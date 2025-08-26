@@ -79,7 +79,11 @@ exports.getStudentsByYear = async (req, res) => {
     // Compute total approved hours per student
     const studentsWithHours = await Promise.all(
       students.map(async (student) => {
-        const events = await Event.find({ 'attendance.userId': student._id }).select('hours attendance');
+        // Include disabled events if student was already approved (to preserve their hours)
+        const events = await Event.find({ 
+          'attendance.userId': student._id,
+          'attendance.status': 'Approved'
+        }).select('hours attendance');
         let totalHours = 0;
         events.forEach((event) => {
           const attendance = event.attendance.find((a) => a.userId.toString() === student._id.toString());
@@ -107,6 +111,29 @@ exports.getStudentsByYear = async (req, res) => {
   }
 };
 
+// Get filter options from existing student data for Students by Year page
+exports.getStudentsByYearFilterOptions = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'Student' })
+      .select('department year section academicYear')
+      .lean();
+
+    const departments = [...new Set(students.map(s => s.department).filter(Boolean))].sort();
+    const years = [...new Set(students.map(s => s.year).filter(Boolean))].sort();
+    const sections = [...new Set(students.map(s => s.section).filter(Boolean))].sort();
+    const academicYears = [...new Set(students.map(s => s.academicYear).filter(Boolean))].sort();
+
+    res.json({
+      departments,
+      years,
+      sections,
+      academicYears
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching filter options', error: err.message });
+  }
+};
+
 // Get students with 40+ hours
 exports.getStudents40Hours = async (req, res) => {
   try {
@@ -117,8 +144,10 @@ exports.getStudents40Hours = async (req, res) => {
     // Calculate total hours for each student
     const studentsWithHours = await Promise.all(
       students.map(async (student) => {
+        // Include disabled events if student was already approved (to preserve their hours)
         const events = await Event.find({
-          'attendance.userId': student._id
+          'attendance.userId': student._id,
+          'attendance.status': 'Approved'
         });
 
         let totalHours = 0;
@@ -239,7 +268,7 @@ exports.approveStaff = async (req, res) => {
     const sendEmail = require('../utils/sendEmail');
     const emailContent = `
       <p>Hello ${staffMember.name},</p>
-      <p>Your CommunityLink account has been approved by an administrator.</p>
+      <p>Your CHARISM account has been approved by an administrator.</p>
       <p>You can now log in to your account and access the system.</p>
       ${approvalNotes ? `<p><strong>Notes:</strong> ${approvalNotes}</p>` : ''}
       <p>Thank you for your patience.</p>
@@ -281,7 +310,7 @@ exports.rejectStaff = async (req, res) => {
     const sendEmail = require('../utils/sendEmail');
     const emailContent = `
       <p>Hello ${staffMember.name},</p>
-      <p>Your CommunityLink account application has been reviewed and unfortunately, it has been rejected.</p>
+      <p>Your CHARISM account application has been reviewed and unfortunately, it has been rejected.</p>
       ${approvalNotes ? `<p><strong>Reason:</strong> ${approvalNotes}</p>` : ''}
       <p>If you believe this is an error, please contact the administrator.</p>
     `;

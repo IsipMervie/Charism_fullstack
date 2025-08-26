@@ -8,149 +8,100 @@ const eventController = require('../controllers/eventController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 
-// Ensure uploads directory exists
+// Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Multer setup for file uploads (event images, reflections)
+// File upload configuration
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadsDir);
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
   },
-  filename: function (req, file, cb) {
-    // Preserve original filename with timestamp to avoid conflicts
-    const timestamp = Date.now();
-    const originalName = file.originalname;
-    const ext = path.extname(originalName);
-    const nameWithoutExt = path.basename(originalName, ext);
-    // Sanitize filename to prevent security issues
-    const sanitizedName = nameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '_');
-    cb(null, `${timestamp}_${sanitizedName}${ext}`);
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
   }
 });
 
-// File filter to allow specific file types
-const fileFilter = (req, file, cb) => {
-  // Allow common document and media file types
-  const allowedTypes = [
-    // Documents
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'text/plain',
-    'text/csv',
-    'application/rtf',
-    'application/vnd.oasis.opendocument.text',
-    
-    // Images
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/gif',
-    'image/bmp',
-    'image/tiff',
-    'image/webp',
-    'image/svg+xml',
-    
-    // Videos
-    'video/mp4',
-    'video/avi',
-    'video/mov',
-    'video/wmv',
-    'video/flv',
-    'video/webm',
-    'video/x-matroska',
-    'video/x-msvideo',
-    'video/quicktime',
-    
-    // Audio
-    'audio/mpeg',
-    'audio/wav',
-    'audio/ogg',
-    'audio/aac',
-    'audio/flac',
-    
-    // Archives
-    'application/zip',
-    'application/x-rar-compressed',
-    'application/x-7z-compressed',
-    'application/x-tar',
-    'application/gzip',
-    
-    // Presentations
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    
-    // Code files
-    'text/html',
-    'text/css',
-    'application/javascript',
-    'application/json',
-    'application/xml',
-    'text/x-python',
-    'text/x-java-source',
-    'text/x-c++src',
-    'text/x-csrc',
-    'application/x-httpd-php',
-    'application/sql',
-    
-    // Other common formats
-    'text/markdown'
-  ];
-  
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error(`File type ${file.mimetype} is not allowed. Please upload a supported file type.`), false);
-  }
-};
-
+// Enhanced multer config with file filtering
 const upload = multer({ 
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: 50 * 1024 * 1024 // 50MB limit
+  storage: storage,
+  limits: { 
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+    files: 1 // Only allow 1 file
+  },
+  fileFilter: (req, file, cb) => {
+    // Allow all file types for reflections (users can upload various document types)
+    // This is more permissive than the frontend accept attribute
+    cb(null, true);
   }
 });
 
-// Error handling middleware for multer
+// Enhanced error handling
 const handleMulterError = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ 
-        message: 'File too large. Maximum file size is 50MB.' 
-      });
+    switch (err.code) {
+      case 'LIMIT_FILE_SIZE':
+        return res.status(413).json({ 
+          message: 'File is too large. Maximum size is 50MB.',
+          error: 'FILE_TOO_LARGE'
+        });
+      case 'LIMIT_FILE_COUNT':
+        return res.status(400).json({ 
+          message: 'Too many files. Only one file is allowed.',
+          error: 'TOO_MANY_FILES'
+        });
+      case 'LIMIT_UNEXPECTED_FILE':
+        return res.status(400).json({ 
+          message: 'Unexpected file field.',
+          error: 'UNEXPECTED_FILE'
+        });
+      default:
+        return res.status(400).json({ 
+          message: `Upload error: ${err.message}`,
+          error: 'UPLOAD_ERROR'
+        });
     }
-    return res.status(400).json({ 
-      message: 'File upload error: ' + err.message 
-    });
-  } else if (err) {
-    // Handle file type errors
-    if (err.message && err.message.includes('File type')) {
-      return res.status(400).json({ 
-        message: err.message 
-      });
-    }
-    return res.status(500).json({ 
-      message: 'File upload error: ' + err.message 
+  }
+  
+  // Handle other file-related errors
+  if (err.code === 'ENOSPC') {
+    return res.status(507).json({ 
+      message: 'Server storage is full. Please try again later.',
+      error: 'STORAGE_FULL'
     });
   }
-  next();
+  
+  next(err);
 };
 
 // =======================
 // Public Routes
 // =======================
 
-// Get all events (public)
+// Health check
+router.get('/health', eventController.healthCheck);
+
+// Get all events (public) - MUST come before /:eventId routes
 router.get('/', eventController.getAllEvents);
 
 // =======================
-// Analytics Routes (Admin/Staff) - Must come before /:eventId routes
+// Public Event Registration Routes
+// =======================
+
+// Get event by registration token (public)
+router.get('/register/:token', eventController.getEventByRegistrationToken);
+
+// Register for event using token (public - requires login)
+router.post('/register/:token', authMiddleware, eventController.registerForEventWithToken);
+
+// Generate tokens for existing events (admin utility)
+router.post('/generate-tokens', authMiddleware, roleMiddleware(['Admin']), eventController.generateTokensForExistingEvents);
+
+// =======================
+// Analytics Routes (Admin/Staff) - MUST come before /:eventId routes
 // =======================
 
 // Analytics
@@ -177,17 +128,24 @@ router.get(
   eventController.getStudents40Hours
 );
 
+// Get pending registrations (Admin/Staff)
+router.get(
+  '/pending-registrations',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getPendingRegistrations
+);
+
 // =======================
-// Event Management Routes (Admin/Staff) - Must come before /:eventId routes
+// Event CRUD Routes
 // =======================
 
-// Create Event (Admin/Staff)
+// Create event (Admin/Staff)
 router.post(
-  '/create',
+  '/',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   upload.single('image'),
-  handleMulterError,
   eventController.createEvent
 );
 
@@ -198,13 +156,31 @@ router.post(
 // Get event details (public)
 router.get('/:eventId', eventController.getEventDetails);
 
+// Get event capacity status (public)
+router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
+
+// Get all registrations for an event (Admin/Staff)
+router.get(
+  '/:eventId/registrations',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getAllEventRegistrations
+);
+
+// Get pending registrations for a specific event (Admin/Staff)
+router.get(
+  '/:eventId/registrations/pending',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getPendingRegistrationsForEvent
+);
+
 // Edit (update) event (Admin/Staff)
 router.put(
   '/:eventId',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   upload.single('image'),
-  handleMulterError,
   eventController.updateEvent
 );
 
@@ -224,42 +200,28 @@ router.patch(
   eventController.toggleEventAvailability
 );
 
-// =======================
-// Student Participation Routes
-// =======================
-
-// Join event (Student)
-router.post(
-  '/:eventId/join',
+// Toggle event visibility (Admin/Staff)
+router.patch(
+  '/:eventId/toggle-visibility',
   authMiddleware,
-  roleMiddleware('Student'),
-  eventController.joinEvent
+  roleMiddleware('Admin', 'Staff'),
+  eventController.toggleEventVisibility
 );
 
-// Time In (Student)
-router.post(
-  '/:eventId/attendance/:userId/time-in',  // Fixed route to match controller
+// Mark event as completed (Admin/Staff)
+router.patch(
+  '/:eventId/mark-completed',
   authMiddleware,
-  roleMiddleware('Student'),
-  eventController.timeIn
+  roleMiddleware('Admin', 'Staff'),
+  eventController.markEventAsCompleted
 );
 
-// Time Out (Student)
-router.post(
-  '/:eventId/attendance/:userId/time-out',
+// Mark event as NOT completed (Admin/Staff) - Revert to editable
+router.patch(
+  '/:eventId/mark-not-completed',
   authMiddleware,
-  roleMiddleware('Student'),
-  eventController.timeOut
-);
-
-// Upload reflection/attachment (Student)
-router.post(
-  '/:eventId/attendance/:userId/reflection',
-  authMiddleware,
-  roleMiddleware('Student'),
-  upload.single('file'),
-  handleMulterError,
-  eventController.uploadReflection
+  roleMiddleware('Admin', 'Staff'),
+  eventController.markEventAsNotCompleted
 );
 
 // =======================
@@ -272,6 +234,38 @@ router.get(
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.getEventParticipants
+);
+
+// Approve/reject registration (Admin/Staff)
+router.patch(
+  '/:eventId/attendance/:userId/approve-registration',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.approveRegistration
+);
+
+// Disapprove registration (Admin/Staff)
+router.patch(
+  '/:eventId/attendance/:userId/disapprove-registration',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveRegistration
+);
+
+// Approve registration for specific event (Admin/Staff) - Frontend expects this route
+router.put(
+  '/:eventId/registrations/:userId/approve',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.approveRegistration
+);
+
+// Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
+router.put(
+  '/:eventId/registrations/:userId/disapprove',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveRegistration
 );
 
 // Approve attendance (Admin/Staff)
@@ -290,13 +284,80 @@ router.patch(
   eventController.disapproveAttendance
 );
 
-// Download reflection/attachment (Admin/Staff)
+// Get all attachments for an event (Admin/Staff)
 router.get(
-  '/:eventId/attendance/:userId/reflection',
+  '/:eventId/attachments',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
-  eventController.downloadReflection
+  eventController.getAllEventAttachments
 );
+
+// =======================
+// Student Participation Routes
+// =======================
+
+// Join event (Student)
+router.post(
+  '/:eventId/join',
+  authMiddleware,
+  roleMiddleware('Student'),
+  eventController.joinEvent
+);
+
+// Time In (Student)
+router.post(
+  '/:eventId/attendance/:userId/time-in',
+  authMiddleware,
+  roleMiddleware('Student'),
+  eventController.timeIn
+);
+
+// Time Out (Student)
+router.post(
+  '/:eventId/attendance/:userId/time-out',
+  authMiddleware,
+  roleMiddleware('Student'),
+  eventController.timeOut
+);
+
+// =======================
+// File Upload Routes for Event Documentation
+// =======================
+
+// Import file upload utility
+const { uploadEventDocs } = require('../utils/fileUpload');
+
+// Upload documentation files for an event (Student)
+router.post(
+  '/:eventId/documentation/upload',
+  authMiddleware,
+  roleMiddleware('Student'),
+  uploadEventDocs.array('files', 5), // Allow up to 5 files
+  eventController.uploadEventDocumentation
+);
+
+// Get documentation files for an event
+router.get(
+  '/:eventId/documentation',
+  authMiddleware,
+  eventController.getEventDocumentation
+);
+
+// Download documentation file
+router.get(
+  '/:eventId/documentation/download/:filename',
+  authMiddleware,
+  eventController.downloadDocumentationFile
+);
+
+// Delete documentation file
+router.delete(
+  '/:eventId/documentation/:filename',
+  authMiddleware,
+  eventController.deleteDocumentationFile
+);
+
+
 
 // =======================
 // Global Error Handlers

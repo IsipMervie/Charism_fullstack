@@ -5,9 +5,21 @@ const AcademicYear = require('../models/AcademicYear');
 // Get all academic years
 exports.getAcademicYears = async (req, res) => {
   try {
+    console.log('Getting academic years...');
+    console.log('AcademicYear model available:', !!AcademicYear);
+    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
+
+    // Check if model is available
+    if (!AcademicYear) {
+      console.error('AcademicYear model not available');
+      return res.status(500).json({ message: 'AcademicYear model not available', error: 'Database model not loaded' });
+    }
+
     const academicYears = await AcademicYear.find().sort({ year: -1 });
+    console.log('Academic years fetched successfully');
     res.json(academicYears);
   } catch (err) {
+    console.error('Error fetching academic years:', err);
     res.status(500).json({ message: 'Error fetching academic years', error: err.message });
   }
 };
@@ -27,6 +39,16 @@ exports.createAcademicYear = async (req, res) => {
   try {
     const { year, description, startDate, endDate } = req.body;
     
+    console.log('Creating academic year:', year);
+    console.log('AcademicYear model available:', !!AcademicYear);
+    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
+
+    // Check if model is available
+    if (!AcademicYear) {
+      console.error('AcademicYear model not available');
+      return res.status(500).json({ message: 'AcademicYear model not available', error: 'Database model not loaded' });
+    }
+    
     // Check if academic year already exists
     const existingYear = await AcademicYear.findOne({ year });
     if (existingYear) {
@@ -42,8 +64,10 @@ exports.createAcademicYear = async (req, res) => {
     });
 
     await academicYear.save();
+    console.log('Academic year saved successfully');
     res.status(201).json({ message: 'Academic year created successfully', academicYear });
   } catch (err) {
+    console.error('Error creating academic year:', err);
     res.status(500).json({ message: 'Error creating academic year', error: err.message });
   }
 };

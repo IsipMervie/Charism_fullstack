@@ -25,6 +25,22 @@ router.patch(
   contactUsController.markMessageAsRead
 );
 
+// Admin: Reply to a message
+router.post(
+  '/:id/reply',
+  authMiddleware,
+  roleMiddleware('Admin'),
+  contactUsController.replyToMessage
+);
+
+// Admin: Update existing reply and resend email
+router.put(
+  '/:id/reply',
+  authMiddleware,
+  roleMiddleware('Admin'),
+  contactUsController.updateReply
+);
+
 // Admin: Delete a message
 router.delete(
   '/:id',

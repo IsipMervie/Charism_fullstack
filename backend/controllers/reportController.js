@@ -76,8 +76,15 @@ const createSimpleList = (doc, items, startY) => {
 // Students By Year PDF Report
 const studentsByYearPDF = async (req, res) => {
   try {
-    const { year, department, yearLevel, section, only40Hours } = req.query;
+    console.log('PDF Generation Request Query:', req.query);
+    console.log('PDF Generation Request Headers:', req.headers);
+    console.log('PDF Generation Request User:', req.user);
+    console.log('User Role:', req.user?.role);
+    console.log('User ID:', req.user?.id);
+    
+    const { year, department, yearLevel, section, only40Hours, hoursMin, hoursMax } = req.query;
     if (!year) {
+      console.log('Missing year parameter');
       return res.status(400).json({ message: 'Year parameter is required' });
     }
 
@@ -90,11 +97,18 @@ const studentsByYearPDF = async (req, res) => {
     if (department) query.department = department;
     if (yearLevel) query.year = yearLevel;
     if (section) query.section = section;
+    
+    console.log('Database Query:', query);
+    console.log('Filters applied:', { department, yearLevel, section, hoursMin, hoursMax });
 
     // Get students for the specific year with filters
     const students = await User.find(query).select('name email department academicYear year section').sort('name');
+    console.log('Students found:', students.length);
+    console.log('Sample student data:', students.slice(0, 2));
+    console.log('Query used:', JSON.stringify(query, null, 2));
 
     if (!students.length) {
+      console.log('No students found for query:', query);
       return res.status(404).json({ message: 'No students found for this year with the specified filters' });
     }
 
@@ -122,12 +136,40 @@ const studentsByYearPDF = async (req, res) => {
       })
     );
 
-    // Apply 40+ hours filter if requested
-    const filteredStudents = only40Hours === 'true' 
-      ? studentsWithHours.filter(s => s.totalHours >= 40)
-      : studentsWithHours;
+    // Apply hours range filter
+    let filteredStudents = studentsWithHours;
+    
+    console.log('Hours filters:', { hoursMin, hoursMax, type: typeof hoursMin, typeMax: typeof hoursMax });
+    
+    if (hoursMin && hoursMin !== '') {
+      const minHours = parseInt(hoursMin);
+      if (isNaN(minHours)) {
+        console.log('Invalid hoursMin:', hoursMin);
+        return res.status(400).json({ message: 'Invalid minimum hours value' });
+      }
+      filteredStudents = filteredStudents.filter(s => (s.totalHours || 0) >= minHours);
+      console.log('Applied min hours filter:', minHours, 'Students remaining:', filteredStudents.length);
+    }
+    
+    if (hoursMax && hoursMax !== '') {
+      const maxHours = parseInt(hoursMax);
+      if (isNaN(maxHours)) {
+        console.log('Invalid hoursMax:', hoursMax);
+        return res.status(400).json({ message: 'Invalid maximum hours value' });
+      }
+      filteredStudents = filteredStudents.filter(s => (s.totalHours || 0) <= maxHours);
+      console.log('Applied max hours filter:', maxHours, 'Students remaining:', filteredStudents.length);
+    }
 
+    // Apply 40+ hours filter if requested (this takes precedence over hours range)
+    if (only40Hours === 'true') {
+      filteredStudents = filteredStudents.filter(s => s.totalHours >= 40);
+    }
+
+    console.log('Final filtered students count:', filteredStudents.length);
+    
     if (!filteredStudents.length) {
+      console.log('No students found after all filters');
       return res.status(404).json({ message: 'No students found matching the criteria' });
     }
 
@@ -143,7 +185,7 @@ const studentsByYearPDF = async (req, res) => {
 
     // Header
     doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('CommunityLink', { align: 'center' });
+       .text('CHARISM', { align: 'center' });
     
     doc.moveDown(1);
 
@@ -159,6 +201,13 @@ const studentsByYearPDF = async (req, res) => {
     if (department) filters.push(`Department: ${department}`);
     if (yearLevel) filters.push(`Year Level: ${yearLevel}`);
     if (section) filters.push(`Section: ${section}`);
+    if (hoursMin && hoursMax) {
+      filters.push(`Hours Range: ${hoursMin}-${hoursMax}`);
+    } else if (hoursMin) {
+      filters.push(`Min Hours: ${hoursMin}+`);
+    } else if (hoursMax) {
+      filters.push(`Max Hours: ${hoursMax}`);
+    }
     if (only40Hours === 'true') filters.push('40+ Hours Only');
 
     if (filters.length > 0) {
@@ -278,7 +327,7 @@ const students40HoursPDF = async (req, res) => {
 
     // Header
     doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('CommunityLink', { align: 'center' });
+       .text('CHARISM', { align: 'center' });
     
     doc.moveDown(1);
 
@@ -345,7 +394,7 @@ const students40HoursPDF = async (req, res) => {
   }
 };
 
-// Event Attendance Report PDF
+// Event Attendance PDF Report
 const eventAttendancePDF = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -405,7 +454,7 @@ const eventAttendancePDF = async (req, res) => {
 
     // Header
     doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('CommunityLink', { align: 'center' });
+       .text('CHARISM', { align: 'center' });
     
 
     doc.moveDown(1);
@@ -576,16 +625,29 @@ const eventListPDF = async (req, res) => {
 
     // Helper function to determine event status (same as frontend)
     const getEventStatus = (event) => {
+      // First check if admin has manually marked the event as completed
+      if (event.status === 'Completed') {
+        return 'completed';
+      }
+      
       const now = new Date();
       const eventDate = new Date(event.date);
-      if (eventDate < now && event.attendance && event.attendance.some(a => a.timeOut)) {
+      const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
+      const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+      
+      // Check if event time has completely passed
+      if (eventEndTime < now) {
+        // Event time has passed - automatically mark as completed
         return 'completed';
-      } else if (eventDate < now) {
-        return 'past';
-      } else if (eventDate.toDateString() === now.toDateString()) {
-        return 'today';
-      } else {
+      } else if (eventStartTime > now) {
+        // Event hasn't started yet - it's upcoming
         return 'upcoming';
+      } else if (eventStartTime <= now && eventEndTime > now) {
+        // Event is currently happening - it's ongoing
+        return 'ongoing';
+      } else {
+        // Event date has passed but time logic didn't catch it - it's past
+        return 'past';
       }
     };
 
@@ -595,13 +657,26 @@ const eventListPDF = async (req, res) => {
       filteredEvents = events.filter(event => getEventStatus(event) === status);
     }
 
-    // Filter by department if specified (check event participants)
+    // Filter by department if specified (check event department restrictions)
     if (department) {
       filteredEvents = filteredEvents.filter(event => {
-        return event.attendance.some(att => {
-          const user = att.userId;
-          return user && user.department === department;
-        });
+        // Check if event is for all departments
+        if (event.isForAllDepartments) {
+          return true; // Event is accessible to all departments
+        }
+        
+        // Check if event has specific departments array
+        if (event.departments && event.departments.length > 0) {
+          return event.departments.includes(department);
+        }
+        
+        // Check if event has single department
+        if (event.department) {
+          return event.department === department;
+        }
+        
+        // Event has no department restriction
+        return true;
       });
     }
 
@@ -625,7 +700,7 @@ const eventListPDF = async (req, res) => {
         event.date ? new Date(event.date).toLocaleDateString() : '',
         event.location || '',
         availableSlots > 0 ? availableSlots : 'No slots',
-        event.hours || '',
+        event.hours || '0',
         eventStatus.charAt(0).toUpperCase() + eventStatus.slice(1)
       ];
     });
@@ -638,7 +713,7 @@ const eventListPDF = async (req, res) => {
 
     // Header
     doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-      .text('CommunityLink', { align: 'center' });
+      .text('CHARISM', { align: 'center' });
     doc.moveDown(1);
 
     // Title

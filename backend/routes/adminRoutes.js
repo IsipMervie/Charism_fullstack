@@ -20,6 +20,7 @@ router.delete('/users/:id', adminController.deleteUser);
 
 // Student reports
 router.get('/students-by-year', adminController.getStudentsByYear);
+router.get('/students-by-year-filter-options', adminController.getStudentsByYearFilterOptions);
 router.get('/students-40-hours', adminController.getStudents40Hours);
 
 // Event management

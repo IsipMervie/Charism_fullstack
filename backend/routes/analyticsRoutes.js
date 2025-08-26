@@ -4,6 +4,14 @@ const analyticsController = require('../controllers/analyticsController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 
+// Overview analytics
+router.get(
+  '/',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  analyticsController.getAnalytics
+);
+
 // Department analytics
 router.get('/department/:department', authMiddleware, roleMiddleware('Admin', 'Staff'), analyticsController.getDepartmentAnalytics);
 

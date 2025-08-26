@@ -46,12 +46,16 @@ exports.register = async (req, res) => {
     await newUser.save();
 
     // Email verification
-    const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ 
+          userId: newUser._id, 
+          role: newUser.role,
+          email: newUser.email 
+        }, JWT_SECRET, { expiresIn: '1h' });
     const verificationUrl = `${FRONTEND_URL}/verify-email/${token}`;
     
     let emailContent = `
       <p>Hello ${name},</p>
-      <p>Welcome to CommunityLink! Please click the link below to verify your email address:</p>
+      <p>Welcome to CHARISM! Please click the link below to verify your email address:</p>
       <a href="${verificationUrl}">${verificationUrl}</a>
     `;
 
@@ -93,7 +97,11 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ 
+      userId: user._id, 
+      role: user.role,
+      email: user.email 
+    }, JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({
       message: 'Login successful',
@@ -165,7 +173,11 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ 
+      userId: user._id, 
+      role: user.role,
+      email: user.email 
+    }, JWT_SECRET, { expiresIn: '1h' });
     const resetUrl = `${FRONTEND_URL}/reset-password/${token}`;
     const emailContent = `
       <p>Hello ${user.name},</p>

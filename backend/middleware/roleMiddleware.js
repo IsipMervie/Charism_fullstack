@@ -23,14 +23,23 @@ const roleMiddleware = (...allowedRoles) => {
 
       console.log('User ID:', userId);
       
-      // Fetch user from database to get current role
+      // Check if role is in the token (faster than database lookup)
+      if (req.user.role && allowedRoles.includes(req.user.role)) {
+        console.log('User role from token:', req.user.role);
+        console.log('User authorized, proceeding...');
+        next();
+        return;
+      }
+      
+      // Fallback to database lookup if role not in token
+      console.log('Role not in token, checking database...');
       const user = await User.findById(userId);
       if (!user) {
         console.log('User not found in database');
         return res.status(401).json({ message: 'User not found' });
       }
 
-      console.log('User role:', user.role);
+      console.log('User role from database:', user.role);
       
       // Check if user role is allowed
       if (!allowedRoles.includes(user.role)) {

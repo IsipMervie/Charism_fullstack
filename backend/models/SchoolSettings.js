@@ -3,10 +3,10 @@
 const mongoose = require('mongoose');
 
 const schoolSettingsSchema = new mongoose.Schema({
-  schoolName: { type: String, required: true, default: 'CommunityLink School' },
-  contactEmail: { type: String, required: true, default: 'info@communitylink.edu' },
+  schoolName: { type: String, required: true, default: 'CHARISM School' },
+  contactEmail: { type: String, required: true, default: 'info@charism.edu' },
   logo: { type: String }, // filename of uploaded logo image
-  brandName: { type: String, required: true, default: 'CommunityLink' }, // Brand name for navbar
+  brandName: { type: String, required: true, default: 'CHARISM' }, // Brand name for navbar
   
   // Academic Years management
   academicYears: [{

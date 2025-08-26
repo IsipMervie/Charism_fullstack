@@ -6,7 +6,10 @@ exports.getAnalytics = async (req, res) => {
   try {
     // Get basic counts with error handling
     const totalUsers = await User.countDocuments().catch(() => 0);
-    const totalEvents = await Event.countDocuments().catch(() => 0);
+    const totalEvents = await Event.countDocuments({ 
+      'isVisibleToStudents': true,
+      'status': { $ne: 'Disabled' }
+    }).catch(() => 0);
     
     // Get messages count with error handling (in case Message model doesn't exist)
     let totalMessages = 0;
@@ -50,8 +53,17 @@ exports.getAnalytics = async (req, res) => {
     let completedEvents = 0;
     
     try {
-      activeEvents = await Event.countDocuments({ status: 'Active' });
-      completedEvents = await Event.countDocuments({ status: 'Completed' });
+      // For event counts, exclude disabled events (they shouldn't be counted as active)
+      activeEvents = await Event.countDocuments({ 
+        status: 'Active',
+        'isVisibleToStudents': true,
+        'status': { $ne: 'Disabled' }
+      });
+      completedEvents = await Event.countDocuments({ 
+        status: 'Completed',
+        'isVisibleToStudents': true,
+        'status': { $ne: 'Disabled' }
+      });
     } catch (eventStatusError) {
       console.log('Error counting events by status:', eventStatusError);
     }
@@ -59,7 +71,10 @@ exports.getAnalytics = async (req, res) => {
     // Get approved attendance count
     let approvedAttendance = 0;
     try {
-      const eventsWithAttendance = await Event.find({ 'attendance.status': 'Approved' });
+      // For attendance count, include disabled events if students were already approved
+      const eventsWithAttendance = await Event.find({ 
+        'attendance.status': 'Approved'
+      });
       approvedAttendance = eventsWithAttendance.reduce((sum, event) => {
         if (event.attendance && Array.isArray(event.attendance)) {
           return sum + event.attendance.filter(att => att.status === 'Approved').length;
@@ -73,7 +88,11 @@ exports.getAnalytics = async (req, res) => {
     // Get total hours from approved events
     let totalHours = 0;
     try {
-      const approvedEvents = await Event.find({ 'attendance.status': 'Approved' });
+      // For hours calculation, include disabled events if students were already approved
+      // This ensures students don't lose hours from events they were already approved for
+      const approvedEvents = await Event.find({ 
+        'attendance.status': 'Approved'
+      });
       totalHours = approvedEvents.reduce((sum, event) => {
         if (event.hours && event.attendance) {
           const approvedCount = event.attendance.filter(att => att.status === 'Approved').length;
@@ -92,7 +111,11 @@ exports.getAnalytics = async (req, res) => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      recentEvents = await Event.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
+      recentEvents = await Event.countDocuments({ 
+        createdAt: { $gte: thirtyDaysAgo },
+        'isVisibleToStudents': true,
+        'status': { $ne: 'Disabled' }
+      });
       recentUsers = await User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } });
     } catch (recentError) {
       console.log('Error calculating recent activity:', recentError);
@@ -115,7 +138,9 @@ exports.getAnalytics = async (req, res) => {
         endDate.setDate(endDate.getDate() + 1);
         
         const dayEvents = await Event.countDocuments({
-          createdAt: { $gte: startDate, $lt: endDate }
+          createdAt: { $gte: startDate, $lt: endDate },
+          'isVisibleToStudents': true,
+          'status': { $ne: 'Disabled' }
         });
         
         const dayUsers = await User.countDocuments({
@@ -146,7 +171,9 @@ exports.getAnalytics = async (req, res) => {
           const deptEvents = await Event.countDocuments({
             'attendance.userId': {
               $in: (await User.find({ role: 'Student', department: dept })).map(u => u._id)
-            }
+            },
+            'isVisibleToStudents': true,
+            'status': { $ne: 'Disabled' }
           });
           
           return {

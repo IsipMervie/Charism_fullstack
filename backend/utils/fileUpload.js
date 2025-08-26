@@ -1,0 +1,88 @@
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Configure storage for event documentation files
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = 'uploads/event-docs';
+    
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    // Generate unique filename with timestamp and original extension
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const fileExtension = path.extname(file.originalname);
+    const fileName = `event-doc-${uniqueSuffix}${fileExtension}`;
+    cb(null, fileName);
+  }
+});
+
+// File filter for allowed document types
+const fileFilter = (req, file, cb) => {
+  // Allow only PDF, DOC, DOCX, and image files
+  const allowedTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/gif'
+  ];
+  
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type. Only PDF, DOC, DOCX, and image files are allowed.'), false);
+  }
+};
+
+// Configure multer for event documentation uploads
+const uploadEventDocs = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 5 // Maximum 5 files per upload
+  }
+});
+
+// Helper function to get file info
+const getFileInfo = (file) => {
+  return {
+    filename: file.filename,
+    originalName: file.originalname,
+    fileType: file.mimetype,
+    fileSize: file.size,
+    uploadDate: new Date(),
+    description: ''
+  };
+};
+
+// Helper function to delete file
+const deleteFile = (filename) => {
+  const filePath = path.join('uploads/event-docs', filename);
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+    return true;
+  }
+  return false;
+};
+
+// Helper function to get file path
+const getFilePath = (filename) => {
+  return path.join('uploads/event-docs', filename);
+};
+
+module.exports = {
+  uploadEventDocs,
+  getFileInfo,
+  deleteFile,
+  getFilePath
+};

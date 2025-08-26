@@ -4,6 +4,11 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const reportController = require('../controllers/reportController');
 
+// Test endpoint for debugging
+router.get('/test', (req, res) => {
+  res.json({ message: 'Reports route is working', timestamp: new Date().toISOString() });
+});
+
 // Students by year PDF report
 router.get(
   '/students-by-year',

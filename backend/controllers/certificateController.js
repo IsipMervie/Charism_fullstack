@@ -102,9 +102,6 @@ exports.generateCertificate = async (req, res) => {
     doc.rect(25, doc.page.height - 40, cornerSize, cornerSize).fill('#007bff');
     doc.rect(doc.page.width - 40, doc.page.height - 40, cornerSize, cornerSize).fill('#007bff');
 
-    // Decorative line under title
-    doc.moveDown(0.5);
-    doc.rect(doc.page.width / 2 - 50, doc.y + 10, 100, 2).fill('#28a745');
 
     // Certificate content
     doc.fontSize(32)
@@ -239,7 +236,7 @@ exports.generateStudentsListPDF = async (req, res) => {
 
     // Document title
     doc.fontSize(18).font('Helvetica-Bold').fill('#000')
-      .text('CommunityLink Students List', { align: 'center' });
+              .text('CHARISM Students List', { align: 'center' });
     doc.fontSize(12).font('Helvetica').fill('#000')
       .text(`Academic Year: ${year || 'All Years'}`, { align: 'center' });
     doc.fontSize(10).font('Helvetica').fill('#000')

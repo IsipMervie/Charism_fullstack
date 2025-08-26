@@ -13,10 +13,10 @@ exports.getSchoolSettings = async (req, res) => {
     if (!settings) {
       // If not set, create default
       settings = new SchoolSettings({
-        schoolName: 'CommunityLink School',
-        contactEmail: 'info@communitylink.edu',
+        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
+        contactEmail: 'ceo@ua.edu.ph',
         logo: null,
-        brandName: 'CommunityLink',
+        brandName: 'CHARISM',
       });
       await settings.save();
     }
@@ -52,10 +52,10 @@ exports.getPublicSchoolSettings = async (req, res) => {
     if (!settings) {
       // If not set, create default
       settings = new SchoolSettings({
-        schoolName: 'CommunityLink School',
-        contactEmail: 'info@communitylink.edu',
+        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
+        contactEmail: 'ceo@ua.edu.ph',
         logo: null,
-        brandName: 'CommunityLink',
+        brandName: 'CHARISM',
       });
       await settings.save();
     }
@@ -63,7 +63,8 @@ exports.getPublicSchoolSettings = async (req, res) => {
     res.json({
       schoolName: settings.schoolName,
       brandName: settings.brandName,
-      logo: settings.logo
+      logo: settings.logo,
+      contactEmail: settings.contactEmail
     });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching school settings', error: err.message });
@@ -73,18 +74,32 @@ exports.getPublicSchoolSettings = async (req, res) => {
 // Get all registration settings (Admin only)
 exports.getSettings = async (req, res) => {
   try {
+    console.log('Getting settings...');
+    console.log('Section model available:', !!Section);
+    console.log('YearLevel model available:', !!YearLevel);
+    console.log('Department model available:', !!Department);
+    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
+
+    // Check if models are available
+    if (!Section || !YearLevel || !Department) {
+      console.error('One or more models not available');
+      return res.status(500).json({ message: 'Database models not available', error: 'Models not loaded' });
+    }
+
     const [sections, yearLevels, departments] = await Promise.all([
       Section.find().sort({ createdAt: -1 }),
       YearLevel.find().sort({ createdAt: -1 }),
       Department.find().sort({ createdAt: -1 })
     ]);
     
+    console.log('Settings fetched successfully');
     res.json({
       sections,
       yearLevels,
       departments
     });
   } catch (err) {
+    console.error('Error fetching settings:', err);
     res.status(500).json({ message: 'Error fetching settings', error: err.message });
   }
 };
@@ -153,14 +168,26 @@ exports.addSection = async (req, res) => {
     const { name } = req.body;
     if (!name) return res.status(400).json({ message: 'Section name is required' });
 
+    console.log('Adding section:', name);
+    console.log('Section model available:', !!Section);
+    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
+
+    // Check if model is available
+    if (!Section) {
+      console.error('Section model not available');
+      return res.status(500).json({ message: 'Section model not available', error: 'Database model not loaded' });
+    }
+
     // Check if section already exists
     const exists = await Section.findOne({ name });
     if (exists) return res.status(400).json({ message: 'Section already exists' });
 
     const section = new Section({ name });
     await section.save();
+    console.log('Section saved successfully');
     res.json({ message: 'Section added successfully', section });
   } catch (err) {
+    console.error('Error adding section:', err);
     res.status(500).json({ message: 'Error adding section', error: err.message });
   }
 };
@@ -208,14 +235,26 @@ exports.addYearLevel = async (req, res) => {
     const { name } = req.body;
     if (!name) return res.status(400).json({ message: 'Year level name is required' });
 
+    console.log('Adding year level:', name);
+    console.log('YearLevel model available:', !!YearLevel);
+    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
+
+    // Check if model is available
+    if (!YearLevel) {
+      console.error('YearLevel model not available');
+      return res.status(500).json({ message: 'YearLevel model not available', error: 'Database model not loaded' });
+    }
+
     // Check if year level already exists
     const exists = await YearLevel.findOne({ name });
     if (exists) return res.status(400).json({ message: 'Year level already exists' });
 
     const yearLevel = new YearLevel({ name });
     await yearLevel.save();
+    console.log('Year level saved successfully');
     res.json({ message: 'Year level added successfully', yearLevel });
   } catch (err) {
+    console.error('Error adding year level:', err);
     res.status(500).json({ message: 'Error adding year level', error: err.message });
   }
 };
@@ -263,14 +302,26 @@ exports.addDepartment = async (req, res) => {
     const { name } = req.body;
     if (!name) return res.status(400).json({ message: 'Department name is required' });
 
+    console.log('Adding department:', name);
+    console.log('Department model available:', !!Department);
+    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
+
+    // Check if model is available
+    if (!Department) {
+      console.error('Department model not available');
+      return res.status(500).json({ message: 'Department model not available', error: 'Database model not loaded' });
+    }
+
     // Check if department already exists
     const exists = await Department.findOne({ name });
     if (exists) return res.status(400).json({ message: 'Department already exists' });
 
     const department = new Department({ name });
     await department.save();
+    console.log('Department saved successfully');
     res.json({ message: 'Department added successfully', department });
   } catch (err) {
+    console.error('Error adding department:', err);
     res.status(500).json({ message: 'Error adding department', error: err.message });
   }
 };

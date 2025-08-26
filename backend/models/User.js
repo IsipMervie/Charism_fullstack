@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
   approvalDate: { type: Date }, // when staff was approved/rejected
   approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // who approved/rejected
   approvalNotes: { type: String }, // notes from admin about approval/rejection
+  profilePicture: { type: String }, // profile picture filename
   // Add more fields as needed for your profile
 }, { timestamps: true });
 

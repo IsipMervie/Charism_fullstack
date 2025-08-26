@@ -1,0 +1,23 @@
+# 📧 COPY THIS FILE TO .env AND FILL IN YOUR ACTUAL VALUES
+
+# Email Configuration (REQUIRED - Fill in your actual values)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password_here
+
+# Optional: Separate admin email for notifications
+ADMIN_EMAIL=your_email@gmail.com
+
+# 🔐 Other configurations (fill in your actual values)
+MONGODB_URI=mongodb://localhost:27017/communitylink
+JWT_SECRET=your_jwt_secret_here
+
+# 🌐 Server configuration
+PORT=5000
+NODE_ENV=development
+
+# 📝 INSTRUCTIONS:
+# 1. Copy this file and rename it to .env (remove the .txt extension)
+# 2. Replace your_email@gmail.com with your actual Gmail address
+# 3. Replace your_app_password_here with your Gmail App Password
+# 4. Save the file in the backend folder
+# 5. Restart your server

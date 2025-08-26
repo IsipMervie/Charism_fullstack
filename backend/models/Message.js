@@ -15,6 +15,12 @@ const messageSchema = new mongoose.Schema({
   content: { type: String },
 
   read: { type: Boolean, default: false },
+  
+  // Admin reply fields
+  adminResponse: { type: String },           // Admin's reply message
+  adminResponseDate: { type: Date },         // When admin replied
+  adminResponder: { type: String },         // Name/ID of admin who replied
+  isReplied: { type: Boolean, default: false }, // Whether admin has replied
 }, { timestamps: true });
 
 module.exports = mongoose.model('Message', messageSchema);
