@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI=false GENERATE_SOURCEMAP=false react-scripts build",
     "build:prod": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
     "build:render": "react-scripts build",
     "test": "react-scripts test",
