@@ -9,7 +9,7 @@ Go to your Vercel project dashboard → Settings → Environment Variables
 
 ### Backend Environment Variables:
 ```
-MONGO_URI_PRODUCTION=your_actual_mongodb_uri
+MONGO_URI=your_actual_mongodb_uri
 JWT_SECRET=your_actual_jwt_secret_key
 FRONTEND_URL_PRODUCTION=https://yourdomain.vercel.app
 EMAIL_USER=your_email@gmail.com
@@ -57,8 +57,7 @@ GENERATE_SOURCEMAP=false
 
 The system will use:
 1. Vercel environment variables (production)
-2. Fallback to development defaults
-3. No .env files needed
+2. No .env files needed
 
 ## Step 5: Verify Deployment
 
