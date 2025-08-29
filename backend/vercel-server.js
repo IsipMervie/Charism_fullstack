@@ -29,26 +29,21 @@ app.use(cors({
       ? process.env.CORS_ORIGINS.split(',')
       : [
           'http://localhost:3000',
-          'https://charism.vercel.app',
-          'https://charism-frontend.vercel.app',
-          'https://charism-backend.vercel.app'
+          'https://charism-system.vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
     console.log('🔍 Request origin:', origin);
     console.log('🔧 Environment CORS_ORIGINS:', process.env.CORS_ORIGINS);
     
-    // TEMPORARY: Allow all origins for debugging
-    console.log('✅ Allowing origin:', origin);
-    callback(null, true);
-    
-    // ORIGINAL LOGIC (uncomment after fixing):
-    // if (allowedOrigins.indexOf(origin) !== -1) {
-    //   callback(null, true);
-    // } else {
-    //   console.log('❌ CORS blocked origin:', origin);
-    //   callback(new Error('Not allowed by CORS'));
-    // }
+    // Check if origin is allowed
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('✅ Allowing origin:', origin);
+      callback(null, true);
+    } else {
+      console.log('❌ CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
