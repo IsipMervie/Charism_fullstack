@@ -1,7 +1,7 @@
 // backend/controllers/userController.js
 
 const User = require('../models/User');
-const { uploadProfilePicture, deleteFile, getProfilePictureUrl } = require('../utils/profilePictureUpload');
+const { uploadProfilePicture, uploadToCloudinary, deleteFromCloudinary, getProfilePictureUrl } = require('../utils/profilePictureUpload');
 
 // Get all users (Admin only, with optional search/filter)
 exports.getUsers = async (req, res) => {
@@ -92,19 +92,23 @@ exports.uploadProfilePicture = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this profile' });
     }
 
-    // Delete old profile picture if it exists
-    if (user.profilePicture) {
-      deleteFile(user.profilePicture);
+    // Delete old profile picture from Cloudinary if it exists
+    if (user.profilePicture && user.profilePicturePublicId) {
+      await deleteFromCloudinary(user.profilePicturePublicId);
     }
 
-    // Update user with new profile picture
-    user.profilePicture = req.file.filename;
+    // Upload new profile picture to Cloudinary
+    const cloudinaryResult = await uploadToCloudinary(req.file.path, 'profile-pictures');
+    
+    // Update user with new profile picture info
+    user.profilePicture = cloudinaryResult.url;
+    user.profilePicturePublicId = cloudinaryResult.publicId;
     await user.save();
 
     res.status(200).json({
       message: 'Profile picture uploaded successfully',
-      profilePicture: req.file.filename,
-      profilePictureUrl: getProfilePictureUrl(req.file.filename)
+      profilePicture: cloudinaryResult.url,
+      profilePictureUrl: cloudinaryResult.url
     });
   } catch (err) {
     res.status(500).json({ message: 'Error uploading profile picture', error: err.message });
@@ -126,12 +130,13 @@ exports.deleteProfilePicture = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this profile' });
     }
 
-    if (user.profilePicture) {
-      // Delete the file
-      deleteFile(user.profilePicture);
+    if (user.profilePicture && user.profilePicturePublicId) {
+      // Delete from Cloudinary
+      await deleteFromCloudinary(user.profilePicturePublicId);
       
       // Remove from user document
       user.profilePicture = undefined;
+      user.profilePicturePublicId = undefined;
       await user.save();
 
       res.status(200).json({ message: 'Profile picture deleted successfully' });

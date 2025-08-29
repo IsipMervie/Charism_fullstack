@@ -4,7 +4,7 @@ const Event = require('../models/Event');
 const User = require('../models/User');
 const fs = require('fs');
 const path = require('path');
-const { getFileInfo, deleteFile, getFilePath } = require('../utils/fileUpload');
+const { getFileInfo, uploadToCloudinary, deleteFromCloudinary } = require('../utils/fileUpload');
 
 
 
@@ -70,7 +70,7 @@ exports.getAllEvents = async (req, res) => {
         eventObj.publicRegistrationUrl = `${process.env.FRONTEND_URL}/events/register/${event.publicRegistrationToken}`;
       }
       if (event.image) {
-        eventObj.imageUrl = `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${event.image}`;
+        eventObj.imageUrl = event.image; // Cloudinary URL is already complete
       }
       return eventObj;
     });
@@ -158,7 +158,7 @@ exports.getEventDetails = async (req, res) => {
         publicRegistrationUrl: event.publicRegistrationToken ? `${process.env.FRONTEND_URL}/events/register/${event.publicRegistrationToken}` : null,
         status: event.status,
         image: event.image,
-        imageUrl: event.image ? `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${event.image}` : null,
+        imageUrl: event.image || null, // Cloudinary URL is already complete
         // Don't include attendance data for public users
         attendanceCount: event.attendance?.length || 0
       };
@@ -262,7 +262,10 @@ exports.createEvent = async (req, res) => {
 
     // Handle image upload
     if (req.file) {
-      eventData.image = req.file.filename;
+      // Upload image to Cloudinary
+      const cloudinaryResult = await uploadToCloudinary(req.file.path, 'event-images');
+      eventData.image = cloudinaryResult.url;
+      eventData.imagePublicId = cloudinaryResult.publicId;
     }
 
     const event = new Event(eventData);
@@ -328,7 +331,18 @@ exports.updateEvent = async (req, res) => {
 
     // Handle image upload
     if (req.file) {
-      updateData.image = req.file.filename;
+      // Get current event to check if it has an old image
+      const currentEvent = await Event.findById(req.params.eventId);
+      
+      // Delete old image from Cloudinary if it exists
+      if (currentEvent && currentEvent.imagePublicId) {
+        await deleteFromCloudinary(currentEvent.imagePublicId);
+      }
+      
+      // Upload new image to Cloudinary
+      const cloudinaryResult = await uploadToCloudinary(req.file.path, 'event-images');
+      updateData.image = cloudinaryResult.url;
+      updateData.imagePublicId = cloudinaryResult.publicId;
     }
 
     const event = await Event.findByIdAndUpdate(
@@ -357,12 +371,9 @@ exports.deleteEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Delete associated image if exists
-    if (event.image) {
-      const imagePath = path.join(__dirname, '..', 'uploads', event.image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
+    // Delete associated image from Cloudinary if exists
+    if (event.imagePublicId) {
+      await deleteFromCloudinary(event.imagePublicId);
     }
 
     res.json({ message: 'Event deleted successfully.' });

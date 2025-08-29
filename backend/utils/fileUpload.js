@@ -1,11 +1,12 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('../config/cloudinary');
 
-// Configure storage for event documentation files
+// Configure storage for temporary file uploads (will be deleted after Cloudinary upload)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'uploads/event-docs';
+    const uploadDir = 'uploads/temp';
     
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
@@ -53,6 +54,44 @@ const uploadEventDocs = multer({
   }
 });
 
+// Helper function to upload to Cloudinary
+const uploadToCloudinary = async (filePath, folder = 'event-docs') => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: folder,
+      resource_type: 'auto'
+    });
+    
+    // Delete temporary file after upload
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    
+    return {
+      url: result.secure_url,
+      publicId: result.public_id,
+      filename: result.original_filename
+    };
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw new Error('Failed to upload file to Cloudinary');
+  }
+};
+
+// Helper function to delete file from Cloudinary
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Cloudinary delete error:', error);
+    return false;
+  }
+};
+
 // Helper function to get file info
 const getFileInfo = (file) => {
   return {
@@ -65,24 +104,9 @@ const getFileInfo = (file) => {
   };
 };
 
-// Helper function to delete file
-const deleteFile = (filename) => {
-  const filePath = path.join('uploads/event-docs', filename);
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-    return true;
-  }
-  return false;
-};
-
-// Helper function to get file path
-const getFilePath = (filename) => {
-  return path.join('uploads/event-docs', filename);
-};
-
 module.exports = {
   uploadEventDocs,
-  getFileInfo,
-  deleteFile,
-  getFilePath
+  uploadToCloudinary,
+  deleteFromCloudinary,
+  getFileInfo
 };

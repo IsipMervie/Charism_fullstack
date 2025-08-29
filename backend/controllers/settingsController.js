@@ -5,6 +5,7 @@ const User = require('../models/User');
 const Section = require('../models/Section');
 const YearLevel = require('../models/YearLevel');
 const Department = require('../models/Department');
+const { uploadToCloudinary, deleteFromCloudinary } = require('../utils/fileUpload');
 
 // Get school settings (Admin only)
 exports.getSchoolSettings = async (req, res) => {
@@ -23,7 +24,7 @@ exports.getSchoolSettings = async (req, res) => {
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
     if (settings.logo) {
-      settingsWithUrl.logoUrl = `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${settings.logo}`;
+      settingsWithUrl.logoUrl = settings.logo; // Cloudinary URL is already complete
     }
     res.json(settingsWithUrl);
   } catch (err) {
@@ -42,12 +43,26 @@ exports.updateSchoolSettings = async (req, res) => {
     if (schoolName) settings.schoolName = schoolName;
     if (contactEmail) settings.contactEmail = contactEmail;
     if (brandName) settings.brandName = brandName;
-    if (req.file) settings.logo = req.file.filename;
+    if (req.file) {
+      // Delete old logo from Cloudinary if it exists
+      if (settings.logoPublicId) {
+        await deleteFromCloudinary(settings.logoPublicId);
+      }
+      
+      // Upload new logo to Cloudinary
+      const cloudinaryResult = await uploadToCloudinary(req.file.path, 'logos');
+      
+      // Update settings with new logo info
+      settings.logo = cloudinaryResult.url;
+      settings.logoPublicId = cloudinaryResult.publicId;
+    }
+    
     await settings.save();
+    
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
     if (settings.logo) {
-      settingsWithUrl.logoUrl = `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${settings.logo}`;
+      settingsWithUrl.logoUrl = settings.logo; // Cloudinary URL is already complete
     }
     res.json({ message: 'School settings updated', settings: settingsWithUrl });
   } catch (err) {
@@ -74,7 +89,7 @@ exports.getPublicSchoolSettings = async (req, res) => {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
       logo: settings.logo,
-      logoUrl: settings.logo ? `${process.env.FRONTEND_URL_PRODUCTION || 'https://charism.vercel.app'}/uploads/${settings.logo}` : null,
+      logoUrl: settings.logo || null, // Cloudinary URL is already complete
       contactEmail: settings.contactEmail
     });
   } catch (err) {

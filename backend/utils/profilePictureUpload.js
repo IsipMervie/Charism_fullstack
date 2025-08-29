@@ -1,11 +1,12 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('../config/cloudinary');
 
-// Configure storage for profile pictures
+// Configure storage for temporary file uploads (will be deleted after Cloudinary upload)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'uploads/profile-pictures';
+    const uploadDir = 'uploads/temp';
     
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
@@ -51,6 +52,44 @@ const uploadProfilePicture = multer({
   }
 });
 
+// Helper function to upload to Cloudinary
+const uploadToCloudinary = async (filePath, folder = 'profile-pictures') => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath, {
+      folder: folder,
+      resource_type: 'auto'
+    });
+    
+    // Delete temporary file after upload
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    
+    return {
+      url: result.secure_url,
+      publicId: result.public_id,
+      filename: result.original_filename
+    };
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw new Error('Failed to upload image to Cloudinary');
+  }
+};
+
+// Helper function to delete file from Cloudinary
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Cloudinary delete error:', error);
+    return false;
+  }
+};
+
 // Helper function to get file info
 const getFileInfo = (file) => {
   return {
@@ -62,35 +101,16 @@ const getFileInfo = (file) => {
   };
 };
 
-// Helper function to delete file
-const deleteFile = (filename) => {
-  const filePath = path.join('uploads/profile-pictures', filename);
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-    return true;
-  }
-  return false;
-};
-
-// Helper function to get file path
-const getFilePath = (filename) => {
-  return path.join('uploads/profile-pictures', filename);
-};
-
-// Helper function to get full URL for profile picture
-const getProfilePictureUrl = (filename) => {
-  if (!filename) return null;
-  // Return full URL for production, relative path for development
-  if (process.env.NODE_ENV === 'production') {
-    return `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/profile-pictures/${filename}`;
-  }
-  return `/uploads/profile-pictures/${filename}`;
+// Helper function to get profile picture URL (now returns Cloudinary URL)
+const getProfilePictureUrl = (cloudinaryUrl) => {
+  if (!cloudinaryUrl) return null;
+  return cloudinaryUrl; // Cloudinary URL is already complete
 };
 
 module.exports = {
   uploadProfilePicture,
+  uploadToCloudinary,
+  deleteFromCloudinary,
   getFileInfo,
-  deleteFile,
-  getFilePath,
   getProfilePictureUrl
 };
