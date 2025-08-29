@@ -74,10 +74,11 @@ exports.getPublicSchoolSettings = async (req, res) => {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
       logo: settings.logo,
-      logoUrl: settings.logo ? `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${settings.logo}` : null,
+      logoUrl: settings.logo ? `${process.env.FRONTEND_URL_PRODUCTION || 'https://charism.vercel.app'}/uploads/${settings.logo}` : null,
       contactEmail: settings.contactEmail
     });
   } catch (err) {
+    console.error('Error in getPublicSchoolSettings:', err);
     res.status(500).json({ message: 'Error fetching school settings', error: err.message });
   }
 };
