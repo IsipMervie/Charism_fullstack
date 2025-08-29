@@ -29,7 +29,7 @@ app.use(cors({
       ? process.env.CORS_ORIGINS.split(',')
       : [
           'http://localhost:3000',
-          'https://charism-system.vercel.app'
+          'https://charism.vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
