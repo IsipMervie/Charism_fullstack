@@ -2,13 +2,12 @@
 // Fresh Simple but Creative Manage Users Page Design
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { 
   FaGraduationCap, FaDownload, FaUsers, FaSpinner, 
   FaExclamationTriangle, FaFilter, FaCheckCircle, FaTimesCircle,
-  FaCalendar, FaIdCard, FaBuilding, FaClock, FaUserGraduate,
-  FaChartBar, FaFileAlt, FaTimes
+  FaCalendar, FaBuilding, FaClock, FaUserGraduate,
+  FaTimes
 } from 'react-icons/fa';
 import { getStudentsByYear, getStudentsByYearFilterOptions } from '../api/api';
 import './StudentsByYearPage.css';
@@ -43,8 +42,6 @@ function StudentsByYearPage() {
   });
   const [showFilters, setShowFilters] = useState(false);
   
-  const navigate = useNavigate();
-
   useEffect(() => {
     setIsVisible(true);
   }, []);

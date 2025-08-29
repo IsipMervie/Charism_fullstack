@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Spinner, Alert, Form, InputGroup, Modal } from 'react-bootstrap';
-import { FaFile, FaUpload, FaDownload, FaTrash, FaSearch, FaFilter, FaPlus, FaEye } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, Button, Badge, Spinner, Alert, Form, Modal } from 'react-bootstrap';
+import { FaFile, FaUpload, FaDownload, FaTrash, FaSearch, FaPlus, FaEye } from 'react-icons/fa';
 import { getEvents, getEventDocumentation, downloadDocumentationFile, deleteDocumentationFile, uploadEventDocumentation } from '../api/api';
 import Swal from 'sweetalert2';
 import './StudentDocumentationPage.css';
@@ -22,11 +22,7 @@ const StudentDocumentationPage = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const userId = user._id;
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -73,7 +69,11 @@ const StudentDocumentationPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleUpload = async (e) => {
     e.preventDefault();

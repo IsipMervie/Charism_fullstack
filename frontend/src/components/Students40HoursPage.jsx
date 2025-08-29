@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getStudents40Hours, generateReport, getPublicSettings } from '../api/api';
+import { getStudents40Hours, getPublicSettings } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaDownload, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaDownload } from 'react-icons/fa';
 import './Students40HoursPage.css';
 import { Button, Spinner, Alert, Table, Form, Card, Row, Col } from 'react-bootstrap';
 
