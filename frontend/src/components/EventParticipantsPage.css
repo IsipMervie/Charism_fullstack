@@ -1,0 +1,145 @@
+.event-participants-container {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--gray-100) 100%);
+  padding: var(--space-8) var(--space-4);
+  margin-top: 70px;
+}
+
+.event-participants-card {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: var(--white);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  padding: var(--space-8);
+}
+
+.event-participants-card h2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-6);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.event-participants-card table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.event-participants-card th,
+.event-participants-card td {
+  padding: var(--space-3) var(--space-2);
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.event-participants-card th {
+  background-color: var(--bg-secondary);
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: var(--text-xs);
+  letter-spacing: 0.05em;
+}
+
+.event-participants-card tr:hover { background-color: var(--gray-50); }
+
+.event-participants-card tr:last-child td { border-bottom: none; }
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.approve-btn, .disapprove-btn, .download-reflection-btn {
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.approve-btn { background-color: var(--success-color); color: var(--white); }
+
+.approve-btn:hover { background-color: #059669; transform: translateY(-1px); }
+
+.disapprove-btn { background-color: var(--danger-color); color: var(--white); }
+
+.disapprove-btn:hover { background-color: #dc2626; transform: translateY(-1px); }
+
+.download-reflection-btn { background-color: var(--info-color); color: var(--white); }
+
+.download-reflection-btn:hover { background-color: #0891b2; transform: translateY(-1px); }
+
+/* Disabled button styles */
+.approve-btn.disabled { background-color: var(--gray-400); cursor: not-allowed; opacity: 0.6; }
+
+.approve-btn.disabled:hover { background-color: var(--gray-400); transform: none; }
+
+/* Time status styles */
+.time-status { font-size: var(--text-xs); line-height: var(--leading-normal); }
+
+.time-in, .time-out { margin-bottom: var(--space-1); }
+
+.time-in strong, .time-out strong { color: var(--text-primary); }
+
+/* Reflection status styles */
+.reflection-status { display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+
+.reflection-uploaded { color: var(--success-color); font-weight: var(--font-medium); font-size: var(--text-xs); }
+
+.reflection-missing { color: var(--danger-color); font-weight: var(--font-medium); font-size: var(--text-xs); }
+
+/* Status badges */
+.status-badge { padding: var(--space-1) var(--space-2); border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: var(--font-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.status-badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.approved {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.disapproved {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Reason text */
+.reason-text { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--text-secondary); font-style: italic; }
+
+/* Row status styling */
+.status-pending { background-color: #fffbf0; }
+.status-approved { background-color: #f8fff8; }
+.status-disapproved { background-color: #fff8f8; }
+
+/* Status styling */
+.event-participants-card td:nth-child(4) { font-weight: var(--font-semibold); }
+
+/* Loading state */
+.event-participants-container p { text-align: center; color: var(--text-secondary); font-style: italic; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .event-participants-container { background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%); }
+  .event-participants-card { background: var(--gray-800); border-color: var(--gray-700); }
+  .event-participants-card th { color: var(--gray-300); }
+}

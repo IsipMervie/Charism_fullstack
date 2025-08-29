@@ -1,0 +1,25 @@
+# VERCEL ENVIRONMENT VARIABLES FOR BACKEND
+# Copy this to your Vercel environment variables
+
+# Database
+MONGO_URI=your_mongodb_connection_string_here
+
+# JWT
+JWT_SECRET=your_jwt_secret_here
+
+# Email (Gmail)
+EMAIL_USER=your_gmail_address@gmail.com
+EMAIL_PASS=your_gmail_app_password
+
+# URLs
+FRONTEND_URL=https://your-frontend-project.vercel.app
+BACKEND_URL=https://your-backend-project.vercel.app
+CORS_ORIGINS=https://your-frontend-project.vercel.app,https://your-backend-project.vercel.app
+
+# Environment
+NODE_ENV=production
+
+# IMPORTANT: 
+# 1. Replace all placeholder values with your actual credentials
+# 2. Set these in your Vercel project dashboard under Settings > Environment Variables
+# 3. Make sure to use your actual MongoDB connection string and JWT secret

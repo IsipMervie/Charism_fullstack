@@ -1,0 +1,13 @@
+# SAFE ENVIRONMENT TEMPLATE - NO SENSITIVE DATA
+# Copy this to .env.production and fill in your actual values
+
+# API URL (point to your Vercel backend)
+REACT_APP_API_URL=https://your-backend-project.vercel.app/api
+REACT_APP_ENV=production
+REACT_APP_VERSION=1.0.0
+GENERATE_SOURCEMAP=false
+
+# IMPORTANT: 
+# 1. Replace 'your-backend-project' with your actual Vercel backend project name
+# 2. Never commit .env files to Git
+# 3. Use Vercel environment variables for production

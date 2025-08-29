@@ -1,0 +1,356 @@
+/* NotFoundPage.css - Modern 404 Page Design */
+
+.not-found-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.not-found-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.not-found-page .card {
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+/* 404 Icon */
+.error-icon {
+  margin-bottom: 2rem;
+}
+
+.icon-circle {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.icon-text {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+  }
+}
+
+/* Error Title */
+.error-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Error Description */
+.error-description {
+  font-size: 1.1rem;
+  color: #4a5568;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+}
+
+/* Suggestions Section */
+.suggestions-title {
+  color: #2d3748;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.suggestion-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.suggestion-item:hover {
+  background: #edf2f7;
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.suggestion-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.suggestion-item span {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-bottom: 2rem;
+}
+
+.action-buttons .btn {
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-buttons .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.action-buttons .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+.action-buttons .btn-outline-primary {
+  border: 2px solid #667eea;
+  color: #667eea;
+  background: transparent;
+}
+
+.action-buttons .btn-outline-primary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Additional Help */
+.additional-help {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1.5rem;
+}
+
+.additional-help p {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.additional-help .btn-link {
+  color: #667eea;
+  font-weight: 500;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.additional-help .btn-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .not-found-page {
+    padding: 1rem 0;
+  }
+  
+  .not-found-page .card-body {
+    padding: 2rem 1.5rem;
+  }
+  
+  .error-title {
+    font-size: 2rem;
+  }
+  
+  .icon-circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .icon-text {
+    font-size: 2rem;
+  }
+  
+  .suggestions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .suggestion-item {
+    padding: 0.75rem;
+  }
+  
+  .suggestion-icon {
+    font-size: 1.5rem;
+  }
+  
+  .action-buttons .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .not-found-page .card-body {
+    padding: 1.5rem 1rem;
+  }
+  
+  .error-title {
+    font-size: 1.75rem;
+  }
+  
+  .error-description {
+    font-size: 1rem;
+  }
+  
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .not-found-page .card {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .error-title {
+    color: #e2e8f0;
+  }
+  
+  .error-description {
+    color: #a0aec0;
+  }
+  
+  .suggestions-title {
+    color: #e2e8f0;
+  }
+  
+  .suggestion-item {
+    background: rgba(45, 55, 72, 0.9);
+    border-color: #4a5568;
+  }
+  
+  .suggestion-item:hover {
+    background: rgba(55, 65, 82, 0.9);
+  }
+  
+  .suggestion-item span {
+    color: #e2e8f0;
+  }
+  
+  .additional-help {
+    border-top-color: #4a5568;
+  }
+  
+  .additional-help p {
+    color: #a0aec0;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .not-found-page .card {
+    border: 3px solid #000;
+    background: white;
+  }
+  
+  .action-buttons .btn {
+    border: 2px solid #000;
+  }
+  
+  .suggestion-item {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .icon-circle {
+    animation: none;
+  }
+  
+  .suggestion-item:hover,
+  .action-buttons .btn:hover {
+    transform: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .not-found-page {
+    background: white;
+  }
+  
+  .not-found-page .card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .action-buttons .btn {
+    display: none;
+  }
+  
+  .suggestion-item {
+    cursor: default;
+  }
+}

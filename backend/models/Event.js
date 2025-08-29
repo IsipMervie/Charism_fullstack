@@ -49,14 +49,14 @@ const eventSchema = new mongoose.Schema({
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   attendance: [attendanceSchema],
   requiresApproval: { type: Boolean, default: true }, // New field to control if registration requires approval
-  registrationToken: { type: String, unique: true, sparse: true }, // Unique token for public registration links
+  publicRegistrationToken: { type: String, unique: true, sparse: true }, // Unique token for public registration links
   isPublicRegistrationEnabled: { type: Boolean, default: false }, // Enable/disable public registration
 }, { timestamps: true });
 
 // Generate unique registration token before saving
 eventSchema.pre('save', function(next) {
-  if (!this.registrationToken) {
-    this.registrationToken = this.generateRegistrationToken();
+  if (!this.publicRegistrationToken) {
+    this.publicRegistrationToken = this.generateRegistrationToken();
   }
   next();
 });

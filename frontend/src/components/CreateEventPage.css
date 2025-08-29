@@ -1,0 +1,276 @@
+/* CreateEventPage.css - Modern Responsive Design with Blue Theme */
+
+.create-event-page {
+  min-height: 100vh;
+  padding: 2rem 0;
+  background: #ffffff;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.create-event-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.create-event-page h1 {
+  color: #1e40af;
+  text-shadow: none;
+  position: relative;
+  z-index: 2;
+}
+
+.create-event-page .lead {
+  color: #475569;
+  text-shadow: none;
+  position: relative;
+  z-index: 2;
+}
+
+.create-event-page .card {
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.1);
+  border: 1px solid #e2e8f0;
+  position: relative;
+  z-index: 2;
+}
+
+.create-event-page .card-body {
+  border-radius: 20px;
+}
+
+.create-event-page .form-control {
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  padding: 12px 16px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.create-event-page .form-control:focus {
+  border-color: #1e40af;
+  box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
+  background: white;
+  transform: translateY(-2px);
+}
+
+.create-event-page .form-control-lg {
+  padding: 16px 20px;
+  font-size: 18px;
+}
+
+.create-event-page .form-label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.create-event-page .btn {
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.create-event-page .btn-primary {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4);
+}
+
+.create-event-page .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.6);
+}
+
+.create-event-page .btn-primary:active {
+  transform: translateY(0);
+}
+
+.create-event-page .btn-outline-primary {
+  border: 2px solid #1e40af;
+  color: #1e40af;
+  background: transparent;
+}
+
+.create-event-page .btn-outline-primary:hover {
+  background: #1e40af;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.create-event-page .btn-outline-primary.active {
+  background: #1e40af;
+  color: white;
+  border-color: #1e40af;
+}
+
+.create-event-page .form-check-input:checked {
+  background-color: #1e40af;
+  border-color: #1e40af;
+}
+
+.create-event-page .form-check-input:focus {
+  border-color: #1e40af;
+  box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
+}
+
+.create-event-page .department-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.create-event-page .img-thumbnail {
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.create-event-page .img-thumbnail:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.15);
+}
+
+/* Animation classes */
+.create-event-page.fade-in {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .create-event-page {
+    padding: 1rem 0;
+  }
+  
+  .create-event-page h1 {
+    font-size: 2rem;
+  }
+  
+  .create-event-page .card-body {
+    padding: 2rem 1.5rem;
+  }
+  
+  .create-event-page .form-control-lg {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+  
+  .create-event-page .btn-lg {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+  
+  .create-event-page .department-tags {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .create-event-page .card-body {
+    padding: 1.5rem 1rem;
+  }
+  
+  .create-event-page h1 {
+    font-size: 1.75rem;
+  }
+  
+  .create-event-page .lead {
+    font-size: 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .create-event-page {
+    background: #0f172a;
+  }
+  
+  .create-event-page::before {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  }
+  
+  .create-event-page .card {
+    background: rgba(30, 41, 59, 0.95);
+    border-color: rgba(51, 65, 85, 0.5);
+  }
+  
+  .create-event-page .form-label {
+    color: #e2e8f0;
+  }
+  
+  .create-event-page .form-control {
+    background: rgba(51, 65, 85, 0.9);
+    border-color: #475569;
+    color: #e2e8f0;
+  }
+  
+  .create-event-page .form-control:focus {
+    background: #1e293b;
+    color: #e2e8f0;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .create-event-page .card {
+    border: 3px solid #000;
+    background: white;
+  }
+  
+  .create-event-page .btn {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .create-event-page .form-control,
+  .create-event-page .btn,
+  .create-event-page .img-thumbnail {
+    transition: none;
+  }
+  
+  .create-event-page.fade-in {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .create-event-page {
+    background: white;
+  }
+  
+  .create-event-page .card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .create-event-page .btn {
+    display: none;
+  }
+}

@@ -20,7 +20,12 @@ exports.getSchoolSettings = async (req, res) => {
       });
       await settings.save();
     }
-    res.json(settings);
+    // Add full logo URL to the response
+    const settingsWithUrl = settings.toObject();
+    if (settings.logo) {
+      settingsWithUrl.logoUrl = `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${settings.logo}`;
+    }
+    res.json(settingsWithUrl);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching school settings', error: err.message });
   }
@@ -39,7 +44,12 @@ exports.updateSchoolSettings = async (req, res) => {
     if (brandName) settings.brandName = brandName;
     if (req.file) settings.logo = req.file.filename;
     await settings.save();
-    res.json({ message: 'School settings updated', settings });
+    // Add full logo URL to the response
+    const settingsWithUrl = settings.toObject();
+    if (settings.logo) {
+      settingsWithUrl.logoUrl = `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${settings.logo}`;
+    }
+    res.json({ message: 'School settings updated', settings: settingsWithUrl });
   } catch (err) {
     res.status(500).json({ message: 'Error updating school settings', error: err.message });
   }
@@ -64,6 +74,7 @@ exports.getPublicSchoolSettings = async (req, res) => {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
       logo: settings.logo,
+      logoUrl: settings.logo ? `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${settings.logo}` : null,
       contactEmail: settings.contactEmail
     });
   } catch (err) {

@@ -1,0 +1,280 @@
+/* Students40HoursPage.css */
+
+/* Page background */
+.students-40-hours-page {
+  background: #ffffff;
+}
+
+.students-40-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.students-40-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  text-align: center;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.students-40-subtitle {
+  text-align: center;
+  color: #374151;
+  margin-top: -8px;
+  margin-bottom: 18px;
+}
+
+/* Filters card styling */
+.filters-card {
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.filters-card .card-body {
+  position: relative;
+  padding-top: 18px;
+}
+
+.filters-card .card-body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+}
+
+.filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filters-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.students-40-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.students-40-controls input[type="text"] {
+  padding: 10px 12px;
+  flex: 1;
+  min-width: 250px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.students-40-controls input[type="text"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* removed toggle styles */
+
+/* Download button (top) */
+.download-btn {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.download-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+/* Filter selects styling */
+.students-40-filters .form-select {
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: all 0.2s ease;
+}
+
+.students-40-filters .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.clear-filters-btn {
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  background: #ffffff;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.clear-filters-btn:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+  background: #f8fafc;
+}
+
+/* Results card */
+.students-40-results-card {
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.students-40-results-header {
+  position: relative;
+  background: #ffffff;
+}
+
+.students-40-results-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+}
+
+.hours-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Mobile cards */
+.students-40-cards {
+  display: none;
+}
+
+.students-40-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.card-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.card-index {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.card-name {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.card-meta {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.grid-item .label {
+  display: block;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.grid-item .value {
+  color: #334155;
+  font-weight: 600;
+}
+
+/* Show cards on small screens and hide table */
+@media (max-width: 768px) {
+  .students-40-results-card { display: none; }
+  .students-40-cards { display: grid; gap: 14px; }
+}
+
+.students-40-list {
+  list-style: none;
+  padding: 0;
+}
+
+.students-40-list li {
+  margin-bottom: 16px;
+  background-color: #ffffff;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.students-40-list strong {
+  font-weight: 600;
+}
+
+.students-40-list .download-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.students-40-list .download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.no-students-msg {
+  color: #dc3545;
+  font-weight: 600;
+  margin-top: 24px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .students-40-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .students-40-controls input[type="text"] {
+    width: 100%;
+  }
+
+  .students-40-list li {
+    font-size: 0.95rem;
+  }
+}

@@ -1,0 +1,192 @@
+/* StaffApprovalPage.css */
+
+/* Page */
+.staff-approval-page {
+  padding: 20px 0;
+  background: #ffffff;
+}
+
+/* Header */
+.header-section {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.header-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+}
+
+.header-title {
+  margin: 0 0 4px 0;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-subtitle {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.pending-badge {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+}
+
+/* Table */
+.staff-approval-table {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.staff-approval-table thead th {
+  background-color: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 700;
+  color: #334155;
+}
+
+.staff-approval-table td {
+  vertical-align: middle;
+}
+
+/* Buttons */
+.staff-approval-page .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 6px 12px;
+}
+
+.staff-approval-page .btn-sm {
+  font-size: 0.875rem;
+}
+
+.staff-approval-page .badge {
+  font-size: 0.875rem;
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+.staff-approval-page .card {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.approval-modal .modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.approval-modal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 12px 12px 0 0;
+}
+
+.approval-modal .modal-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.staff-approval-page .form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.staff-approval-page .form-control {
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 10px 12px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.staff-approval-page .form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+}
+
+.staff-approval-page .form-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.staff-approval-page .alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.staff-approval-page .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.staff-approval-page .staff-details {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.staff-approval-page .staff-details h6 {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.staff-approval-page .staff-details p {
+  margin-bottom: 8px;
+  color: #6c757d;
+}
+
+.staff-approval-page .staff-details strong {
+  color: #495057;
+}
+
+/* Emphasize action buttons to match theme */
+.approve-btn {
+  box-shadow: 0 6px 14px rgba(16, 185, 129, 0.25);
+}
+
+.reject-btn {
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .staff-approval-page .table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .staff-approval-page .btn-sm {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .staff-approval-page .d-flex {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .staff-approval-page .d-flex .badge {
+    align-self: flex-start;
+  }
+} 

@@ -1,0 +1,57 @@
+/* VerifyEmailPage.css */
+
+.verify-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.verify-box {
+  background-color: #fff;
+  padding: 36px 28px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.verify-box h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #222;
+}
+
+.verify-box p {
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #c62828;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+  .verify-box {
+    padding: 28px 20px;
+  }
+
+  .verify-box h2 {
+    font-size: 1.5rem;
+  }
+
+  .verify-box p {
+    font-size: 0.95rem;
+  }
+}

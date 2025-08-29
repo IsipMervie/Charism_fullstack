@@ -1,0 +1,12 @@
+# VERCEL ENVIRONMENT VARIABLES FOR FRONTEND
+# Copy this to .env.vercel and update with your actual Vercel URLs
+
+# API URL (point to your Vercel backend)
+REACT_APP_API_URL=https://your-project-name.vercel.app/api
+REACT_APP_ENV=production
+REACT_APP_VERSION=1.0.0
+
+# IMPORTANT: Update REACT_APP_API_URL to your actual Vercel project URL
+# This will be something like: https://charism-backend.vercel.app/api
+
+# After updating, rename this file to .env.vercel

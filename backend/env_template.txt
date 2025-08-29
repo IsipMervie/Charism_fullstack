@@ -1,23 +1,35 @@
-# 📧 COPY THIS FILE TO .env AND FILL IN YOUR ACTUAL VALUES
+# Database Configuration
+MONGO_URI=mongodb://localhost:27017/communitylink
+MONGO_URI_PRODUCTION=your_production_mongodb_uri
 
-# Email Configuration (REQUIRED - Fill in your actual values)
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password_here
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_here
+JWT_EXPIRES_IN=24h
 
-# Optional: Separate admin email for notifications
-ADMIN_EMAIL=your_email@gmail.com
-
-# 🔐 Other configurations (fill in your actual values)
-MONGODB_URI=mongodb://localhost:27017/communitylink
-JWT_SECRET=your_jwt_secret_here
-
-# 🌐 Server configuration
+# Server Configuration
 PORT=5000
 NODE_ENV=development
 
-# 📝 INSTRUCTIONS:
-# 1. Copy this file and rename it to .env (remove the .txt extension)
-# 2. Replace your_email@gmail.com with your actual Gmail address
-# 3. Replace your_app_password_here with your Gmail App Password
-# 4. Save the file in the backend folder
-# 5. Restart your server
+# Frontend URL (for CORS and email links)
+FRONTEND_URL=http://localhost:3000
+FRONTEND_URL_PRODUCTION=https://yourdomain.com
+
+# Email Configuration
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password_or_oauth_token
+EMAIL_SERVICE=gmail
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+
+# File Upload Configuration
+MAX_FILE_SIZE=5242880
+UPLOAD_PATH=./uploads
+
+# Security
+BCRYPT_ROUNDS=12
+CORS_ORIGINS=http://localhost:3000,https://yourdomain.com
+
+# Optional: External Services
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret

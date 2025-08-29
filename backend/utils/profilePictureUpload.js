@@ -80,6 +80,10 @@ const getFilePath = (filename) => {
 // Helper function to get full URL for profile picture
 const getProfilePictureUrl = (filename) => {
   if (!filename) return null;
+  // Return full URL for production, relative path for development
+  if (process.env.NODE_ENV === 'production') {
+    return `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/profile-pictures/${filename}`;
+  }
   return `/uploads/profile-pictures/${filename}`;
 };
 

@@ -63,19 +63,32 @@ exports.getAllEvents = async (req, res) => {
     
     console.log(`✅ Found ${events.length} events for user role: ${userRole}`);
     
+    // Add full URLs for events with public registration and images
+    const eventsWithUrls = events.map(event => {
+      const eventObj = event.toObject();
+      if (event.publicRegistrationToken) {
+        eventObj.publicRegistrationUrl = `${process.env.FRONTEND_URL}/events/register/${event.publicRegistrationToken}`;
+      }
+      if (event.image) {
+        eventObj.imageUrl = `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${event.image}`;
+      }
+      return eventObj;
+    });
+    
     // Log some event details for debugging
-    events.slice(0, 3).forEach((event, index) => {
+    eventsWithUrls.slice(0, 3).forEach((event, index) => {
       console.log(`Event ${index + 1}:`, {
         id: event._id,
         title: event.title,
         date: event.date,
         isVisibleToStudents: event.isVisibleToStudents,
         status: event.status,
-        attendanceCount: event.attendance?.length || 0
+        attendanceCount: event.attendance?.length || 0,
+        hasRegistrationUrl: !!event.publicRegistrationUrl
       });
     });
     
-    res.json(events);
+    res.json(eventsWithUrls);
   } catch (err) {
     console.error('❌ Error in getAllEvents:', err);
     res.status(500).json({ 
@@ -113,43 +126,79 @@ exports.getEventDetails = async (req, res) => {
       attendanceCount: event.attendance?.length || 0
     });
     
-    // Check if user is a student and if they can access this event
-    if (req.user) {
-      const userRole = req.user.role || req.userInfo?.role;
-      const userId = req.user.userId || req.user.id || req.user._id;
+    // For public access (no authentication), only show basic event info
+    if (!req.user) {
+      console.log('⚠️ Public access - limited information');
       
-      console.log('🔍 Access control check - Role:', userRole, 'User ID:', userId);
+      // Check if event is public and active
+      if (event.status === 'Disabled') {
+        return res.status(403).json({ 
+          message: 'This event is currently disabled.',
+          error: 'EVENT_DISABLED'
+        });
+      }
       
-      if (userRole === 'Student') {
-        // Students can only see events that are visible and not disabled
-        // UNLESS they are already approved for the event (to preserve their access)
-        if (!event.isVisibleToStudents || event.status === 'Disabled') {
-          console.log('⚠️ Event not visible to students or disabled');
-          
-          // Check if student is already approved for this event
-          const existingAttendance = event.attendance.find(
-            a => a.userId && a.userId.toString() === userId && a.registrationApproved === true
-          );
-          
-          if (!existingAttendance) {
-            console.log('❌ Student not approved for this event - access denied');
-            return res.status(403).json({ 
-              message: 'This event is not available for viewing. It may be disabled or not visible to students.',
-              error: 'EVENT_NOT_ACCESSIBLE',
-              eventStatus: event.status,
-              isVisibleToStudents: event.isVisibleToStudents
-            });
-          } else {
-            console.log('✅ Student has approved attendance - allowing access');
-          }
+      // Return limited event data for public viewing
+      const publicEventData = {
+        _id: event._id,
+        title: event.title,
+        description: event.description,
+        date: event.date,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        location: event.location,
+        hours: event.hours,
+        maxParticipants: event.maxParticipants,
+        department: event.department,
+        departments: event.departments,
+        isForAllDepartments: event.isForAllDepartments,
+        requiresApproval: event.requiresApproval,
+        isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,
+        publicRegistrationToken: event.publicRegistrationToken,
+        publicRegistrationUrl: event.publicRegistrationToken ? `${process.env.FRONTEND_URL}/events/register/${event.publicRegistrationToken}` : null,
+        status: event.status,
+        image: event.image,
+        imageUrl: event.image ? `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/${event.image}` : null,
+        // Don't include attendance data for public users
+        attendanceCount: event.attendance?.length || 0
+      };
+      
+      return res.json(publicEventData);
+    }
+    
+    // For authenticated users, check access control
+    const userRole = req.user.role || req.userInfo?.role;
+    const userId = req.user.userId || req.user.id || req.user._id;
+    
+    console.log('🔍 Access control check - Role:', userRole, 'User ID:', userId);
+    
+    if (userRole === 'Student') {
+      // Students can only see events that are visible and not disabled
+      // UNLESS they are already approved for the event (to preserve their access)
+      if (!event.isVisibleToStudents || event.status === 'Disabled') {
+        console.log('⚠️ Event not visible to students or disabled');
+        
+        // Check if student is already approved for this event
+        const existingAttendance = event.attendance.find(
+          a => a.userId && a.userId.toString() === userId && a.registrationApproved === true
+        );
+        
+        if (!existingAttendance) {
+          console.log('❌ Student not approved for this event - access denied');
+          return res.status(403).json({ 
+            message: 'This event is not available for viewing. It may be disabled or not visible to students.',
+            error: 'EVENT_NOT_ACCESSIBLE',
+            eventStatus: event.status,
+            isVisibleToStudents: event.isVisibleToStudents
+          });
         } else {
-          console.log('✅ Event is visible to students');
+          console.log('✅ Student has approved attendance - allowing access');
         }
       } else {
-        console.log('✅ Admin/Staff user - full access granted');
+        console.log('✅ Event is visible to students');
       }
     } else {
-      console.log('⚠️ No user authentication - limited access');
+      console.log('✅ Admin/Staff user - full access granted');
     }
     
     console.log('✅ Access granted - sending event details');
@@ -264,16 +313,16 @@ exports.updateEvent = async (req, res) => {
     };
 
     // Generate registration token if public registration is enabled and token doesn't exist
-    if (updateData.isPublicRegistrationEnabled && !updateData.registrationToken) {
-      updateData.registrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    if (updateData.isPublicRegistrationEnabled && !updateData.publicRegistrationToken) {
+      updateData.publicRegistrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
     // If public registration is being enabled, ensure we have a token
     if (updateData.isPublicRegistrationEnabled) {
       // Check if the current event has a token
       const currentEvent = await Event.findById(req.params.eventId);
-      if (!currentEvent.registrationToken) {
-        updateData.registrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      if (!currentEvent.publicRegistrationToken) {
+        updateData.publicRegistrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       }
     }
 
@@ -1547,11 +1596,21 @@ exports.getEventDocumentation = async (req, res) => {
       }
     }
     
-    console.log(`📊 Total documentation entries found: ${documentation.length}`);
-    console.log(`📄 Final documentation data:`, documentation);
-    console.log(`📄 Response being sent:`, { documentation });
+    // Add full URLs for documentation files
+    const documentationWithUrls = documentation.map(doc => ({
+      ...doc,
+              files: doc.files.map(file => ({
+          ...file,
+                  downloadUrl: `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/documentation/${file.filename}`,
+        fullUrl: `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/documentation/${file.filename}`
+        }))
+    }));
     
-    res.json({ documentation });
+    console.log(`📊 Total documentation entries found: ${documentationWithUrls.length}`);
+    console.log(`📄 Final documentation data:`, documentationWithUrls);
+    console.log(`📄 Response being sent:`, { documentation: documentationWithUrls });
+    
+    res.json({ documentation: documentationWithUrls });
     
   } catch (err) {
     console.error('Error in getEventDocumentation:', err);
@@ -1705,7 +1764,7 @@ exports.getEventByRegistrationToken = async (req, res) => {
     const { token } = req.params;
     
     const event = await Event.findOne({ 
-      registrationToken: token,
+      publicRegistrationToken: token,
       isPublicRegistrationEnabled: true,
       status: { $ne: 'Disabled' }
     }).populate('createdBy', 'name');
@@ -1766,7 +1825,7 @@ exports.registerForEventWithToken = async (req, res) => {
     
     // Find event by token
     const event = await Event.findOne({ 
-      registrationToken: token,
+      publicRegistrationToken: token,
       isPublicRegistrationEnabled: true,
       status: { $ne: 'Disabled' }
     });
@@ -1837,14 +1896,14 @@ exports.generateTokensForExistingEvents = async (req, res) => {
   try {
     // Find all events without registration tokens
     const eventsWithoutTokens = await Event.find({ 
-      registrationToken: { $exists: false } 
+      publicRegistrationToken: { $exists: false } 
     });
     
     console.log(`Found ${eventsWithoutTokens.length} events without registration tokens`);
     
     let updatedCount = 0;
     for (const event of eventsWithoutTokens) {
-      event.registrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      event.publicRegistrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
       await event.save();
       updatedCount++;
     }
