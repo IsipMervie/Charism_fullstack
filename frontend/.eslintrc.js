@@ -1,0 +1,45 @@
+module.exports = {
+  extends: [
+    'react-app',
+    'react-app/jest'
+  ],
+  rules: {
+    // Make all rules warnings instead of errors
+    'no-unused-vars': 'warn',
+    'react-hooks/exhaustive-deps': 'warn',
+    'no-use-before-define': 'warn',
+    'react/jsx-no-duplicate-props': 'warn',
+    'react/no-unescaped-entities': 'warn',
+    'react/display-name': 'warn',
+    'react/no-array-index-key': 'warn',
+    'react/jsx-key': 'warn',
+    'react/jsx-no-target-blank': 'warn',
+    'react/no-direct-mutation-state': 'warn',
+    'react/no-find-dom-node': 'warn',
+    'react/no-is-mounted': 'warn',
+    'react/no-render-return-value': 'warn',
+    'react/no-string-refs': 'warn',
+    'react/no-unknown-property': 'warn',
+    'react/require-render-return': 'warn',
+    'react/self-closing-comp': 'warn',
+    'react/sort-comp': 'warn',
+    'react/sort-prop-types': 'warn',
+    'react/style-prop-object': 'warn',
+    'react/void-dom-elements-no-children': 'warn',
+    'react/jsx-boolean-value': 'warn',
+    'react/jsx-closing-bracket-location': 'warn',
+    'react/jsx-closing-tag-location': 'warn',
+    'react/jsx-curly-spacing': 'warn',
+    'react/jsx-equals-spacing': 'warn',
+    'react/jsx-first-prop-new-line': 'warn',
+    'react/jsx-indent': 'warn',
+    'react/jsx-indent-props': 'warn',
+    'react/jsx-max-props-per-line': 'warn',
+    'react/jsx-no-bind': 'warn',
+    'react/jsx-no-literals': 'warn',
+    'react/jsx-pascal-case': 'warn',
+    'react/jsx-sort-props': 'warn',
+    'react/jsx-tag-spacing': 'warn',
+    'react/jsx-wrap-multilines': 'warn'
+  }
+};

@@ -6,6 +6,11 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build"
+      },
+      "env": {
+        "CI": "false",
+        "DISABLE_ESLINT_PLUGIN": "true",
+        "GENERATE_SOURCEMAP": "false"
       }
     },
     {
@@ -21,6 +26,30 @@
     {
       "src": "/(.*)",
       "dest": "/frontend/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/uploads/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
   "env": {
