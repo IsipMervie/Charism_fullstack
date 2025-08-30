@@ -15,6 +15,14 @@
   ],
   "routes": [
     {
+      "src": "/api/files/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/api/uploads/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "backend/server.js"
     },
@@ -22,5 +30,10 @@
       "src": "/(.*)",
       "dest": "frontend/$1"
     }
-  ]
+  ],
+  "functions": {
+    "backend/server.js": {
+      "maxDuration": 30
+    }
+  }
 }

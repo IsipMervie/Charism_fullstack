@@ -307,6 +307,56 @@ console.log(' Feedback routes loaded');
 app.use('/api/files', require('./routes/fileRoutes'));
 console.log(' File routes loaded');
 
+// File serving fallback for Vercel
+app.get('/api/files/*', (req, res) => {
+  res.status(404).json({ 
+    message: 'File not found',
+    note: 'Files are stored in database, not in file system',
+    path: req.path
+  });
+});
+
+// File serving status and debugging
+app.get('/api/file-status', (req, res) => {
+  const fs = require('fs');
+  const uploadsPath = path.join(__dirname, 'uploads');
+  
+  try {
+    const uploadsExists = fs.existsSync(uploadsPath);
+    const uploadsFiles = uploadsExists ? fs.readdirSync(uploadsPath) : [];
+    
+    res.json({
+      status: 'File System Status',
+      uploads: {
+        exists: uploadsExists,
+        path: uploadsPath,
+        fileCount: uploadsFiles.length,
+        files: uploadsFiles.slice(0, 10)
+      },
+      database: {
+        connection: mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected',
+        models: {
+          User: !!mongoose.models.User,
+          Event: !!mongoose.models.Event,
+          SchoolSettings: !!mongoose.models.SchoolSettings
+        }
+      },
+      environment: {
+        nodeEnv: process.env.NODE_ENV || 'Not set',
+        isProduction: process.env.NODE_ENV === 'production',
+        hasMongoUri: !!process.env.MONGO_URI
+      },
+      note: 'Files are primarily stored in MongoDB, not in file system'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: error.message,
+      note: 'Error checking file system status'
+    });
+  }
+});
+
 // 404 handler
 app.use((req, res) => {
   console.log('404 - Route not found:', req.method, req.url);
