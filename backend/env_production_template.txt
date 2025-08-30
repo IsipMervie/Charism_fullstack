@@ -1,16 +1,15 @@
-# Production Environment Variables for Backend
-# Copy this file to .env before deploying
+# Production Environment Variables for Vercel
+# Copy this to your Vercel environment variables
 
 # Database Configuration
-MONGO_URI=your_production_mongodb_uri_here
-MONGO_URI_PRODUCTION=your_production_mongodb_uri_here
+MONGO_URI=mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority
 
 # JWT Configuration
-JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
+JWT_SECRET=mysecretkey123456789
 JWT_EXPIRES_IN=24h
 
 # Server Configuration
-PORT=5000
+PORT=10000
 NODE_ENV=production
 
 # Frontend URL (for CORS and email links)
@@ -18,8 +17,8 @@ FRONTEND_URL=https://charism.vercel.app
 FRONTEND_URL_PRODUCTION=https://charism.vercel.app
 
 # Email Configuration
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password_or_oauth_token
+EMAIL_USER=nexacore91@gmail.com
+EMAIL_PASS=vikq reqx qvxv qvxv
 EMAIL_SERVICE=gmail
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
@@ -30,16 +29,8 @@ UPLOAD_PATH=./uploads
 
 # Security
 BCRYPT_ROUNDS=12
-CORS_ORIGINS=https://charism.vercel.app,https://communitylink.vercel.app
+CORS_ORIGINS=https://charism.vercel.app
 
 # Optional: External Services
 # Cloudinary removed - using local file storage instead
-
-# Important Production Notes:
-# 1. Set NODE_ENV=production
-# 2. Use strong, unique JWT_SECRET
-# 3. Use production MongoDB URI
-# 4. Set proper CORS origins
-# 5. Configure email service
-# 6. Set proper file upload limits
 
