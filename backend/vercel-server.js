@@ -163,6 +163,90 @@ app.get('/api/test-db-simple', async (req, res) => {
   }
 });
 
+// Comprehensive database test endpoint
+app.get('/api/test-db-comprehensive', async (req, res) => {
+  try {
+    console.log('🔍 Testing database connection comprehensively...');
+    
+    // Check environment variables
+    const envVars = {
+      MONGO_URI: process.env.MONGO_URI ? 'SET' : 'NOT SET',
+      JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'NOT SET',
+      NODE_ENV: process.env.NODE_ENV || 'NOT SET',
+      EMAIL_USER: process.env.EMAIL_USER ? 'SET' : 'NOT SET'
+    };
+    
+    console.log('📋 Environment variables:', envVars);
+    
+    // Check mongoose
+    const mongoose = require('mongoose');
+    const connectionState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    console.log('🔗 Mongoose connection state:', states[connectionState]);
+    
+    // Try to connect using our lazy connection
+    const { getLazyConnection } = require('./config/db');
+    let lazyConnectionResult = 'Not tested';
+    
+    try {
+      const isConnected = await getLazyConnection();
+      lazyConnectionResult = isConnected ? 'SUCCESS' : 'FAILED';
+      console.log('🔄 Lazy connection result:', lazyConnectionResult);
+    } catch (lazyError) {
+      lazyConnectionResult = `ERROR: ${lazyError.message}`;
+      console.log('❌ Lazy connection error:', lazyError.message);
+    }
+    
+    // Try to connect directly to test
+    let directConnectionResult = 'Not tested';
+    try {
+      if (process.env.MONGO_URI) {
+        await mongoose.connect(process.env.MONGO_URI, {
+          serverSelectionTimeoutMS: 5000,
+          socketTimeoutMS: 10000
+        });
+        directConnectionResult = 'SUCCESS';
+        console.log('✅ Direct connection successful');
+      } else {
+        directConnectionResult = 'NO MONGO_URI';
+      }
+    } catch (directError) {
+      directConnectionResult = `ERROR: ${directError.message}`;
+      console.log('❌ Direct connection error:', directError.message);
+    }
+    
+    res.json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      environment: envVars,
+      mongoose: {
+        available: true,
+        connectionState: states[connectionState],
+        readyState: connectionState
+      },
+      connectionTests: {
+        lazyConnection: lazyConnectionResult,
+        directConnection: directConnectionResult
+      },
+      message: 'Comprehensive database test completed'
+    });
+    
+  } catch (error) {
+    console.error('❌ Comprehensive test error:', error);
+    res.status(500).json({ 
+      status: 'ERROR',
+      error: error.message,
+      message: 'Comprehensive test failed'
+    });
+  }
+});
+
 // Import and use all routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');

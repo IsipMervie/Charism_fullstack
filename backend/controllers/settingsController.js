@@ -92,9 +92,11 @@ exports.getPublicSchoolSettings = async (req, res) => {
   try {
     console.log('=== Getting Public School Settings ===');
     
-    // Check if database is connected
-    const { mongoose } = require('../config/db');
-    if (mongoose.connection.readyState !== 1) {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
       console.log('Database not connected, returning default settings');
       return res.json({
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',
