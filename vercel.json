@@ -9,22 +9,22 @@
       }
     },
     {
-      "src": "backend/server.js",
+      "src": "backend/vercel-server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/files/(.*)",
-      "dest": "backend/server.js"
+      "dest": "backend/vercel-server.js"
     },
     {
       "src": "/api/uploads/(.*)",
-      "dest": "backend/server.js"
+      "dest": "backend/vercel-server.js"
     },
     {
       "src": "/api/(.*)",
-      "dest": "backend/server.js"
+      "dest": "backend/vercel-server.js"
     },
     {
       "src": "/(.*)",
@@ -32,7 +32,7 @@
     }
   ],
   "functions": {
-    "backend/server.js": {
+    "backend/vercel-server.js": {
       "maxDuration": 30
     }
   }

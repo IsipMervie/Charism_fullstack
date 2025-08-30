@@ -166,9 +166,11 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Check if database is connected
-    const { mongoose } = require('../config/db');
-    if (mongoose.connection.readyState !== 1) {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
       console.log('Database not connected during login attempt');
       return res.status(500).json({ 
         message: 'Database connection not ready. Please try again.',

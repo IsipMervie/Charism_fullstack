@@ -57,19 +57,22 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        serverSelectionTimeoutMS: 10000, // Reduced for serverless
-        socketTimeoutMS: 20000, // Reduced for serverless
+        serverSelectionTimeoutMS: 15000, // Increased for serverless
+        socketTimeoutMS: 30000, // Increased for serverless
         maxPoolSize: 1, // Reduced for serverless
         minPoolSize: 0, // Reduced for serverless
         bufferCommands: false, // Disable buffering for serverless
         bufferMaxEntries: 0, // Disable buffer max entries
-        maxIdleTimeMS: 10000, // Reduced for serverless
+        maxIdleTimeMS: 15000, // Increased for serverless
         family: 4, // Force IPv4
         retryWrites: true,
         w: 'majority',
         // Serverless-specific options
         keepAlive: true,
         keepAliveInitialDelay: 300000,
+        // Additional options for better reliability
+        autoIndex: false, // Disable auto-indexing in production
+        maxConnecting: 1, // Limit concurrent connections
       });
       
       console.log('✅ MongoDB connected successfully');
@@ -140,17 +143,27 @@ const getConnectionStatus = () => {
   };
 };
 
-// Connect immediately
-const connection = connectDB();
-
-// Lazy connection for Vercel - only connect when actually needed
+// For Vercel serverless, don't connect immediately
+let connection = null;
 let lazyConnection = null;
 
+// Lazy connection for Vercel - only connect when actually needed
 const getLazyConnection = async () => {
-  if (!lazyConnection) {
-    lazyConnection = connectDB();
+  try {
+    if (!lazyConnection || mongoose.connection.readyState !== 1) {
+      console.log('🔄 Initializing lazy database connection...');
+      lazyConnection = connectDB();
+    }
+    
+    if (lazyConnection) {
+      await lazyConnection;
+    }
+    
+    return mongoose.connection.readyState === 1;
+  } catch (error) {
+    console.error('❌ Lazy connection failed:', error);
+    return false;
   }
-  return lazyConnection;
 };
 
 // Export both mongoose and connection promise
