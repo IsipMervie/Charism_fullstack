@@ -92,6 +92,19 @@ exports.getPublicSchoolSettings = async (req, res) => {
   try {
     console.log('=== Getting Public School Settings ===');
     
+    // Check if database is connected
+    const { mongoose } = require('../config/db');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, returning default settings');
+      return res.json({
+        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
+        brandName: 'CHARISM',
+        logo: null,
+        logoUrl: null,
+        contactEmail: 'ceo@ua.edu.ph'
+      });
+    }
+    
     let settings = await SchoolSettings.findOne();
     if (!settings) {
       console.log('No settings found, creating default...');
@@ -119,6 +132,19 @@ exports.getPublicSchoolSettings = async (req, res) => {
     res.json(publicSettings);
   } catch (err) {
     console.error('Error in getPublicSchoolSettings:', err);
+    
+    // If database error, return default settings
+    if (err.name === 'MongooseError' || err.message.includes('before initial connection')) {
+      console.log('Database connection issue, returning default settings');
+      return res.json({
+        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
+        brandName: 'CHARISM',
+        logo: null,
+        logoUrl: null,
+        contactEmail: 'ceo@ua.edu.ph'
+      });
+    }
+    
     res.status(500).json({ 
       message: 'Error fetching school settings', 
       error: err.message,

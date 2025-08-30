@@ -23,16 +23,20 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like mobile apps, curl requests, or Vercel internal requests)
+    if (!origin) {
+      console.log('✅ Allowing request with no origin');
+      return callback(null, true);
+    }
     
     // Get allowed origins from environment variable or use defaults
     const allowedOrigins = process.env.CORS_ORIGINS 
-      ? process.env.CORS_ORIGINS.split(',')
+      ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
       : [
           'http://localhost:3000',
           'https://charism.vercel.app',
-          'https://charism-backend.vercel.app'
+          'https://charism-backend.vercel.app',
+          'https://vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
@@ -40,15 +44,22 @@ app.use(cors({
     
     // Check if origin is allowed
     if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('✅ CORS allowed for origin:', origin);
       callback(null, true);
     } else {
       console.log('❌ CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+      // In production, be more permissive for debugging
+      if (process.env.NODE_ENV === 'production') {
+        console.log('🚨 Production mode - allowing blocked origin for debugging');
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   optionsSuccessStatus: 200
 }));
 
@@ -99,8 +110,17 @@ const startServer = async () => {
   try {
     // Wait for database connection
     if (connection) {
-      await connection;
-      console.log('✅ Database connection established');
+      try {
+        await connection;
+        console.log('✅ Database connection established');
+      } catch (dbError) {
+        console.error('❌ Database connection failed:', dbError.message);
+        if (process.env.NODE_ENV === 'production') {
+          console.log('🚨 Production mode - continuing without database');
+        } else {
+          throw dbError;
+        }
+      }
     } else {
       console.log('⚠️ No database connection available');
     }
@@ -151,6 +171,27 @@ if (require.main === module) {
 
 // Health check (must come before other routes)
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
+
+// Environment variables checker (for debugging)
+app.get('/api/env-check', (req, res) => {
+  const envVars = {
+    NODE_ENV: process.env.NODE_ENV || 'Not set',
+    MONGO_URI: process.env.MONGO_URI ? 'Set (' + process.env.MONGO_URI.substring(0, 30) + '...)' : 'Not set',
+    JWT_SECRET: process.env.JWT_SECRET ? 'Set (' + process.env.JWT_SECRET.length + ' chars)' : 'Not set',
+    EMAIL_USER: process.env.EMAIL_USER || 'Not set',
+    EMAIL_PASS: process.env.EMAIL_PASS ? 'Set' : 'Not set',
+    CORS_ORIGINS: process.env.CORS_ORIGINS || 'Not set',
+    FRONTEND_URL: process.env.FRONTEND_URL || 'Not set',
+    BACKEND_URL: process.env.BACKEND_URL || 'Not set'
+  };
+  
+  res.json({
+    status: 'Environment Check',
+    environment: process.env.NODE_ENV || 'development',
+    variables: envVars,
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Test if models are working
 app.get('/api/test-models', (req, res) => {

@@ -46,10 +46,12 @@ const connectDB = async () => {
     const conn = await mongoose.connect(dbURI, {
       serverSelectionTimeoutMS: 30000, // Increased timeout for serverless
       socketTimeoutMS: 45000,
-      maxPoolSize: 5, // Reduced for serverless
+      maxPoolSize: 10, // Increased for better performance
       minPoolSize: 1,
-      bufferCommands: false, // Disable buffering for serverless
-      bufferMaxEntries: 0, // Disable buffer max entries
+      bufferCommands: true, // Enable buffering for serverless
+      bufferMaxEntries: 100, // Enable buffer max entries
+      maxIdleTimeMS: 30000,
+      family: 4, // Force IPv4
     });
     
     console.log('✅ MongoDB connected successfully');
