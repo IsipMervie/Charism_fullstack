@@ -4,9 +4,10 @@ const mongoose = require('mongoose');
 
 // Get the appropriate MongoDB URI based on environment
 const dbURI = process.env.MONGO_URI;
+const nodeEnv = process.env.NODE_ENV || 'development';
 
 console.log('🔍 MongoDB Connection Debug:');
-console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('NODE_ENV:', nodeEnv);
 console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
 console.log('MONGO_URI length:', process.env.MONGO_URI ? process.env.MONGO_URI.length : 0);
 console.log('MONGO_URI preview:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 50) + '...' : 'Not set');
@@ -17,10 +18,11 @@ if (!dbURI) {
   console.error('Available env vars:', Object.keys(process.env));
   
   // In serverless, don't exit, just return null
-  if (process.env.NODE_ENV === 'production') {
+  if (nodeEnv === 'production') {
     console.error('🚨 Production environment - continuing without DB connection');
-    return null;
+    return { mongoose, connection: null };
   } else {
+    console.error('❌ Development environment - exiting due to missing MONGO_URI');
     process.exit(1);
   }
 }
@@ -28,9 +30,11 @@ if (!dbURI) {
 // Check if URI looks valid
 if (!dbURI.includes('mongodb')) {
   console.error('❌ Invalid MongoDB URI format:', dbURI);
-  if (process.env.NODE_ENV === 'production') {
-    return null;
+  if (nodeEnv === 'production') {
+    console.error('🚨 Production environment - continuing without DB connection');
+    return { mongoose, connection: null };
   } else {
+    console.error('❌ Development environment - exiting due to invalid MONGO_URI');
     process.exit(1);
   }
 }
@@ -71,10 +75,11 @@ const connectDB = async () => {
     });
     
     // In serverless, don't exit process, just log error
-    if (process.env.NODE_ENV === 'production') {
+    if (nodeEnv === 'production') {
       console.error('🚨 Production environment - continuing without DB connection');
-      return null;
+      return { mongoose, connection: null };
     } else {
+      console.error('❌ Development environment - exiting due to MongoDB connection error');
       process.exit(1);
     }
   }

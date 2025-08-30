@@ -287,6 +287,29 @@ app.use((req, res) => {
 // Use the comprehensive error handler
 app.use(globalErrorHandler);
 
+// Global database health check middleware
+app.use((req, res, next) => {
+  // Skip health check endpoints
+  if (req.path === '/api/health' || req.path === '/api/env-check' || req.path === '/api/test-db') {
+    return next();
+  }
+  
+  // Check database connection for API routes
+  if (req.path.startsWith('/api/')) {
+    const { mongoose } = require('./config/db');
+    if (mongoose.connection.readyState !== 1) {
+      console.log(`Database not connected for ${req.method} ${req.path}`);
+      return res.status(503).json({ 
+        message: 'Service temporarily unavailable. Database connection not ready.',
+        error: 'Database not connected',
+        retryAfter: 5
+      });
+    }
+  }
+  
+  next();
+});
+
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');

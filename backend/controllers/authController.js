@@ -166,6 +166,16 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
+    // Check if database is connected
+    const { mongoose } = require('../config/db');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected during login attempt');
+      return res.status(500).json({ 
+        message: 'Database connection not ready. Please try again.',
+        error: 'Database not connected'
+      });
+    }
+
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'User not found' });
     if (!user.isVerified) return res.status(401).json({ message: 'Please verify your email before logging in.' });
@@ -204,6 +214,7 @@ exports.login = async (req, res) => {
       }
     });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ message: 'Error logging in', error: err.message });
   }
 };
