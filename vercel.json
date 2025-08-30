@@ -4,13 +4,6 @@
     {
       "src": "backend/vercel-server.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
     }
   ],
   "routes": [
@@ -24,15 +17,12 @@
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/$1"
+      "dest": "backend/vercel-server.js"
     }
   ],
   "functions": {
     "backend/vercel-server.js": {
       "maxDuration": 30
     }
-  },
-  "env": {
-    "NODE_ENV": "production"
   }
 }
