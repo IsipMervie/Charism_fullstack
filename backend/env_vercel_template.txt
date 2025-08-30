@@ -1,25 +1,40 @@
 # VERCEL ENVIRONMENT VARIABLES FOR BACKEND
 # Copy this to your Vercel environment variables
+# Go to: Vercel Dashboard → Your Project → Settings → Environment Variables
 
-# Database
-MONGO_URI=your_mongodb_connection_string_here
+# REQUIRED: Database Connection
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database_name?retryWrites=true&w=majority
 
-# JWT
-JWT_SECRET=your_jwt_secret_here
+# REQUIRED: JWT Secret (generate a strong random string)
+JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
 
-# Email (Gmail)
+# REQUIRED: Email Configuration (Gmail)
 EMAIL_USER=your_gmail_address@gmail.com
-EMAIL_PASS=your_gmail_app_password
+EMAIL_PASS=your_gmail_app_password_here
 
-# URLs
+# REQUIRED: Application URLs
 FRONTEND_URL=https://your-frontend-project.vercel.app
 BACKEND_URL=https://your-backend-project.vercel.app
+
+# REQUIRED: CORS Origins (comma-separated)
 CORS_ORIGINS=https://your-frontend-project.vercel.app,https://your-backend-project.vercel.app
 
-# Environment
+# REQUIRED: Environment
 NODE_ENV=production
 
-# IMPORTANT: 
+# OPTIONAL: Additional Settings
+PORT=5000
+LOG_LEVEL=info
+
+# IMPORTANT SETUP STEPS:
 # 1. Replace all placeholder values with your actual credentials
 # 2. Set these in your Vercel project dashboard under Settings > Environment Variables
 # 3. Make sure to use your actual MongoDB connection string and JWT secret
+# 4. After setting variables, redeploy your project
+# 5. Test the /api/health endpoint first
+
+# TROUBLESHOOTING:
+# - If you get "Server Error", check that MONGO_URI is set correctly
+# - If CORS errors occur, verify CORS_ORIGINS includes your frontend URL
+# - If authentication fails, ensure JWT_SECRET is set
+# - Test with /api/health, /api/test-db endpoints first
