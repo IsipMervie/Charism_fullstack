@@ -553,7 +553,7 @@ const EventAttendancePage = memo(() => {
                   {event.image && (
                     <div className="event-image-wrapper">
                       <img
-                        src={getEventImageUrl(event.image)}
+                                                    src={getEventImageUrl(event.image, event._id)}
                         alt={event.title}
                         className="event-image"
                       />

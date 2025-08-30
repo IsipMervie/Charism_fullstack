@@ -28,10 +28,10 @@ const generateEmailLink = (path, token = null) => {
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
   if (token) {
-    return `${baseUrl}/${cleanPath}/${token}`;
+    return `${baseUrl}/#/${cleanPath}/${token}`;
   }
   
-  return `${baseUrl}/${cleanPath}`;
+  return `${baseUrl}/#/${cleanPath}`;
 };
 
 // Specific link generators

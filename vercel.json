@@ -19,24 +19,8 @@
       "dest": "/backend/vercel-server.js"
     },
     {
-      "src": "/verify-email/(.*)",
-      "dest": "/frontend/index.html"
-    },
-    {
-      "src": "/reset-password/(.*)",
-      "dest": "/frontend/index.html"
-    },
-    {
-      "src": "/events/register/(.*)",
-      "dest": "/frontend/index.html"
-    },
-    {
-      "src": "/events/(.*)",
-      "dest": "/frontend/index.html"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "dest": "/$1"
     }
   ]
 }

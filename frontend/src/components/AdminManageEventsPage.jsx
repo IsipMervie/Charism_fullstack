@@ -633,7 +633,7 @@ function AdminManageEventsPage() {
                       {event.image && (
                         <div className="event-image-wrapper">
                           <img
-                            src={getEventImageUrl(event.image)}
+                            src={getEventImageUrl(event.image, event._id)}
                             alt={event.title}
                             className="event-image"
                           />
@@ -699,12 +699,12 @@ function AdminManageEventsPage() {
                               <span className="detail-label">Registration Link:</span>
                               <div className="link-container">
                                 <code className="registration-url">
-                                  {`${window.location.origin}/events/register/${event.publicRegistrationToken}`}
+                                  {`${window.location.origin}/#/events/register/${event.publicRegistrationToken}`}
                                 </code>
                                 <button
                                   className="copy-link-btn"
                                   onClick={() => {
-                                    navigator.clipboard.writeText(`${window.location.origin}/events/register/${event.publicRegistrationToken}`);
+                                    navigator.clipboard.writeText(`${window.location.origin}/#/events/register/${event.publicRegistrationToken}`);
                                     Swal.fire({
                                       icon: 'success',
                                       title: 'Link Copied!',

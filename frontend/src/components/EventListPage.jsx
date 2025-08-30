@@ -2,7 +2,7 @@
 // Simple but Creative Event List Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getEvents, getEventDetails, approveAttendance, disapproveAttendance, joinEvent, timeIn, timeOut, generateReport } from '../api/api';
+import { getEvents, getEventDetails, approveAttendance, disapproveAttendance, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaDownload, FaEye, FaCheck, FaTimes, FaArrowLeft } from 'react-icons/fa';
@@ -44,48 +44,33 @@ function EventListPage() {
   // Fetch filter options from settings
   const fetchFilterOptions = async () => {
     try {
-      const token = localStorage.getItem('token');
-      console.log('🔑 Fetching filter options with token:', token ? 'Token exists' : 'No token');
+      console.log('🔑 Fetching filter options using API utility');
       
-      const response = await fetch('/settings/public', {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const settings = await getPublicSettings();
+      console.log('⚙️ Full settings response:', settings);
+      
+      const activeDepartments = settings.departments?.filter(d => d.isActive).map(d => d.name) || [];
+      
+      console.log('🏢 Active departments from settings:', activeDepartments);
+      console.log('🏢 Raw departments data:', settings.departments);
+      
+      setFilterOptions(prev => ({
+        ...prev,
+        departments: activeDepartments
+      }));
+      
+      // If no departments found, try to get them from events
+      if (activeDepartments.length === 0) {
+        console.log('⚠️ No departments found in settings, trying to extract from events...');
+        const eventDepartments = [...new Set(events.map(event => event.department).filter(Boolean))];
+        console.log('🏢 Departments from events:', eventDepartments);
+        
+        if (eventDepartments.length > 0) {
+          setFilterOptions(prev => ({
+            ...prev,
+            departments: eventDepartments
+          }));
         }
-      });
-      
-      console.log('📡 API response status:', response.status);
-      
-      if (response.ok) {
-        const settings = await response.json();
-        console.log('⚙️ Full settings response:', settings);
-        
-        const activeDepartments = settings.departments?.filter(d => d.isActive).map(d => d.name) || [];
-        
-        console.log('🏢 Active departments from settings:', activeDepartments);
-        console.log('🏢 Raw departments data:', settings.departments);
-        
-        setFilterOptions(prev => ({
-          ...prev,
-          departments: activeDepartments
-        }));
-        
-        // If no departments found, try to get them from events
-        if (activeDepartments.length === 0) {
-          console.log('⚠️ No departments found in settings, trying to extract from events...');
-          const eventDepartments = [...new Set(events.map(event => event.department).filter(Boolean))];
-          console.log('🏢 Departments from events:', eventDepartments);
-          
-          if (eventDepartments.length > 0) {
-            setFilterOptions(prev => ({
-              ...prev,
-              departments: eventDepartments
-            }));
-          }
-        }
-      } else {
-        console.error('❌ API response not ok:', response.status, response.statusText);
-        const errorText = await response.text();
-        console.error('❌ Error response body:', errorText);
       }
     } catch (err) {
       console.error('❌ Error fetching filter options:', err);
@@ -998,7 +983,7 @@ function EventListPage() {
                     {event.image && (
                       <div className="event-image-wrapper">
                         <img
-                          src={getEventImageUrl(event.image)}
+                                                      src={getEventImageUrl(event.image, event._id)}
                           alt={event.title}
                           className="event-image"
                         />

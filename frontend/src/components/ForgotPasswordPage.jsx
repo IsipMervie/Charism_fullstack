@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
-import axios from 'axios';
+import { forgotPassword } from '../api/api';
 import Swal from 'sweetalert2';
 import './ForgotPasswordPage.css';
 
@@ -30,16 +30,14 @@ function ForgotPasswordPage() {
     
     setLoading(true);
     try {
-      // Use the correct API endpoint
-      const response = await axios.post(`${process.env.REACT_APP_API_URL || ''}/api/auth/forgot-password`, { 
-        email: email.trim() 
-      });
+      // Use the API utility function
+      const response = await forgotPassword(email.trim());
       
-      if (response.data && response.data.message) {
+      if (response && response.message) {
         Swal.fire({
           icon: 'success',
           title: '📧 Reset Link Sent!',
-          text: response.data.message,
+          text: response.message,
           confirmButtonText: 'OK',
           confirmButtonColor: '#10b981'
         });
@@ -128,8 +126,8 @@ function ForgotPasswordPage() {
 
           {/* Additional Help */}
           <div className="forgot-password-help">
-            <p>Don't have an account? <a href="/register">Sign up here</a></p>
-            <p>Remember your password? <a href="/login">Login here</a></p>
+            <p>Don't have an account? <a href="/#/register">Sign up here</a></p>
+            <p>Remember your password? <a href="/#/login">Login here</a></p>
           </div>
         </div>
       </Container>

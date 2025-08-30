@@ -1,82 +1,67 @@
-// backend/scripts/test-api-endpoints.js
-// Test script to verify API endpoints are working
-
+// Test API endpoints directly
+require('dotenv').config();
 const mongoose = require('mongoose');
 
-// Load environment variables
-require('dotenv').config();
-
-// Import database configuration
-const { getLazyConnection } = require('../config/db');
-
-async function testApiEndpoints() {
+const testApiEndpoints = async () => {
   try {
-    console.log('🧪 Testing API endpoints after fixes...');
+    console.log('🧪 Testing API endpoints directly...\n');
     
     // Connect to database
+    const { getLazyConnection } = require('../config/db');
     const isConnected = await getLazyConnection();
+    
     if (!isConnected) {
-      console.error('❌ Failed to connect to database');
+      console.log('❌ Database not connected');
       return;
     }
-    console.log('✅ Database connected');
     
-    // Test SchoolSettings
-    console.log('\n📚 Testing SchoolSettings...');
-    const SchoolSettings = require('../models/SchoolSettings');
-    const settings = await SchoolSettings.findOne();
-    if (settings) {
-      console.log('  ✅ SchoolSettings found');
-      console.log('  📋 Logo field:', settings.logo);
-      console.log('  📋 Logo type:', typeof settings.logo);
-      if (settings.logo) {
-        console.log('  📋 Logo has data:', !!(settings.logo.data && settings.logo.data.length > 0));
-      }
-    }
+    console.log('✅ Database connected\n');
     
-    // Test Events
-    console.log('\n🎉 Testing Events...');
+    // Test 1: Get events through Mongoose model
+    console.log('📋 Test 1: Getting events through Mongoose model...');
     const Event = require('../models/Event');
-    const events = await Event.find().limit(2);
-    console.log(`  📋 Found ${events.length} events`);
+    const events = await Event.find({});
+    console.log(`   Found ${events.length} events`);
     
     events.forEach((event, index) => {
-      console.log(`  📋 Event ${index + 1} (${event.title}):`);
-      console.log(`    📋 Image field: ${event.image}`);
-      console.log(`    📋 Image type: ${typeof event.image}`);
+      console.log(`   Event ${index + 1}: ${event.title}`);
+      console.log(`     Has image: ${!!event.image}`);
       if (event.image) {
-        console.log(`    📋 Image has data: ${!!(event.image.data && event.image.data.length > 0)}`);
+        console.log(`     Image type: ${typeof event.image}`);
+        console.log(`     Image keys: ${Object.keys(event.image).join(', ')}`);
+        if (event.image.data) {
+          console.log(`     Data length: ${event.image.data.length}`);
+        }
       }
+      console.log('');
     });
     
-    // Test Users
-    console.log('\n👤 Testing Users...');
-    const User = require('../models/User');
-    const users = await User.find().limit(2);
-    console.log(`  📋 Found ${users.length} users`);
+    // Test 2: Get school settings through Mongoose model
+    console.log('📋 Test 2: Getting school settings through Mongoose model...');
+    const SchoolSettings = require('../models/SchoolSettings');
+    const settings = await SchoolSettings.findOne();
     
-    users.forEach((user, index) => {
-      console.log(`  📋 User ${index + 1} (${user.name}):`);
-      console.log(`    📋 Profile picture field: ${user.profilePicture}`);
-      console.log(`    📋 Profile picture type: ${typeof user.profilePicture}`);
-      if (user.profilePicture) {
-        console.log(`    📋 Profile picture has data: ${!!(user.profilePicture.data && user.profilePicture.data.length > 0)}`);
+    if (settings) {
+      console.log('   SchoolSettings found');
+      console.log(`     Has logo: ${!!settings.logo}`);
+      if (settings.logo) {
+        console.log(`     Logo type: ${typeof settings.logo}`);
+        console.log(`     Logo keys: ${Object.keys(settings.logo).join(', ')}`);
+        if (settings.logo.data) {
+          console.log(`     Data length: ${settings.logo.data.length}`);
+        }
       }
-    });
+    } else {
+      console.log('   ❌ No SchoolSettings found');
+    }
     
-    console.log('\n✅ API endpoint test completed!');
+    console.log('\n✅ API endpoint tests complete');
     
   } catch (error) {
     console.error('❌ Error testing API endpoints:', error);
   } finally {
-    // Close database connection
-    if (mongoose.connection.readyState === 1) {
-      await mongoose.connection.close();
-      console.log('🔌 Database connection closed');
-    }
     process.exit(0);
   }
-}
+};
 
-// Run the test
 testApiEndpoints();
