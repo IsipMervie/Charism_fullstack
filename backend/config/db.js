@@ -44,43 +44,65 @@ console.log('Using database:', dbURI.includes('mongodb.net') ? 'MongoDB Atlas' :
 
 // Connect to MongoDB with better error handling for serverless
 const connectDB = async () => {
-  try {
-    console.log('🔄 Attempting to connect to MongoDB...');
-    
-    const conn = await mongoose.connect(dbURI, {
-      serverSelectionTimeoutMS: 30000, // Increased timeout for serverless
-      socketTimeoutMS: 45000,
-      maxPoolSize: 10, // Increased for better performance
-      minPoolSize: 1,
-      bufferCommands: true, // Enable buffering for serverless
-      bufferMaxEntries: 100, // Enable buffer max entries
-      maxIdleTimeMS: 30000,
-      family: 4, // Force IPv4
-    });
-    
-    console.log('✅ MongoDB connected successfully');
-    console.log('📊 Database:', conn.connection.name);
-    console.log('🌐 Host:', conn.connection.host);
-    console.log('🔌 Port:', conn.connection.port);
-    console.log('🔗 Connection state:', mongoose.connection.readyState);
-    
-    return conn;
-  } catch (err) {
-    console.error('❌ Error connecting to MongoDB:', err.message);
-    console.error('🔍 Connection details:', {
-      uri: dbURI ? `${dbURI.substring(0, 30)}...` : 'Not set',
-      nodeEnv: process.env.NODE_ENV,
-      hasMongoUri: !!process.env.MONGO_URI,
-      error: err.stack
-    });
-    
-    // In serverless, don't exit process, just log error
-    if (nodeEnv === 'production') {
-      console.error('🚨 Production environment - continuing without DB connection');
-      return { mongoose, connection: null };
-    } else {
-      console.error('❌ Development environment - exiting due to MongoDB connection error');
-      process.exit(1);
+  const maxRetries = 3;
+  let retryCount = 0;
+  
+  while (retryCount < maxRetries) {
+    try {
+      console.log(`🔄 Attempting to connect to MongoDB (attempt ${retryCount + 1}/${maxRetries})...`);
+      
+      // Close any existing connections first
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+      }
+      
+      const conn = await mongoose.connect(dbURI, {
+        serverSelectionTimeoutMS: 10000, // Reduced for serverless
+        socketTimeoutMS: 20000, // Reduced for serverless
+        maxPoolSize: 1, // Reduced for serverless
+        minPoolSize: 0, // Reduced for serverless
+        bufferCommands: false, // Disable buffering for serverless
+        bufferMaxEntries: 0, // Disable buffer max entries
+        maxIdleTimeMS: 10000, // Reduced for serverless
+        family: 4, // Force IPv4
+        retryWrites: true,
+        w: 'majority',
+        // Serverless-specific options
+        keepAlive: true,
+        keepAliveInitialDelay: 300000,
+      });
+      
+      console.log('✅ MongoDB connected successfully');
+      console.log('📊 Database:', conn.connection.name);
+      console.log('🌐 Host:', conn.connection.host);
+      console.log('🔌 Port:', conn.connection.port);
+      console.log('🔗 Connection state:', mongoose.connection.readyState);
+      
+      return conn;
+    } catch (err) {
+      retryCount++;
+      console.error(`❌ Error connecting to MongoDB (attempt ${retryCount}/${maxRetries}):`, err.message);
+      
+      if (retryCount >= maxRetries) {
+        console.error('🔍 Final connection details:', {
+          uri: dbURI ? `${dbURI.substring(0, 30)}...` : 'Not set',
+          nodeEnv: process.env.NODE_ENV,
+          hasMongoUri: !!process.env.MONGO_URI,
+          error: err.stack
+        });
+        
+        // In serverless, don't exit process, just log error
+        if (nodeEnv === 'production') {
+          console.error('🚨 Production environment - continuing without DB connection after all retries');
+          return { mongoose, connection: null };
+        } else {
+          console.error('❌ Development environment - exiting due to MongoDB connection error');
+          process.exit(1);
+        }
+      } else {
+        console.log(`⏳ Retrying in 2 seconds... (${retryCount}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     }
   }
 };
@@ -102,8 +124,24 @@ mongoose.connection.on('connected', () => {
   console.log('✅ MongoDB connection established');
 });
 
+// Connection status checker for serverless
+const getConnectionStatus = () => {
+  const readyState = mongoose.connection.readyState;
+  const states = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  return {
+    readyState,
+    status: states[readyState] || 'unknown',
+    isConnected: readyState === 1
+  };
+};
+
 // Connect immediately
 const connection = connectDB();
 
 // Export both mongoose and connection promise
-module.exports = { mongoose, connection };
+module.exports = { mongoose, connection, getConnectionStatus };
