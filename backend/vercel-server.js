@@ -14,6 +14,9 @@ require('./models/Event');
 require('./models/Message');
 require('./models/Feedback');
 
+// Database connection is handled in config/db.js
+const { mongoose, connection } = require('./config/db');
+
 const app = express();
 
 // Middleware
@@ -60,7 +63,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
 // Test if models are working
 app.get('/api/test-models', (req, res) => {
   try {
-    const mongoose = require('mongoose');
+    const { mongoose } = require('./config/db');
     const models = {
       Section: !!mongoose.models.Section,
       YearLevel: !!mongoose.models.YearLevel,
