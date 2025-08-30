@@ -127,15 +127,16 @@ app.get('/api/uploads-health', (req, res) => {
 });
 
 // Database connection is handled in config/db.js
-const { mongoose, connection } = require('./config/db');
+const { mongoose, getLazyConnection } = require('./config/db');
 
 // Wait for database connection before starting server
 const startServer = async () => {
   try {
-    // Wait for database connection
+    // Get database connection lazily
+    const connection = await getLazyConnection();
+    
     if (connection) {
       try {
-        await connection;
         console.log('✅ Database connection established');
       } catch (dbError) {
         console.error('❌ Database connection failed:', dbError.message);
@@ -275,6 +276,37 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
+// Use the comprehensive error handler
+app.use(globalErrorHandler);
+
+// Global database health check middleware - MUST come BEFORE routes
+app.use(async (req, res, next) => {
+  // Skip health check endpoints
+  if (req.path === '/api/health' || req.path === '/api/env-check' || req.path === '/api/test-db') {
+    return next();
+  }
+  
+  // Check database connection for API routes
+  if (req.path.startsWith('/api/')) {
+    try {
+      const { mongoose } = require('./config/db');
+      if (mongoose.connection.readyState !== 1) {
+        console.log(`Database not connected for ${req.method} ${req.path}`);
+        return res.status(503).json({ 
+          message: 'Service temporarily unavailable. Database connection not ready.',
+          error: 'Database not connected',
+          retryAfter: 5
+        });
+      }
+    } catch (error) {
+      console.log(`Database check failed for ${req.method} ${req.path}:`, error.message);
+      // Continue anyway - let individual routes handle database errors
+    }
+  }
+  
+  next();
+});
+
 // Routes - Mount in specific order to avoid conflicts
 console.log('Loading routes...');
 
@@ -361,32 +393,6 @@ app.get('/api/file-status', (req, res) => {
 app.use((req, res) => {
   console.log('404 - Route not found:', req.method, req.url);
   res.status(404).json({ message: 'Route not found' });
-});
-
-// Use the comprehensive error handler
-app.use(globalErrorHandler);
-
-// Global database health check middleware
-app.use((req, res, next) => {
-  // Skip health check endpoints
-  if (req.path === '/api/health' || req.path === '/api/env-check' || req.path === '/api/test-db') {
-    return next();
-  }
-  
-  // Check database connection for API routes
-  if (req.path.startsWith('/api/')) {
-    const { mongoose } = require('./config/db');
-    if (mongoose.connection.readyState !== 1) {
-      console.log(`Database not connected for ${req.method} ${req.path}`);
-      return res.status(503).json({ 
-        message: 'Service temporarily unavailable. Database connection not ready.',
-        error: 'Database not connected',
-        retryAfter: 5
-      });
-    }
-  }
-  
-  next();
 });
 
 // Graceful shutdown handling

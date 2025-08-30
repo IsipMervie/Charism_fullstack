@@ -6,44 +6,44 @@ const mongoose = require('mongoose');
 const dbURI = process.env.MONGO_URI;
 const nodeEnv = process.env.NODE_ENV || 'development';
 
-console.log('🔍 MongoDB Connection Debug:');
-console.log('NODE_ENV:', nodeEnv);
-console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
-console.log('MONGO_URI length:', process.env.MONGO_URI ? process.env.MONGO_URI.length : 0);
-console.log('MONGO_URI preview:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 50) + '...' : 'Not set');
-
-if (!dbURI) {
-  console.error('❌ No MongoDB URI found!');
-  console.error('Please set MONGO_URI environment variable');
-  console.error('Available env vars:', Object.keys(process.env));
-  
-  // In serverless, don't exit, just return null
-  if (nodeEnv === 'production') {
-    console.error('🚨 Production environment - continuing without DB connection');
-    return { mongoose, connection: null };
-  } else {
-    console.error('❌ Development environment - exiting due to missing MONGO_URI');
-    process.exit(1);
-  }
-}
-
-// Check if URI looks valid
-if (!dbURI.includes('mongodb')) {
-  console.error('❌ Invalid MongoDB URI format:', dbURI);
-  if (nodeEnv === 'production') {
-    console.error('🚨 Production environment - continuing without DB connection');
-    return { mongoose, connection: null };
-  } else {
-    console.error('❌ Development environment - exiting due to invalid MONGO_URI');
-    process.exit(1);
-  }
-}
-
-console.log('✅ MongoDB URI format looks valid');
-console.log('Using database:', dbURI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Custom MongoDB');
-
-// Connect to MongoDB with better error handling for serverless
+// Lazy connection function - only called when needed
 const connectDB = async () => {
+  console.log('🔍 MongoDB Connection Debug:');
+  console.log('NODE_ENV:', nodeEnv);
+  console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
+  console.log('MONGO_URI length:', process.env.MONGO_URI ? process.env.MONGO_URI.length : 0);
+  console.log('MONGO_URI preview:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 50) + '...' : 'Not set');
+
+  if (!dbURI) {
+    console.error('❌ No MongoDB URI found!');
+    console.error('Please set MONGO_URI environment variable');
+    console.error('Available env vars:', Object.keys(process.env));
+    
+    // In serverless, don't exit, just return null
+    if (nodeEnv === 'production') {
+      console.error('🚨 Production environment - continuing without DB connection');
+      return null;
+    } else {
+      console.error('❌ Development environment - continuing without DB connection');
+      return null;
+    }
+  }
+
+  // Check if URI looks valid
+  if (!dbURI.includes('mongodb')) {
+    console.error('❌ Invalid MongoDB URI format:', dbURI);
+    if (nodeEnv === 'production') {
+      console.error('🚨 Production environment - continuing without DB connection');
+      return null;
+    } else {
+      console.error('❌ Development environment - continuing without DB connection');
+      return null;
+    }
+  }
+
+  console.log('✅ MongoDB URI format looks valid');
+  console.log('Using database:', dbURI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Custom MongoDB');
+
   const maxRetries = 3;
   let retryCount = 0;
   
@@ -94,10 +94,10 @@ const connectDB = async () => {
         // In serverless, don't exit process, just log error
         if (nodeEnv === 'production') {
           console.error('🚨 Production environment - continuing without DB connection after all retries');
-          return { mongoose, connection: null };
+          return null;
         } else {
-          console.error('❌ Development environment - exiting due to MongoDB connection error');
-          process.exit(1);
+          console.error('❌ Development environment - continuing without DB connection after all retries');
+          return null;
         }
       } else {
         console.log(`⏳ Retrying in 2 seconds... (${retryCount}/${maxRetries})`);
@@ -143,5 +143,20 @@ const getConnectionStatus = () => {
 // Connect immediately
 const connection = connectDB();
 
+// Lazy connection for Vercel - only connect when actually needed
+let lazyConnection = null;
+
+const getLazyConnection = async () => {
+  if (!lazyConnection) {
+    lazyConnection = connectDB();
+  }
+  return lazyConnection;
+};
+
 // Export both mongoose and connection promise
-module.exports = { mongoose, connection, getConnectionStatus };
+module.exports = { 
+  mongoose, 
+  connection, 
+  getConnectionStatus,
+  getLazyConnection 
+};
