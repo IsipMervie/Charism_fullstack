@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaCheck, FaTimes, FaArrowLeft, FaDownload } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import './EventListPage.css';

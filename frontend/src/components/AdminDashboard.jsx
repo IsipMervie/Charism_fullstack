@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Spinner, Alert } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getAnalytics } from '../api/api';
 import { axiosInstance } from '../api/api';
 import { FaUsers, FaCalendarAlt, FaChartBar, FaTrophy, FaUserCheck, FaEnvelope, FaCog, FaBuilding, FaFile, FaUser } from 'react-icons/fa';
@@ -14,7 +14,6 @@ import './AdminDashboard.css';
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [school, setSchool] = useState(null);

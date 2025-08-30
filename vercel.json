@@ -1,27 +1,6 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build",
-        "buildCommand": "cd frontend && npm run build:vercel"
-      }
-    },
-    {
-      "src": "backend/vercel-server.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/vercel-server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
-    }
-  ]
+  "buildCommand": "cd frontend && cross-env CI=false npm run build",
+  "outputDirectory": "frontend/build",
+  "installCommand": "cd frontend && npm install",
+  "framework": "create-react-app"
 }

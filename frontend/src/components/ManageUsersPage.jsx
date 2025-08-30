@@ -2,9 +2,9 @@
 // Fresh Simple but Creative Manage Users Page Design
 
 import React, { useEffect, useState } from 'react';
-import { Form, Spinner, Alert, Modal, Badge, Button } from 'react-bootstrap';
+import { Form, Spinner, Modal, Badge, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { FaUsers, FaUser, FaEnvelope, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaCrown, FaUserTie, FaUserGraduate } from 'react-icons/fa';
+import { FaUser, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaCrown, FaUserTie, FaUserGraduate } from 'react-icons/fa';
 import {
   getUsers, updateUser, deleteUser
 } from '../api/api';
