@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-// Environment variables are provided by Vercel, no need for dotenv
+// Load environment variables from .env file
+require('dotenv').config();
 
 // Get the appropriate MongoDB URI based on environment
 const dbURI = process.env.MONGO_URI;

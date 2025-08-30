@@ -87,7 +87,12 @@ const getImageInfo = (file) => {
 
 // Helper function to check if file exists
 const hasFile = (fileData) => {
-  return fileData && fileData.data && fileData.data.length > 0;
+  // Defensive check for malformed data
+  if (!fileData) return false;
+  if (typeof fileData === 'string') return false;
+  if (typeof fileData !== 'object') return false;
+  
+  return fileData.data && fileData.data.length > 0;
 };
 
 // Helper function to get file size in human readable format

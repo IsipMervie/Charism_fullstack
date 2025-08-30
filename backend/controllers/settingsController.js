@@ -26,11 +26,21 @@ exports.getSchoolSettings = async (req, res) => {
       console.log('Default settings created');
     }
     
+    // Defensive fix for malformed logo data
+    let safeLogo = settings.logo;
+    if (typeof settings.logo === 'string') {
+      console.log('⚠️  Logo field contains string, converting to null to prevent errors');
+      safeLogo = null;
+    }
+    
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
-    if (hasFile(settings.logo)) {
+    if (hasFile(safeLogo)) {
       settingsWithUrl.logoUrl = `/api/files/school-logo`;
     }
+    
+    // Ensure logo field is safe in response
+    settingsWithUrl.logo = safeLogo;
     
     console.log('Settings retrieved successfully');
     res.json(settingsWithUrl);
@@ -70,11 +80,21 @@ exports.updateSchoolSettings = async (req, res) => {
     await settings.save();
     console.log('Settings updated successfully');
     
+    // Defensive fix for malformed logo data
+    let safeLogo = settings.logo;
+    if (typeof settings.logo === 'string') {
+      console.log('⚠️  Logo field contains string, converting to null to prevent errors');
+      safeLogo = null;
+    }
+    
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
-    if (hasFile(settings.logo)) {
+    if (hasFile(safeLogo)) {
       settingsWithUrl.logoUrl = `/api/files/school-logo`;
     }
+    
+    // Ensure logo field is safe in response
+    settingsWithUrl.logo = safeLogo;
     
     res.json({ message: 'School settings updated', settings: settingsWithUrl });
   } catch (err) {
@@ -121,12 +141,19 @@ exports.getPublicSchoolSettings = async (req, res) => {
       console.log('Default public settings created');
     }
     
+    // Defensive fix for malformed logo data
+    let safeLogo = settings.logo;
+    if (typeof settings.logo === 'string') {
+      console.log('⚠️  Logo field contains string, converting to null to prevent errors');
+      safeLogo = null;
+    }
+    
     // Only return public fields
     const publicSettings = {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
-      logo: settings.logo,
-      logoUrl: hasFile(settings.logo) ? `/api/files/school-logo` : null,
+      logo: safeLogo,
+      logoUrl: hasFile(safeLogo) ? `/api/files/school-logo` : null,
       contactEmail: settings.contactEmail
     };
     

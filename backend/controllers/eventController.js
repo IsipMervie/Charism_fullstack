@@ -95,7 +95,16 @@ exports.getAllEvents = async (req, res) => {
       if (event.publicRegistrationToken) {
         eventObj.publicRegistrationUrl = generateEventRegistrationLink(event.publicRegistrationToken);
       }
-      if (hasFile(event.image)) {
+      
+      // Defensive fix for malformed image data
+      let safeImage = event.image;
+      if (typeof event.image === 'string') {
+        console.log(`⚠️  Event ${event._id} image field contains string, converting to null to prevent errors`);
+        safeImage = null;
+        eventObj.image = null; // Ensure the response also has safe data
+      }
+      
+      if (hasFile(safeImage)) {
         eventObj.imageUrl = `/api/files/event-image/${event._id}`;
       }
       return eventObj;
@@ -183,8 +192,8 @@ exports.getEventDetails = async (req, res) => {
         publicRegistrationToken: event.publicRegistrationToken,
         publicRegistrationUrl: event.publicRegistrationToken ? generateEventRegistrationLink(event.publicRegistrationToken) : null,
         status: event.status,
-        image: event.image,
-        imageUrl: event.image ? `/uploads/event-images/${event.image}` : null,
+        image: typeof event.image === 'string' ? null : event.image,
+        imageUrl: typeof event.image === 'string' ? null : (hasFile(event.image) ? `/api/files/event-image/${event._id}` : null),
         // Don't include attendance data for public users
         attendanceCount: event.attendance?.length || 0
       };
