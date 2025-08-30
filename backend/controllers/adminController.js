@@ -72,6 +72,15 @@ exports.updateUser = async (req, res) => {
 // Get students by year (with total approved hours)
 exports.getStudentsByYear = async (req, res) => {
   try {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty data');
+      return res.json({});
+    }
+
     const students = await User.find({ role: 'Student' })
       .select('name email department academicYear year section')
       .sort('academicYear name');
@@ -114,6 +123,20 @@ exports.getStudentsByYear = async (req, res) => {
 // Get filter options from existing student data for Students by Year page
 exports.getStudentsByYearFilterOptions = async (req, res) => {
   try {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty filter options');
+      return res.json({
+        departments: [],
+        years: [],
+        sections: [],
+        academicYears: []
+      });
+    }
+
     const students = await User.find({ role: 'Student' })
       .select('department year section academicYear')
       .lean();
@@ -137,6 +160,15 @@ exports.getStudentsByYearFilterOptions = async (req, res) => {
 // Get students with 40+ hours
 exports.getStudents40Hours = async (req, res) => {
   try {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty data');
+      return res.json([]);
+    }
+
     const students = await User.find({ role: 'Student' })
       .select('name email department academicYear year section')
       .sort('name');

@@ -64,8 +64,66 @@ const getUserFeedback = async (req, res) => {
   }
 };
 
+// Get feedback statistics for admin dashboard
+const getFeedbackStats = async (req, res) => {
+  try {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty stats');
+      return res.json({
+        total: 0,
+        pending: 0,
+        inProgress: 0,
+        resolved: 0,
+        closed: 0
+      });
+    }
+
+    const [total, pending, inProgress, resolved, closed] = await Promise.all([
+      Feedback.countDocuments(),
+      Feedback.countDocuments({ status: 'Pending' }),
+      Feedback.countDocuments({ status: 'In Progress' }),
+      Feedback.countDocuments({ status: 'Resolved' }),
+      Feedback.countDocuments({ status: 'Closed' })
+    ]);
+
+    res.json({
+      total,
+      pending,
+      inProgress,
+      resolved,
+      closed
+    });
+  } catch (error) {
+    console.error('Error fetching feedback stats:', error);
+    res.status(500).json({ message: 'Failed to fetch feedback stats' });
+  }
+};
+
+// Get all feedback for admin (with pagination and search)
 const getAllFeedback = async (req, res) => {
   try {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty feedback list');
+      return res.json({
+        feedback: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 0,
+          totalItems: 0,
+          hasNextPage: false,
+          hasPrevPage: false
+        }
+      });
+    }
+
     const { page = 1, limit = 20, status, category, priority, search } = req.query;
     
     const filter = {};
@@ -94,33 +152,23 @@ const getAllFeedback = async (req, res) => {
       Feedback.countDocuments(filter)
     ]);
 
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+
     res.json({
       feedback,
       pagination: {
         currentPage: parseInt(page),
-        totalPages: Math.ceil(total / limit),
+        totalPages,
         totalItems: total,
-        itemsPerPage: parseInt(limit)
+        hasNextPage,
+        hasPrevPage
       }
     });
   } catch (error) {
     console.error('Error fetching all feedback:', error);
     res.status(500).json({ message: 'Failed to fetch feedback' });
-  }
-};
-
-const getFeedbackStats = async (req, res) => {
-  try {
-    const totalCount = await Feedback.countDocuments();
-
-    const overall = {
-      total: totalCount
-    };
-
-    res.json({ overall });
-  } catch (error) {
-    console.error('Error fetching feedback stats:', error);
-    res.status(500).json({ message: 'Failed to fetch feedback statistics' });
   }
 };
 

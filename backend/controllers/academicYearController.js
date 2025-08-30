@@ -6,6 +6,16 @@ const AcademicYear = require('../models/AcademicYear');
 exports.getAcademicYears = async (req, res) => {
   try {
     console.log('Getting academic years...');
+    
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty academic years list');
+      return res.json([]);
+    }
+
     console.log('AcademicYear model available:', !!AcademicYear);
     console.log('Mongoose connection state:', require('mongoose').connection.readyState);
 

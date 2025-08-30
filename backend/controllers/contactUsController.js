@@ -76,6 +76,15 @@ exports.sendContactMessage = async (req, res) => {
 // Get all messages (with optional search)
 exports.getAllMessages = async (req, res) => {
   try {
+    // Check if database is connected using lazy connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning empty messages list');
+      return res.json([]);
+    }
+
     const { search } = req.query;
     let query = {};
     if (search) {
