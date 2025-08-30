@@ -75,7 +75,7 @@ router.post(
   '/',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
-  uploadEventImage.single('image'),
+  uploadEventImage,
   eventController.createEvent
 );
 
@@ -110,7 +110,7 @@ router.put(
   '/:eventId',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
-  uploadEventImage.single('image'),
+  uploadEventImage,
   eventController.updateEvent
 );
 

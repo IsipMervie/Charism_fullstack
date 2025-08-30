@@ -1,9 +1,8 @@
 // server.js
+require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-// Environment variables are provided by Vercel, no need for dotenv
 
 // Import models to ensure they are registered with Mongoose
 require('./models/Section');
@@ -90,7 +89,60 @@ app.get('/api/uploads-health', (req, res) => {
 });
 
 // Database connection is handled in config/db.js
-require('./config/db');
+const { mongoose, connection } = require('./config/db');
+
+// Wait for database connection before starting server
+const startServer = async () => {
+  try {
+    // Wait for database connection
+    if (connection) {
+      await connection;
+      console.log('✅ Database connection established');
+    } else {
+      console.log('⚠️ No database connection available');
+    }
+    
+    // Start server
+    const PORT = process.env.PORT || 5000;
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
+      console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
+      console.log(`📊 MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected'}`);
+      console.log('✅ All routes loaded successfully!');
+    });
+
+    // Handle server errors
+    server.on('error', (error) => {
+      if (error.syscall !== 'listen') {
+        throw error;
+      }
+
+      const bind = typeof PORT === 'string' ? 'Pipe ' + PORT : 'Port ' + PORT;
+
+      switch (error.code) {
+        case 'EACCES':
+          console.error(bind + ' requires elevated privileges');
+          process.exit(1);
+          break;
+        case 'EADDRINUSE':
+          console.error(bind + ' is already in use');
+          process.exit(1);
+          break;
+        default:
+          throw error;
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+// Start the server
+startServer();
 
 // Health check (must come before other routes)
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
@@ -98,7 +150,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
 // Test if models are working
 app.get('/api/test-models', (req, res) => {
   try {
-    const mongoose = require('mongoose');
+    const { mongoose } = require('./config/db');
     const models = {
       Section: !!mongoose.models.Section,
       YearLevel: !!mongoose.models.YearLevel,
@@ -148,8 +200,6 @@ console.log(' Feedback routes loaded');
 app.use('/api/files', require('./routes/fileRoutes'));
 console.log(' File routes loaded');
 
-// Reflection routes removed - no longer needed
-
 // 404 handler
 app.use((req, res) => {
   console.log('404 - Route not found:', req.method, req.url);
@@ -187,37 +237,4 @@ process.on('SIGINT', () => {
     console.log('MongoDB connection closed');
     process.exit(0);
   });
-});
-
-// Start server
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
-  console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
-  console.log(`📊 MongoDB: ${process.env.MONGO_URI ? 'Connected' : 'Not connected'}`);
-  console.log('✅ All routes loaded successfully!');
-});
-
-// Handle server errors
-server.on('error', (error) => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-
-  const bind = typeof PORT === 'string' ? 'Pipe ' + PORT : 'Port ' + PORT;
-
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
 });

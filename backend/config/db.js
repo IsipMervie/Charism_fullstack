@@ -5,27 +5,48 @@ const mongoose = require('mongoose');
 // Get the appropriate MongoDB URI based on environment
 const dbURI = process.env.MONGO_URI;
 
+console.log('🔍 MongoDB Connection Debug:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
+console.log('MONGO_URI length:', process.env.MONGO_URI ? process.env.MONGO_URI.length : 0);
+console.log('MONGO_URI preview:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 50) + '...' : 'Not set');
+
 if (!dbURI) {
   console.error('❌ No MongoDB URI found!');
   console.error('Please set MONGO_URI environment variable');
   console.error('Available env vars:', Object.keys(process.env));
-  process.exit(1);
+  
+  // In serverless, don't exit, just return null
+  if (process.env.NODE_ENV === 'production') {
+    console.error('🚨 Production environment - continuing without DB connection');
+    return null;
+  } else {
+    process.exit(1);
+  }
 }
 
-console.log('🔍 Environment check:');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('MONGO_URI:', process.env.MONGO_URI ? 'Set' : 'Not set');
+// Check if URI looks valid
+if (!dbURI.includes('mongodb')) {
+  console.error('❌ Invalid MongoDB URI format:', dbURI);
+  if (process.env.NODE_ENV === 'production') {
+    return null;
+  } else {
+    process.exit(1);
+  }
+}
+
+console.log('✅ MongoDB URI format looks valid');
 console.log('Using database:', dbURI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Custom MongoDB');
 
-// Connect to MongoDB with better error handling
+// Connect to MongoDB with better error handling for serverless
 const connectDB = async () => {
   try {
+    console.log('🔄 Attempting to connect to MongoDB...');
+    
     const conn = await mongoose.connect(dbURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // Increased timeout
+      serverSelectionTimeoutMS: 30000, // Increased timeout for serverless
       socketTimeoutMS: 45000,
-      maxPoolSize: 10,
+      maxPoolSize: 5, // Reduced for serverless
       minPoolSize: 1,
     });
     
@@ -33,12 +54,13 @@ const connectDB = async () => {
     console.log('📊 Database:', conn.connection.name);
     console.log('🌐 Host:', conn.connection.host);
     console.log('🔌 Port:', conn.connection.port);
+    console.log('🔗 Connection state:', mongoose.connection.readyState);
     
     return conn;
   } catch (err) {
     console.error('❌ Error connecting to MongoDB:', err.message);
     console.error('🔍 Connection details:', {
-      uri: dbURI,
+      uri: dbURI ? `${dbURI.substring(0, 30)}...` : 'Not set',
       nodeEnv: process.env.NODE_ENV,
       hasMongoUri: !!process.env.MONGO_URI,
       error: err.stack
@@ -67,7 +89,12 @@ mongoose.connection.on('reconnected', () => {
   console.log('🔄 MongoDB reconnected');
 });
 
-// Connect immediately
-connectDB();
+mongoose.connection.on('connected', () => {
+  console.log('✅ MongoDB connection established');
+});
 
-module.exports = mongoose;
+// Connect immediately
+const connection = connectDB();
+
+// Export both mongoose and connection promise
+module.exports = { mongoose, connection };
