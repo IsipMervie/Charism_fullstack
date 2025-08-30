@@ -1,6 +1,33 @@
 // Image URL utility for consistent image handling
-const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const getBackendUrl = () => {
+  // If environment variable is set, use it
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // Detect production environment
+  const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
+  
+  // Vercel production
+  if (hostname === 'charism.vercel.app') {
+    return 'https://charism.vercel.app/api';
+  }
+  
+  // Local development
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+  
+  // Fallback to current domain
+  return `${protocol}//${hostname}/api`;
+};
+
+const BACKEND_URL = getBackendUrl();
 const STATIC_URL = BACKEND_URL.replace('/api', '');
+
+console.log('🖼️ Image Utils - BACKEND_URL:', BACKEND_URL);
+console.log('🖼️ Image Utils - STATIC_URL:', STATIC_URL);
 
 export const getImageUrl = (imageData, type = 'general') => {
   if (!imageData) return null;

@@ -137,6 +137,16 @@ app.get('/api/test', (req, res) => {
   });
 });
 
+// Frontend test endpoint
+app.get('/api/frontend-test', (req, res) => {
+  res.json({ 
+    message: 'Frontend should be able to reach this!',
+    timestamp: new Date().toISOString(),
+    frontendUrl: `${req.protocol}://${req.get('host')}`,
+    apiUrl: `${req.protocol}://${req.get('host')}/api`
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Vercel backend is running' });

@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Event = require('../models/Event');
 const SchoolSettings = require('../models/SchoolSettings');
 const { hasFile } = require('../utils/mongoFileStorage');
+const { isValidObjectId } = require('mongoose');
 
 // Serve profile picture
 router.get('/profile-picture/:userId', async (req, res) => {
@@ -32,34 +33,73 @@ router.get('/profile-picture/:userId', async (req, res) => {
 // Serve event image
 router.get('/event-image/:eventId', async (req, res) => {
   try {
-    const event = await Event.findById(req.params.eventId);
+    const { eventId } = req.params;
+    
+    // Validate ObjectId
+    if (!isValidObjectId(eventId)) {
+      console.log('❌ Invalid event ID format:', eventId);
+      return res.status(400).json({ 
+        message: 'Invalid event ID format',
+        error: 'INVALID_OBJECT_ID',
+        receivedId: eventId
+      });
+    }
+
+    console.log('🔍 Looking for event with ID:', eventId);
+    const event = await Event.findById(eventId);
     
     if (!event) {
-      console.log('❌ Event not found:', req.params.eventId);
-      return res.status(404).json({ message: 'Event not found' });
+      console.log('❌ Event not found:', eventId);
+      return res.status(404).json({ 
+        message: 'Event not found',
+        error: 'EVENT_NOT_FOUND',
+        eventId: eventId
+      });
     }
+    
+    console.log('✅ Event found:', { 
+      eventId: event._id, 
+      title: event.title,
+      hasImage: !!event.image 
+    });
     
     // Defensive check for malformed image data
     if (!event.image) {
       console.log('❌ No image field in event:', event._id);
-      return res.status(404).json({ message: 'Event image not found' });
+      return res.status(404).json({ 
+        message: 'Event image not found',
+        error: 'NO_IMAGE_FIELD',
+        eventId: event._id
+      });
     }
     
     if (typeof event.image === 'string') {
       console.log('⚠️  Event image field contains string, cannot serve:', event._id);
-      return res.status(404).json({ message: 'Event image not properly configured' });
+      return res.status(404).json({ 
+        message: 'Event image not properly configured',
+        error: 'IMAGE_IS_STRING',
+        eventId: event._id
+      });
     }
     
     if (!hasFile(event.image)) {
       console.log('❌ Event image field does not contain valid file data:', event._id);
-      return res.status(404).json({ message: 'Event image not found' });
+      return res.status(404).json({ 
+        message: 'Event image not found',
+        error: 'INVALID_IMAGE_DATA',
+        eventId: event._id
+      });
     }
 
     const { data, contentType } = event.image;
     
     if (!data || !contentType) {
       console.log('❌ Event image missing data or contentType:', event._id);
-      return res.status(404).json({ message: 'Event image data incomplete' });
+      return res.status(404).json({ 
+        message: 'Event image data incomplete',
+        error: 'INCOMPLETE_IMAGE_DATA',
+        eventId: event._id
+      });
     }
     
     console.log('✅ Serving event image:', {
@@ -77,8 +117,22 @@ router.get('/event-image/:eventId', async (req, res) => {
     
     res.send(data);
   } catch (error) {
-    console.error('Error serving event image:', error);
-    res.status(500).json({ message: 'Error serving event image' });
+    console.error('❌ Error serving event image:', error);
+    
+    // Send appropriate error response
+    if (error.name === 'CastError') {
+      return res.status(400).json({ 
+        message: 'Invalid event ID format',
+        error: 'CAST_ERROR',
+        details: error.message
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Error serving event image',
+      error: 'INTERNAL_ERROR',
+      details: error.message
+    });
   }
 });
 
