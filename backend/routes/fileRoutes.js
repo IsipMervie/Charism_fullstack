@@ -34,11 +34,40 @@ router.get('/event-image/:eventId', async (req, res) => {
   try {
     const event = await Event.findById(req.params.eventId);
     
-    if (!event || !hasFile(event.image)) {
+    if (!event) {
+      console.log('❌ Event not found:', req.params.eventId);
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    // Defensive check for malformed image data
+    if (!event.image) {
+      console.log('❌ No image field in event:', event._id);
+      return res.status(404).json({ message: 'Event image not found' });
+    }
+    
+    if (typeof event.image === 'string') {
+      console.log('⚠️  Event image field contains string, cannot serve:', event._id);
+      return res.status(404).json({ message: 'Event image not properly configured' });
+    }
+    
+    if (!hasFile(event.image)) {
+      console.log('❌ Event image field does not contain valid file data:', event._id);
       return res.status(404).json({ message: 'Event image not found' });
     }
 
     const { data, contentType } = event.image;
+    
+    if (!data || !contentType) {
+      console.log('❌ Event image missing data or contentType:', event._id);
+      return res.status(404).json({ message: 'Event image data incomplete' });
+    }
+    
+    console.log('✅ Serving event image:', {
+      eventId: event._id,
+      contentType,
+      dataLength: data.length,
+      filename: event.image.filename
+    });
     
     res.set({
       'Content-Type': contentType,
@@ -58,11 +87,39 @@ router.get('/school-logo', async (req, res) => {
   try {
     const settings = await SchoolSettings.findOne();
     
-    if (!settings || !hasFile(settings.logo)) {
+    if (!settings) {
+      console.log('❌ No SchoolSettings found');
+      return res.status(404).json({ message: 'School settings not found' });
+    }
+    
+    // Defensive check for malformed logo data
+    if (!settings.logo) {
+      console.log('❌ No logo field in SchoolSettings');
+      return res.status(404).json({ message: 'School logo not found' });
+    }
+    
+    if (typeof settings.logo === 'string') {
+      console.log('⚠️  Logo field contains string, cannot serve');
+      return res.status(404).json({ message: 'School logo not properly configured' });
+    }
+    
+    if (!hasFile(settings.logo)) {
+      console.log('❌ Logo field does not contain valid file data');
       return res.status(404).json({ message: 'School logo not found' });
     }
 
     const { data, contentType } = settings.logo;
+    
+    if (!data || !contentType) {
+      console.log('❌ Logo missing data or contentType');
+      return res.status(404).json({ message: 'School logo data incomplete' });
+    }
+    
+    console.log('✅ Serving school logo:', {
+      contentType,
+      dataLength: data.length,
+      filename: settings.logo.filename
+    });
     
     res.set({
       'Content-Type': contentType,

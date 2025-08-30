@@ -48,7 +48,7 @@ const eventSchema = new mongoose.Schema({
     data: { type: Buffer },           // The actual image file data
     contentType: { type: String },    // "image/png", "image/jpeg", etc.
     filename: { type: String },       // Stored filename
-    uploadedAt: { type: Date, default: Date.now }
+    uploadedAt: { type: Date }
   },
   status: { type: String, enum: ['Active', 'Completed', 'Cancelled', 'Disabled'], default: 'Active' },
   isVisibleToStudents: { type: Boolean, default: true }, // New field to control visibility to students

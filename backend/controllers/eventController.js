@@ -104,6 +104,13 @@ exports.getAllEvents = async (req, res) => {
         eventObj.image = null; // Ensure the response also has safe data
       }
       
+      // Check if image has actual data
+      if (safeImage && (!safeImage.data || safeImage.data.length === 0)) {
+        console.log(`⚠️  Event ${event._id} image field has no data, treating as null`);
+        safeImage = null;
+        eventObj.image = null; // Ensure the response also has safe data
+      }
+      
       if (hasFile(safeImage)) {
         eventObj.imageUrl = `/api/files/event-image/${event._id}`;
       }
@@ -192,8 +199,8 @@ exports.getEventDetails = async (req, res) => {
         publicRegistrationToken: event.publicRegistrationToken,
         publicRegistrationUrl: event.publicRegistrationToken ? generateEventRegistrationLink(event.publicRegistrationToken) : null,
         status: event.status,
-        image: typeof event.image === 'string' ? null : event.image,
-        imageUrl: typeof event.image === 'string' ? null : (hasFile(event.image) ? `/api/files/event-image/${event._id}` : null),
+        image: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : event.image,
+        imageUrl: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : (hasFile(event.image) ? `/api/files/event-image/${event._id}` : null),
         // Don't include attendance data for public users
         attendanceCount: event.attendance?.length || 0
       };

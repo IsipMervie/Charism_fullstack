@@ -9,7 +9,7 @@ const schoolSettingsSchema = new mongoose.Schema({
     data: { type: Buffer },           // The actual logo file data
     contentType: { type: String },    // "image/png", "image/jpeg", etc.
     filename: { type: String },       // Stored filename
-    uploadedAt: { type: Date, default: Date.now }
+    uploadedAt: { type: Date }
   },
   brandName: { type: String, required: true, default: 'CHARISM' }, // Brand name for navbar
   

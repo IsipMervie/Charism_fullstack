@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     data: { type: Buffer },           // The actual image file data
     contentType: { type: String },    // "image/png", "image/jpeg", etc.
     filename: { type: String },       // Original filename
-    uploadedAt: { type: Date, default: Date.now }
+    uploadedAt: { type: Date }
   },
   // Add more fields as needed for your profile
 }, { timestamps: true });

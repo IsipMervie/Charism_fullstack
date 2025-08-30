@@ -148,6 +148,12 @@ exports.getPublicSchoolSettings = async (req, res) => {
       safeLogo = null;
     }
     
+    // Check if logo has actual data
+    if (safeLogo && (!safeLogo.data || safeLogo.data.length === 0)) {
+      console.log('⚠️  Logo field has no data, treating as null');
+      safeLogo = null;
+    }
+    
     // Only return public fields
     const publicSettings = {
       schoolName: settings.schoolName,
