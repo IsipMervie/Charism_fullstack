@@ -62,14 +62,11 @@ const connectDB = async () => {
         maxPoolSize: 1, // Reduced for serverless
         minPoolSize: 0, // Reduced for serverless
         bufferCommands: false, // Disable buffering for serverless
-        bufferMaxEntries: 0, // Disable buffer max entries
-        maxIdleTimeMS: 15000, // Increased for serverless
         family: 4, // Force IPv4
         retryWrites: true,
         w: 'majority',
-        // Serverless-specific options
-        keepAlive: true,
-        keepAliveInitialDelay: 300000,
+        // Serverless-specific options (removed unsupported ones)
+        maxIdleTimeMS: 15000, // Increased for serverless
         // Additional options for better reliability
         autoIndex: false, // Disable auto-indexing in production
         maxConnecting: 1, // Limit concurrent connections
