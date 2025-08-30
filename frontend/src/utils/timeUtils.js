@@ -57,7 +57,7 @@ export const formatTimeForInput = (timeString) => {
   try {
     const match = timeString.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
     if (match) {
-      let [_, hours, minutes, period] = match;
+      let [, hours, minutes, period] = match;
       hours = parseInt(hours);
       minutes = parseInt(minutes);
       

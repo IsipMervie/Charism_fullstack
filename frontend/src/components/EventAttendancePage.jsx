@@ -143,9 +143,7 @@ const EventAttendancePage = memo(() => {
     if (!event) return;
 
     const eventDate = new Date(event.date);
-    const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
     const eventDateTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
-    const now = new Date();
 
     const result = await Swal.fire({
       title: 'Confirm Registration',
@@ -192,18 +190,17 @@ const EventAttendancePage = memo(() => {
         text: 'Failed to register for event. Please try again.' 
       });
     }
-  }, [events, refreshEvents]);
+  }, [events, refreshEvents, joinEvent]);
 
   const handleTimeIn = useCallback(async (eventId) => {
     const event = events.find(e => e._id === eventId);
     if (!event) return;
 
     const eventDate = new Date(event.date);
-    const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
     const eventDateTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
-    const now = new Date();
 
     // Check if event has started
+    const now = new Date();
     if (eventDateTime > now) {
       Swal.fire({
         icon: 'warning',
@@ -245,7 +242,7 @@ const EventAttendancePage = memo(() => {
         text: err.message || 'Failed to record Time In. Please try again.'
       });
     }
-  }, [events, refreshEvents]);
+  }, [events, refreshEvents, timeIn]);
 
   const handleTimeOut = useCallback(async (eventId) => {
     const event = events.find(e => e._id === eventId);
@@ -295,7 +292,7 @@ const EventAttendancePage = memo(() => {
         text: err.message || 'Failed to record Time Out. Please try again.'
       });
     }
-  }, [events, user._id, refreshEvents]);
+  }, [events, user._id, refreshEvents, timeOut]);
 
   // PDF Download Handler (Admin/Staff only)
   const handleDownloadPDF = useCallback(async () => {
@@ -335,8 +332,7 @@ const EventAttendancePage = memo(() => {
       (event.location && event.location.toLowerCase().includes(search.toLowerCase()));
     
     // Status filter
-    const status = getEventStatus(event);
-    const matchesStatus = filter === 'all' || filter === status;
+    const matchesStatus = filter === 'all' || filter === getEventStatus(event);
     
     // Department restriction filter (only for students)
     let matchesDepartment = true;
@@ -528,7 +524,6 @@ const EventAttendancePage = memo(() => {
           <div className="events-grid">
             {filteredEvents.map(event => {
               const att = event.attendance?.find(a => (a.userId === user._id || (a.userId && a.userId._id === user._id)));
-              const status = getEventStatus(event);
               const isJoined = joinedEvents.includes(event._id);
 
               // Calculate available slots and status
@@ -655,14 +650,14 @@ const EventAttendancePage = memo(() => {
                             <button 
                               className={`action-btn ${att && att.timeOut ? 'success-btn disabled' : 'info-btn'}`}
                               onClick={() => handleTimeOut(event._id)} 
-                              disabled={att && !att.timeIn || (att && att.timeOut)}
+                              disabled={(att && !att.timeIn) || (att && att.timeOut)}
                             >
                               {att && att.timeOut ? '✓ Time Out Recorded' : 'Time Out'}
                             </button>
                           </div>
 
                           {/* Time Display */}
-                          {(att && (att.timeIn || att.timeOut)) && (
+                          {((att && att.timeIn) || (att && att.timeOut)) && (
                             <div className="time-display">
                               {att.timeIn && (
                                 <div className="time-item">

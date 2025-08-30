@@ -16,10 +16,8 @@ function NavigationBar() {
 
   const [user, setUser] = useState(getUserFromStorage());
   const [role, setRole] = useState(getUserFromStorage()?.role || localStorage.getItem('role'));
-  const [schoolSettings, setSchoolSettings] = useState({
-    brandName: 'CHARISM',
-    logo: null
-  });
+  const [schoolSettings, setSchoolSettings] = useState({});
+
   const navigate = useNavigate();
   const location = useLocation();
 

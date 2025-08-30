@@ -2,9 +2,9 @@
 // Modern Blue Theme Settings Page Design
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button, Alert, Card, Spinner } from 'react-bootstrap';
-import { FaUser, FaSave, FaTimes, FaEye, FaEyeSlash, FaCamera, FaTrash, FaEnvelope, FaIdCard, FaGraduationCap, FaBuilding, FaCalendar, FaUserTie, FaSpinner, FaCheckCircle, FaExclamationTriangle, FaCog, FaUserGraduate } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { FaUser, FaSave, FaTimes, FaEye, FaEyeSlash, FaCamera, FaTrash, FaEnvelope, FaIdCard, FaGraduationCap, FaBuilding, FaCalendar, FaUserTie, FaSpinner, FaCheckCircle, FaCog, FaUserGraduate, FaExclamationTriangle } from 'react-icons/fa';
+
 import { updateUserProfile, getUserProfile, uploadProfilePicture, deleteProfilePicture, getPublicSettings } from '../api/api';
 import Swal from 'sweetalert2';
 import './SettingsPage.css';
@@ -189,7 +189,7 @@ function SettingsPage() {
     setSaving(true);
     
     try {
-      const result = await updateUserProfile(profile);
+      await updateUserProfile(profile);
       
       // Apply temporary profile picture changes if any
       if (tempProfilePicture !== profilePicture) {

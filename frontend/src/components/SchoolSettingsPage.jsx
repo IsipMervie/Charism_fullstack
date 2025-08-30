@@ -18,8 +18,9 @@ function SchoolSettingsPage() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ function SchoolSettingsPage() {
 
   useEffect(() => {
     fetchSettings();
-  }, []);
+  }, [fetchSettings]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

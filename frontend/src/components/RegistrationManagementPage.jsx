@@ -77,7 +77,7 @@ function RegistrationManagementPage() {
     }
     
     fetchSettings();
-  }, []);
+  }, [fetchSettings]);
 
   const fetchSettings = async () => {
     setLoading(true);

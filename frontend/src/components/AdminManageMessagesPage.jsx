@@ -73,10 +73,7 @@ function AdminManageMessagesPage() {
     return () => clearTimeout(delayDebounceFn);
   }, [search]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // Search is now handled automatically via onChange
-  };
+
 
   const handleMarkAsRead = async (id) => {
     try {

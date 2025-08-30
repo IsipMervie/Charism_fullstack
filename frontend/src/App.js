@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
 // Components
@@ -45,6 +45,7 @@ import PublicEventRegistrationPage from './components/PublicEventRegistrationPag
 import FeedbackPage from './components/FeedbackPage';
 import AdminManageFeedbackPage from './components/AdminManageFeedbackPage';
 import NotFoundPage from './components/NotFoundPage';
+import TestPage from './components/TestPage';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
+        <Route path="/test" element={<TestPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />

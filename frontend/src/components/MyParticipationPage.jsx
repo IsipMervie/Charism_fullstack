@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { getEvents } from '../api/api';
 import { 
-  FaCalendarAlt, FaClock, FaTrophy, FaDownload, FaSpinner, 
-  FaCheckCircle, FaExclamationTriangle, FaTimes, FaUserGraduate,
-  FaChartLine, FaAward, FaCalendar, FaMapMarkerAlt, FaUsers
+  FaCalendarAlt, FaClock, FaTrophy, FaSpinner, 
+  FaCheckCircle, FaTimes, FaUserGraduate,
+  FaAward, FaCalendar, FaMapMarkerAlt, FaExclamationTriangle, FaDownload, FaChartLine
 } from 'react-icons/fa';
 import './MyParticipationPage.css';
 

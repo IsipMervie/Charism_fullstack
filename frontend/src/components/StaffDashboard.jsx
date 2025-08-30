@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  FaCalendarAlt, FaUsers, FaChartLine, FaCog, FaUserTie, 
-  FaClock, FaCheckCircle, FaSpinner, FaExclamationTriangle, 
-  FaBuilding, FaGraduationCap, FaBell, FaTrophy, FaEdit, FaFile
+  FaCalendarAlt, FaUsers, FaCog, FaUserTie, 
+  FaClock, FaCheckCircle, FaSpinner, 
+  FaBuilding, FaGraduationCap, FaEdit, FaFile
 } from 'react-icons/fa';
 import { getEvents, getUserProfile } from '../api/api';
 import { axiosInstance } from '../api/api';
-import { getSchoolSettings } from '../api/api';
+
 import { getLogoUrl } from '../utils/imageUtils';
 
 import './StaffDashboard.css';
@@ -33,6 +33,7 @@ function StaffDashboard() {
   const [school, setSchool] = useState(null);
   const [schoolLoading, setSchoolLoading] = useState(true);
   const [schoolError, setSchoolError] = useState('');
+
 
 
   useEffect(() => {

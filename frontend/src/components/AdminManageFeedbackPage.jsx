@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, Button, Modal, Form, Badge, Pagination, Alert, Spinner } from 'react-bootstrap';
-import { FaComments, FaEye, FaReply, FaTrash, FaUser, FaEnvelope, FaCalendar, FaTag, FaExclamationTriangle, FaSpinner, FaTimes, FaCheck } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Pagination } from 'react-bootstrap';
+import { FaComments, FaEye, FaReply, FaTrash, FaUser, FaCalendar, FaTag, FaSpinner, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { axiosInstance } from '../api/api';
 import Swal from 'sweetalert2';
 import './AdminManageFeedbackPage.css';
@@ -130,15 +130,7 @@ function AdminManageFeedbackPage() {
     }));
   };
 
-  const clearFilters = () => {
-    setFilters({
-      search: ''
-    });
-    setPagination(prev => ({ 
-      ...prev, 
-      currentPage: 1
-    }));
-  };
+
 
   const toggleExpanded = (feedbackId) => {
     setExpandedFeedback(prev => {
@@ -259,18 +251,7 @@ function AdminManageFeedbackPage() {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'warning';
-      case 'working-on-it':
-        return 'info';
-      case 'resolve':
-        return 'success';
-      default:
-        return 'secondary';
-    }
-  };
+
 
   if (loading && safeFeedback.length === 0) {
     return (

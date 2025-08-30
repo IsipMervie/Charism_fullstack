@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Spinner, Alert, Form, InputGroup, Modal, Table, Row, Col } from 'react-bootstrap';
-import { FaFile, FaDownload, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaGraduationCap, FaBuilding, FaIdCard, FaSpinner, FaList } from 'react-icons/fa';
+import { Badge, Modal, Table, Button } from 'react-bootstrap';
+import { FaFile, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaSpinner, FaList, FaBuilding, FaDownload } from 'react-icons/fa';
 import { getEvents, downloadDocumentationFile } from '../api/api';
 import Swal from 'sweetalert2';
 import './AdminViewStudentDocumentation.css';

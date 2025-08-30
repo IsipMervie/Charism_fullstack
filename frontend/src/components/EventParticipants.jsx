@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getEventParticipants, approveAttendance, disapproveAttendance } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaCheck, FaTimes, FaDownload, FaEye } from 'react-icons/fa';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 import './EventParticipantsPage.css';
 
 function EventParticipantsPage() {

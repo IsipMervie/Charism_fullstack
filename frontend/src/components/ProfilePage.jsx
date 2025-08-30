@@ -4,8 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FaUser, FaEnvelope, FaUserTie, FaIdCard, FaGraduationCap, 
-  FaBuilding, FaCalendar, FaEdit, FaCrown, FaUserGraduate,
-  FaSpinner, FaCheckCircle, FaExclamationTriangle, FaUsers
+  FaBuilding, FaCalendar, FaCrown, FaUserGraduate,
+  FaSpinner, FaCheckCircle, FaUsers
 } from 'react-icons/fa';
 import { axiosInstance } from '../api/api';
 import { getProfilePictureUrl as getImageUrl } from '../utils/imageUtils';
@@ -167,14 +167,14 @@ function ProfilePage() {
     const handleProfilePictureChange = (event) => {
       const { profilePicture } = event.detail;
       if (profilePicture) {
-        const fullUrl = getProfilePictureUrl(profilePicture, user._id);
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const fullUrl = getProfilePictureUrl(profilePicture, currentUser._id);
         console.log('ProfilePage - Profile picture changed event received:', fullUrl);
         setProfilePictureUrl(fullUrl);
         
         // Update localStorage user object
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        user.profilePicture = profilePicture;
-        localStorage.setItem('user', JSON.stringify(user));
+        currentUser.profilePicture = profilePicture;
+        localStorage.setItem('user', JSON.stringify(currentUser));
       }
     };
     
@@ -224,27 +224,9 @@ function ProfilePage() {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [checkProfileSync, loadProfileData]);
 
-  // Handle profile picture changes
-  const handleProfilePictureChange = (newProfilePicture) => {
-    if (newProfilePicture) {
-              const fullUrl = getProfilePictureUrl(newProfilePicture, user._id);
-      console.log('ProfilePage - Profile picture changed, updating to:', fullUrl);
-      setProfilePictureUrl(fullUrl);
-      
-      // Update localStorage user object
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      user.profilePicture = newProfilePicture;
-      localStorage.setItem('user', JSON.stringify(user));
-      
-      // Force a re-render by updating the state
-      setProfilePictureUrl(''); // Clear first
-      setTimeout(() => {
-        setProfilePictureUrl(fullUrl); // Set again
-      }, 100);
-    }
-  };
+
 
   // Get profile picture fallback
   const getProfilePictureFallback = () => {
@@ -322,7 +304,7 @@ function ProfilePage() {
               {profilePictureUrl ? (
                 <img 
                   src={profilePictureUrl} 
-                  alt="Profile Picture" 
+                  alt="Profile" 
                   className="profile-picture"
                   onError={(e) => {
                     console.error('Profile picture failed to load:', e.target.src);

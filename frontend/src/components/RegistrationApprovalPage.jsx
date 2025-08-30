@@ -1,9 +1,9 @@
 // Redesigned Registration Approval Page - Super User Friendly
 
 import React, { useState, useEffect } from 'react';
-import { getPendingRegistrations, approveRegistration, disapproveRegistration, getAllEventRegistrations, getEvents } from '../api/api';
+import { approveRegistration, disapproveRegistration, getAllEventRegistrations, getEvents } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaSync, FaEye, FaCheck, FaTimes, FaClock, FaUserGraduate, FaBuilding, FaExclamationTriangle, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
+import { FaSync, FaEye, FaCheck, FaTimes, FaClock, FaUserGraduate, FaBuilding, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 import './RegistrationApprovalPage.css';
 
 function RegistrationApprovalPage() {
@@ -24,7 +24,7 @@ function RegistrationApprovalPage() {
 
   useEffect(() => {
     filterEvents();
-  }, [eventSearchTerm, events]);
+  }, [eventSearchTerm, events, filterEvents]);
 
   const loadEvents = async () => {
     setLoading(true);

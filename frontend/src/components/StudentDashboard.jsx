@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
-  FaCalendarAlt, FaChartLine, FaUser, FaCog, FaGraduationCap, 
+  FaCalendarAlt, FaUser, FaCog, FaGraduationCap, 
   FaClock, FaTrophy, FaSpinner, FaCheckCircle, 
-  FaExclamationTriangle, FaUserGraduate, FaCalendar
+  FaUserGraduate, FaCalendar, FaChartLine
 } from 'react-icons/fa';
 import { getEvents, getUserProfile } from '../api/api';
 import { axiosInstance } from '../api/api';
-import { getSchoolSettings } from '../api/api';
+
 import { getLogoUrl } from '../utils/imageUtils';
 import './StudentDashboard.css';
 
@@ -31,8 +31,9 @@ function StudentDashboard() {
 
   const [school, setSchool] = useState(null);
   const [schoolLoading, setSchoolLoading] = useState(true);
-  const [schoolError, setSchoolError] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
+  const [schoolError, setSchoolError] = useState('');
+
 
   useEffect(() => {
     setIsVisible(true);
@@ -125,9 +126,7 @@ function StudentDashboard() {
     fetchSchool();
   }, []);
 
-  const isActiveRoute = (path) => {
-    return location.pathname === path;
-  };
+
 
   const getProgressPercentage = () => {
     const targetHours = 40;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Form, Alert, Spinner, Badge } from 'react-bootstrap';
-import { FaComment, FaPaperPlane, FaCheckCircle, FaExclamationTriangle, FaLightbulb, FaBug, FaStar } from 'react-icons/fa';
+import { FaComment, FaPaperPlane, FaLightbulb, FaBug, FaStar, FaExclamationTriangle } from 'react-icons/fa';
 import { submitFeedback, getUserFeedback } from '../api/api';
 import Swal from 'sweetalert2';
 import './FeedbackPage.css';
@@ -33,7 +33,7 @@ const FeedbackPage = () => {
     } else {
       setLoadingHistory(false);
     }
-  }, [user._id]);
+  }, [user._id, user.email, user.firstName, user.lastName, fetchUserFeedback]);
 
   const fetchUserFeedback = async () => {
     try {

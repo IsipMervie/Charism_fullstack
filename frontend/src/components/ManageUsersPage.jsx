@@ -2,9 +2,9 @@
 // Fresh Simple but Creative Manage Users Page Design
 
 import React, { useEffect, useState } from 'react';
-import { Container, Button, Form, Spinner, Alert, Modal, Row, Col, Card, Badge } from 'react-bootstrap';
+import { Form, Spinner, Alert, Modal, Badge, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { FaUsers, FaEdit, FaTrash, FaFilter, FaSort, FaUser, FaEnvelope, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaBell, FaEye, FaCrown, FaUserTie, FaUserGraduate, FaImage, FaTimes } from 'react-icons/fa';
+import { FaUsers, FaUser, FaEnvelope, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaCrown, FaUserTie, FaUserGraduate } from 'react-icons/fa';
 import {
   getUsers, updateUser, deleteUser
 } from '../api/api';
@@ -51,7 +51,7 @@ function ManageUsersPage() {
 
   useEffect(() => {
     fetchUsers();
-  }, [roleFilter]);
+  }, [roleFilter, fetchUsers]);
 
   // Search handler
   const handleSearch = (e) => {
@@ -63,12 +63,7 @@ function ManageUsersPage() {
     setRoleFilter(e.target.value);
   };
 
-  // Clear all filters
-  const clearAllFilters = () => {
-    setSearch('');
-    setRoleFilter('');
-    setPage(1);
-  };
+
 
   // Search on enter or button
   const handleSearchSubmit = (e) => {

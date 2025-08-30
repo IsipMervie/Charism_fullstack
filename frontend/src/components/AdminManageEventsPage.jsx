@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaPlus, FaSpinner, FaEyeSlash, FaShare } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaSpinner, FaEyeSlash, FaShare } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import './AdminManageEventsPage.css';
@@ -333,75 +333,7 @@ function AdminManageEventsPage() {
     });
   };
 
-  const handleViewAttachments = async (eventId) => {
-    try {
-      const attachmentsData = await getAllEventAttachments(eventId);
-      
-      if (!attachmentsData.attachments || attachmentsData.attachments.length === 0) {
-        Swal.fire({
-          icon: 'info',
-          title: 'No Attachments',
-          text: 'No students have submitted attachments for this event yet.'
-        });
-        return;
-      }
 
-      // Create a detailed view of all attachments
-      let attachmentsHtml = `
-        <div style="text-align: left; max-height: 400px; overflow-y: auto;">
-          <h4 style="color: #2c3e50; margin-bottom: 15px;">${attachmentsData.eventTitle}</h4>
-          <p style="color: #7f8c8d; margin-bottom: 20px;">Total Attachments: ${attachmentsData.totalAttachments}</p>
-      `;
-
-      attachmentsData.attachments.forEach((attachment, index) => {
-        const student = attachment.userId;
-        attachmentsHtml += `
-          <div style="border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px; background-color: #f8f9fa;">
-            <h5 style="color: #495057; margin: 0 0 10px 0;">${index + 1}. ${student.name}</h5>
-            <p style="color: #6c757d; margin: 5px 0; font-size: 14px;">
-              <strong>Department:</strong> ${student.department} • <strong>Year:</strong> ${student.year} • <strong>Section:</strong> ${student.section}
-            </p>
-            <p style="color: #6c757d; margin: 5px 0; font-size: 14px;">
-              <strong>Status:</strong> ${attachment.status} • <strong>Approved:</strong> ${attachment.registrationApproved ? 'Yes' : 'No'}
-            </p>
-        `;
-
-        if (attachment.attachment && attachment.attachment.trim() !== '') {
-          attachmentsHtml += `
-            <div style="margin: 10px 0; padding: 10px; background-color: white; border-radius: 4px; border-left: 4px solid #28a745;">
-              <strong style="color: #495057;">Attachment:</strong>
-              <p style="margin: 5px 0 0 0; color: #212529;">📎 ${attachment.attachment}</p>
-            </div>
-          `;
-        }
-
-        attachmentsHtml += `
-            <p style="color: #6c757d; margin: 10px 0 0 0; font-size: 12px;">
-              <strong>Uploaded:</strong> ${new Date(attachment.uploadedAt).toLocaleDateString()}
-            </p>
-          </div>
-        `;
-      });
-
-      attachmentsHtml += '</div>';
-
-      Swal.fire({
-        title: 'Student Attachments',
-        html: attachmentsHtml,
-        width: '800px',
-        confirmButtonText: 'Close',
-        showCloseButton: true
-      });
-
-    } catch (err) {
-      console.error('Error fetching attachments:', err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to fetch student attachments. Please try again.'
-      });
-    }
-  };
 
   // Helper function to determine event status
   const getEventStatus = (event) => {
@@ -624,7 +556,7 @@ function AdminManageEventsPage() {
                   const approvedAttendanceCount = Array.isArray(event.attendance) ? 
                     event.attendance.filter(a => a.registrationApproved === true).length : 0;
 
-                  const totalAttendanceCount = Array.isArray(event.attendance) ? event.attendance.length : 0;
+
                   const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';
 
                   return (

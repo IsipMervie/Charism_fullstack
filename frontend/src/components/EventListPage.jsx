@@ -2,10 +2,10 @@
 // Simple but Creative Event List Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getEvents, getEventDetails, approveAttendance, disapproveAttendance, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
+import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaDownload, FaEye, FaCheck, FaTimes, FaArrowLeft } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaCheck, FaTimes, FaArrowLeft, FaDownload } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import './EventListPage.css';
@@ -17,12 +17,7 @@ function EventListPage() {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showEventModal, setShowEventModal] = useState(false);
-  const [showAttendanceModal, setShowAttendanceModal] = useState(false);
-  const [selectedEventForAttendance, setSelectedEventForAttendance] = useState(null);
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [loadingAttendance, setLoadingAttendance] = useState(false);
+
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -132,10 +127,7 @@ function EventListPage() {
     }
   }, [events, filterOptions.departments.length]);
 
-  // Modal state change logging
-  useEffect(() => {
-    console.log('🔍 Modal state changed:', { showEventModal, showAttendanceModal });
-  }, [showEventModal, showAttendanceModal]);
+
 
 
 
@@ -297,15 +289,14 @@ function EventListPage() {
 
   useEffect(() => {
     refreshEvents();
-    // eslint-disable-next-line
-  }, []); // Removed role dependency since it's not a state variable
+    fetchFilterOptions();
+  }, [refreshEvents, fetchFilterOptions]);
 
   const handleJoin = async (eventId) => {
     const event = events.find(e => e._id === eventId);
     if (!event) return;
 
     const eventDate = new Date(event.date);
-    const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
     const eventDateTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
     const now = new Date();
 
@@ -382,7 +373,6 @@ function EventListPage() {
     if (!event) return;
 
     const eventDate = new Date(event.date);
-    const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
     const eventDateTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
     const now = new Date();
 
@@ -672,8 +662,7 @@ function EventListPage() {
       (event.location && event.location.toLowerCase().includes(searchTerm.toLowerCase()));
     
     // Status filter
-    const status = getEventStatus(event);
-    const matchesStatus = filter === 'all' || filter === status;
+    const matchesStatus = filter === 'all' || filter === getEventStatus(event);
     
     // Department restriction filter (only for students)
     let matchesDepartment = true;
@@ -803,7 +792,7 @@ function EventListPage() {
               >
                 {/* <FaDownload className="download-icon" /> */}
                 Download Event List PDF
-                {!events || events.length === 0 && <span className="disabled-hint"> (No Events)</span>}
+                {(!events || events.length === 0) && <span className="disabled-hint"> (No Events)</span>}
               </button>
               
               {/* PDF Info Badge */}
@@ -815,7 +804,7 @@ function EventListPage() {
             </div>
             
             {/* Status Messages */}
-            {!events || events.length === 0 && (
+            {(!events || events.length === 0) && (
               <p className="pdf-disabled-hint">
                 PDF generation is disabled because there are no events available.
               </p>
@@ -950,7 +939,6 @@ function EventListPage() {
                 });
                 
                 console.log(`🔍 Event ${event.title}: User ID ${userId}, Found attendance:`, att);
-                const status = getEventStatus(event);
                 const isJoined = // setJoinedEvents(joined); // Removed as per edit hint
                   event.attendance && 
                   event.attendance.some(a => {
@@ -1110,7 +1098,7 @@ function EventListPage() {
                             )}
 
                             {/* Only show time buttons if registration is approved or no approval required */}
-                            {(att.registrationApproved || !event.requiresApproval) && att.status !== 'Disapproved' && (
+                            {((att.registrationApproved || !event.requiresApproval) && att.status !== 'Disapproved') && (
                               <div className="time-buttons">
                                 <button 
                                   className={`action-button time-in-button ${att && att.timeIn ? 'success-button disabled' : 'warning-button'}`}
@@ -1123,7 +1111,7 @@ function EventListPage() {
                                 <button 
                                   className={`action-button time-out-button ${att && att.timeOut ? 'success-button disabled' : 'info-button'}`}
                                   onClick={() => handleTimeOut(event._id)} 
-                                  disabled={att && !att.timeIn || (att && att.timeOut)}
+                                  disabled={(att && !att.timeIn) || (att && att.timeOut)}
                                 >
                                   {att && att.timeOut ? 'Time Out Recorded' : 'Time Out'}
                                 </button>
@@ -1131,7 +1119,7 @@ function EventListPage() {
                             )}
 
                             {/* Time Display */}
-                            {(att && (att.timeIn || att.timeOut)) && (
+                            {((att && att.timeIn) || (att && att.timeOut)) && (
                               <div className="time-display">
                                 {att.timeIn && (
                                   <div className="time-item">

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaDownload, FaEye, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 
 import './EventDetailsPage.css';
@@ -16,7 +16,7 @@ function EventDetailsPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
-  const [downloading, setDownloading] = useState(false);
+
   const navigate = useNavigate();
   
   // Get user info safely
@@ -38,7 +38,7 @@ function EventDetailsPage() {
   };
   
   const role = getRole();
-  const user = getUser();
+
   const isAuthenticated = !!localStorage.getItem('token');
   
   useEffect(() => {
@@ -182,16 +182,10 @@ function EventDetailsPage() {
   if (error) return null;
   if (!event) return null;
 
-  // Calculate available slots and isAvailable
+  // Calculate available slots
   const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
   const attendanceCount = Array.isArray(event.attendance) ? event.attendance.length : 0;
   const availableSlots = maxParticipants > 0 ? maxParticipants - attendanceCount : 0;
-  const isAvailable = event.status === 'Active' && availableSlots > 0;
-
-  // Filter attended participants
-  const attendedParticipants = event.attendance?.filter(a => 
-    a.status === 'Approved' || a.status === 'Attended'
-  ) || [];
 
   return (
     <div className="event-details-page">

@@ -19,7 +19,7 @@ function PublicEventRegistrationPage() {
   useEffect(() => {
     checkAuthStatus();
     fetchEventDetails();
-  }, [token]);
+  }, [token, checkAuthStatus, fetchEventDetails]);
 
   const checkAuthStatus = () => {
     const token = localStorage.getItem('token');
@@ -35,7 +35,6 @@ function PublicEventRegistrationPage() {
       
       // Check if user is already registered (if logged in)
       if (isLoggedIn) {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
         const isUserRegistered = eventData.currentParticipants > 0; // This is a simplified check
         setIsRegistered(isUserRegistered);
       }

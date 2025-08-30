@@ -2,7 +2,7 @@
 // Modern Redesigned Create Event Page with Responsive Design
 
 import React, { useState, useEffect } from 'react';
-import { Container, Form, Button, Spinner, Row, Col, Card, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Spinner, Row, Col, Card } from 'react-bootstrap';
 import { createEvent, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';

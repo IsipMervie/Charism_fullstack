@@ -4,7 +4,7 @@ import {
   getDepartmentStatistics,
   getYearlyStatistics,
 } from '../api/api';
-import { Container, Card, Row, Col, Spinner, Alert, Form, Nav } from 'react-bootstrap';
+import { Container, Card, Row, Col, Form, Nav } from 'react-bootstrap';
 import {
   Chart as ChartJS,
   CategoryScale,
