@@ -1,12 +1,11 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const cloudinary = require('../config/cloudinary');
 
-// Configure storage for temporary file uploads (will be deleted after Cloudinary upload)
+// Configure storage for local file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'uploads/temp';
+    const uploadDir = 'uploads/profile-pictures';
     
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
@@ -18,7 +17,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     // Generate unique filename with timestamp and original extension
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const fileExtension = path.extname(file.originalname);
+    const fileExtension = path.extname(file.originalname).toLowerCase(); // Ensure lowercase extension
     const fileName = `profile-${uniqueSuffix}${fileExtension}`;
     cb(null, fileName);
   }
@@ -52,44 +51,6 @@ const uploadProfilePicture = multer({
   }
 });
 
-// Helper function to upload to Cloudinary
-const uploadToCloudinary = async (filePath, folder = 'profile-pictures') => {
-  try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: folder,
-      resource_type: 'auto'
-    });
-    
-    // Delete temporary file after upload
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-    
-    return {
-      url: result.secure_url,
-      publicId: result.public_id,
-      filename: result.original_filename
-    };
-  } catch (error) {
-    console.error('Cloudinary upload error:', error);
-    throw new Error('Failed to upload image to Cloudinary');
-  }
-};
-
-// Helper function to delete file from Cloudinary
-const deleteFromCloudinary = async (publicId) => {
-  try {
-    if (publicId) {
-      await cloudinary.uploader.destroy(publicId);
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('Cloudinary delete error:', error);
-    return false;
-  }
-};
-
 // Helper function to get file info
 const getFileInfo = (file) => {
   return {
@@ -101,16 +62,30 @@ const getFileInfo = (file) => {
   };
 };
 
-// Helper function to get profile picture URL (now returns Cloudinary URL)
-const getProfilePictureUrl = (cloudinaryUrl) => {
-  if (!cloudinaryUrl) return null;
-  return cloudinaryUrl; // Cloudinary URL is already complete
+// Helper function to get profile picture URL (now returns local file path)
+const getProfilePictureUrl = (filename) => {
+  if (!filename) return null;
+  // Return relative path that will be served by the static middleware
+  return `/uploads/profile-pictures/${filename}`;
+};
+
+// Helper function to delete local file
+const deleteLocalFile = async (filePath) => {
+  try {
+    if (filePath && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Local file delete error:', error);
+    return false;
+  }
 };
 
 module.exports = {
   uploadProfilePicture,
-  uploadToCloudinary,
-  deleteFromCloudinary,
   getFileInfo,
+  deleteLocalFile,
   getProfilePictureUrl
 };

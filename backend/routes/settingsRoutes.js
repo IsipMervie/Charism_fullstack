@@ -15,8 +15,8 @@ router.get(
   settingsController.getPublicSchoolSettings
 );
 
-// Multer setup for logo uploads
-const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
+// Multer setup for logo uploads using local storage
+const { uploadLogo } = require('../utils/localFileStorage');
 
 // Get school settings (Admin only)
 router.get(
@@ -45,7 +45,7 @@ router.post(
   '/school',
   authMiddleware,
   roleMiddleware('Admin'),
-  upload.single('logo'),
+  uploadLogo.single('logo'),
   settingsController.updateSchoolSettings
 );
 

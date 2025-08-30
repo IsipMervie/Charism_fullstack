@@ -43,8 +43,7 @@ const eventSchema = new mongoose.Schema({
   department: { type: String }, // Single department for backward compatibility
   departments: [{ type: String }], // New field for multiple departments
   isForAllDepartments: { type: Boolean, default: false }, // New field to indicate if event is for all departments
-  image: { type: String }, // event image URL from Cloudinary
-  imagePublicId: { type: String }, // Cloudinary public ID for deletion
+  image: { type: String }, // event image filename for local storage
   status: { type: String, enum: ['Active', 'Completed', 'Cancelled', 'Disabled'], default: 'Active' },
   isVisibleToStudents: { type: Boolean, default: true }, // New field to control visibility to students
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

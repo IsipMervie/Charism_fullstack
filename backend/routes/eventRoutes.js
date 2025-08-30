@@ -1,81 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-
 const eventController = require('../controllers/eventController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
+const { uploadEventImage } = require('../utils/localFileStorage');
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
-// File upload configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
-});
-
-// Enhanced multer config with file filtering
-const upload = multer({ 
-  storage: storage,
-  limits: { 
-    fileSize: 50 * 1024 * 1024, // 50MB limit
-    files: 1 // Only allow 1 file
-  },
-  fileFilter: (req, file, cb) => {
-    // Allow all file types for reflections (users can upload various document types)
-    // This is more permissive than the frontend accept attribute
-    cb(null, true);
-  }
-});
-
-// Enhanced error handling
-const handleMulterError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    switch (err.code) {
-      case 'LIMIT_FILE_SIZE':
-        return res.status(413).json({ 
-          message: 'File is too large. Maximum size is 50MB.',
-          error: 'FILE_TOO_LARGE'
-        });
-      case 'LIMIT_FILE_COUNT':
-        return res.status(400).json({ 
-          message: 'Too many files. Only one file is allowed.',
-          error: 'TOO_MANY_FILES'
-        });
-      case 'LIMIT_UNEXPECTED_FILE':
-        return res.status(400).json({ 
-          message: 'Unexpected file field.',
-          error: 'UNEXPECTED_FILE'
-        });
-      default:
-        return res.status(400).json({ 
-          message: `Upload error: ${err.message}`,
-          error: 'UPLOAD_ERROR'
-        });
-    }
-  }
-  
-  // Handle other file-related errors
-  if (err.code === 'ENOSPC') {
-    return res.status(507).json({ 
-      message: 'Server storage is full. Please try again later.',
-      error: 'STORAGE_FULL'
-    });
-  }
-  
-  next(err);
-};
 
 // =======================
 // Public Routes
@@ -145,7 +75,7 @@ router.post(
   '/',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
-  upload.single('image'),
+  uploadEventImage.single('image'),
   eventController.createEvent
 );
 
@@ -180,7 +110,7 @@ router.put(
   '/:eventId',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
-  upload.single('image'),
+  uploadEventImage.single('image'),
   eventController.updateEvent
 );
 

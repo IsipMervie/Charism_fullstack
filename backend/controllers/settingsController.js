@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Section = require('../models/Section');
 const YearLevel = require('../models/YearLevel');
 const Department = require('../models/Department');
-const { uploadToCloudinary, deleteFromCloudinary } = require('../utils/fileUpload');
+const { moveToPermanentLocation, deleteLocalFile } = require('../utils/fileUpload');
 
 // Get school settings (Admin only)
 exports.getSchoolSettings = async (req, res) => {
@@ -24,7 +24,7 @@ exports.getSchoolSettings = async (req, res) => {
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
     if (settings.logo) {
-      settingsWithUrl.logoUrl = settings.logo; // Cloudinary URL is already complete
+      settingsWithUrl.logoUrl = `/uploads/logos/${settings.logo}`;
     }
     res.json(settingsWithUrl);
   } catch (err) {
@@ -44,17 +44,17 @@ exports.updateSchoolSettings = async (req, res) => {
     if (contactEmail) settings.contactEmail = contactEmail;
     if (brandName) settings.brandName = brandName;
     if (req.file) {
-      // Delete old logo from Cloudinary if it exists
-      if (settings.logoPublicId) {
-        await deleteFromCloudinary(settings.logoPublicId);
+      // Delete old logo from local storage if it exists
+      if (settings.logo) {
+        const oldLogoPath = path.join(__dirname, '..', 'uploads', 'logos', settings.logo);
+        await deleteLocalFile(oldLogoPath);
       }
       
-      // Upload new logo to Cloudinary
-      const cloudinaryResult = await uploadToCloudinary(req.file.path, 'logos');
+      // Move new logo to permanent location
+      const logoResult = await moveToPermanentLocation(req.file.path, 'logos', req.file.filename);
       
       // Update settings with new logo info
-      settings.logo = cloudinaryResult.url;
-      settings.logoPublicId = cloudinaryResult.publicId;
+      settings.logo = logoResult.filename;
     }
     
     await settings.save();
@@ -62,7 +62,7 @@ exports.updateSchoolSettings = async (req, res) => {
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
     if (settings.logo) {
-      settingsWithUrl.logoUrl = settings.logo; // Cloudinary URL is already complete
+      settingsWithUrl.logoUrl = `/uploads/logos/${settings.logo}`;
     }
     res.json({ message: 'School settings updated', settings: settingsWithUrl });
   } catch (err) {
@@ -89,7 +89,7 @@ exports.getPublicSchoolSettings = async (req, res) => {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
       logo: settings.logo,
-      logoUrl: settings.logo || null, // Cloudinary URL is already complete
+      logoUrl: settings.logo ? `/uploads/logos/${settings.logo}` : null,
       contactEmail: settings.contactEmail
     });
   } catch (err) {

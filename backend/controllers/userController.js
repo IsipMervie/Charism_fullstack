@@ -1,7 +1,7 @@
 // backend/controllers/userController.js
 
 const User = require('../models/User');
-const { uploadProfilePicture, uploadToCloudinary, deleteFromCloudinary, getProfilePictureUrl } = require('../utils/profilePictureUpload');
+const { uploadProfilePicture, deleteLocalFile, getProfilePictureUrl } = require('../utils/profilePictureUpload');
 
 // Get all users (Admin only, with optional search/filter)
 exports.getUsers = async (req, res) => {
@@ -92,23 +92,21 @@ exports.uploadProfilePicture = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this profile' });
     }
 
-    // Delete old profile picture from Cloudinary if it exists
-    if (user.profilePicture && user.profilePicturePublicId) {
-      await deleteFromCloudinary(user.profilePicturePublicId);
+    // Delete old profile picture from local storage if it exists
+    if (user.profilePicture) {
+      const oldImagePath = path.join(__dirname, '..', 'uploads', 'profile-pictures', user.profilePicture);
+      await deleteLocalFile(oldImagePath);
     }
 
-    // Upload new profile picture to Cloudinary
-    const cloudinaryResult = await uploadToCloudinary(req.file.path, 'profile-pictures');
-    
+    // File is already uploaded to local storage by multer
     // Update user with new profile picture info
-    user.profilePicture = cloudinaryResult.url;
-    user.profilePicturePublicId = cloudinaryResult.publicId;
+    user.profilePicture = req.file.filename;
     await user.save();
 
     res.status(200).json({
       message: 'Profile picture uploaded successfully',
-      profilePicture: cloudinaryResult.url,
-      profilePictureUrl: cloudinaryResult.url
+      profilePicture: req.file.filename,
+      profilePictureUrl: `/uploads/profile-pictures/${req.file.filename}`
     });
   } catch (err) {
     res.status(500).json({ message: 'Error uploading profile picture', error: err.message });
@@ -130,13 +128,13 @@ exports.deleteProfilePicture = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this profile' });
     }
 
-    if (user.profilePicture && user.profilePicturePublicId) {
-      // Delete from Cloudinary
-      await deleteFromCloudinary(user.profilePicturePublicId);
+    if (user.profilePicture) {
+      // Delete from local storage
+      const imagePath = path.join(__dirname, '..', 'uploads', 'profile-pictures', user.profilePicture);
+      await deleteLocalFile(imagePath);
       
       // Remove from user document
       user.profilePicture = undefined;
-      user.profilePicturePublicId = undefined;
       await user.save();
 
       res.status(200).json({ message: 'Profile picture deleted successfully' });

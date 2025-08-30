@@ -33,9 +33,7 @@ BCRYPT_ROUNDS=12
 CORS_ORIGINS=https://charism.vercel.app,https://communitylink.vercel.app
 
 # Optional: External Services
-CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_cloudinary_key
-CLOUDINARY_API_SECRET=your_cloudinary_secret
+# Cloudinary removed - using local file storage instead
 
 # Important Production Notes:
 # 1. Set NODE_ENV=production

@@ -4,7 +4,8 @@ const Event = require('../models/Event');
 const User = require('../models/User');
 const fs = require('fs');
 const path = require('path');
-const { getFileInfo, uploadToCloudinary, deleteFromCloudinary } = require('../utils/fileUpload');
+const { getFileInfo, moveToPermanentLocation, deleteLocalFile } = require('../utils/fileUpload');
+const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator');
 
 
 
@@ -67,10 +68,10 @@ exports.getAllEvents = async (req, res) => {
     const eventsWithUrls = events.map(event => {
       const eventObj = event.toObject();
       if (event.publicRegistrationToken) {
-        eventObj.publicRegistrationUrl = `${process.env.FRONTEND_URL}/events/register/${event.publicRegistrationToken}`;
+        eventObj.publicRegistrationUrl = generateEventRegistrationLink(event.publicRegistrationToken);
       }
       if (event.image) {
-        eventObj.imageUrl = event.image; // Cloudinary URL is already complete
+        eventObj.imageUrl = `/uploads/event-images/${event.image}`;
       }
       return eventObj;
     });
@@ -155,10 +156,10 @@ exports.getEventDetails = async (req, res) => {
         requiresApproval: event.requiresApproval,
         isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,
         publicRegistrationToken: event.publicRegistrationToken,
-        publicRegistrationUrl: event.publicRegistrationToken ? `${process.env.FRONTEND_URL}/events/register/${event.publicRegistrationToken}` : null,
+        publicRegistrationUrl: event.publicRegistrationToken ? generateEventRegistrationLink(event.publicRegistrationToken) : null,
         status: event.status,
         image: event.image,
-        imageUrl: event.image || null, // Cloudinary URL is already complete
+        imageUrl: event.image ? `/uploads/event-images/${event.image}` : null,
         // Don't include attendance data for public users
         attendanceCount: event.attendance?.length || 0
       };
@@ -262,10 +263,9 @@ exports.createEvent = async (req, res) => {
 
     // Handle image upload
     if (req.file) {
-      // Upload image to Cloudinary
-      const cloudinaryResult = await uploadToCloudinary(req.file.path, 'event-images');
-      eventData.image = cloudinaryResult.url;
-      eventData.imagePublicId = cloudinaryResult.publicId;
+      // Move image to permanent location
+      const imageResult = await moveToPermanentLocation(req.file.path, 'event-images', req.file.filename);
+      eventData.image = imageResult.filename;
     }
 
     const event = new Event(eventData);
@@ -334,15 +334,15 @@ exports.updateEvent = async (req, res) => {
       // Get current event to check if it has an old image
       const currentEvent = await Event.findById(req.params.eventId);
       
-      // Delete old image from Cloudinary if it exists
-      if (currentEvent && currentEvent.imagePublicId) {
-        await deleteFromCloudinary(currentEvent.imagePublicId);
+      // Delete old image from local storage if it exists
+      if (currentEvent && currentEvent.image) {
+        const oldImagePath = path.join(__dirname, '..', 'uploads', 'event-images', currentEvent.image);
+        await deleteLocalFile(oldImagePath);
       }
       
-      // Upload new image to Cloudinary
-      const cloudinaryResult = await uploadToCloudinary(req.file.path, 'event-images');
-      updateData.image = cloudinaryResult.url;
-      updateData.imagePublicId = cloudinaryResult.publicId;
+      // Move new image to permanent location
+      const imageResult = await moveToPermanentLocation(req.file.path, 'event-images', req.file.filename);
+      updateData.image = imageResult.filename;
     }
 
     const event = await Event.findByIdAndUpdate(
@@ -371,9 +371,10 @@ exports.deleteEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Delete associated image from Cloudinary if exists
-    if (event.imagePublicId) {
-      await deleteFromCloudinary(event.imagePublicId);
+    // Delete associated image from local storage if exists
+    if (event.image) {
+      const imagePath = path.join(__dirname, '..', 'uploads', 'event-images', event.image);
+      await deleteLocalFile(imagePath);
     }
 
     res.json({ message: 'Event deleted successfully.' });

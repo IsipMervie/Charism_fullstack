@@ -1,9 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const cloudinary = require('../config/cloudinary');
 
-// Configure storage for temporary file uploads (will be deleted after Cloudinary upload)
+// Configure storage for temporary file uploads (will be deleted after local storage upload)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = 'uploads/temp';
@@ -18,7 +17,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     // Generate unique filename with timestamp and original extension
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const fileExtension = path.extname(file.originalname);
+    const fileExtension = path.extname(file.originalname).toLowerCase(); // Ensure lowercase extension
     const fileName = `event-doc-${uniqueSuffix}${fileExtension}`;
     cb(null, fileName);
   }
@@ -54,40 +53,41 @@ const uploadEventDocs = multer({
   }
 });
 
-// Helper function to upload to Cloudinary
-const uploadToCloudinary = async (filePath, folder = 'event-docs') => {
+// Helper function to move file to permanent location
+const moveToPermanentLocation = async (filePath, destination, filename) => {
   try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: folder,
-      resource_type: 'auto'
-    });
+    const finalDir = `uploads/${destination}`;
+    const finalPath = path.join(finalDir, filename);
     
-    // Delete temporary file after upload
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Create destination directory if it doesn't exist
+    if (!fs.existsSync(finalDir)) {
+      fs.mkdirSync(finalDir, { recursive: true });
     }
     
+    // Move file to permanent location
+    fs.renameSync(filePath, finalPath);
+    
     return {
-      url: result.secure_url,
-      publicId: result.public_id,
-      filename: result.original_filename
+      url: `/uploads/${destination}/${filename}`,
+      filename: filename,
+      path: finalPath
     };
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
-    throw new Error('Failed to upload file to Cloudinary');
+    console.error('File move error:', error);
+    throw new Error('Failed to move file to permanent location');
   }
 };
 
-// Helper function to delete file from Cloudinary
-const deleteFromCloudinary = async (publicId) => {
+// Helper function to delete file from local storage
+const deleteLocalFile = async (filePath) => {
   try {
-    if (publicId) {
-      await cloudinary.uploader.destroy(publicId);
+    if (filePath && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
       return true;
     }
     return false;
   } catch (error) {
-    console.error('Cloudinary delete error:', error);
+    console.error('Local file delete error:', error);
     return false;
   }
 };
@@ -104,9 +104,17 @@ const getFileInfo = (file) => {
   };
 };
 
+// Helper function to get file URL (for local storage)
+const getFileUrl = (filename, folder) => {
+  if (!filename) return null;
+  // Return relative path that will be served by the static middleware
+  return `/uploads/${folder}/${filename}`;
+};
+
 module.exports = {
   uploadEventDocs,
-  uploadToCloudinary,
-  deleteFromCloudinary,
-  getFileInfo
+  moveToPermanentLocation,
+  deleteLocalFile,
+  getFileInfo,
+  getFileUrl
 };

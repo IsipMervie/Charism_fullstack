@@ -5,8 +5,7 @@ const mongoose = require('mongoose');
 const schoolSettingsSchema = new mongoose.Schema({
   schoolName: { type: String, required: true, default: 'CHARISM School' },
   contactEmail: { type: String, required: true, default: 'info@charism.edu' },
-  logo: { type: String }, // logo URL from Cloudinary
-  logoPublicId: { type: String }, // Cloudinary public ID for deletion
+  logo: { type: String }, // logo filename for local storage
   brandName: { type: String, required: true, default: 'CHARISM' }, // Brand name for navbar
   
   // Academic Years management

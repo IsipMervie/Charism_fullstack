@@ -6,7 +6,7 @@ const sendEmail = require('../utils/sendEmail');
 const User = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
-const FRONTEND_URL = process.env.FRONTEND_URL_PRODUCTION || process.env.FRONTEND_URL || 'http://localhost:3000';
+const { generateVerificationLink, generatePasswordResetLink } = require('../utils/emailLinkGenerator');
 
 // Register a new user
 exports.register = async (req, res) => {
@@ -53,7 +53,7 @@ exports.register = async (req, res) => {
         email: newUser.email 
       }, JWT_SECRET, { expiresIn: '24h' }); // Extended to 24 hours
       
-      const verificationUrl = `${FRONTEND_URL}/verify-email/${token}`;
+      const verificationUrl = generateVerificationLink(token);
       
       let emailContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa; border-radius: 10px;">
@@ -234,7 +234,7 @@ exports.forgotPassword = async (req, res) => {
       email: user.email 
     }, JWT_SECRET, { expiresIn: '1h' });
     
-    const resetUrl = `${FRONTEND_URL}/reset-password/${token}`;
+    const resetUrl = generatePasswordResetLink(token);
     
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa; border-radius: 10px;">
