@@ -142,7 +142,12 @@ const startServer = async () => {
 };
 
 // Start the server
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+// For Vercel, export the app
+module.exports = app;
 
 // Health check (must come before other routes)
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
