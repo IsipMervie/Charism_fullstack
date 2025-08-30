@@ -31,6 +31,25 @@ exports.getAllEvents = async (req, res) => {
     console.log('User role:', req.user?.role || 'Unknown');
     console.log('User ID:', req.user?.userId || req.user?.id || req.user?._id || 'Unknown');
     
+    // Check if Event model is available
+    if (!Event) {
+      console.error('Event model not available');
+      return res.status(500).json({ 
+        message: 'Event model not available',
+        error: 'Database model not loaded'
+      });
+    }
+    
+    // Check if we can connect to database
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.error('Database not connected, state:', mongoose.connection.readyState);
+      return res.status(500).json({ 
+        message: 'Database not connected',
+        error: 'Connection state: ' + mongoose.connection.readyState
+      });
+    }
+    
     // Check if user is authenticated and get their role
     let userRole = null;
     let userId = null;
@@ -56,6 +75,10 @@ exports.getAllEvents = async (req, res) => {
     }
     
     console.log('🔍 Final query:', JSON.stringify(query, null, 2));
+    
+    // Test database connection by counting events first
+    const totalEvents = await Event.countDocuments();
+    console.log(`📊 Total events in database: ${totalEvents}`);
     
     const events = await Event.find(query)
       .populate('createdBy', 'name')
@@ -1465,19 +1488,28 @@ exports.markEventAsNotCompleted = async (req, res) => {
 // Upload documentation files for an event
 exports.uploadEventDocumentation = async (req, res) => {
   try {
+    console.log('=== Upload Event Documentation ===');
     const { eventId } = req.params;
     const { description } = req.body;
     
+    console.log('Event ID:', eventId);
+    console.log('Description:', description);
+    console.log('Files received:', req.files ? req.files.length : 0);
+    
     // Check if user is authenticated
     if (!req.user || !req.user.userId) {
+      console.log('❌ Authentication required');
       return res.status(401).json({ message: 'Authentication required.' });
     }
     
     // Check if event exists
     const event = await Event.findById(eventId);
     if (!event) {
+      console.log('❌ Event not found');
       return res.status(404).json({ message: 'Event not found.' });
     }
+    
+    console.log('✅ Event found:', event.title);
     
     // Check if user is registered for this event
     const attendance = event.attendance.find(
@@ -1485,16 +1517,23 @@ exports.uploadEventDocumentation = async (req, res) => {
     );
     
     if (!attendance) {
+      console.log('❌ User not registered for this event');
       return res.status(400).json({ message: 'You must be registered for this event to upload documentation.' });
     }
     
+    console.log('✅ User attendance found');
+    
     // Check if files were uploaded
     if (!req.files || req.files.length === 0) {
+      console.log('❌ No files uploaded');
       return res.status(400).json({ message: 'No files were uploaded.' });
     }
     
-    // Process uploaded files
-    const uploadedFiles = req.files.map(file => getFileInfo(file));
+    console.log(`📁 Processing ${req.files.length} files...`);
+    
+    // Process uploaded files using MongoDB storage
+    const { getFileInfoWithData } = require('../utils/fileUpload');
+    const uploadedFiles = req.files.map(file => getFileInfoWithData(file));
     
     // Add description if provided
     if (description) {
@@ -1514,19 +1553,21 @@ exports.uploadEventDocumentation = async (req, res) => {
     
     await event.save();
     
+    console.log(`✅ ${uploadedFiles.length} files uploaded successfully`);
+    
     res.json({
       message: 'Documentation uploaded successfully.',
       uploadedFiles: uploadedFiles.map(file => ({
         filename: file.filename,
         originalName: file.originalName,
-        fileType: file.fileType,
+        fileType: file.contentType,
         fileSize: file.fileSize,
         description: file.description
       }))
     });
     
   } catch (err) {
-    console.error('Error in uploadEventDocumentation:', err);
+    console.error('❌ Error in uploadEventDocumentation:', err);
     res.status(500).json({ message: 'Error uploading documentation.', error: err.message });
   }
 };
@@ -1535,50 +1576,47 @@ exports.uploadEventDocumentation = async (req, res) => {
 exports.getEventDocumentation = async (req, res) => {
   try {
     const { eventId } = req.params;
-    console.log(`🔍 getEventDocumentation called for eventId: ${eventId}`);
-    console.log(`👤 Request user:`, req.user);
+    console.log('=== Get Event Documentation ===');
+    console.log('Event ID:', eventId);
+    console.log('Request user:', req.user);
     
     // Check if event exists
     const event = await Event.findById(eventId)
       .populate('attendance.userId', 'name email department academicYear');
     
     if (!event) {
-      console.log(`❌ Event not found: ${eventId}`);
+      console.log('❌ Event not found');
       return res.status(404).json({ message: 'Event not found.' });
     }
     
-    console.log(`✅ Event found: ${event.title}`);
-    console.log(`👥 Event attendance count: ${event.attendance.length}`);
+    console.log('✅ Event found:', event.title);
+    console.log('👥 Attendance count:', event.attendance.length);
     
     // Check if user has permission to view documentation
     let canViewAll = false;
     if (req.user) {
       const userRole = req.user.role || req.userInfo?.role;
       canViewAll = userRole === 'Admin' || userRole === 'Staff';
-      console.log(`🔐 User role: ${userRole}, canViewAll: ${canViewAll}`);
-      console.log(`🔐 Full req.user object:`, JSON.stringify(req.user, null, 2));
-      console.log(`🔐 req.userInfo:`, req.userInfo);
+      console.log('🔐 User role:', userRole, 'Can view all:', canViewAll);
     } else {
-      console.log(`❌ No req.user found`);
+      console.log('❌ No user found');
     }
     
     let documentation = [];
     
     if (canViewAll) {
       // Admin/Staff can see all documentation
-      console.log(`🔍 Admin/Staff view - checking all attendance for documentation`);
+      console.log('🔍 Admin/Staff view - checking all attendance for documentation');
       event.attendance.forEach((att, index) => {
         console.log(`👤 Attendance ${index}: userId=${att.userId._id}, has documentation: ${!!att.documentation}`);
-        if (att.documentation) {
+        if (att.documentation && att.documentation.files && att.documentation.files.length > 0) {
           console.log(`📁 Documentation files count: ${att.documentation.files.length}`);
-          if (att.documentation.files.length > 0) {
-            documentation.push({
-              userId: att.userId,
-              files: att.documentation.files,
-              lastUpdated: att.documentation.lastUpdated
-            });
-            console.log(`✅ Added documentation for user: ${att.userId.name}`);
-          }
+          documentation.push({
+            userId: att.userId,
+            files: att.documentation.files,
+            lastUpdated: att.documentation.lastUpdated
+          });
+          console.log(`✅ Added documentation for user: ${att.userId.name}`);
         }
       });
     } else {
@@ -1587,33 +1625,32 @@ exports.getEventDocumentation = async (req, res) => {
         a => a.userId._id.toString() === req.user.userId
       );
       
-      if (userAttendance && userAttendance.documentation) {
+      if (userAttendance && userAttendance.documentation && userAttendance.documentation.files) {
         documentation.push({
           userId: userAttendance.userId,
           files: userAttendance.documentation.files,
           lastUpdated: userAttendance.documentation.lastUpdated
         });
+        console.log('✅ Added student documentation');
       }
     }
     
-    // Add full URLs for documentation files
+    // Add download URLs for documentation files
     const documentationWithUrls = documentation.map(doc => ({
       ...doc,
-              files: doc.files.map(file => ({
-          ...file,
-                  downloadUrl: `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/documentation/${file.filename}`,
-        fullUrl: `${process.env.BACKEND_URL || 'https://charism-backend.vercel.app'}/uploads/documentation/${file.filename}`
-        }))
+      files: doc.files.map(file => ({
+        ...file,
+        downloadUrl: `/api/files/documentation/${file.filename}`,
+        fullUrl: `${process.env.FRONTEND_URL_PRODUCTION || 'https://charism.vercel.app'}/api/files/documentation/${file.filename}`
+      }))
     }));
     
     console.log(`📊 Total documentation entries found: ${documentationWithUrls.length}`);
-    console.log(`📄 Final documentation data:`, documentationWithUrls);
-    console.log(`📄 Response being sent:`, { documentation: documentationWithUrls });
     
     res.json({ documentation: documentationWithUrls });
     
   } catch (err) {
-    console.error('Error in getEventDocumentation:', err);
+    console.error('❌ Error in getEventDocumentation:', err);
     res.status(500).json({ message: 'Error fetching documentation.', error: err.message });
   }
 };
@@ -1622,64 +1659,80 @@ exports.getEventDocumentation = async (req, res) => {
 exports.downloadDocumentationFile = async (req, res) => {
   try {
     const { eventId, filename } = req.params;
+    console.log('=== Download Documentation File ===');
+    console.log('Event ID:', eventId);
+    console.log('Filename:', filename);
     
     // Check if event exists
     const event = await Event.findById(eventId);
     if (!event) {
+      console.log('❌ Event not found');
       return res.status(404).json({ message: 'Event not found.' });
     }
     
     // Check if user has permission to download this file
     let canDownload = false;
-    console.log(`🔍 Download permission check for event: ${eventId}, filename: ${filename}`);
-    console.log(`👤 req.user:`, req.user);
-    console.log(`👤 req.userInfo:`, req.userInfo);
+    let fileData = null;
     
     if (req.user) {
       const userRole = req.user.role || req.userInfo?.role;
-      console.log(`🔐 User role detected: ${userRole}`);
+      console.log('🔐 User role:', userRole);
       
       if (userRole === 'Admin' || userRole === 'Staff') {
         canDownload = true;
-        console.log(`✅ Admin/Staff access granted`);
+        console.log('✅ Admin/Staff access granted');
+        
+        // Find file in any attendance record
+        for (const attendance of event.attendance) {
+          if (attendance.documentation && attendance.documentation.files) {
+            const file = attendance.documentation.files.find(f => f.filename === filename);
+            if (file) {
+              fileData = file;
+              break;
+            }
+          }
+        }
       } else {
-        console.log(`❌ User role ${userRole} is not Admin/Staff`);
+        console.log('❌ User role not Admin/Staff');
         // Students can only download their own files
         const userAttendance = event.attendance.find(
           a => a.userId.toString() === req.user.userId
         );
         
-        if (userAttendance && userAttendance.documentation) {
-          canDownload = userAttendance.documentation.files.some(
-            file => file.filename === filename
-          );
-          console.log(`📁 Student file access: ${canDownload}`);
+        if (userAttendance && userAttendance.documentation && userAttendance.documentation.files) {
+          const file = userAttendance.documentation.files.find(f => f.filename === filename);
+          if (file) {
+            canDownload = true;
+            fileData = file;
+            console.log('✅ Student file access granted');
+          }
         }
       }
+    }
+    
+    if (!canDownload || !fileData) {
+      console.log('❌ Download permission denied or file not found');
+      return res.status(403).json({ message: 'Access denied or file not found.' });
+    }
+    
+    console.log('✅ File found, serving download');
+    
+    // Set response headers
+    res.set({
+      'Content-Type': fileData.contentType || 'application/octet-stream',
+      'Content-Disposition': `attachment; filename="${fileData.originalName || fileData.filename}"`,
+      'Content-Length': fileData.data ? fileData.data.length : 0
+    });
+    
+    // Send file data
+    if (fileData.data) {
+      res.send(fileData.data);
     } else {
-      console.log(`❌ No req.user found`);
+      res.status(404).json({ message: 'File data not found.' });
     }
-    
-    console.log(`🔐 Final canDownload result: ${canDownload}`);
-    
-    if (!canDownload) {
-      console.log(`❌ Access denied - returning 403`);
-      return res.status(403).json({ message: 'Access denied.' });
-    }
-    
-    // Get file path
-    const filePath = getFilePath(filename);
-    
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: 'File not found.' });
-    }
-    
-    // Send file
-    res.download(filePath);
     
   } catch (err) {
-    console.error('Error in downloadDocumentationFile:', err);
+    console.error('❌ Error in downloadDocumentationFile:', err);
     res.status(500).json({ message: 'Error downloading file.', error: err.message });
   }
 };
@@ -1742,7 +1795,7 @@ exports.deleteDocumentationFile = async (req, res) => {
     attendance.documentation.lastUpdated = new Date();
     
     // Delete physical file
-    deleteFile(filename);
+    // deleteFile(filename); // This function is no longer used
     
     await event.save();
     

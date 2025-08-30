@@ -100,12 +100,11 @@ router.get('/event-document/:eventId/:documentIndex', async (req, res) => {
       return res.status(404).json({ message: 'Document not found' });
     }
 
-    const { data, contentType, originalName } = document;
+    const { data, contentType } = document;
     
     res.set({
       'Content-Type': contentType,
       'Content-Length': data.length,
-      'Content-Disposition': `inline; filename="${originalName}"`,
       'Cache-Control': 'public, max-age=31536000' // Cache for 1 year
     });
     
@@ -113,6 +112,57 @@ router.get('/event-document/:eventId/:documentIndex', async (req, res) => {
   } catch (error) {
     console.error('Error serving event document:', error);
     res.status(500).json({ message: 'Error serving event document' });
+  }
+});
+
+// Serve documentation files (for direct access)
+router.get('/documentation/:filename', async (req, res) => {
+  try {
+    const { filename } = req.params;
+    console.log('=== Serving Documentation File ===');
+    console.log('Filename:', filename);
+    
+    // Find the file in any event's attendance documentation
+    const event = await Event.findOne({
+      'attendance.documentation.files.filename': filename
+    });
+    
+    if (!event) {
+      console.log('❌ File not found in any event');
+      return res.status(404).json({ message: 'Document not found' });
+    }
+    
+    // Find the specific file
+    let fileData = null;
+    for (const attendance of event.attendance) {
+      if (attendance.documentation && attendance.documentation.files) {
+        const file = attendance.documentation.files.find(f => f.filename === filename);
+        if (file) {
+          fileData = file;
+          break;
+        }
+      }
+    }
+    
+    if (!fileData || !hasFile(fileData)) {
+      console.log('❌ File data not found');
+      return res.status(404).json({ message: 'File data not found' });
+    }
+    
+    console.log('✅ File found, serving');
+    
+    const { data, contentType } = fileData;
+    
+    res.set({
+      'Content-Type': contentType,
+      'Content-Length': data.length,
+      'Cache-Control': 'public, max-age=31536000' // Cache for 1 year
+    });
+    
+    res.send(data);
+  } catch (error) {
+    console.error('Error serving documentation file:', error);
+    res.status(500).json({ message: 'Error serving documentation file' });
   }
 });
 

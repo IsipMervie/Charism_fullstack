@@ -5,17 +5,46 @@ const bcrypt = require('bcryptjs');
 const sendEmail = require('../utils/sendEmail');
 const User = require('../models/User');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+// Use environment variable for JWT secret, with fallback for development only
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'your_jwt_secret');
+
+// Validate JWT secret is available
+if (!JWT_SECRET) {
+  console.error('❌ JWT_SECRET environment variable is required in production!');
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+}
+
 const { generateVerificationLink, generatePasswordResetLink } = require('../utils/emailLinkGenerator');
 
 // Register a new user
 exports.register = async (req, res) => {
   const { name, email, password, role, userId, academicYear, year, section, department } = req.body;
+  
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'User already exists' });
+    // Validate required fields
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ 
+        message: 'Missing required fields: name, email, password, and role are required' 
+      });
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Validate role
+    if (!['Admin', 'Staff', 'Student'].includes(role)) {
+      return res.status(400).json({ 
+        message: 'Invalid role. Must be Admin, Staff, or Student' 
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12); // Increased security
 
     let userData = {
       name,
@@ -44,6 +73,8 @@ exports.register = async (req, res) => {
 
     const newUser = new User(userData);
     await newUser.save();
+
+    console.log(`✅ User registered successfully: ${email} (${role})`);
 
     // Email verification with better error handling and no-reply
     try {

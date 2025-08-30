@@ -48,6 +48,8 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
       maxPoolSize: 5, // Reduced for serverless
       minPoolSize: 1,
+      bufferCommands: false, // Disable buffering for serverless
+      bufferMaxEntries: 0, // Disable buffer max entries
     });
     
     console.log('✅ MongoDB connected successfully');

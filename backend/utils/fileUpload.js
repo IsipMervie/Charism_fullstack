@@ -92,7 +92,7 @@ const deleteLocalFile = async (filePath) => {
   }
 };
 
-// Helper function to get file info
+// Helper function to get file info for MongoDB storage
 const getFileInfo = (file) => {
   return {
     filename: file.filename,
@@ -102,6 +102,44 @@ const getFileInfo = (file) => {
     uploadDate: new Date(),
     description: ''
   };
+};
+
+// Helper function to get file info for MongoDB storage (with data)
+const getFileInfoWithData = (file) => {
+  return {
+    data: file.buffer || fs.readFileSync(file.path), // Handle both memory and disk storage
+    contentType: file.mimetype,
+    filename: file.filename,
+    originalName: file.originalname,
+    fileSize: file.size,
+    uploadDate: new Date(),
+    description: ''
+  };
+};
+
+// Helper function to check if file exists (works with both local and MongoDB storage)
+const hasFile = (fileData) => {
+  if (!fileData) return false;
+  
+  // Check if it's MongoDB storage (has data buffer)
+  if (fileData.data && fileData.data.length > 0) return true;
+  
+  // Check if it's local storage (has filename and path)
+  if (fileData.filename && fileData.path && fs.existsSync(fileData.path)) return true;
+  
+  // Check if it's just filename reference
+  if (fileData.filename && fileData.fileSize > 0) return true;
+  
+  return false;
+};
+
+// Helper function to get file size in human readable format
+const getFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
 // Helper function to get file URL (for local storage)
@@ -116,5 +154,8 @@ module.exports = {
   moveToPermanentLocation,
   deleteLocalFile,
   getFileInfo,
+  getFileInfoWithData,
+  hasFile,
+  getFileSize,
   getFileUrl
 };

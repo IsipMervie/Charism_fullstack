@@ -1,13 +1,22 @@
 // backend/middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 
-// Use the same fallback as controllers to avoid secret mismatches in development
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+// Use environment variable for JWT secret, with fallback for development only
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'your_jwt_secret');
+
+// Validate JWT secret is available
+if (!JWT_SECRET) {
+  console.error('❌ JWT_SECRET environment variable is required in production!');
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+}
 
 const authMiddleware = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization || '';
     const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
     }
@@ -35,7 +44,14 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch (error) {
     console.error('Auth middleware error:', error);
-    return res.status(401).json({ message: 'Invalid token' });
+    
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token expired' });
+    } else if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
+    } else {
+      return res.status(401).json({ message: 'Authentication failed' });
+    }
   }
 };
 
@@ -49,7 +65,11 @@ const roleMiddleware = (...allowedRoles) => {
     if (allowedRoles.includes(req.user.role)) {
       next();
     } else {
-      res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+      res.status(403).json({ 
+        message: 'Access denied. Insufficient permissions.',
+        requiredRoles: allowedRoles,
+        userRole: req.user.role
+      });
     }
   };
 };

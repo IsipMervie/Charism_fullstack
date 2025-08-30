@@ -4,6 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// Import utilities
+const { globalErrorHandler } = require('./utils/errorHandler');
+
 // Import models to ensure they are registered with Mongoose
 require('./models/Section');
 require('./models/YearLevel');
@@ -141,13 +144,10 @@ const startServer = async () => {
   }
 };
 
-// Start the server
+// Start the server only if running directly (not on Vercel)
 if (require.main === module) {
   startServer();
 }
-
-// For Vercel, export the app
-module.exports = app;
 
 // Health check (must come before other routes)
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
@@ -170,6 +170,31 @@ app.get('/api/test-models', (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Test database connection
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const { mongoose } = require('./config/db');
+    
+    // Test if we can query the database
+    const userCount = await mongoose.models.User.countDocuments();
+    const eventCount = await mongoose.models.Event.countDocuments();
+    
+    res.json({
+      status: 'OK',
+      connectionState: mongoose.connection.readyState,
+      userCount,
+      eventCount,
+      message: 'Database connection working'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
@@ -211,21 +236,8 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  
-  // Don't leak error details in production
-  const errorMessage = process.env.NODE_ENV === 'production' 
-    ? 'Internal server error' 
-    : err.message;
-    
-  res.status(500).json({ 
-    message: 'Server error', 
-    error: errorMessage,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
-});
+// Use the comprehensive error handler
+app.use(globalErrorHandler);
 
 // Graceful shutdown handling
 process.on('SIGTERM', () => {
@@ -251,3 +263,6 @@ process.on('SIGINT', () => {
     process.exit(0);
   }
 });
+
+// For Vercel, export the app
+module.exports = app;

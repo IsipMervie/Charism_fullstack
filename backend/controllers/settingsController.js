@@ -10,8 +10,11 @@ const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 // Get school settings (Admin only)
 exports.getSchoolSettings = async (req, res) => {
   try {
+    console.log('=== Getting School Settings ===');
+    
     let settings = await SchoolSettings.findOne();
     if (!settings) {
+      console.log('No settings found, creating default...');
       // If not set, create default
       settings = new SchoolSettings({
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',
@@ -20,53 +23,78 @@ exports.getSchoolSettings = async (req, res) => {
         brandName: 'CHARISM',
       });
       await settings.save();
+      console.log('Default settings created');
     }
+    
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
     if (hasFile(settings.logo)) {
       settingsWithUrl.logoUrl = `/api/files/school-logo`;
     }
+    
+    console.log('Settings retrieved successfully');
     res.json(settingsWithUrl);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching school settings', error: err.message });
+    console.error('Error in getSchoolSettings:', err);
+    res.status(500).json({ 
+      message: 'Error fetching school settings', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
 // Update school settings (Admin only)
 exports.updateSchoolSettings = async (req, res) => {
   try {
+    console.log('=== Updating School Settings ===');
+    
     let settings = await SchoolSettings.findOne();
     if (!settings) {
+      console.log('No settings found, creating new...');
       settings = new SchoolSettings();
     }
+    
     const { schoolName, contactEmail, brandName } = req.body;
     if (schoolName) settings.schoolName = schoolName;
     if (contactEmail) settings.contactEmail = contactEmail;
     if (brandName) settings.brandName = brandName;
+    
     if (req.file) {
+      console.log('Logo file received, updating...');
       // Store new logo data in MongoDB
       const logoInfo = getImageInfo(req.file);
       settings.logo = logoInfo;
     }
     
     await settings.save();
+    console.log('Settings updated successfully');
     
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
     if (hasFile(settings.logo)) {
       settingsWithUrl.logoUrl = `/api/files/school-logo`;
     }
+    
     res.json({ message: 'School settings updated', settings: settingsWithUrl });
   } catch (err) {
-    res.status(500).json({ message: 'Error updating school settings', error: err.message });
+    console.error('Error in updateSchoolSettings:', err);
+    res.status(500).json({ 
+      message: 'Error updating school settings', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
 // Get public school settings (for navbar, no auth required)
 exports.getPublicSchoolSettings = async (req, res) => {
   try {
+    console.log('=== Getting Public School Settings ===');
+    
     let settings = await SchoolSettings.findOne();
     if (!settings) {
+      console.log('No settings found, creating default...');
       // If not set, create default
       settings = new SchoolSettings({
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',
@@ -75,72 +103,118 @@ exports.getPublicSchoolSettings = async (req, res) => {
         brandName: 'CHARISM',
       });
       await settings.save();
+      console.log('Default public settings created');
     }
+    
     // Only return public fields
-    res.json({
+    const publicSettings = {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
       logo: settings.logo,
       logoUrl: hasFile(settings.logo) ? `/api/files/school-logo` : null,
       contactEmail: settings.contactEmail
-    });
+    };
+    
+    console.log('Public settings retrieved successfully');
+    res.json(publicSettings);
   } catch (err) {
     console.error('Error in getPublicSchoolSettings:', err);
-    res.status(500).json({ message: 'Error fetching school settings', error: err.message });
+    res.status(500).json({ 
+      message: 'Error fetching school settings', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
 // Get all registration settings (Admin only)
 exports.getSettings = async (req, res) => {
   try {
-    console.log('Getting settings...');
+    console.log('=== Getting All Settings ===');
     console.log('Section model available:', !!Section);
     console.log('YearLevel model available:', !!YearLevel);
     console.log('Department model available:', !!Department);
-    console.log('Mongoose connection state:', require('mongoose').connection.readyState);
-
+    
     // Check if models are available
     if (!Section || !YearLevel || !Department) {
-      console.error('One or more models not available');
-      return res.status(500).json({ message: 'Database models not available', error: 'Models not loaded' });
+      console.error('Models not available');
+      return res.status(500).json({ 
+        message: 'Database models not available',
+        models: {
+          Section: !!Section,
+          YearLevel: !!YearLevel,
+          Department: !!Department
+        }
+      });
     }
-
-    const [sections, yearLevels, departments] = await Promise.all([
-      Section.find().sort({ createdAt: -1 }),
-      YearLevel.find().sort({ createdAt: -1 }),
-      Department.find().sort({ createdAt: -1 })
+    
+    // Get all data
+    const [sections, yearLevels, departments, academicYears] = await Promise.all([
+      Section.find().sort('name'),
+      YearLevel.find().sort('name'),
+      Department.find().sort('name'),
+      require('../models/AcademicYear').find().sort('-year')
     ]);
     
-    console.log('Settings fetched successfully');
+    console.log(`Retrieved: ${sections.length} sections, ${yearLevels.length} year levels, ${departments.length} departments, ${academicYears.length} academic years`);
+    
     res.json({
       sections,
       yearLevels,
-      departments
+      departments,
+      academicYears
     });
   } catch (err) {
-    console.error('Error fetching settings:', err);
-    res.status(500).json({ message: 'Error fetching settings', error: err.message });
+    console.error('Error in getSettings:', err);
+    res.status(500).json({ 
+      message: 'Error fetching settings', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
 // Get public registration settings (for registration page, no auth required)
 exports.getPublicSettings = async (req, res) => {
   try {
-    const [academicYears, sections, yearLevels, departments] = await Promise.all([
-      require('../models/AcademicYear').find({ isActive: true }).sort({ year: -1 }),
-      Section.find({ isActive: true }).sort({ name: 1 }),
-      YearLevel.find({ isActive: true }).sort({ name: 1 }),
-      Department.find({ isActive: true }).sort({ name: 1 })
+    console.log('=== Getting Public Settings ===');
+    
+    // Check if models are available
+    if (!Section || !YearLevel || !Department) {
+      console.error('Models not available for public settings');
+      return res.status(500).json({ 
+        message: 'Database models not available',
+        models: {
+          Section: !!Section,
+          YearLevel: !!YearLevel,
+          Department: !!Department
+        }
+      });
+    }
+    
+    // Get all data
+    const [sections, yearLevels, departments, academicYears] = await Promise.all([
+      Section.find().sort('name'),
+      YearLevel.find().sort('name'),
+      Department.find().sort('name'),
+      require('../models/AcademicYear').find().sort('-year')
     ]);
     
+    console.log(`Public settings retrieved: ${sections.length} sections, ${yearLevels.length} year levels, ${departments.length} departments, ${academicYears.length} academic years`);
+    
     res.json({
-      academicYears,
       sections,
       yearLevels,
-      departments
+      departments,
+      academicYears
     });
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching public settings', error: err.message });
+    console.error('Error in getPublicSettings:', err);
+    res.status(500).json({ 
+      message: 'Error fetching public settings', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
