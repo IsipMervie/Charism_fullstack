@@ -32,18 +32,26 @@ app.use(cors({
     // Get allowed origins from environment variable or use defaults
     const allowedOrigins = process.env.CORS_ORIGINS 
       ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-      : [
+              : [
           'http://localhost:3000',
           'https://charism.vercel.app',
           'https://charism-backend.vercel.app',
-          'https://vercel.app'
+          'https://vercel.app',
+          'https://*.vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
     console.log('🔍 Request origin:', origin);
     
-    // Check if origin is allowed
-    const isAllowed = allowedOrigins.indexOf(origin) !== -1;
+    // Check if origin is allowed (including wildcard matching)
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (allowedOrigin.includes('*')) {
+        // Handle wildcard domains like *.vercel.app
+        const pattern = allowedOrigin.replace('*', '.*');
+        return new RegExp(pattern).test(origin);
+      }
+      return allowedOrigin === origin;
+    });
     if (isAllowed) {
       console.log('✅ CORS allowed for origin:', origin);
       callback(null, true);
@@ -69,6 +77,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   optionsSuccessStatus: 200
 }));
+
+// Additional CORS headers for all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Handle preflight requests
 app.options('*', cors());
@@ -125,11 +142,18 @@ const startServer = async () => {
         if (process.env.NODE_ENV === 'production') {
           console.log('🚨 Production mode - continuing without database');
         } else {
+          console.error('❌ Development mode - database connection required');
           throw dbError;
         }
       }
     } else {
       console.log('⚠️ No database connection available');
+      if (process.env.NODE_ENV === 'production') {
+        console.log('🚨 Production mode - continuing without database');
+      } else {
+        console.error('❌ Development mode - database connection required');
+        throw new Error('Database connection not available');
+      }
     }
     
     // Start server
@@ -167,7 +191,12 @@ const startServer = async () => {
     
   } catch (error) {
     console.error('❌ Failed to start server:', error);
-    process.exit(1);
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🚨 Production mode - exiting gracefully');
+      process.exit(0);
+    } else {
+      process.exit(1);
+    }
   }
 };
 
