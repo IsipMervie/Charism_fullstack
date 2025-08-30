@@ -1,33 +1,10 @@
 import axios from 'axios';
+import { API_URL } from '../config/environment';
 
-// Smart API URL detection for different environments
-const getApiUrl = () => {
-  // If environment variable is set, use it
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
-  }
-  
-  // Detect production environment
-  const hostname = window.location.hostname;
-  const protocol = window.location.protocol;
-  
-  // Vercel production
-  if (hostname === 'charism.vercel.app') {
-    return 'https://charism.vercel.app/api';
-  }
-  
-  // Local development
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:5000/api';
-  }
-  
-  // Fallback to current domain
-  return `${protocol}//${hostname}/api`;
-};
+// Use centralized environment configuration
+const API_BASE_URL = API_URL;
 
-const API_URL = getApiUrl();
-
-console.log('🌐 API URL configured as:', API_URL);
+console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 

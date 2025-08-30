@@ -5,6 +5,7 @@ import './App.css';
 // Components
 import NavigationBar from './components/NavigationBar';
 import PrivateRoute from './components/PrivateRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 
 // Pages
@@ -49,9 +50,10 @@ import TestPage from './components/TestPage';
 
 function App() {
   return (
-    <Router>
-      <NavigationBar />
-      <Routes>
+    <ErrorBoundary>
+      <Router>
+        <NavigationBar />
+        <Routes>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/test" element={<TestPage />} />
@@ -303,7 +305,8 @@ function App() {
         {/* 404 fallback */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </Router>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
