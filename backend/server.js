@@ -43,7 +43,8 @@ app.use(cors({
     console.log('🔍 Request origin:', origin);
     
     // Check if origin is allowed
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    const isAllowed = allowedOrigins.indexOf(origin) !== -1;
+    if (isAllowed) {
       console.log('✅ CORS allowed for origin:', origin);
       callback(null, true);
     } else {
@@ -53,7 +54,13 @@ app.use(cors({
         console.log('🚨 Production mode - allowing blocked origin for debugging');
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        // Additional fallback for Vercel domains
+        if (origin.includes('vercel.app') || origin.includes('vercel.com')) {
+          console.log('✅ Allowing Vercel domain:', origin);
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
       }
     }
   },
