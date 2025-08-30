@@ -3,7 +3,7 @@ const router = express.Router();
 const eventController = require('../controllers/eventController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
-const { uploadEventImage } = require('../utils/localFileStorage');
+const { uploadEventImage } = require('../utils/mongoFileStorage');
 
 
 

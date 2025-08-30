@@ -3,7 +3,7 @@ const router = express.Router();
 
 const userController = require('../controllers/userController');
 const { authMiddleware, roleMiddleware } = require('../middleware/authMiddleware');
-const { uploadProfilePicture } = require('../utils/profilePictureUpload');
+const { uploadProfilePicture } = require('../utils/mongoFileStorage');
 
 // Get all users (Admin/Staff)
 router.get(
@@ -20,7 +20,7 @@ router.get('/:id', authMiddleware, userController.getUserById);
 router.put('/:id', authMiddleware, userController.updateUser);
 
 // Upload profile picture
-router.post('/:id/profile-picture', authMiddleware, uploadProfilePicture.single('profilePicture'), userController.uploadProfilePicture);
+router.post('/:id/profile-picture', authMiddleware, uploadProfilePicture, userController.uploadProfilePicture);
 
 // Delete profile picture
 router.delete('/:id/profile-picture', authMiddleware, userController.deleteProfilePicture);

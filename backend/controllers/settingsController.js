@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Section = require('../models/Section');
 const YearLevel = require('../models/YearLevel');
 const Department = require('../models/Department');
-const { moveToPermanentLocation, deleteLocalFile } = require('../utils/fileUpload');
+const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 
 // Get school settings (Admin only)
 exports.getSchoolSettings = async (req, res) => {
@@ -23,8 +23,8 @@ exports.getSchoolSettings = async (req, res) => {
     }
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
-    if (settings.logo) {
-      settingsWithUrl.logoUrl = `/uploads/logos/${settings.logo}`;
+    if (hasFile(settings.logo)) {
+      settingsWithUrl.logoUrl = `/api/files/school-logo`;
     }
     res.json(settingsWithUrl);
   } catch (err) {
@@ -44,25 +44,17 @@ exports.updateSchoolSettings = async (req, res) => {
     if (contactEmail) settings.contactEmail = contactEmail;
     if (brandName) settings.brandName = brandName;
     if (req.file) {
-      // Delete old logo from local storage if it exists
-      if (settings.logo) {
-        const oldLogoPath = path.join(__dirname, '..', 'uploads', 'logos', settings.logo);
-        await deleteLocalFile(oldLogoPath);
-      }
-      
-      // Move new logo to permanent location
-      const logoResult = await moveToPermanentLocation(req.file.path, 'logos', req.file.filename);
-      
-      // Update settings with new logo info
-      settings.logo = logoResult.filename;
+      // Store new logo data in MongoDB
+      const logoInfo = getImageInfo(req.file);
+      settings.logo = logoInfo;
     }
     
     await settings.save();
     
     // Add full logo URL to the response
     const settingsWithUrl = settings.toObject();
-    if (settings.logo) {
-      settingsWithUrl.logoUrl = `/uploads/logos/${settings.logo}`;
+    if (hasFile(settings.logo)) {
+      settingsWithUrl.logoUrl = `/api/files/school-logo`;
     }
     res.json({ message: 'School settings updated', settings: settingsWithUrl });
   } catch (err) {
@@ -89,7 +81,7 @@ exports.getPublicSchoolSettings = async (req, res) => {
       schoolName: settings.schoolName,
       brandName: settings.brandName,
       logo: settings.logo,
-      logoUrl: settings.logo ? `/uploads/logos/${settings.logo}` : null,
+      logoUrl: hasFile(settings.logo) ? `/api/files/school-logo` : null,
       contactEmail: settings.contactEmail
     });
   } catch (err) {

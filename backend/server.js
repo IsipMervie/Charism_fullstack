@@ -144,6 +144,10 @@ console.log(' Users routes loaded');
 app.use('/api/feedback', require('./routes/feedbackRoutes'));
 console.log(' Feedback routes loaded');
 
+// File serving routes for MongoDB-stored files
+app.use('/api/files', require('./routes/fileRoutes'));
+console.log(' File routes loaded');
+
 // Reflection routes removed - no longer needed
 
 // 404 handler

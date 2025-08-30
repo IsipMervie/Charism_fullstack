@@ -5,7 +5,12 @@ const mongoose = require('mongoose');
 const schoolSettingsSchema = new mongoose.Schema({
   schoolName: { type: String, required: true, default: 'CHARISM School' },
   contactEmail: { type: String, required: true, default: 'info@charism.edu' },
-  logo: { type: String }, // logo filename for local storage
+  logo: {
+    data: { type: Buffer },           // The actual logo file data
+    contentType: { type: String },    // "image/png", "image/jpeg", etc.
+    filename: { type: String },       // Stored filename
+    uploadedAt: { type: Date, default: Date.now }
+  },
   brandName: { type: String, required: true, default: 'CHARISM' }, // Brand name for navbar
   
   // Academic Years management

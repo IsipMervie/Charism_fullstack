@@ -1,7 +1,7 @@
 // backend/controllers/userController.js
 
 const User = require('../models/User');
-const { uploadProfilePicture, deleteLocalFile, getProfilePictureUrl } = require('../utils/profilePictureUpload');
+const { uploadProfilePicture, getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 
 // Get all users (Admin only, with optional search/filter)
 exports.getUsers = async (req, res) => {
@@ -92,21 +92,17 @@ exports.uploadProfilePicture = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this profile' });
     }
 
-    // Delete old profile picture from local storage if it exists
-    if (user.profilePicture) {
-      const oldImagePath = path.join(__dirname, '..', 'uploads', 'profile-pictures', user.profilePicture);
-      await deleteLocalFile(oldImagePath);
-    }
-
-    // File is already uploaded to local storage by multer
-    // Update user with new profile picture info
-    user.profilePicture = req.file.filename;
+    // Get file info for MongoDB storage
+    const imageInfo = getImageInfo(req.file);
+    
+    // Update user with new profile picture data
+    user.profilePicture = imageInfo;
     await user.save();
 
     res.status(200).json({
       message: 'Profile picture uploaded successfully',
-      profilePicture: req.file.filename,
-      profilePictureUrl: `/uploads/profile-pictures/${req.file.filename}`
+      profilePicture: imageInfo,
+      profilePictureUrl: `/api/files/profile-picture/${userId}`
     });
   } catch (err) {
     res.status(500).json({ message: 'Error uploading profile picture', error: err.message });
@@ -128,12 +124,8 @@ exports.deleteProfilePicture = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this profile' });
     }
 
-    if (user.profilePicture) {
-      // Delete from local storage
-      const imagePath = path.join(__dirname, '..', 'uploads', 'profile-pictures', user.profilePicture);
-      await deleteLocalFile(imagePath);
-      
-      // Remove from user document
+    if (hasFile(user.profilePicture)) {
+      // Remove profile picture data from user document
       user.profilePicture = undefined;
       await user.save();
 

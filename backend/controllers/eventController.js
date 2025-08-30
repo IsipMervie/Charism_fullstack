@@ -4,7 +4,7 @@ const Event = require('../models/Event');
 const User = require('../models/User');
 const fs = require('fs');
 const path = require('path');
-const { getFileInfo, moveToPermanentLocation, deleteLocalFile } = require('../utils/fileUpload');
+const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator');
 
 
@@ -70,8 +70,8 @@ exports.getAllEvents = async (req, res) => {
       if (event.publicRegistrationToken) {
         eventObj.publicRegistrationUrl = generateEventRegistrationLink(event.publicRegistrationToken);
       }
-      if (event.image) {
-        eventObj.imageUrl = `/uploads/event-images/${event.image}`;
+      if (hasFile(event.image)) {
+        eventObj.imageUrl = `/api/files/event-image/${event._id}`;
       }
       return eventObj;
     });
@@ -263,9 +263,9 @@ exports.createEvent = async (req, res) => {
 
     // Handle image upload
     if (req.file) {
-      // Move image to permanent location
-      const imageResult = await moveToPermanentLocation(req.file.path, 'event-images', req.file.filename);
-      eventData.image = imageResult.filename;
+      // Store image data in MongoDB
+      const imageInfo = getImageInfo(req.file);
+      eventData.image = imageInfo;
     }
 
     const event = new Event(eventData);
@@ -331,18 +331,9 @@ exports.updateEvent = async (req, res) => {
 
     // Handle image upload
     if (req.file) {
-      // Get current event to check if it has an old image
-      const currentEvent = await Event.findById(req.params.eventId);
-      
-      // Delete old image from local storage if it exists
-      if (currentEvent && currentEvent.image) {
-        const oldImagePath = path.join(__dirname, '..', 'uploads', 'event-images', currentEvent.image);
-        await deleteLocalFile(oldImagePath);
-      }
-      
-      // Move new image to permanent location
-      const imageResult = await moveToPermanentLocation(req.file.path, 'event-images', req.file.filename);
-      updateData.image = imageResult.filename;
+      // Store new image data in MongoDB
+      const imageInfo = getImageInfo(req.file);
+      updateData.image = imageInfo;
     }
 
     const event = await Event.findByIdAndUpdate(
@@ -371,11 +362,8 @@ exports.deleteEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Delete associated image from local storage if exists
-    if (event.image) {
-      const imagePath = path.join(__dirname, '..', 'uploads', 'event-images', event.image);
-      await deleteLocalFile(imagePath);
-    }
+    // No need to delete image from local storage - it's stored in MongoDB
+    // The image data will be automatically removed when the event is deleted
 
     res.json({ message: 'Event deleted successfully.' });
   } catch (err) {

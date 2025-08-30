@@ -15,8 +15,8 @@ router.get(
   settingsController.getPublicSchoolSettings
 );
 
-// Multer setup for logo uploads using local storage
-const { uploadLogo } = require('../utils/localFileStorage');
+// Multer setup for logo uploads using MongoDB storage
+const { uploadLogo } = require('../utils/mongoFileStorage');
 
 // Get school settings (Admin only)
 router.get(
@@ -45,7 +45,7 @@ router.post(
   '/school',
   authMiddleware,
   roleMiddleware('Admin'),
-  uploadLogo.single('logo'),
+  uploadLogo,
   settingsController.updateSchoolSettings
 );
 

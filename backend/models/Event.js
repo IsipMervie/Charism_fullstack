@@ -15,9 +15,10 @@ const attendanceSchema = new mongoose.Schema({
   // File upload fields for documentation
   documentation: {
     files: [{
-      filename: { type: String, required: true },
-      originalName: { type: String, required: true },
-      fileType: { type: String, required: true },
+      data: { type: Buffer, required: true },           // The actual file data
+      contentType: { type: String, required: true },    // "application/pdf", "application/msword", etc.
+      filename: { type: String, required: true },       // Stored filename
+      originalName: { type: String, required: true },   // Original filename
       fileSize: { type: Number, required: true },
       uploadDate: { type: Date, default: Date.now },
       description: { type: String, default: '' }
@@ -43,7 +44,12 @@ const eventSchema = new mongoose.Schema({
   department: { type: String }, // Single department for backward compatibility
   departments: [{ type: String }], // New field for multiple departments
   isForAllDepartments: { type: Boolean, default: false }, // New field to indicate if event is for all departments
-  image: { type: String }, // event image filename for local storage
+  image: {
+    data: { type: Buffer },           // The actual image file data
+    contentType: { type: String },    // "image/png", "image/jpeg", etc.
+    filename: { type: String },       // Stored filename
+    uploadedAt: { type: Date, default: Date.now }
+  },
   status: { type: String, enum: ['Active', 'Completed', 'Cancelled', 'Disabled'], default: 'Active' },
   isVisibleToStudents: { type: Boolean, default: true }, // New field to control visibility to students
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
