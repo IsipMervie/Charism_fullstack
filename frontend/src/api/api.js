@@ -350,6 +350,8 @@ export const getEvents = async () => {
     // Handle specific error types
     if (error.code === 'ECONNABORTED') {
       console.warn('⚠️ Events API timeout - server may be slow or overloaded');
+    } else if (error.response?.status === 503) {
+      console.error('🚨 Events API 503 - Backend server is DOWN or unavailable');
     } else if (error.response?.status === 500) {
       console.warn('⚠️ Events API server error - backend issue');
     } else if (error.response?.status === 404) {
@@ -804,6 +806,8 @@ export const getPublicSettings = async () => {
     // Handle specific error types
     if (error.code === 'ECONNABORTED') {
       console.warn('⚠️ Public settings API timeout - server may be slow or overloaded');
+    } else if (error.response?.status === 503) {
+      console.error('🚨 Public settings API 503 - Backend server is DOWN or unavailable');
     } else if (error.response?.status === 500) {
       console.warn('⚠️ Public settings API server error - backend issue');
     } else if (error.response?.status === 404) {

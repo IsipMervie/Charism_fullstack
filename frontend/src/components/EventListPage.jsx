@@ -185,6 +185,47 @@ function EventListPage() {
     }
   };
 
+  // Server status check for 503 errors
+  const checkServerStatus = async () => {
+    try {
+      console.log('🔍 Checking server status...');
+      const response = await fetch('/api/health', { 
+        method: 'GET'
+      });
+      
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Server is Online! 🟢',
+          text: 'The backend server is now available. Refreshing events...',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        
+        // Refresh events after a short delay
+        setTimeout(() => {
+          setError('');
+          refreshEvents();
+        }, 1000);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Server Still Offline 🔴',
+          text: `Server responded with status: ${response.status}`,
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      console.error('❌ Server status check failed:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Server Still Offline 🔴',
+        text: 'Unable to connect to the server. It may still be down.',
+        confirmButtonText: 'OK'
+      });
+    }
+  };
+
   // Refresh events and joined events
   const refreshEvents = async (retryCount = 0) => {
     try {
@@ -259,7 +300,9 @@ function EventListPage() {
       
       let errorMessage = 'Failed to load events.';
       
-      if (err.message.includes('Database not connected')) {
+      if (err.response?.status === 503) {
+        errorMessage = '🚨 Backend server is currently unavailable. The service is temporarily down.';
+      } else if (err.message.includes('Database not connected')) {
         errorMessage = 'Database temporarily unavailable. Please try again later.';
       } else if (err.message.includes('timeout')) {
         errorMessage = 'Connection timeout. The server may be slow. Please try again.';
@@ -757,11 +800,31 @@ function EventListPage() {
 
   // Error state
   if (error) {
+    const is503Error = error.includes('503') || error.includes('Backend server is currently unavailable');
+    
     return (
       <div className="event-list-page">
         <div className="error-section">
           <h3>Oops! Something went wrong</h3>
           <p>{error}</p>
+          
+          {is503Error && (
+            <div className="error-503-warning">
+              <div className="warning-icon">🚨</div>
+              <div className="warning-content">
+                <h4>Backend Server Unavailable</h4>
+                <p>The backend server is currently down or experiencing issues. This is not a problem with your device or internet connection.</p>
+                <div className="server-status-info">
+                  <strong>Server Status:</strong> 🔴 Offline
+                  <br />
+                  <strong>Error Code:</strong> 503 Service Unavailable
+                  <br />
+                  <strong>What This Means:</strong> The application server is temporarily unavailable
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="error-actions">
             <button onClick={refreshEvents} className="refresh-button primary">
               🔄 Try Again
@@ -771,21 +834,49 @@ function EventListPage() {
                 🔄 Refresh Page
               </button>
             )}
+                      {is503Error && (
+            <>
+              <button onClick={() => window.location.reload()} className="refresh-button secondary">
+                🔄 Refresh Page
+              </button>
+              <button onClick={() => checkServerStatus()} className="refresh-button secondary">
+                🔍 Check Server Status
+              </button>
+            </>
+          )}
           </div>
+          
           <div className="error-help">
             <p><strong>💡 Tips:</strong></p>
             <ul>
-              <li>Check your internet connection</li>
-              <li>The server might be temporarily slow</li>
-              <li>Try refreshing the page</li>
+              {is503Error ? (
+                <>
+                  <li>This is a server-side issue, not your fault</li>
+                  <li>The backend team has been notified</li>
+                  <li>Try again in a few minutes</li>
+                  <li>Check if the service is back online</li>
+                </>
+              ) : (
+                <>
+                  <li>Check your internet connection</li>
+                  <li>The server might be temporarily slow</li>
+                  <li>Try refreshing the page</li>
+                </>
+              )}
             </ul>
           </div>
+          
           <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '5px' }}>
             <strong>Debug Info:</strong>
             <div>Role: {role}</div>
             <div>User: {user._id || user.id || 'No user ID'}</div>
             <div>Events loaded: {events.length}</div>
             <div>Loading state: {loading ? 'Yes' : 'No'}</div>
+            {is503Error && (
+              <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#fee2e2', borderRadius: '4px', color: '#dc2626' }}>
+                <strong>Server Error:</strong> HTTP 503 Service Unavailable
+              </div>
+            )}
           </div>
         </div>
       </div>
