@@ -42,13 +42,21 @@ exports.getAllEvents = async (req, res) => {
     
     // Check if we can connect to database using lazy connection
     const { getLazyConnection } = require('../config/db');
-    const isConnected = await getLazyConnection();
+    let isConnected = false;
+    
+    try {
+      isConnected = await getLazyConnection();
+    } catch (dbError) {
+      console.log('Database connection check failed:', dbError.message);
+      isConnected = false;
+    }
     
     if (!isConnected) {
-      console.error('Database not connected');
-      return res.status(500).json({ 
-        message: 'Database not connected',
-        error: 'Connection failed'
+      console.error('Database not connected, returning empty events list');
+      return res.json({ 
+        events: [],
+        message: 'Database temporarily unavailable, showing no events',
+        totalEvents: 0
       });
     }
     

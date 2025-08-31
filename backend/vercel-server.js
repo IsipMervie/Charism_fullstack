@@ -166,6 +166,58 @@ app.get('/api/health-quick', (req, res) => {
   });
 });
 
+// Simple backend status check
+app.get('/api/status', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Backend is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Database connection status check
+app.get('/api/db-status', async (req, res) => {
+  try {
+    const { getLazyConnection } = require('./config/db');
+    let isConnected = false;
+    let connectionDetails = {};
+    
+    try {
+      isConnected = await getLazyConnection();
+      connectionDetails = {
+        status: isConnected ? 'connected' : 'disconnected',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+      };
+    } catch (dbError) {
+      connectionDetails = {
+        status: 'error',
+        error: dbError.message,
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+      };
+    }
+    
+    res.json({
+      database: connectionDetails,
+      backend: {
+        status: 'OK',
+        message: 'Database status check completed',
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Database status check failed',
+      error: error.message
+    });
+  }
+});
+
+
+
 // Simple test for database
 app.get('/api/test-db-simple', async (req, res) => {
   try {

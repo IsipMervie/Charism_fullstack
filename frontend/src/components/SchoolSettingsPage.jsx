@@ -2,7 +2,7 @@
 // Simple but Creative School Settings Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getSchoolSettings, updateSchoolSettings } from '../api/api';
+import { getPublicSchoolSettings, updateSchoolSettings } from '../api/api';
 import { getLogoUrl } from '../utils/imageUtils';
 import Swal from 'sweetalert2';
 import { FaBuilding, FaEnvelope, FaTag, FaImage, FaSave, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -30,7 +30,7 @@ function SchoolSettingsPage() {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const data = await getSchoolSettings();
+      const data = await getPublicSchoolSettings();
       setSettings({
         schoolName: data.schoolName || '',
         contactEmail: data.contactEmail || '',
@@ -39,15 +39,26 @@ function SchoolSettingsPage() {
         logoPreview: data.logo ? getLogoUrl(data.logo) : null,
       });
       setError('');
-    } catch {
-      setError('Failed to fetch school settings.');
+    } catch (err) {
+      console.error('Failed to fetch school settings:', err);
+      setError('Failed to fetch school settings. Please check if you are logged in.');
     }
     setLoading(false);
   };
 
   useEffect(() => {
     fetchSettings();
-  }, [fetchSettings]);
+    
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        setError('Loading timeout. Please refresh the page.');
+        setLoading(false);
+      }
+    }, 30000); // 30 seconds timeout
+    
+    return () => clearTimeout(timeoutId);
+  }, [fetchSettings, loading]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;

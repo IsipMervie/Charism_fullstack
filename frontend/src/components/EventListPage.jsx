@@ -97,6 +97,14 @@ function EventListPage() {
     refreshEvents();
     fetchFilterOptions(); // Fetch filter options from settings
     
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        setError('Loading timeout. Please refresh the page.');
+        setLoading(false);
+      }
+    }, 30000); // 30 seconds timeout
+    
     // Add focus event listener to refresh data when user returns to the page
     const handleFocus = () => {
       console.log('🔄 Window focus event - refreshing events');
@@ -108,6 +116,7 @@ function EventListPage() {
     return () => {
       console.log('🧹 EventListPage component unmounting');
       window.removeEventListener('focus', handleFocus);
+      clearTimeout(timeoutId); // Clean up timeout
     };
   }, []);
   
@@ -230,7 +239,16 @@ function EventListPage() {
       
     } catch (err) {
       console.error('❌ Error in refreshEvents:', err);
-      const errorMessage = `Failed to load events: ${err.message || 'Unknown error'}`;
+      let errorMessage = 'Failed to load events.';
+      
+      if (err.message.includes('Database not connected')) {
+        errorMessage = 'Database temporarily unavailable. Please try again later.';
+      } else if (err.response?.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (err.message) {
+        errorMessage = `Failed to load events: ${err.message}`;
+      }
+      
       setError(errorMessage);
       
       // Show SweetAlert for the error

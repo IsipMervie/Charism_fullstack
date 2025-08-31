@@ -53,8 +53,23 @@ function AnalyticsPage() {
         setData(analytics || {});
         setError('');
       } catch (err) {
-        setData({});
-        setError('Failed to fetch analytics data.');
+        console.error('Failed to fetch analytics:', err);
+        // Set default data with error message
+        setData({
+          totalUsers: 0,
+          totalEvents: 0,
+          totalMessages: 0,
+          totalAttendance: 0,
+          studentsCount: 0,
+          staffCount: 0,
+          adminCount: 0,
+          activeEvents: 0,
+          completedEvents: 0,
+          approvedAttendance: 0,
+          totalHours: 0,
+          message: 'Database temporarily unavailable'
+        });
+        setError('Database connection issue - showing default values');
       } finally {
         setLoading(false);
       }

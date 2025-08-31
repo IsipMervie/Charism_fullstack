@@ -4,6 +4,35 @@ const Message = require('../models/Message');
 
 exports.getAnalytics = async (req, res) => {
   try {
+    // Check database connection first
+    const { getLazyConnection } = require('../config/db');
+    let isConnected = false;
+    
+    try {
+      isConnected = await getLazyConnection();
+    } catch (dbError) {
+      console.log('Database connection check failed:', dbError.message);
+      isConnected = false;
+    }
+    
+    if (!isConnected) {
+      console.log('Database not connected, returning default analytics');
+      return res.json({
+        totalUsers: 0,
+        totalEvents: 0,
+        totalMessages: 0,
+        totalAttendance: 0,
+        studentsCount: 0,
+        staffCount: 0,
+        adminCount: 0,
+        activeEvents: 0,
+        completedEvents: 0,
+        approvedAttendance: 0,
+        totalHours: 0,
+        message: 'Database temporarily unavailable, showing default values'
+      });
+    }
+    
     // Get basic counts with error handling
     const totalUsers = await User.countDocuments().catch(() => 0);
     const totalEvents = await Event.countDocuments({ 

@@ -9,6 +9,7 @@ import { axiosInstance } from '../api/api';
 import { FaUsers, FaCalendarAlt, FaChartBar, FaTrophy, FaUserCheck, FaEnvelope, FaCog, FaBuilding, FaFile, FaUser } from 'react-icons/fa';
 
 import { getLogoUrl } from '../utils/imageUtils';
+import DatabaseStatus from './DatabaseStatus';
 
 import './AdminDashboard.css';
 
@@ -34,7 +35,22 @@ function AdminDashboard() {
         const data = await getAnalytics();
         setAnalytics(data);
       } catch (err) {
-        setAnalytics(null);
+        console.error('Failed to fetch analytics:', err);
+        // Set default analytics with error message
+        setAnalytics({
+          totalUsers: 0,
+          totalEvents: 0,
+          totalMessages: 0,
+          totalAttendance: 0,
+          studentsCount: 0,
+          staffCount: 0,
+          adminCount: 0,
+          activeEvents: 0,
+          completedEvents: 0,
+          approvedAttendance: 0,
+          totalHours: 0,
+          message: 'Database temporarily unavailable'
+        });
       }
       setLoading(false);
     };
@@ -69,9 +85,12 @@ function AdminDashboard() {
         <div className="background-pattern"></div>
       </div>
 
-      <div className={`admin-dashboard-container ${isVisible ? 'visible' : ''}`}>
-        {/* Header Section */}
-        <div className="header-section">
+              <div className={`admin-dashboard-container ${isVisible ? 'visible' : ''}`}>
+          {/* Database Status Alert */}
+          <DatabaseStatus />
+          
+          {/* Header Section */}
+          <div className="header-section">
           <div className="header-content">
             <div className="header-icon">
               <div className="icon-symbol">⚙️</div>

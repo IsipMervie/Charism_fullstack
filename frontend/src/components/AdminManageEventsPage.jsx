@@ -55,6 +55,10 @@ function AdminManageEventsPage() {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const role = user.role || localStorage.getItem('role');
         setError(`Access denied. This page requires Admin or Staff role. Your current role is: ${role || 'Unknown'}`);
+      } else if (err.message && err.message.includes('Database not connected')) {
+        setError('Database temporarily unavailable. Please try again later.');
+      } else if (err.response?.status === 500) {
+        setError('Server error. Please try again later.');
       } else {
         setError('Failed to fetch events. Please try again.');
       }
@@ -65,7 +69,17 @@ function AdminManageEventsPage() {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+    
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        setError('Loading timeout. Please refresh the page.');
+        setLoading(false);
+      }
+    }, 30000); // 30 seconds timeout
+    
+    return () => clearTimeout(timeoutId);
+  }, [loading]);
 
   const handleEdit = (eventId) => {
     navigate(`/events/${eventId}/edit`);

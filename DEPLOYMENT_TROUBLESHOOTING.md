@@ -17,6 +17,13 @@
 - **Cause**: Environment variables not properly set or connection timeouts
 - **Solution**: Improved error handling and fallback to default values
 
+### 4. Events and Analytics Failures
+- **Problem**: `/api/events` and `/api/analytics` returning "Database not connected" errors
+- **Cause**: Database connection failures causing endpoints to crash
+- **Solution**: Added graceful fallbacks and better error handling
+
+
+
 ## Quick Fixes Applied
 
 ### Frontend Changes
@@ -29,6 +36,8 @@
 2. **Reduced database timeouts**: Faster failure detection
 3. **Added health check endpoints**: Better monitoring
 4. **Enhanced lazy connection**: Prevents hanging connections
+5. **Fixed events and analytics controllers**: Added graceful fallbacks for database failures
+6. **Added database status endpoint**: Real-time connection monitoring
 
 ## Environment Variable Setup
 
@@ -65,6 +74,12 @@ node backend/check-env.js
 - `/api/settings/public/school` - Public school settings (no auth required)
 - `/api/settings/school` - Admin school settings (requires auth)
 
+### 4. Test Database Connection
+- `/api/db-status` - Database connection status
+- `/api/test-db-comprehensive` - Full database connection test
+
+
+
 ## Common Issues and Solutions
 
 ### Issue: "timeout of 30000ms exceeded"
@@ -85,6 +100,8 @@ node backend/check-env.js
 - Include your frontend domain in the CORS configuration
 - Check if the request origin matches allowed origins
 
+
+
 ## Vercel Deployment Checklist
 
 ### Before Deployment
@@ -96,6 +113,7 @@ node backend/check-env.js
 ### After Deployment
 - [ ] Test `/api/health` endpoint
 - [ ] Test `/api/settings/public/school` endpoint
+
 - [ ] Check Vercel function logs for errors
 - [ ] Verify frontend can reach backend
 
@@ -127,6 +145,8 @@ curl https://your-app.vercel.app/api/health-quick
 ```bash
 curl https://your-app.vercel.app/api/settings/public/school
 ```
+
+
 
 ## Performance Optimizations
 
@@ -165,8 +185,15 @@ If issues persist:
 
 - `frontend/src/components/NavigationBar.jsx` - Fixed useEffect dependency
 - `frontend/src/api/api.js` - Reduced timeout and fixed formatting
+- `frontend/src/components/AdminDashboard.jsx` - Added database status and better error handling
+- `frontend/src/components/AnalyticsPage.jsx` - Improved error handling for analytics
+- `frontend/src/components/DatabaseStatus.jsx` - New database status monitoring component
 - `backend/controllers/settingsController.js` - Improved error handling
+- `backend/controllers/eventController.js` - Added graceful fallback for database failures
+- `backend/controllers/analyticsController.js` - Added graceful fallback for database failures
 - `backend/config/db.js` - Reduced timeouts and added connection timeout
-- `backend/vercel-server.js` - Added health check endpoints
+- `backend/vercel-server.js` - Added health check and database status endpoints
 - `backend/check-env.js` - New environment checker script
+- `backend/test-db-connection.js` - New database connection test script
+
 - `DEPLOYMENT_TROUBLESHOOTING.md` - This troubleshooting guide
