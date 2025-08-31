@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Spinner, Button } from 'react-bootstrap';
 import { FaDatabase, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
-import axiosInstance from '../api/api';
+import { axiosInstance } from '../api/api';
 
 const DatabaseStatus = () => {
   const [status, setStatus] = useState('checking');

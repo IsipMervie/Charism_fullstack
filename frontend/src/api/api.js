@@ -77,6 +77,12 @@ function getUserId() {
 // API Functions
 // =======================
 
+// Default export for backward compatibility
+export default {
+  axiosInstance,
+  // Add other commonly used functions here if needed
+};
+
 // Generate registration tokens for existing events (admin utility)
 export const generateTokensForExistingEvents = async () => {
   try {
