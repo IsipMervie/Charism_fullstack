@@ -6,7 +6,7 @@ const config = {
     NODE_ENV: 'development'
   },
   production: {
-    API_URL: process.env.REACT_APP_API_URL || 'https://charism-backend.vercel.app/api',
+    API_URL: process.env.REACT_APP_API_URL || '/api',
     FRONTEND_URL: 'https://charism.vercel.app',
     NODE_ENV: 'production'
   }
