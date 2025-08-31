@@ -77,6 +77,36 @@ function NavigationBar() {
     setIsExpanded(false);
   };
 
+  // Handle mobile menu toggle
+  const handleMobileToggle = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isExpanded && !event.target.closest('.navbar')) {
+        setIsExpanded(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isExpanded]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isExpanded) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [isExpanded]);
+
   // Get the logo URL with fallback
   const getLogoUrl = () => {
     if (schoolSettings.logo && schoolSettings.logo.data) {
@@ -114,11 +144,28 @@ function NavigationBar() {
           <Navbar.Toggle 
             aria-controls="navbar-nav" 
             className="navbar-toggler"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={handleMobileToggle}
+            aria-expanded={isExpanded}
+            aria-label="Toggle navigation"
           />
         </div>
-        <Navbar.Collapse id="navbar-nav" className="justify-content-end">
-          <Nav>
+        <Navbar.Collapse 
+          id="navbar-nav" 
+          className={`justify-content-end ${isExpanded ? 'show' : ''}`}
+        >
+          {/* Mobile menu header */}
+          <div className="mobile-menu-header">
+            <h6 className="mobile-menu-title">Navigation Menu</h6>
+            <button 
+              className="mobile-menu-close"
+              onClick={() => setIsExpanded(false)}
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <Nav className="navbar-nav-mobile">
             {/* Not logged in */}
             {!user && (
               <>

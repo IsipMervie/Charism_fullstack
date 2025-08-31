@@ -49,6 +49,7 @@ import FeedbackPage from './components/FeedbackPage';
 import AdminManageFeedbackPage from './components/AdminManageFeedbackPage';
 import NotFoundPage from './components/NotFoundPage';
 import TestPage from './components/TestPage';
+import DebugInfo from './components/DebugInfo';
 
 function App() {
   // Setup global error handling
@@ -312,6 +313,10 @@ function App() {
         {/* 404 fallback */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      
+      {/* Debug Info - Remove this in production */}
+      <DebugInfo />
+      
       </Router>
     </ErrorBoundary>
   );
