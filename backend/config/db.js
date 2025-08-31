@@ -58,8 +58,8 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        serverSelectionTimeoutMS: 30000, // Increased to 30 seconds
-        socketTimeoutMS: 45000, // Increased to 45 seconds
+        serverSelectionTimeoutMS: 10000, // Reduced to 10 seconds for faster failure
+        socketTimeoutMS: 15000, // Reduced to 15 seconds for faster failure
         maxPoolSize: 1, // Reduced for serverless
         minPoolSize: 0, // Reduced for serverless
         bufferCommands: true, // Enable buffering for better reliability
@@ -67,7 +67,7 @@ const connectDB = async () => {
         retryWrites: true,
         w: 'majority',
         // Serverless-specific options
-        maxIdleTimeMS: 30000, // Increased for serverless
+        maxIdleTimeMS: 15000, // Reduced for serverless
         // Additional options for better reliability
         autoIndex: false, // Disable auto-indexing in production
         maxConnecting: 1, // Limit concurrent connections
@@ -78,8 +78,8 @@ const connectDB = async () => {
           deprecationErrors: false,
         },
         // Timeout improvements
-        connectTimeoutMS: 30000,
-        heartbeatFrequencyMS: 10000,
+        connectTimeoutMS: 10000, // Reduced to 10 seconds
+        heartbeatFrequencyMS: 5000, // Reduced for faster detection
         // Retry logic
         retryReads: true,
         retryWrites: true,
@@ -166,7 +166,12 @@ const getLazyConnection = async () => {
     }
     
     if (lazyConnection) {
-      await lazyConnection;
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database connection timeout')), 15000);
+      });
+      
+      await Promise.race([lazyConnection, timeoutPromise]);
     }
     
     return mongoose.connection.readyState === 1;

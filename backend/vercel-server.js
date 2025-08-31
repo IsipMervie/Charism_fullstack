@@ -149,7 +149,21 @@ app.get('/api/frontend-test', (req, res) => {
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Vercel backend is running' });
+  res.json({ 
+    status: 'OK', 
+    message: 'Vercel backend is running',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Quick health check for frontend
+app.get('/api/health-quick', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Backend responding quickly',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Simple test for database

@@ -114,7 +114,14 @@ exports.getPublicSchoolSettings = async (req, res) => {
     
     // Check if database is connected using lazy connection
     const { getLazyConnection } = require('../config/db');
-    const isConnected = await getLazyConnection();
+    let isConnected = false;
+    
+    try {
+      isConnected = await getLazyConnection();
+    } catch (dbError) {
+      console.log('Database connection check failed:', dbError.message);
+      isConnected = false;
+    }
     
     if (!isConnected) {
       console.log('Database not connected, returning default settings');
@@ -169,7 +176,7 @@ exports.getPublicSchoolSettings = async (req, res) => {
     console.error('Error in getPublicSchoolSettings:', err);
     
     // If database error, return default settings
-    if (err.name === 'MongooseError' || err.message.includes('before initial connection')) {
+    if (err.name === 'MongooseError' || err.message.includes('before initial connection') || err.message.includes('timeout')) {
       console.log('Database connection issue, returning default settings');
       return res.json({
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',

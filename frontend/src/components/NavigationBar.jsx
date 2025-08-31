@@ -63,7 +63,7 @@ function NavigationBar() {
     };
     
     fetchSchoolSettings();
-  }, []);
+  }, [isLoading]);
 
   const handleLogout = () => {
     localStorage.clear();

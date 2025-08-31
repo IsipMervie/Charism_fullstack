@@ -13,7 +13,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // 30 second timeout for better performance
+  timeout: 15000, // 15 second timeout for faster failure detection
 });
 
 // Attach token if it exists
@@ -773,8 +773,8 @@ export const getPublicSchoolSettings = async () => {
     console.error('Error fetching public school settings:', error);
     // Return default values if API fails
     return {
-          schoolName: 'CHARISM School',
-    brandName: 'CHARISM',
+      schoolName: 'CHARISM School',
+      brandName: 'CHARISM',
       logo: null
     };
   }
