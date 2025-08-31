@@ -16,8 +16,11 @@ function NavigationBar() {
 
   const [user, setUser] = useState(getUserFromStorage());
   const [role, setRole] = useState(getUserFromStorage()?.role || localStorage.getItem('role'));
-  const [schoolSettings, setSchoolSettings] = useState({});
-
+  const [schoolSettings, setSchoolSettings] = useState({
+    brandName: 'CHARISM',
+    logo: null
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,17 +38,24 @@ function NavigationBar() {
     };
   }, []);
 
-  // Fetch school settings for navbar
+  // Fetch school settings for navbar with error handling
   useEffect(() => {
     const fetchSchoolSettings = async () => {
+      if (isLoading) return; // Prevent multiple simultaneous requests
+      
+      setIsLoading(true);
       try {
         const settings = await getPublicSchoolSettings();
         setSchoolSettings(settings);
       } catch (error) {
         console.error('Failed to fetch school settings:', error);
-        // Keep default values
+        // Keep default values and don't show error to user
+        // The navbar will still work with default branding
+      } finally {
+        setIsLoading(false);
       }
     };
+    
     fetchSchoolSettings();
   }, []);
 
@@ -55,13 +65,33 @@ function NavigationBar() {
     navigate('/login');
   };
 
+  // Get the logo URL with fallback
+  const getLogoUrl = () => {
+    if (schoolSettings.logo && schoolSettings.logo.data) {
+      // If we have MongoDB-stored logo, use the API endpoint
+      return '/api/files/school-logo';
+    }
+    // Fallback to static logo
+    return logo;
+  };
+
   return (
     <Navbar expand="lg" className="navbar-custom fixed-top" collapseOnSelect>
       <Container fluid>
         <div className="d-flex align-items-center">
           <Navbar.Brand as={Link} to="/" className="navbar-brand">
-            <img src={logo} alt="CHARISM Logo" className="navbar-logo" />
-            <span className="navbar-title">CHARISM</span>
+            <img 
+              src={getLogoUrl()} 
+              alt="CHARISM Logo" 
+              className="navbar-logo"
+              onError={(e) => {
+                console.warn('Logo failed to load, using fallback');
+                e.target.src = logo; // Fallback to static logo
+              }}
+            />
+            <span className="navbar-title">
+              {schoolSettings.brandName || 'CHARISM'}
+            </span>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbar-nav" className="navbar-toggler" />
         </div>

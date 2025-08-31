@@ -5,9 +5,10 @@ const Event = require('../models/Event');
 const SchoolSettings = require('../models/SchoolSettings');
 const { hasFile } = require('../utils/mongoFileStorage');
 const { isValidObjectId } = require('mongoose');
+const { ensureDBConnection } = require('../middleware/dbMiddleware');
 
 // Serve profile picture
-router.get('/profile-picture/:userId', async (req, res) => {
+router.get('/profile-picture/:userId', ensureDBConnection, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     
@@ -31,7 +32,7 @@ router.get('/profile-picture/:userId', async (req, res) => {
 });
 
 // Serve event image
-router.get('/event-image/:eventId', async (req, res) => {
+router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
   try {
     const { eventId } = req.params;
     
@@ -137,7 +138,7 @@ router.get('/event-image/:eventId', async (req, res) => {
 });
 
 // Serve school logo
-router.get('/school-logo', async (req, res) => {
+router.get('/school-logo', ensureDBConnection, async (req, res) => {
   try {
     const settings = await SchoolSettings.findOne();
     
@@ -189,7 +190,7 @@ router.get('/school-logo', async (req, res) => {
 });
 
 // Serve event document
-router.get('/event-document/:eventId/:documentIndex', async (req, res) => {
+router.get('/event-document/:eventId/:documentIndex', ensureDBConnection, async (req, res) => {
   try {
     const { eventId, documentIndex } = req.params;
     const event = await Event.findById(eventId);
@@ -227,7 +228,7 @@ router.get('/event-document/:eventId/:documentIndex', async (req, res) => {
 });
 
 // Serve documentation files (for direct access)
-router.get('/documentation/:filename', async (req, res) => {
+router.get('/documentation/:filename', ensureDBConnection, async (req, res) => {
   try {
     const { filename } = req.params;
     console.log('=== Serving Documentation File ===');

@@ -240,6 +240,17 @@ exports.getPublicSettings = async (req, res) => {
   try {
     console.log('=== Getting Public Settings ===');
     
+    // Ensure database connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    if (!isConnected) {
+      console.error('❌ Database not connected for public settings');
+      return res.status(503).json({ 
+        message: 'Database connection unavailable',
+        error: 'DATABASE_CONNECTION_FAILED'
+      });
+    }
+    
     // Check if models are available
     if (!Section || !YearLevel || !Department) {
       console.error('Models not available for public settings');
@@ -253,12 +264,21 @@ exports.getPublicSettings = async (req, res) => {
       });
     }
     
-    // Get all data
-    const [sections, yearLevels, departments, academicYears] = await Promise.all([
+    // Get all data with timeout protection
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Database query timeout')), 25000)
+    );
+    
+    const dataPromise = Promise.all([
       Section.find().sort('name'),
       YearLevel.find().sort('name'),
       Department.find().sort('name'),
       require('../models/AcademicYear').find().sort('-year')
+    ]);
+    
+    const [sections, yearLevels, departments, academicYears] = await Promise.race([
+      dataPromise,
+      timeoutPromise
     ]);
     
     console.log(`Public settings retrieved: ${sections.length} sections, ${yearLevels.length} year levels, ${departments.length} departments, ${academicYears.length} academic years`);

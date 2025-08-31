@@ -1,66 +1,126 @@
 import React from 'react';
+import { Alert, Button, Container } from 'react-bootstrap';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    this.state = { 
+      hasError: false, 
+      error: null, 
+      errorInfo: null,
+      isApiError: false 
+    };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    // Update state so the next render will show the fallback UI
+    return { 
+      hasError: true,
+      isApiError: error.message && (
+        error.message.includes('fetch') || 
+        error.message.includes('network') ||
+        error.message.includes('500') ||
+        error.message.includes('503')
+      )
+    };
   }
 
   componentDidCatch(error, errorInfo) {
+    // Log error to console
+    console.error('Error caught by boundary:', error, errorInfo);
+    
     this.setState({
       error: error,
       errorInfo: errorInfo
     });
-    
-    // Log error to console for debugging
-    console.error('Error caught by boundary:', error, errorInfo);
   }
+
+  handleRetry = () => {
+    this.setState({ 
+      hasError: false, 
+      error: null, 
+      errorInfo: null,
+      isApiError: false 
+    });
+    
+    // Force a page refresh to retry
+    window.location.reload();
+  };
+
+  handleGoHome = () => {
+    this.setState({ 
+      hasError: false, 
+      error: null, 
+      errorInfo: null,
+      isApiError: false 
+    });
+    
+    // Navigate to home page
+    window.location.href = '/';
+  };
 
   render() {
     if (this.state.hasError) {
+      // Custom fallback UI
       return (
-        <div style={{ 
-          padding: '20px', 
-          textAlign: 'center',
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #dee2e6',
-          borderRadius: '5px',
-          margin: '20px'
-        }}>
-          <h2>🚨 Something went wrong</h2>
-          <p>We're sorry, but something unexpected happened.</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
-          >
-            Reload Page
-          </button>
-          {process.env.NODE_ENV === 'development' && (
-            <details style={{ marginTop: '20px', textAlign: 'left' }}>
-              <summary>Error Details (Development)</summary>
-              <pre style={{ 
-                backgroundColor: '#f1f3f4', 
-                padding: '10px', 
-                borderRadius: '3px',
-                overflow: 'auto'
-              }}>
-                {this.state.error && this.state.error.toString()}
-                {this.state.errorInfo && this.state.errorInfo.componentStack}
-              </pre>
-            </details>
-          )}
-        </div>
+        <Container className="mt-5 text-center">
+          <Alert variant="danger" className="border-0 shadow-sm">
+            <Alert.Heading>
+              {this.state.isApiError ? '🔄 Connection Issue' : '⚠️ Something went wrong'}
+            </Alert.Heading>
+            
+            {this.state.isApiError ? (
+              <>
+                <p>
+                  We're experiencing some connection issues. This might be due to:
+                </p>
+                <ul className="text-start">
+                  <li>Database connection problems</li>
+                  <li>Network connectivity issues</li>
+                  <li>Server maintenance</li>
+                </ul>
+                <p>
+                  Please try again in a few moments.
+                </p>
+              </>
+            ) : (
+              <p>
+                An unexpected error occurred. Our team has been notified.
+              </p>
+            )}
+            
+            <hr />
+            
+            <div className="d-flex justify-content-center gap-2">
+              <Button 
+                variant="outline-danger" 
+                onClick={this.handleRetry}
+                className="px-4"
+              >
+                🔄 Try Again
+              </Button>
+              
+              <Button 
+                variant="outline-secondary" 
+                onClick={this.handleGoHome}
+                className="px-4"
+              >
+                🏠 Go Home
+              </Button>
+            </div>
+            
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <details className="mt-3 text-start">
+                <summary>Error Details (Development)</summary>
+                <pre className="mt-2 p-3 bg-light rounded">
+                  {this.state.error && this.state.error.toString()}
+                  <br />
+                  {this.state.errorInfo.componentStack}
+                </pre>
+              </details>
+            )}
+          </Alert>
+        </Container>
       );
     }
 

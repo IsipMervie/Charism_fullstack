@@ -45,7 +45,7 @@ const connectDB = async () => {
   console.log('✅ MongoDB URI format looks valid');
   console.log('Using database:', dbURI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Custom MongoDB');
 
-  const maxRetries = 3;
+  const maxRetries = 5; // Increased retries
   let retryCount = 0;
   
   while (retryCount < maxRetries) {
@@ -58,19 +58,31 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        serverSelectionTimeoutMS: 15000, // Increased for serverless
-        socketTimeoutMS: 30000, // Increased for serverless
+        serverSelectionTimeoutMS: 30000, // Increased to 30 seconds
+        socketTimeoutMS: 45000, // Increased to 45 seconds
         maxPoolSize: 1, // Reduced for serverless
         minPoolSize: 0, // Reduced for serverless
-        bufferCommands: false, // Disable buffering for serverless
+        bufferCommands: true, // Enable buffering for better reliability
         family: 4, // Force IPv4
         retryWrites: true,
         w: 'majority',
-        // Serverless-specific options (removed unsupported ones)
-        maxIdleTimeMS: 15000, // Increased for serverless
+        // Serverless-specific options
+        maxIdleTimeMS: 30000, // Increased for serverless
         // Additional options for better reliability
         autoIndex: false, // Disable auto-indexing in production
         maxConnecting: 1, // Limit concurrent connections
+        // Connection pooling improvements
+        serverApi: {
+          version: '1',
+          strict: false,
+          deprecationErrors: false,
+        },
+        // Timeout improvements
+        connectTimeoutMS: 30000,
+        heartbeatFrequencyMS: 10000,
+        // Retry logic
+        retryReads: true,
+        retryWrites: true,
       });
       
       console.log('✅ MongoDB connected successfully');
@@ -101,8 +113,8 @@ const connectDB = async () => {
           return null;
         }
       } else {
-        console.log(`⏳ Retrying in 2 seconds... (${retryCount}/${maxRetries})`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log(`⏳ Retrying in 3 seconds... (${retryCount}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
   }

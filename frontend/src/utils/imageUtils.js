@@ -143,6 +143,40 @@ export const getImageTypeFromContentType = (contentType) => {
   return 'unknown';
 };
 
+// Enhanced image loading with error handling
+export const loadImageWithFallback = (imageUrl, fallbackUrl = null, onError = null) => {
+  return new Promise((resolve, reject) => {
+    if (!imageUrl) {
+      if (fallbackUrl) {
+        resolve(fallbackUrl);
+      } else {
+        reject(new Error('No image URL provided'));
+      }
+      return;
+    }
+
+    const img = new Image();
+    
+    img.onload = () => {
+      resolve(imageUrl);
+    };
+    
+    img.onerror = () => {
+      console.warn('Failed to load image:', imageUrl);
+      if (fallbackUrl) {
+        resolve(fallbackUrl);
+      } else if (onError) {
+        onError(imageUrl);
+        resolve(null);
+      } else {
+        reject(new Error(`Failed to load image: ${imageUrl}`));
+      }
+    };
+    
+    img.src = imageUrl;
+  });
+};
+
 // Debug function to check current configuration
 export const debugImageConfig = () => {
   console.log('🔍 Image Utils Debug Info:');

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
@@ -7,6 +7,8 @@ import NavigationBar from './components/NavigationBar';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 
+// Utilities
+import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
 
 // Pages
 import HomePage from './components/HomePage';
@@ -49,6 +51,11 @@ import NotFoundPage from './components/NotFoundPage';
 import TestPage from './components/TestPage';
 
 function App() {
+  // Setup global error handling
+  useEffect(() => {
+    setupGlobalErrorHandler();
+  }, []);
+
   return (
     <ErrorBoundary>
       <Router>
