@@ -27,6 +27,7 @@
     "build": "react-scripts build",
     "build:prod": "react-scripts build",
     "build:vercel": "react-scripts build",
+    "vercel-build": "react-scripts build",
     "build:render": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

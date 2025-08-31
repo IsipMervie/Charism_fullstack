@@ -6,7 +6,9 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build"
-      }
+      },
+      "buildCommand": "npm run vercel-build",
+      "installCommand": "npm install"
     },
     {
       "src": "backend/vercel-server.js",
@@ -49,6 +51,7 @@
   ],
   "env": {
     "CI": "false",
-    "DISABLE_ESLINT_PLUGIN": "true"
+    "DISABLE_ESLINT_PLUGIN": "true",
+    "GENERATE_SOURCEMAP": "false"
   }
 }
