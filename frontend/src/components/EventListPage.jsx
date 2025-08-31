@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
+import { safeFilter, safeMap, safeSet, safeSpread } from '../utils/arrayUtils';
 import './EventListPage.css';
 
 function EventListPage() {
@@ -44,10 +45,15 @@ function EventListPage() {
       const settings = await getPublicSettings();
       console.log('⚙️ Full settings response:', settings);
       
-      const activeDepartments = settings.departments?.filter(d => d.isActive).map(d => d.name) || [];
+      // Use safe array utilities to prevent filter errors
+      const departments = safeSpread(settings?.departments, []);
+      const activeDepartments = safeMap(
+        safeFilter(departments, d => d && d.isActive),
+        d => d.name
+      );
       
       console.log('🏢 Active departments from settings:', activeDepartments);
-      console.log('🏢 Raw departments data:', settings.departments);
+      console.log('🏢 Raw departments data:', settings?.departments);
       
       setFilterOptions(prev => ({
         ...prev,
@@ -57,7 +63,7 @@ function EventListPage() {
       // If no departments found, try to get them from events
       if (activeDepartments.length === 0) {
         console.log('⚠️ No departments found in settings, trying to extract from events...');
-        const eventDepartments = [...new Set(events.map(event => event.department).filter(Boolean))];
+        const eventDepartments = [...safeSet(safeMap(events, event => event.department).filter(Boolean))];
         console.log('🏢 Departments from events:', eventDepartments);
         
         if (eventDepartments.length > 0) {
@@ -124,7 +130,7 @@ function EventListPage() {
   useEffect(() => {
     if (events.length > 0 && filterOptions.departments.length === 0) {
       console.log('🔄 Events loaded, updating department filter options...');
-      const eventDepartments = [...new Set(events.map(event => event.department).filter(Boolean))];
+      const eventDepartments = [...safeSet(safeMap(events, event => event.department).filter(Boolean))];
       console.log('🏢 Departments from events:', eventDepartments);
       
       if (eventDepartments.length > 0) {
@@ -197,10 +203,8 @@ function EventListPage() {
       setEvents(eventsData);
       
       // Extract unique departments from events for filter options
-      const uniqueDepartments = [...new Set(
-        eventsData
-          .map(event => event.department)
-          .filter(Boolean) // Remove null/undefined values
+      const uniqueDepartments = [...safeSet(
+        safeMap(eventsData, event => event.department).filter(Boolean) // Remove null/undefined values
       )].sort();
       
       console.log('🏢 Unique departments found:', uniqueDepartments);
@@ -220,15 +224,16 @@ function EventListPage() {
         console.log('🆔 User ID:', userId);
         
         if (userId) {
-          const joined = eventsData
-            .filter(event => 
+          const joined = safeMap(
+            safeFilter(eventsData, event => 
               event.attendance && 
               event.attendance.some(a => {
                 const attUserId = a.userId?._id || a.userId;
                 return attUserId === userId;
               })
-            )
-            .map(event => event._id);
+            ),
+            event => event._id
+          );
           console.log('📋 Joined events:', joined);
         }
       }
@@ -490,7 +495,7 @@ function EventListPage() {
       }
 
       // Check if current filters would result in no events
-      const eventsWithFilters = events.filter(event => {
+      const eventsWithFilters = safeFilter(events, event => {
         // Apply PDF filters to check if any events would match
         if (pdfFilters.status) {
           const eventStatus = getEventStatus(event);
@@ -627,7 +632,7 @@ function EventListPage() {
   const getEventsWithPdfFilters = () => {
     if (!events || events.length === 0) return [];
     
-    return events.filter(event => {
+    return safeFilter(events, event => {
       // Apply PDF filters to check if any events would match
       if (pdfFilters.status) {
         const eventStatus = getEventStatus(event);
@@ -673,7 +678,7 @@ function EventListPage() {
   };
 
   // Filter events by status, search, and department restrictions
-  const filteredEvents = events.filter(event => {
+  const filteredEvents = safeFilter(events, event => {
     // Search filter
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -966,10 +971,8 @@ function EventListPage() {
 
                 // Calculate available slots and status - only count approved registrations
                 const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
-                const approvedAttendanceCount = Array.isArray(event.attendance) ? 
-                  event.attendance.filter(a => a.registrationApproved === true).length : 0;
-                const pendingRegistrationsCount = Array.isArray(event.attendance) ? 
-                  event.attendance.filter(a => a.registrationApproved === false && a.status === 'Pending').length : 0;
+                const approvedAttendanceCount = safeFilter(event.attendance, a => a.registrationApproved === true).length;
+                const pendingRegistrationsCount = safeFilter(event.attendance, a => a.registrationApproved === false && a.status === 'Pending').length;
                 const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';
                 
                 // Check if event is available for registration (not completed, has slots, time hasn't passed, and event has started)

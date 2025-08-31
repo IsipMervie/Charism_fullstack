@@ -1,9 +1,10 @@
 // Redesigned Registration Approval Page - Super User Friendly
 
 import React, { useState, useEffect } from 'react';
-import { approveRegistration, disapproveRegistration, getAllEventRegistrations, getEvents } from '../api/api';
+import { getEvents, getAllEventRegistrations, approveRegistration, disapproveRegistration } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaSync, FaEye, FaCheck, FaTimes, FaClock, FaUserGraduate, FaBuilding, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
+import { FaSpinner, FaSearch, FaEye, FaCheck, FaTimes, FaArrowLeft, FaFilter } from 'react-icons/fa';
+import { safeFilter, safeLength } from '../utils/arrayUtils';
 import './RegistrationApprovalPage.css';
 
 function RegistrationApprovalPage() {
@@ -30,7 +31,7 @@ function RegistrationApprovalPage() {
     setLoading(true);
     try {
       const allEvents = await getEvents();
-      const eventsWithRegistrations = allEvents.filter(event => 
+      const eventsWithRegistrations = safeFilter(allEvents, event => 
         event.attendance && event.attendance.length > 0
       );
       setEvents(eventsWithRegistrations);
@@ -53,11 +54,11 @@ function RegistrationApprovalPage() {
     }
 
     const searchLower = eventSearchTerm.toLowerCase();
-    const filtered = events.filter(event => 
+    const filtered = safeFilter(events, event => 
       event.title.toLowerCase().includes(searchLower) ||
       (event.location && event.location.toLowerCase().includes(searchLower)) ||
       event.date.toLowerCase().includes(searchLower) ||
-      event.attendance.length.toString().includes(searchLower)
+      safeLength(event.attendance).toString().includes(searchLower)
     );
     setFilteredEvents(filtered);
   };
@@ -281,7 +282,7 @@ function EventsView({ events, searchTerm, onSearchChange, onEventSelect, onRefre
           onClick={onRefresh}
           title="Refresh events"
         >
-          <FaSync className="refresh-icon" />
+          <FaSpinner className="refresh-icon" />
           Refresh
         </button>
       </div>
@@ -411,7 +412,7 @@ function RegistrationsView({
           onClick={onRefresh}
           disabled={loading}
         >
-          <FaSync className={`refresh-icon ${loading ? 'spinning' : ''}`} />
+          <FaSpinner className={`refresh-icon ${loading ? 'spinning' : ''}`} />
           Refresh
         </button>
       </div>

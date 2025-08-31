@@ -331,10 +331,20 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
 export const getEvents = async () => {
   try {
     const response = await axiosInstance.get('/events');
-    return response.data;
+    // Ensure we always return an array
+    const data = response.data;
+    if (Array.isArray(data)) {
+      return data;
+    } else if (data && Array.isArray(data.events)) {
+      return data.events;
+    } else {
+      console.warn('getEvents: Unexpected response format, returning empty array:', data);
+      return [];
+    }
   } catch (error) {
     console.error('Error fetching events:', error);
-    throw new Error('Failed to fetch events. Please try again.');
+    // Return empty array instead of throwing error to prevent crashes
+    return [];
   }
 };
 
@@ -763,10 +773,24 @@ export const getSettings = async () => {
 export const getPublicSettings = async () => {
   try {
     const response = await axiosInstance.get('/settings/public');
-    return response.data;
+    const data = response.data;
+    
+    // Ensure we always return an object with arrays
+    return {
+      sections: Array.isArray(data?.sections) ? data.sections : [],
+      yearLevels: Array.isArray(data?.yearLevels) ? data.yearLevels : [],
+      departments: Array.isArray(data?.departments) ? data.departments : [],
+      academicYears: Array.isArray(data?.academicYears) ? data.academicYears : []
+    };
   } catch (error) {
     console.error('Error fetching public settings:', error);
-    throw new Error('Failed to fetch public settings. Please try again.');
+    // Return default structure instead of throwing error
+    return {
+      sections: [],
+      yearLevels: [],
+      departments: [],
+      academicYears: []
+    };
   }
 };
 

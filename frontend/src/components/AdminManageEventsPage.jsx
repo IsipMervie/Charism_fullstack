@@ -1,13 +1,14 @@
 // frontend/src/components/AdminManageEventsPage.jsx
 // Simple but Creative Manage Events Page Design
 
-import React, { useEffect, useState } from 'react';
-import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted } from '../api/api';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted } from '../api/api';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaSpinner, FaEyeSlash, FaShare } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
+import { safeFilter, safeMap, safeLength } from '../utils/arrayUtils';
 import './AdminManageEventsPage.css';
 
 function AdminManageEventsPage() {
@@ -389,7 +390,7 @@ function AdminManageEventsPage() {
   };
 
   // Filter events by search and status
-  const filteredEvents = events.filter(event => {
+  const filteredEvents = safeFilter(events, event => {
     // Search filter
     const matchesSearch = (event.title && event.title.toLowerCase().includes(search.toLowerCase())) ||
                          (event.description && event.description.toLowerCase().includes(search.toLowerCase()));
@@ -502,21 +503,21 @@ function AdminManageEventsPage() {
         <div className="events-summary">
           <div className="summary-stats">
             <div className="stat-item">
-              <span className="stat-number">{events.filter(e => getEventStatus(e) === 'upcoming').length}</span>
+              <span className="stat-number">{safeLength(safeFilter(events, e => getEventStatus(e) === 'upcoming'))}</span>
               <span className="stat-label">🚀 Upcoming</span>
             </div>
 
             <div className="stat-item">
-              <span className="stat-number">{events.filter(e => getEventStatus(e) === 'ongoing').length}</span>
+              <span className="stat-number">{safeLength(safeFilter(events, e => getEventStatus(e) === 'ongoing'))}</span>
               <span className="stat-label">🔄 Ongoing</span>
             </div>
 
             <div className="stat-item">
-              <span className="stat-number">{events.filter(e => getEventStatus(e) === 'past').length}</span>
+              <span className="stat-number">{safeLength(safeFilter(events, e => getEventStatus(e) === 'past'))}</span>
               <span className="stat-label">⏰ Past</span>
             </div>
             <div className="stat-item">
-              <span className="stat-number">{events.filter(e => getEventStatus(e) === 'completed').length}</span>
+              <span className="stat-number">{safeLength(safeFilter(events, e => getEventStatus(e) === 'completed'))}</span>
               <span className="stat-label">✅ Completed</span>
             </div>
           </div>
@@ -524,7 +525,7 @@ function AdminManageEventsPage() {
 
         {/* Events Grid */}
         <div className="events-section">
-          {filteredEvents.length === 0 ? (
+          {safeLength(filteredEvents) === 0 ? (
             <div className="no-events">
               <div className="no-events-icon">📅</div>
               <h3>No Events Found</h3>
@@ -548,7 +549,7 @@ function AdminManageEventsPage() {
             <>
               {/* Results Header */}
               <div className="results-header">
-                <h3>Events ({filteredEvents.length} of {events.length})</h3>
+                <h3>Events ({safeLength(filteredEvents)} of {safeLength(events)})</h3>
                 {(search || statusFilter) && (
                   <div className="active-filters">
                     <span className="filter-tag">
@@ -564,11 +565,10 @@ function AdminManageEventsPage() {
               </div>
               
               <div className="events-grid">
-                {filteredEvents.map(event => {
+                                 {filteredEvents.map(event => {
                   const status = getEventStatus(event);
                   const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
-                  const approvedAttendanceCount = Array.isArray(event.attendance) ? 
-                    event.attendance.filter(a => a.registrationApproved === true).length : 0;
+                  const approvedAttendanceCount = safeFilter(event.attendance, a => a.registrationApproved === true).length;
 
 
                   const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';
