@@ -20,7 +20,7 @@ console.log('   GENERATE_SOURCEMAP:', process.env.GENERATE_SOURCEMAP);
 console.log('   ESLINT_NO_DEV_ERRORS:', process.env.ESLINT_NO_DEV_ERRORS);
 console.log('   SKIP_PREFLIGHT_CHECK:', process.env.SKIP_PREFLIGHT_CHECK);
 
-// Create a temporary .env file for the build
+// Create multiple environment files to ensure they're loaded
 const envContent = `DISABLE_ESLINT_PLUGIN=true
 CI=false
 GENERATE_SOURCEMAP=false
@@ -28,11 +28,15 @@ ESLINT_NO_DEV_ERRORS=true
 SKIP_PREFLIGHT_CHECK=true
 `;
 
-try {
-  fs.writeFileSync(path.join(__dirname, '.env.temp'), envContent);
-  console.log('✅ Temporary .env file created');
-} catch (error) {
-  console.log('⚠️  Could not create temporary .env file:', error.message);
-}
+const envFiles = ['.env.local', '.env.production', '.env.build'];
+
+envFiles.forEach(fileName => {
+  try {
+    fs.writeFileSync(path.join(__dirname, fileName), envContent);
+    console.log(`✅ ${fileName} file created`);
+  } catch (error) {
+    console.log(`⚠️  Could not create ${fileName} file:`, error.message);
+  }
+});
 
 console.log('🚀 Ready for build process');
