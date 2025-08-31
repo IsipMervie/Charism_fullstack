@@ -1,16 +1,19 @@
-/* Clean Minimal Navigation Bar - No Space Design */
+/* Clean Minimal Navigation Bar - Fixed Positioning and Proper Spacing */
 
 .navbar-custom {
   background: #ffffff;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-  padding: 1rem 0;
-  height: 80px;
+  padding: 0.75rem 0;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   transition: all 0.3s ease;
-  position: relative;
-  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
   margin-bottom: 0;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -20,27 +23,28 @@
   display: flex;
   align-items: center;
   text-decoration: none;
-  margin-left: auto;
-  margin-right: 0;
+  margin-left: 0;
+  margin-right: auto;
   flex: 0 0 auto;
   min-width: 0;
   transition: all 0.3s ease;
-  padding: 0.75rem 2rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   background: #f8f9fa;
   border: 1px solid #e9ecef;
-  max-width: 300px;
-  order: 2;
+  max-width: 280px;
+  order: 1;
 }
 
 .navbar-brand:hover {
   transform: translateY(-1px);
   background: #f1f3f4;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
 }
 
 .navbar-logo {
-  height: 42px;
+  height: 36px;
   width: auto;
   flex-shrink: 0;
   border-radius: 6px;
@@ -52,8 +56,8 @@
 }
 
 .navbar-title {
-  margin-left: 1rem;
-  font-size: 1.4rem;
+  margin-left: 0.75rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #2c3e50;
   white-space: nowrap;
@@ -66,33 +70,30 @@
   color: #1a252f;
 }
 
-/* Super Left Toggler for mobile - No Space */
+/* Hamburger Toggler - Right Side */
 .navbar-toggler {
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #495057;
   background: #f8f9fa;
   outline: none;
   transition: all 0.3s ease;
-  padding: 0.875rem;
-  margin-left: 0;
-  margin-right: auto;
-  order: 1;
+  padding: 0.75rem;
+  margin-left: auto;
+  margin-right: 0;
+  order: 2;
   flex-shrink: 0;
   align-self: center;
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 8px;
   border: 1px solid #e9ecef;
-  border-left: none;
-  border-top: none;
-  border-bottom: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  min-width: 52px;
+  min-width: 48px;
 }
 
 .navbar-toggler:hover {
@@ -115,19 +116,19 @@
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   margin-left: auto;
 }
 
 .nav-link {
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 1rem;
   font-weight: 500;
   color: #495057;
   text-decoration: none;
   transition: all 0.3s ease;
   border-radius: 8px;
   position: relative;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -205,8 +206,8 @@
 /* Mobile Responsive Styles */
 @media (max-width: 992px) {
   .navbar-custom {
-    padding: 0.75rem 0;
-    height: 70px;
+    padding: 0.5rem 0;
+    height: 65px;
   }
   
   /* Mobile Layout: Logo left, Hamburger right */
@@ -227,40 +228,43 @@
     margin-right: 0;
     flex: 0 0 auto;
     order: 1;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 0.75rem;
+    max-width: 240px;
   }
   
   .navbar-toggler {
-    margin-left: 0;
+    margin-left: auto;
     margin-right: 0;
     order: 2;
     flex-shrink: 0;
-    font-size: 1.1rem;
-    width: 48px;
-    height: 48px;
-    padding: 0.75rem;
-    border-radius: 0;
+    font-size: 1rem;
+    width: 44px;
+    height: 44px;
+    padding: 0.625rem;
+    border-radius: 8px;
   }
   
-  /* Important: keep collapsed menu hidden unless .show is present */
-  .navbar-collapse { display: none !important; }
-
-  .navbar-collapse.show {
+  /* Mobile collapsed menu */
+  .navbar-collapse {
     position: fixed;
-    top: 70px;
+    top: 65px;
     left: 0;
     right: 0;
     background: #ffffff;
-    padding: 1.5rem 2rem;
+    padding: 1rem 1.5rem;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    display: flex !important;
+    display: none;
     flex-direction: column;
     gap: 0.5rem;
-    max-height: calc(100vh - 70px);
+    max-height: calc(100vh - 65px);
     overflow-y: auto;
-    z-index: 999;
+    z-index: 1029;
     border-top: 1px solid #e9ecef;
     animation: slideDown 0.3s ease;
+  }
+
+  .navbar-collapse.show {
+    display: flex !important;
   }
 
   @keyframes slideDown {
@@ -285,7 +289,9 @@
     margin-bottom: 0.25rem;
   }
 
-  .nav-link:last-child { border-bottom: none; }
+  .nav-link:last-child { 
+    border-bottom: none; 
+  }
 
   .nav-link:hover {
     transform: translateX(8px);
@@ -321,55 +327,67 @@
     background: #e9ecef;
   }
   
-  .navbar-title { font-size: 1.2rem; }
-  .navbar-logo { height: 36px; }
+  .navbar-title { 
+    font-size: 1.1rem; 
+  }
+  .navbar-logo { 
+    height: 32px; 
+  }
 }
 
 /* Extra small screens */
 @media (max-width: 576px) {
   .navbar-custom { 
-    padding: 0.75rem 0; 
-    height: 65px; 
+    padding: 0.5rem 0; 
+    height: 60px; 
   }
   .navbar-brand { 
     margin-left: 0;
+    max-width: 200px;
+    padding: 0.4rem 0.5rem;
   }
   .navbar-title { 
-    font-size: 1.1rem; 
-  }
-  .navbar-logo { height: 32px; }
-  .navbar-toggler { 
     font-size: 1rem; 
-    width: 44px; 
-    height: 44px; 
-    padding: 0.625rem;
-    border-radius: 0;
   }
-  .navbar-collapse.show { 
-    top: 65px; 
-    max-height: calc(100vh - 65px); 
-    padding: 1rem 1.5rem; 
+  .navbar-logo { 
+    height: 28px; 
   }
-  .navbar-title { font-size: 1rem; }
+  .navbar-toggler { 
+    font-size: 0.9rem; 
+    width: 40px; 
+    height: 40px; 
+    padding: 0.5rem;
+    border-radius: 6px;
+  }
+  .navbar-collapse { 
+    top: 60px; 
+    max-height: calc(100vh - 60px); 
+    padding: 0.75rem 1rem; 
+  }
 }
 
-/* Additional spacing for main content */
-body { padding-top: 80px; }
-
-/* Ensure proper spacing for fixed navbar */
-.navbar-custom.fixed-top { margin-bottom: 0; }
-
 /* Container spacing */
-.container-fluid { padding-left: 2rem; padding-right: 2rem; }
+.container-fluid { 
+  padding-left: 1rem; 
+  padding-right: 1rem; 
+}
 
-/* Brand spacing */
-.navbar-brand { margin-right: 0; }
+@media (min-width: 768px) {
+  .container-fluid { 
+    padding-left: 2rem; 
+    padding-right: 2rem; 
+  }
+}
 
 /* Fix for dropdown positioning */
-.dropdown-menu { margin-top: 0.5rem !important; }
+.dropdown-menu { 
+  margin-top: 0.5rem !important; 
+}
 
 /* Ensure dropdowns are properly positioned */
-.navbar-nav .dropdown { position: relative; }
+.navbar-nav .dropdown { 
+  position: relative; 
+}
 
 /* Fix for mobile dropdowns */
 @media (max-width: 992px) {
@@ -385,7 +403,10 @@ body { padding-top: 80px; }
 }
 
 /* Loading state for navbar */
-.navbar-loading { opacity: 0.7; pointer-events: none; }
+.navbar-loading { 
+  opacity: 0.7; 
+  pointer-events: none; 
+}
 
 /* Focus styles for accessibility */
 .navbar-toggler:focus,
@@ -401,7 +422,65 @@ body { padding-top: 80px; }
   .dropdown-menu,
   .nav-link,
   .navbar-brand,
-  .navbar-logo { transition: none; animation: none; }
-  .nav-link:hover { transform: none; }
-  .navbar-nav .dropdown-item:hover { transform: none; }
+  .navbar-logo { 
+    transition: none; 
+    animation: none; 
+  }
+  .nav-link:hover { 
+    transform: none; 
+  }
+  .navbar-nav .dropdown-item:hover { 
+    transform: none; 
+  }
+}
+
+/* Ensure proper spacing for main content */
+body { 
+  padding-top: 70px !important; 
+}
+
+@media (max-width: 992px) {
+  body {
+    padding-top: 65px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    padding-top: 60px !important;
+  }
+}
+
+/* Global navbar fixes */
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+.navbar-custom {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Ensure proper spacing for fixed navbar */
+.navbar-custom.fixed-top { 
+  margin-bottom: 0; 
+}
+
+/* Fix for Bootstrap conflicts */
+.navbar-expand-lg .navbar-nav .nav-link {
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+  position: absolute;
+}
+
+/* Mobile menu overlay */
+@media (max-width: 992px) {
+  .navbar-collapse.show {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+  }
 }

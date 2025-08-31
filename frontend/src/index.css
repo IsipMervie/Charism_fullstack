@@ -258,30 +258,6 @@ a:hover {
   transform: translateY(-1px);
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  color: var(--white);
-  border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-dark);
-  border-color: var(--primary-dark);
-  color: var(--white);
-}
-
-.btn-secondary {
-  background-color: var(--white);
-  color: var(--text-primary);
-  border-color: var(--border-medium);
-}
-
-.btn-secondary:hover {
-  background-color: var(--gray-50);
-  border-color: var(--border-dark);
-  color: var(--text-primary);
-}
-
 .btn-success {
   background-color: var(--success-color);
   color: var(--white);
@@ -342,12 +318,6 @@ a:hover {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
   outline: none;
-}
-
-.form-control:focus {
-  border-color: var(--primary-color);
-  outline: 0;
-  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
 }
 
 .form-control:disabled {
@@ -577,34 +547,6 @@ a:hover {
   .xl\:text-right { text-align: right; }
 }
 
-/* Global navbar fixes */
-.navbar {
-  margin-bottom: 0 !important;
-}
-
-.navbar-custom {
-  background-color: var(--white) !important;
-  border-bottom: 1px solid var(--border-light) !important;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Ensure proper spacing for fixed navbar */
-body {
-  padding-top: 70px !important;
-}
-
-@media (max-width: 992px) {
-  body {
-    padding-top: 65px !important;
-  }
-}
-
-@media (max-width: 576px) {
-  body {
-    padding-top: 60px !important;
-  }
-}
-
 /* Loading States */
 .loading {
   opacity: 0.6;
@@ -657,5 +599,50 @@ body {
     --text-primary: #ffffff;
     --text-secondary: #cccccc;
     --border-light: #404040;
+  }
+}
+
+/* Navigation Bar Global Fixes */
+/* Remove conflicting Bootstrap navbar styles */
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure proper spacing for fixed navbar */
+body {
+  padding-top: 70px !important;
+}
+
+@media (max-width: 992px) {
+  body {
+    padding-top: 65px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    padding-top: 60px !important;
+  }
+}
+
+/* Fix Bootstrap conflicts */
+.navbar-expand-lg .navbar-nav .nav-link {
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+  position: absolute;
+}
+
+/* Ensure proper z-index for navigation */
+.navbar-custom {
+  z-index: 1030 !important;
+}
+
+/* Fix for mobile menu positioning */
+@media (max-width: 992px) {
+  .navbar-collapse.show {
+    z-index: 1029 !important;
   }
 }

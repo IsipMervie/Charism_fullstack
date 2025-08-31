@@ -21,6 +21,7 @@ function NavigationBar() {
     logo: null
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,6 +38,11 @@ function NavigationBar() {
       window.removeEventListener('userChanged', syncUser);
     };
   }, []);
+
+  // Close mobile menu when location changes
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [location.pathname]);
 
   // Fetch school settings for navbar with error handling
   useEffect(() => {
@@ -62,7 +68,13 @@ function NavigationBar() {
   const handleLogout = () => {
     localStorage.clear();
     window.dispatchEvent(new Event('userChanged'));
+    setIsExpanded(false);
     navigate('/login');
+  };
+
+  // Handle navigation link clicks
+  const handleNavLinkClick = () => {
+    setIsExpanded(false);
   };
 
   // Get the logo URL with fallback
@@ -76,10 +88,16 @@ function NavigationBar() {
   };
 
   return (
-    <Navbar expand="lg" className="navbar-custom fixed-top" collapseOnSelect>
+    <Navbar 
+      expand="lg" 
+      className="navbar-custom fixed-top" 
+      collapseOnSelect
+      expanded={isExpanded}
+      onToggle={(expanded) => setIsExpanded(expanded)}
+    >
       <Container fluid>
         <div className="d-flex align-items-center">
-          <Navbar.Brand as={Link} to="/" className="navbar-brand">
+          <Navbar.Brand as={Link} to="/" className="navbar-brand" onClick={handleNavLinkClick}>
             <img 
               src={getLogoUrl()} 
               alt="CHARISM Logo" 
@@ -93,23 +111,47 @@ function NavigationBar() {
               {schoolSettings.brandName || 'CHARISM'}
             </span>
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbar-nav" className="navbar-toggler" />
+          <Navbar.Toggle 
+            aria-controls="navbar-nav" 
+            className="navbar-toggler"
+            onClick={() => setIsExpanded(!isExpanded)}
+          />
         </div>
         <Navbar.Collapse id="navbar-nav" className="justify-content-end">
           <Nav>
             {/* Not logged in */}
             {!user && (
               <>
-                <Nav.Link as={Link} to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/contact" 
+                  className={location.pathname === '/contact' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Contact
                 </Nav.Link>
-                <Nav.Link as={Link} to="/feedback" className={location.pathname === '/feedback' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/feedback" 
+                  className={location.pathname === '/feedback' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Feedback
                 </Nav.Link>
-                <Nav.Link as={Link} to="/login" className={location.pathname === '/login' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/login" 
+                  className={location.pathname === '/login' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Login
                 </Nav.Link>
-                <Nav.Link as={Link} to="/register" className={location.pathname === '/register' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/register" 
+                  className={location.pathname === '/register' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Register
                 </Nav.Link>
               </>
@@ -118,16 +160,36 @@ function NavigationBar() {
             {/* Student */}
             {user && role === 'Student' && (
               <>
-                <Nav.Link as={Link} to="/student/dashboard" className={location.pathname === '/student/dashboard' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/student/dashboard" 
+                  className={location.pathname === '/student/dashboard' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Dashboard
                 </Nav.Link>
-                <Nav.Link as={Link} to="/events" className={location.pathname.startsWith('/events') ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/events" 
+                  className={location.pathname.startsWith('/events') ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Events
                 </Nav.Link>
-                <Nav.Link as={Link} to="/my-participation" className={location.pathname === '/my-participation' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/my-participation" 
+                  className={location.pathname === '/my-participation' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   My Participation
                 </Nav.Link>
-                <Nav.Link as={Link} to="/feedback" className={location.pathname === '/feedback' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/feedback" 
+                  className={location.pathname === '/feedback' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Feedback
                 </Nav.Link>
               </>
@@ -136,22 +198,52 @@ function NavigationBar() {
             {/* Staff */}
             {user && role === 'Staff' && (
               <>
-                <Nav.Link as={Link} to="/staff/dashboard" className={location.pathname === '/staff/dashboard' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/staff/dashboard" 
+                  className={location.pathname === '/staff/dashboard' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Dashboard
                 </Nav.Link>
-                <Nav.Link as={Link} to="/events" className={location.pathname.startsWith('/events') ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/events" 
+                  className={location.pathname.startsWith('/events') ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Events
                 </Nav.Link>
-                <Nav.Link as={Link} to="/admin/manage-events" className={location.pathname === '/admin/manage-events' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/admin/manage-events" 
+                  className={location.pathname === '/admin/manage-events' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Manage Events
                 </Nav.Link>
-                <Nav.Link as={Link} to="/staff/create-event" className={location.pathname === '/staff/create-event' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/staff/create-event" 
+                  className={location.pathname === '/staff/create-event' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Create Event
                 </Nav.Link>
-                <Nav.Link as={Link} to="/registration-approval" className={location.pathname === '/registration-approval' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/registration-approval" 
+                  className={location.pathname === '/registration-approval' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Event Registered Approval
                 </Nav.Link>
-                <Nav.Link as={Link} to="/feedback" className={location.pathname === '/feedback' ? 'active' : ''}>
+                <Nav.Link 
+                  as={Link} 
+                  to="/feedback" 
+                  className={location.pathname === '/feedback' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
                   Feedback
                 </Nav.Link>
               </>
@@ -159,41 +251,105 @@ function NavigationBar() {
 
             {/* Admin */}
             {user && role === 'Admin' && (
-              <NavDropdown title="Admin" id="navbar-admin-dropdown">
-                <NavDropdown.Item as={Link} to="/admin/dashboard" active={location.pathname === '/admin/dashboard'}>
+              <NavDropdown 
+                title="Admin" 
+                id="navbar-admin-dropdown"
+                onClick={handleNavLinkClick}
+              >
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/dashboard" 
+                  active={location.pathname === '/admin/dashboard'}
+                  onClick={handleNavLinkClick}
+                >
                   Dashboard
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/events" active={location.pathname.startsWith('/events')}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/events" 
+                  active={location.pathname.startsWith('/events')}
+                  onClick={handleNavLinkClick}
+                >
                   Events
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/manage-events" active={location.pathname === '/admin/manage-events'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/manage-events" 
+                  active={location.pathname === '/admin/manage-events'}
+                  onClick={handleNavLinkClick}
+                >
                   Manage Events
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/create-event" active={location.pathname === '/admin/create-event'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/create-event" 
+                  active={location.pathname === '/admin/create-event'}
+                  onClick={handleNavLinkClick}
+                >
                   Create Event
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/registration-approval" active={location.pathname === '/registration-approval'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/registration-approval" 
+                  active={location.pathname === '/registration-approval'}
+                  onClick={handleNavLinkClick}
+                >
                   Event Registered Approval
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/manage-messages" active={location.pathname === '/admin/manage-messages'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/manage-messages" 
+                  active={location.pathname === '/admin/manage-messages'}
+                  onClick={handleNavLinkClick}
+                >
                   Manage Messages
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/manage-users" active={location.pathname === '/admin/manage-users'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/manage-users" 
+                  active={location.pathname === '/admin/manage-users'}
+                  onClick={handleNavLinkClick}
+                >
                   Manage Users
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/analytics" active={location.pathname === '/analytics'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/analytics" 
+                  active={location.pathname === '/analytics'}
+                  onClick={handleNavLinkClick}
+                >
                   Analytics
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/school-settings" active={location.pathname === '/admin/school-settings'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/school-settings" 
+                  active={location.pathname === '/admin/school-settings'}
+                  onClick={handleNavLinkClick}
+                >
                   School Settings
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/registration-management" active={location.pathname === '/admin/registration-management'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/registration-management" 
+                  active={location.pathname === '/admin/registration-management'}
+                  onClick={handleNavLinkClick}
+                >
                   Manage Registration
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/students-by-year" active={location.pathname === '/students-by-year'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/students-by-year" 
+                  active={location.pathname === '/students-by-year'}
+                  onClick={handleNavLinkClick}
+                >
                   Students by Year
                 </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/admin/manage-feedback" active={location.pathname === '/admin/manage-feedback'}>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/admin/manage-feedback" 
+                  active={location.pathname === '/admin/manage-feedback'}
+                  onClick={handleNavLinkClick}
+                >
                   Manage Feedback
                 </NavDropdown.Item>
               </NavDropdown>
@@ -201,10 +357,32 @@ function NavigationBar() {
 
             {/* Account Dropdown for logged-in users */}
             {user && (
-              <NavDropdown title="Account" id="navbar-account-dropdown">
-                <NavDropdown.Item as={Link} to="/profile">Profile</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/settings">Settings</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/change-password">Change Password</NavDropdown.Item>
+              <NavDropdown 
+                title="Account" 
+                id="navbar-account-dropdown"
+                onClick={handleNavLinkClick}
+              >
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/profile"
+                  onClick={handleNavLinkClick}
+                >
+                  Profile
+                </NavDropdown.Item>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/settings"
+                  onClick={handleNavLinkClick}
+                >
+                  Settings
+                </NavDropdown.Item>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/change-password"
+                  onClick={handleNavLinkClick}
+                >
+                  Change Password
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
