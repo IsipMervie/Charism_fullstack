@@ -186,9 +186,9 @@ function EventListPage() {
   };
 
   // Refresh events and joined events
-  const refreshEvents = async () => {
+  const refreshEvents = async (retryCount = 0) => {
     try {
-      console.log('🔄 Starting refreshEvents...');
+      console.log('🔄 Starting refreshEvents...', retryCount > 0 ? `(Retry ${retryCount})` : '');
       setLoading(true);
       setError('');
       
@@ -244,10 +244,25 @@ function EventListPage() {
       
     } catch (err) {
       console.error('❌ Error in refreshEvents:', err);
+      
+      // Handle timeout errors with retry logic
+      if (err.message && err.message.includes('timeout') && retryCount < 2) {
+        console.log(`⏰ Timeout detected, retrying... (${retryCount + 1}/3)`);
+        setError(`Connection timeout. Retrying... (${retryCount + 1}/3)`);
+        
+        // Wait 2 seconds before retry
+        setTimeout(() => {
+          refreshEvents(retryCount + 1);
+        }, 2000);
+        return;
+      }
+      
       let errorMessage = 'Failed to load events.';
       
       if (err.message.includes('Database not connected')) {
         errorMessage = 'Database temporarily unavailable. Please try again later.';
+      } else if (err.message.includes('timeout')) {
+        errorMessage = 'Connection timeout. The server may be slow. Please try again.';
       } else if (err.response?.status === 500) {
         errorMessage = 'Server error. Please try again later.';
       } else if (err.message) {
@@ -262,7 +277,14 @@ function EventListPage() {
         title: 'Failed to Load Events',
         text: errorMessage,
         confirmButtonColor: '#ef4444',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
+        showCancelButton: true,
+        cancelButtonText: 'Retry',
+        cancelButtonColor: '#6b7280'
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          refreshEvents();
+        }
       });
     } finally {
       setLoading(false);
@@ -740,9 +762,24 @@ function EventListPage() {
         <div className="error-section">
           <h3>Oops! Something went wrong</h3>
           <p>{error}</p>
-          <button onClick={refreshEvents} className="refresh-button">
-            Try Again
-          </button>
+          <div className="error-actions">
+            <button onClick={refreshEvents} className="refresh-button primary">
+              🔄 Try Again
+            </button>
+            {error.includes('timeout') && (
+              <button onClick={() => window.location.reload()} className="refresh-button secondary">
+                🔄 Refresh Page
+              </button>
+            )}
+          </div>
+          <div className="error-help">
+            <p><strong>💡 Tips:</strong></p>
+            <ul>
+              <li>Check your internet connection</li>
+              <li>The server might be temporarily slow</li>
+              <li>Try refreshing the page</li>
+            </ul>
+          </div>
           <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '5px' }}>
             <strong>Debug Info:</strong>
             <div>Role: {role}</div>

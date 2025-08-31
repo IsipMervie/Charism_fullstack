@@ -1037,6 +1037,83 @@
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
 }
 
+/* Error Section Enhancements */
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.error-actions .refresh-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.error-actions .refresh-button.primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.error-actions .refresh-button.primary:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.error-actions .refresh-button.secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.error-actions .refresh-button.secondary:hover {
+  background: #4b5563;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+.error-help {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.error-help p {
+  margin: 0 0 0.75rem 0;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.error-help ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #0c4a6e;
+}
+
+.error-help li {
+  margin-bottom: 0.5rem;
+}
+
+.retry-info {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  color: #92400e;
+  font-weight: 500;
+}
+
 /* Responsive Design */
 
 

@@ -13,7 +13,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // 15 second timeout for faster failure detection
+  timeout: 30000, // Increased from 15s to 30s for better reliability
 });
 
 // Attach token if it exists
@@ -330,7 +330,10 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
 // Events
 export const getEvents = async () => {
   try {
+    console.log('🔄 Fetching events from API...');
     const response = await axiosInstance.get('/events');
+    console.log('✅ Events API response received');
+    
     // Ensure we always return an array
     const data = response.data;
     if (Array.isArray(data)) {
@@ -342,7 +345,17 @@ export const getEvents = async () => {
       return [];
     }
   } catch (error) {
-    console.error('Error fetching events:', error);
+    console.error('❌ Error fetching events:', error);
+    
+    // Handle specific error types
+    if (error.code === 'ECONNABORTED') {
+      console.warn('⚠️ Events API timeout - server may be slow or overloaded');
+    } else if (error.response?.status === 500) {
+      console.warn('⚠️ Events API server error - backend issue');
+    } else if (error.response?.status === 404) {
+      console.warn('⚠️ Events API endpoint not found - routing issue');
+    }
+    
     // Return empty array instead of throwing error to prevent crashes
     return [];
   }
@@ -772,7 +785,10 @@ export const getSettings = async () => {
 
 export const getPublicSettings = async () => {
   try {
+    console.log('🔄 Fetching public settings from API...');
     const response = await axiosInstance.get('/settings/public');
+    console.log('✅ Public settings API response received');
+    
     const data = response.data;
     
     // Ensure we always return an object with arrays
@@ -783,13 +799,23 @@ export const getPublicSettings = async () => {
       academicYears: Array.isArray(data?.academicYears) ? data.academicYears : []
     };
   } catch (error) {
-    console.error('Error fetching public settings:', error);
+    console.error('❌ Error fetching public settings:', error);
+    
+    // Handle specific error types
+    if (error.code === 'ECONNABORTED') {
+      console.warn('⚠️ Public settings API timeout - server may be slow or overloaded');
+    } else if (error.response?.status === 500) {
+      console.warn('⚠️ Public settings API server error - backend issue');
+    } else if (error.response?.status === 404) {
+      console.warn('⚠️ Public settings API endpoint not found - routing issue');
+    }
+    
     // Return default structure instead of throwing error
     return {
       sections: [],
       yearLevels: [],
-      departments: [],
-      academicYears: []
+      academicYears: [],
+      departments: []
     };
   }
 };
