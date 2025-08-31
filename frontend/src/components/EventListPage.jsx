@@ -39,6 +39,12 @@ function EventListPage() {
 
   // Fetch filter options from settings
   const fetchFilterOptions = async () => {
+    // Prevent multiple simultaneous calls
+    if (filterOptions.departments.length > 0) {
+      console.log('⚠️ Filter options already loaded, skipping...');
+      return;
+    }
+    
     try {
       console.log('🔑 Fetching filter options using API utility');
       
@@ -63,7 +69,26 @@ function EventListPage() {
       // If no departments found, try to get them from events
       if (activeDepartments.length === 0) {
         console.log('⚠️ No departments found in settings, trying to extract from events...');
-        const eventDepartments = [...safeSet(safeMap(events, event => event.department).filter(Boolean))];
+        
+        // Handle both single department and departments array
+        const eventDepartments = [...safeSet(
+          safeMap(events, event => {
+            // Check if event has departments array
+            if (event.departments && Array.isArray(event.departments) && event.departments.length > 0) {
+              return event.departments;
+            }
+            // Check if event has single department
+            if (event.department && typeof event.department === 'string') {
+              return [event.department];
+            }
+            // Check if event has department object with name
+            if (event.department && typeof event.department === 'object' && event.department.name) {
+              return [event.department.name];
+            }
+            return [];
+          }).flat().filter(Boolean) // Flatten arrays and remove null/undefined values
+        )];
+        
         console.log('🏢 Departments from events:', eventDepartments);
         
         if (eventDepartments.length > 0) {
@@ -130,7 +155,26 @@ function EventListPage() {
   useEffect(() => {
     if (events.length > 0 && filterOptions.departments.length === 0) {
       console.log('🔄 Events loaded, updating department filter options...');
-      const eventDepartments = [...safeSet(safeMap(events, event => event.department).filter(Boolean))];
+      
+      // Handle both single department and departments array
+      const eventDepartments = [...safeSet(
+        safeMap(events, event => {
+          // Check if event has departments array
+          if (event.departments && Array.isArray(event.departments) && event.departments.length > 0) {
+            return event.departments;
+          }
+          // Check if event has single department
+          if (event.department && typeof event.department === 'string') {
+            return [event.department];
+          }
+          // Check if event has department object with name
+          if (event.department && typeof event.department === 'object' && event.department.name) {
+            return [event.department.name];
+          }
+          return [];
+        }).flat().filter(Boolean) // Flatten arrays and remove null/undefined values
+      )];
+      
       console.log('🏢 Departments from events:', eventDepartments);
       
       if (eventDepartments.length > 0) {
@@ -228,6 +272,12 @@ function EventListPage() {
 
   // Refresh events and joined events
   const refreshEvents = async (retryCount = 0) => {
+    // Prevent multiple simultaneous calls
+    if (loading && retryCount === 0) {
+      console.log('⚠️ refreshEvents already in progress, skipping...');
+      return;
+    }
+    
     try {
       console.log('🔄 Starting refreshEvents...', retryCount > 0 ? `(Retry ${retryCount})` : '');
       setLoading(true);
@@ -237,6 +287,18 @@ function EventListPage() {
       const eventsData = await getEvents();
       console.log('✅ Events loaded:', eventsData);
       
+      // Debug: Log the structure of first event to understand department format
+      if (eventsData && eventsData.length > 0) {
+        console.log('🔍 First event structure:', {
+          id: eventsData[0]._id,
+          title: eventsData[0].title,
+          department: eventsData[0].department,
+          departments: eventsData[0].departments,
+          departmentType: typeof eventsData[0].department,
+          departmentsType: Array.isArray(eventsData[0].departments)
+        });
+      }
+      
       if (!eventsData || !Array.isArray(eventsData)) {
         throw new Error('Invalid events data received');
       }
@@ -244,8 +306,23 @@ function EventListPage() {
       setEvents(eventsData);
       
       // Extract unique departments from events for filter options
+      // Handle both single department and departments array
       const uniqueDepartments = [...safeSet(
-        safeMap(eventsData, event => event.department).filter(Boolean) // Remove null/undefined values
+        safeMap(eventsData, event => {
+          // Check if event has departments array
+          if (event.departments && Array.isArray(event.departments) && event.departments.length > 0) {
+            return event.departments;
+          }
+          // Check if event has single department
+          if (event.department && typeof event.department === 'string') {
+            return [event.department];
+          }
+          // Check if event has department object with name
+          if (event.department && typeof event.department === 'object' && event.department.name) {
+            return [event.department.name];
+          }
+          return [];
+        }).flat().filter(Boolean) // Flatten arrays and remove null/undefined values
       )].sort();
       
       console.log('🏢 Unique departments found:', uniqueDepartments);
@@ -376,9 +453,10 @@ function EventListPage() {
   };
 
   useEffect(() => {
+    // Only call these functions once on mount
     refreshEvents();
     fetchFilterOptions();
-  }, [refreshEvents, fetchFilterOptions]);
+  }, []); // Remove dependencies to prevent infinite loops
 
   const handleJoin = async (eventId) => {
     const event = events.find(e => e._id === eventId);
