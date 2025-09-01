@@ -359,10 +359,10 @@ function StudentsByYearPage() {
       if (pdfFilters.hoursMin && pdfFilters.hoursMin.trim() !== '') params.append('hoursMin', pdfFilters.hoursMin.trim());
       if (pdfFilters.hoursMax && pdfFilters.hoursMax.trim() !== '') params.append('hoursMax', pdfFilters.hoursMax.trim());
 
-      console.log('PDF Generation URL:', `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/reports/students-by-year?${params}`);
+      console.log('PDF Generation URL:', `${process.env.REACT_APP_API_URL || 'https://charism-backend.vercel.app/api'}/reports/students-by-year?${params}`);
       console.log('PDF Filters:', pdfFilters);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/reports/students-by-year?${params}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-backend.vercel.app/api'}/reports/students-by-year?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

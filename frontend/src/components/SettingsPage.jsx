@@ -483,18 +483,10 @@ function SettingsPage() {
                     {/* Show temporary profile picture if available, otherwise show current */}
                     {(tempProfilePicture || profilePicture) ? (
                       <img
-                        src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}/uploads/profile-pictures/${tempProfilePicture || profilePicture}`}
-                        alt="Current Profile"
-                        className="current-profile-image"
-                        onError={(e) => {
-                          console.log('Profile picture failed to load:', e.target.src);
-                          console.log('Profile picture filename:', tempProfilePicture || profilePicture);
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                        onLoad={(e) => {
-                          console.log('Profile picture loaded successfully:', e.target.src);
-                        }}
+                        src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-backend.vercel.app'}/uploads/profile-pictures/${tempProfilePicture || profilePicture}`}
+                        alt="Profile"
+                        className="rounded-circle"
+                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                       />
                     ) : null}
                     

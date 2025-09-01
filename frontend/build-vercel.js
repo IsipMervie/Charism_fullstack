@@ -18,12 +18,17 @@ try {
   process.env.SKIP_PREFLIGHT_CHECK = 'true';
 }
 
+// Set the backend API URL for production
+process.env.REACT_APP_API_URL = 'https://charism-backend.vercel.app/api';
+console.log('🔗 Backend API URL set to:', process.env.REACT_APP_API_URL);
+
 console.log('🔧 Environment variables set:');
 console.log('- DISABLE_ESLINT_PLUGIN:', process.env.DISABLE_ESLINT_PLUGIN);
 console.log('- CI:', process.env.CI);
 console.log('- GENERATE_SOURCEMAP:', process.env.GENERATE_SOURCEMAP);
 console.log('- ESLINT_NO_DEV_ERRORS:', process.env.ESLINT_NO_DEV_ERRORS);
 console.log('- SKIP_PREFLIGHT_CHECK:', process.env.SKIP_PREFLIGHT_CHECK);
+console.log('- REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 
 // Temporarily remove ESLint configuration files and modify package.json
 const eslintrcPath = path.join(__dirname, '.eslintrc.js');
