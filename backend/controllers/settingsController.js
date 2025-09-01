@@ -107,90 +107,76 @@ exports.updateSchoolSettings = async (req, res) => {
   }
 };
 
-// Get public school settings (for navbar, no auth required)
+// Get public school settings
 exports.getPublicSchoolSettings = async (req, res) => {
   try {
-    console.log('=== Getting Public School Settings ===');
+    console.log('🔍 Fetching public school settings...');
     
-    // Check if database is connected using lazy connection
+    // Check database connection first
     const { getLazyConnection } = require('../config/db');
-    let isConnected = false;
-    
-    try {
-      isConnected = await getLazyConnection();
-    } catch (dbError) {
-      console.log('Database connection check failed:', dbError.message);
-      isConnected = false;
-    }
+    const isConnected = await getLazyConnection();
     
     if (!isConnected) {
-      console.log('Database not connected, returning default settings');
-      return res.json({
-        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
-        brandName: 'CHARISM',
-        logo: null,
-        logoUrl: null,
-        contactEmail: 'ceo@ua.edu.ph'
+      console.log('❌ Database not connected');
+      return res.status(500).json({ 
+        message: 'Database connection not available',
+        error: 'Database not connected'
       });
     }
+
+    const SchoolSettings = require('../models/SchoolSettings');
     
-    let settings = await SchoolSettings.findOne();
+    // Try to find settings with better error handling
+    let settings;
+    try {
+      settings = await SchoolSettings.findOne().lean();
+      console.log('✅ Settings found:', settings ? 'yes' : 'no');
+    } catch (dbError) {
+      console.error('❌ Database query error:', dbError);
+      return res.status(500).json({ 
+        message: 'Database query failed',
+        error: dbError.message
+      });
+    }
+
+    // If no settings found, return default settings
     if (!settings) {
-      console.log('No settings found, creating default...');
-      // If not set, create default
-      settings = new SchoolSettings({
-        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
-        contactEmail: 'ceo@ua.edu.ph',
-        logo: null,
-        brandName: 'CHARISM'
-      });
-      await settings.save();
-      console.log('Default public settings created');
+      console.log('⚠️ No settings found, returning defaults');
+      const defaultSettings = {
+        schoolName: 'CHARISM Community Link',
+        schoolLogo: '',
+        schoolAddress: '',
+        schoolPhone: '',
+        schoolEmail: '',
+        schoolWebsite: '',
+        schoolDescription: 'Welcome to CHARISM Community Link',
+        isActive: true
+      };
+      
+      return res.json(defaultSettings);
     }
-    
-    // Defensive fix for malformed logo data
-    let safeLogo = settings.logo;
-    if (typeof settings.logo === 'string') {
-      console.log('⚠️  Logo field contains string, converting to null to prevent errors');
-      safeLogo = null;
-    }
-    
-    // Check if logo has actual data
-    if (safeLogo && (!safeLogo.data || safeLogo.data.length === 0)) {
-      console.log('⚠️  Logo field has no data, treating as null');
-      safeLogo = null;
-    }
-    
-    // Only return public fields
+
+    // Return only public fields
     const publicSettings = {
-      schoolName: settings.schoolName,
-      brandName: settings.brandName,
-      logo: safeLogo,
-      logoUrl: hasFile(safeLogo) ? `/api/files/school-logo` : null,
-      contactEmail: settings.contactEmail
+      schoolName: settings.schoolName || 'CHARISM Community Link',
+      schoolLogo: settings.schoolLogo || '',
+      schoolAddress: settings.schoolAddress || '',
+      schoolPhone: settings.schoolPhone || '',
+      schoolEmail: settings.schoolEmail || '',
+      schoolWebsite: settings.schoolWebsite || '',
+      schoolDescription: settings.schoolDescription || 'Welcome to CHARISM Community Link',
+      isActive: settings.isActive !== false // Default to true if not set
     };
-    
-    console.log('Public settings retrieved successfully');
+
+    console.log('✅ Returning public settings');
     res.json(publicSettings);
-  } catch (err) {
-    console.error('Error in getPublicSchoolSettings:', err);
     
-    // If database error, return default settings
-    if (err.name === 'MongooseError' || err.message.includes('before initial connection') || err.message.includes('timeout')) {
-      console.log('Database connection issue, returning default settings');
-      return res.json({
-        schoolName: 'UNIVERSITY OF THE ASSUMPTION',
-        brandName: 'CHARISM',
-        logo: null,
-        logoUrl: null,
-        contactEmail: 'ceo@ua.edu.ph'
-      });
-    }
-    
+  } catch (error) {
+    console.error('❌ Public school settings error:', error);
     res.status(500).json({ 
-      message: 'Error fetching school settings', 
-      error: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      message: 'Error fetching school settings',
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 };

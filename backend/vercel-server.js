@@ -251,6 +251,64 @@ app.get('/api/test-db-simple', async (req, res) => {
   }
 });
 
+// Test settings endpoint specifically
+app.get('/api/test-settings', async (req, res) => {
+  try {
+    console.log('🔍 Testing settings endpoint...');
+    
+    // Check database connection
+    const { getLazyConnection } = require('./config/db');
+    const isConnected = await getLazyConnection();
+    
+    if (!isConnected) {
+      return res.status(500).json({
+        status: 'ERROR',
+        message: 'Database not connected',
+        test: 'settings-endpoint'
+      });
+    }
+
+    // Try to require SchoolSettings model
+    let SchoolSettings;
+    try {
+      SchoolSettings = require('./models/SchoolSettings');
+    } catch (modelError) {
+      return res.status(500).json({
+        status: 'ERROR',
+        message: 'SchoolSettings model not available',
+        error: modelError.message,
+        test: 'settings-endpoint'
+      });
+    }
+
+    // Try to query settings
+    try {
+      const settings = await SchoolSettings.findOne().lean();
+      res.json({
+        status: 'OK',
+        message: 'Settings endpoint working',
+        settingsFound: !!settings,
+        test: 'settings-endpoint'
+      });
+    } catch (queryError) {
+      res.status(500).json({
+        status: 'ERROR',
+        message: 'Settings query failed',
+        error: queryError.message,
+        test: 'settings-endpoint'
+      });
+    }
+    
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Settings test failed',
+      error: error.message,
+      test: 'settings-endpoint'
+    });
+  }
+});
+
 // Comprehensive database test endpoint
 app.get('/api/test-db-comprehensive', async (req, res) => {
   try {
