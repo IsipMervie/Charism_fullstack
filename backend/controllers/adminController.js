@@ -232,15 +232,27 @@ exports.deleteMessage = async (req, res) => {
 // Get all events (with optional search/filter)
 exports.getAllEvents = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, limit = 50, page = 1 } = req.query;
     let query = {};
+    
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } }
       ];
     }
-    const events = await Event.find(query);
+    
+    // Add pagination and optimization
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const limitNum = Math.min(parseInt(limit), 100); // Cap at 100 items
+    
+    const events = await Event.find(query)
+      .populate('createdBy', 'name')
+      .sort({ date: 1, createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean(); // Use lean() for better performance
+      
     res.json(events);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching events', error: err.message });
@@ -264,7 +276,10 @@ exports.getPendingStaffApprovals = async (req, res) => {
     const pendingStaff = await User.find({ 
       role: 'Staff', 
       approvalStatus: 'pending' 
-    }).select('-password').sort({ createdAt: -1 });
+    })
+    .select('name email userId department createdAt')
+    .sort({ createdAt: -1 })
+    .lean(); // Use lean() for better performance
     
     res.json(pendingStaff);
   } catch (err) {

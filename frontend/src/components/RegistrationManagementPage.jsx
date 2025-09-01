@@ -82,6 +82,26 @@ function RegistrationManagementPage() {
   const fetchSettings = async () => {
     setLoading(true);
     try {
+      // Add caching for better performance
+      const cacheKey = 'registration_settings_cache';
+      const cachedData = sessionStorage.getItem(cacheKey);
+      const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+      
+      // Use cache if it's less than 60 seconds old
+      if (cachedData && cacheTimestamp) {
+        const cacheAge = Date.now() - parseInt(cacheTimestamp);
+        if (cacheAge < 60000) { // 60 seconds
+          console.log('📦 Using cached registration settings');
+          const parsedData = JSON.parse(cachedData);
+          setAcademicYears(parsedData.academicYears || []);
+          setSections(parsedData.sections || []);
+          setYearLevels(parsedData.yearLevels || []);
+          setDepartments(parsedData.departments || []);
+          setLoading(false);
+          return;
+        }
+      }
+      
       const [settingsData, academicYearsData] = await Promise.all([
         getSettings(),
         getAcademicYears()
@@ -89,6 +109,16 @@ function RegistrationManagementPage() {
       
       // Check and auto-deactivate expired academic years
       const updatedAcademicYears = await checkAndUpdateExpiredAcademicYears(academicYearsData || []);
+      
+      // Cache the data
+      const dataToCache = {
+        academicYears: updatedAcademicYears,
+        sections: settingsData.sections || [],
+        yearLevels: settingsData.yearLevels || [],
+        departments: settingsData.departments || []
+      };
+      sessionStorage.setItem(cacheKey, JSON.stringify(dataToCache));
+      sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
       
       setAcademicYears(updatedAcademicYears);
       setSections(settingsData.sections || []);

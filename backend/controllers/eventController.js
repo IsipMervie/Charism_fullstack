@@ -90,16 +90,21 @@ exports.getAllEvents = async (req, res) => {
     const totalEvents = await Event.countDocuments();
     console.log(`📊 Total events in database: ${totalEvents}`);
     
+    // Optimize query with selective population and indexing
     const events = await Event.find(query)
       .populate('createdBy', 'name')
       .populate('attendance.userId', 'name email department academicYear')
-      .sort({ date: 1 }); // Sort by date, upcoming first
+      .sort({ date: 1, createdAt: -1 }) // Sort by date, then by creation time
+      .lean() // Use lean() for better performance when not modifying documents
+      .limit(100); // Limit results to prevent overwhelming response
     
     console.log(`✅ Found ${events.length} events for user role: ${userRole}`);
     
     // Add full URLs for events with public registration and images
     const eventsWithUrls = events.map(event => {
-      const eventObj = event.toObject();
+      // Since we're using lean(), event is already a plain object
+      const eventObj = { ...event };
+      
       if (event.publicRegistrationToken) {
         eventObj.publicRegistrationUrl = generateEventRegistrationLink(event.publicRegistrationToken);
       }

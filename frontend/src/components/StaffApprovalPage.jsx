@@ -4,7 +4,8 @@ import Swal from 'sweetalert2';
 import {
   getPendingStaffApprovals,
   approveStaff,
-  rejectStaff
+  rejectStaff,
+  clearCache
 } from '../api/api';
 import './StaffApprovalPage.css';
 
@@ -22,7 +23,28 @@ function StaffApprovalPage() {
     setLoading(true);
     setError('');
     try {
+      // Add caching for better performance
+      const cacheKey = 'pending_staff_cache';
+      const cachedData = sessionStorage.getItem(cacheKey);
+      const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+      
+      // Use cache if it's less than 15 seconds old
+      if (cachedData && cacheTimestamp) {
+        const cacheAge = Date.now() - parseInt(cacheTimestamp);
+        if (cacheAge < 15000) { // 15 seconds
+          console.log('📦 Using cached pending staff data');
+          setPendingStaff(JSON.parse(cachedData));
+          setLoading(false);
+          return;
+        }
+      }
+      
       const data = await getPendingStaffApprovals();
+      
+      // Cache the data
+      sessionStorage.setItem(cacheKey, JSON.stringify(data));
+      sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+      
       setPendingStaff(data);
     } catch (err) {
       setError('Error fetching pending staff approvals. Please try again later.');
@@ -67,6 +89,8 @@ function StaffApprovalPage() {
       setSelectedStaff(null);
       setAction('');
       setApprovalNotes('');
+      // Clear cache to ensure fresh data
+      clearCache('pending_staff_cache');
       fetchPendingStaff(); // Refresh the list
     } catch (err) {
       Swal.fire({ 

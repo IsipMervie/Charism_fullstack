@@ -3,9 +3,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
-import { loginUser } from '../api/api';
+import { loginUser, testApiConnection } from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { runConnectionDiagnostic, getDiagnosticSummary } from '../utils/connectionDiagnostic';
 import './LoginPage.css';
 
 function LoginPage() {
@@ -13,6 +14,7 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [diagnosticRunning, setDiagnosticRunning] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +24,33 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Test API connection first
+    try {
+      const connectionTest = await testApiConnection();
+      if (!connectionTest.success) {
+        console.error('API connection test failed:', connectionTest);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Connection Issue',
+          text: 'Unable to connect to the server. Please check your internet connection and try again.',
+          confirmButtonColor: '#f59e0b'
+        });
+        setLoading(false);
+        return;
+      }
+    } catch (connectionError) {
+      console.error('Connection test error:', connectionError);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Connection Issue',
+        text: 'Unable to reach the server. Please check your internet connection and try again.',
+        confirmButtonColor: '#f59e0b'
+      });
+      setLoading(false);
+      return;
+    }
+    
     try {
       const { token, user } = await loginUser(email, password);
       localStorage.setItem('token', token);
@@ -80,6 +109,18 @@ function LoginPage() {
           title = 'Invalid Password';
           text = 'The password you entered is incorrect. Please try again.';
           icon = 'error';
+        } else if (errorMessage.includes('timed out') || errorMessage.includes('timeout')) {
+          title = 'Connection Timeout';
+          text = 'The login request took too long. Please check your internet connection and try again.';
+          icon = 'warning';
+        } else if (errorMessage.includes('Network error')) {
+          title = 'Network Error';
+          text = 'Unable to connect to the server. Please check your internet connection and try again.';
+          icon = 'warning';
+        } else if (errorMessage.includes('canceled')) {
+          title = 'Request Canceled';
+          text = 'The login request was interrupted. Please try again.';
+          icon = 'info';
         } else if (errorMessage.includes('Error logging in')) {
           title = 'Server Error';
           text = 'There was a problem with the server. Please try again later.';
@@ -98,6 +139,45 @@ function LoginPage() {
       });
     }
     setLoading(false);
+  };
+
+  const handleDiagnostic = async () => {
+    setDiagnosticRunning(true);
+    try {
+      const results = await runConnectionDiagnostic();
+      const summary = getDiagnosticSummary(results);
+      
+      let icon = 'info';
+      let title = 'Connection Diagnostic';
+      let text = `Status: ${summary.overall}\n\n`;
+      
+      if (summary.issues.length > 0) {
+        icon = 'warning';
+        text += `Issues found:\n${summary.issues.join('\n')}\n\n`;
+        text += `Recommendations:\n${summary.recommendations.join('\n')}`;
+      } else {
+        icon = 'success';
+        text += 'All connection tests passed successfully!';
+      }
+      
+      Swal.fire({
+        icon: icon,
+        title: title,
+        text: text,
+        confirmButtonText: 'OK',
+        width: '600px'
+      });
+    } catch (error) {
+      console.error('Diagnostic error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Diagnostic Failed',
+        text: 'Unable to run connection diagnostic. Please try again.',
+        confirmButtonText: 'OK'
+      });
+    } finally {
+      setDiagnosticRunning(false);
+    }
   };
 
   return (
@@ -169,6 +249,20 @@ function LoginPage() {
             <Link to="/register" className="link-text">
               Create new account
             </Link>
+          </div>
+
+          {/* Diagnostic Button */}
+          <div className="diagnostic-section">
+            <Button 
+              type="button" 
+              variant="outline-secondary" 
+              size="sm"
+              onClick={handleDiagnostic}
+              disabled={diagnosticRunning}
+              className="diagnostic-button"
+            >
+              {diagnosticRunning ? 'Running Tests...' : '🔧 Connection Diagnostic'}
+            </Button>
           </div>
 
           {/* Login Info */}

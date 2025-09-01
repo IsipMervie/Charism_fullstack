@@ -8,13 +8,13 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Simple axios instance without complex retry logic
+// Simple axios instance with longer timeout
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // Simple 15 second timeout
+  timeout: 60000, // Increased to 60 seconds for better reliability
 });
 
 // Simple request interceptor to add token
@@ -38,11 +38,13 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Simple error logging
+    // Better error logging
     if (error.code === 'ECONNABORTED') {
-      console.error('Request timeout');
+      console.error('Request timeout - server may be slow');
     } else if (error.code === 'ERR_NETWORK') {
-      console.error('Network error');
+      console.error('Network error - check connection');
+    } else if (error.code === 'ERR_CANCELED') {
+      console.error('Request was canceled/aborted');
     } else if (error.response) {
       console.error('Server error:', error.response.status);
     }
@@ -65,6 +67,43 @@ function getUserId() {
   if (userId) return userId;
   throw new Error('No userId found in localStorage. Please log in.');
 }
+
+// Test API connection
+export const testApiConnection = async () => {
+  try {
+    const response = await axiosInstance.get('/health');
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('API connection test failed:', error);
+    return { 
+      success: false, 
+      error: error.message,
+      code: error.code,
+      status: error.response?.status
+    };
+  }
+};
+
+// Clear all cached data
+export const clearAllCache = () => {
+  const keysToRemove = [];
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    if (key && (key.includes('_cache') || key.includes('_timestamp'))) {
+      keysToRemove.push(key);
+    }
+  }
+  
+  keysToRemove.forEach(key => sessionStorage.removeItem(key));
+  console.log('🧹 Cleared all cached data');
+};
+
+// Clear specific cache
+export const clearCache = (cacheKey) => {
+  sessionStorage.removeItem(cacheKey);
+  sessionStorage.removeItem(`${cacheKey}_timestamp`);
+  console.log(`🧹 Cleared cache: ${cacheKey}`);
+};
 
 // =======================
 // API Functions
@@ -460,19 +499,65 @@ export const updateEvent = async (eventId, eventData) => {
 
 // Auth
 export const loginUser = async (email, password) => {
-  try {
-    const response = await axiosInstance.post('/auth/login', { email, password });
-    return response.data;
-  } catch (error) {
-    console.error('Error logging in:', error);
-    // Preserve the original error structure so frontend can access response data
-    if (error.response?.data?.message) {
-      const customError = new Error(error.response.data.message);
-      customError.response = error.response;
-      throw customError;
+  const maxRetries = 2;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Login attempt ${attempt}/${maxRetries}`);
+      const response = await axiosInstance.post('/auth/login', { email, password });
+      return response.data;
+    } catch (error) {
+      console.error(`Error logging in (attempt ${attempt}):`, error);
+      lastError = error;
+      
+      // Handle specific error types
+      if (error.code === 'ECONNABORTED') {
+        if (attempt < maxRetries) {
+          console.log('⏳ Request timed out, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+          continue;
+        }
+        throw new Error('Login request timed out. Please check your connection and try again.');
+      } else if (error.code === 'ERR_NETWORK') {
+        if (attempt < maxRetries) {
+          console.log('⏳ Network error, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          continue;
+        }
+        throw new Error('Network error. Please check your internet connection and try again.');
+      } else if (error.code === 'ERR_CANCELED') {
+        if (attempt < maxRetries) {
+          console.log('⏳ Request canceled, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          continue;
+        }
+        throw new Error('Login request was canceled. Please try again.');
+      }
+      
+      // Don't retry for server errors (4xx, 5xx)
+      if (error.response?.status >= 400) {
+        break;
+      }
+      
+      // Retry for other errors
+      if (attempt < maxRetries) {
+        console.log('⏳ Unexpected error, retrying...');
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        continue;
+      }
     }
-    throw error;
   }
+  
+  // Handle final error
+  if (lastError.response?.data?.message) {
+    const customError = new Error(lastError.response.data.message);
+    customError.response = lastError.response;
+    throw customError;
+  }
+  
+  // Generic error fallback
+  throw new Error('Login failed. Please try again.');
 };
 
 export const registerUser = async (name, email, password, userId, academicYear, year, section, role, department) => {

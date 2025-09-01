@@ -3,12 +3,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted } from '../api/api';
+import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache } from '../api/api';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaSpinner, FaEyeSlash, FaShare } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import { safeFilter, safeMap, safeLength } from '../utils/arrayUtils';
+import LoadingOptimizer from './LoadingOptimizer';
 import './AdminManageEventsPage.css';
 
 function AdminManageEventsPage() {
@@ -51,7 +52,28 @@ function AdminManageEventsPage() {
         return;
       }
 
+      // Add caching for better performance
+      const cacheKey = `events_cache_${role}`;
+      const cachedData = sessionStorage.getItem(cacheKey);
+      const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
+      
+      // Use cache if it's less than 30 seconds old
+      if (cachedData && cacheTimestamp) {
+        const cacheAge = Date.now() - parseInt(cacheTimestamp);
+        if (cacheAge < 30000) { // 30 seconds
+          console.log('📦 Using cached events data');
+          setEvents(JSON.parse(cachedData));
+          setLoading(false);
+          return;
+        }
+      }
+
       const data = await getEvents();
+      
+      // Cache the data
+      sessionStorage.setItem(cacheKey, JSON.stringify(data));
+      sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+      
       setEvents(data);
       setError('');
     } catch (err) {
@@ -127,6 +149,9 @@ function AdminManageEventsPage() {
 
     try {
       await deleteEvent(eventId);
+      // Clear cache to ensure fresh data
+      clearCache('events_cache_Admin');
+      clearCache('events_cache_Staff');
       Swal.fire({ icon: 'success', title: 'Deleted', text: 'Event deleted.' });
       fetchEvents();
     } catch (err) {
@@ -156,6 +181,9 @@ function AdminManageEventsPage() {
 
     try {
       await toggleEventVisibility(eventId, !currentVisibility);
+      // Clear cache to ensure fresh data
+      clearCache('events_cache_Admin');
+      clearCache('events_cache_Staff');
       Swal.fire({ 
         icon: 'success', 
         title: 'Success', 
@@ -420,32 +448,14 @@ function AdminManageEventsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  if (loading) return (
-    <div className="manage-events-page">
-      <div className="loading-section">
-        <FaSpinner className="loading-spinner" />
-        <h3>Loading Events...</h3>
-        <p>Please wait while we fetch the events data</p>
-      </div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="manage-events-page">
-      <div className="error-section">
-        <div className="error-message">
-          <h3>Error</h3>
-          <p>{error}</p>
-          <button onClick={fetchEvents} className="retry-button">
-            Try Again
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="manage-events-page">
+    <LoadingOptimizer 
+      loading={loading} 
+      error={error}
+      message="Loading events..."
+      timeout={15000}
+    >
+      <div className="manage-events-page">
       <div className="manage-events-background">
         <div className="background-pattern"></div>
       </div>
@@ -783,6 +793,7 @@ function AdminManageEventsPage() {
         </div>
       </div>
     </div>
+    </LoadingOptimizer>
   );
 }
 
