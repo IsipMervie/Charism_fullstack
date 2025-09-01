@@ -182,7 +182,7 @@ function ManageUsersPage() {
   const getProfilePictureUrl = (user) => {
     if (!user.profilePicture) return '/default-profile.png';
     if (user.profilePicture.startsWith('http')) return user.profilePicture;
-    return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-backend.vercel.app'}/uploads/profile-pictures/${user.profilePicture}`;
+    return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-server-ua-backend.vercel.app'}/uploads/profile-pictures/${user.profilePicture}`;
   };
 
   // Get profile picture fallback

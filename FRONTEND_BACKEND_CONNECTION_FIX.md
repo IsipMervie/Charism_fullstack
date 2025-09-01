@@ -9,11 +9,11 @@ Your frontend and backend were not connecting because:
 ## What I Fixed
 
 ### 1. Environment Configuration (`frontend/src/config/environment.js`)
-- Updated production API_URL from `/api` to `https://charism-backend.vercel.app/api`
+- Updated production API_URL from `/api` to `https://charism-server-ua-backend.vercel.app/api`
 - This ensures the frontend knows where to find the backend in production
 
 ### 2. Build Scripts
-- **`frontend/build-vercel.js`**: Added `REACT_APP_API_URL=https://charism-backend.vercel.app/api`
+- **`frontend/build-vercel.js`**: Added `REACT_APP_API_URL=https://charism-server-ua-backend.vercel.app/api`
 - **`frontend/setup-env.js`**: Added the same environment variable
 
 ### 3. Hardcoded URL Fixes
@@ -38,7 +38,7 @@ git push origin main
 ```
 
 ### 2. Verify Backend Deployment
-Make sure your backend is deployed at: `https://charism-backend.vercel.app`
+Make sure your backend is deployed at: `https://charism-server-ua-backend.vercel.app`
 
 ### 3. Test the Connection
 After deploying, you can:
@@ -49,7 +49,7 @@ After deploying, you can:
 ### 4. Environment Variables in Vercel (Optional)
 If you want to make the backend URL configurable, add this to your Vercel project:
 - **Variable Name**: `REACT_APP_API_URL`
-- **Value**: `https://charism-backend.vercel.app/api`
+- **Value**: `https://charism-server-ua-backend.vercel.app/api`
 
 ## Expected Results
 After these fixes:
@@ -61,8 +61,8 @@ After these fixes:
 ## Troubleshooting
 If issues persist:
 1. Check browser console for connection errors
-2. Verify backend is running at `https://charism-backend.vercel.app`
-3. Test backend endpoints directly (e.g., `https://charism-backend.vercel.app/api/health`)
+2. Verify backend is running at `https://charism-server-ua-backend.vercel.app`
+3. Test backend endpoints directly (e.g., `https://charism-server-ua-backend.vercel.app/api/health`)
 4. Check CORS settings in your backend
 5. Use the `ConnectionTest` component to diagnose issues
 
