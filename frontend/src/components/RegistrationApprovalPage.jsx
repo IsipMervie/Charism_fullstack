@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { getEvents, getAllEventRegistrations, approveRegistration, disapproveRegistration } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaSpinner, FaSearch, FaEye, FaCheck, FaTimes, FaArrowLeft, FaFilter } from 'react-icons/fa';
+import { FaSpinner, FaSearch, FaEye, FaCheck, FaTimes, FaArrowLeft, FaFilter, FaMapMarkerAlt, FaUsers, FaClock, FaBuilding, FaUserGraduate } from 'react-icons/fa';
 import { safeFilter, safeLength } from '../utils/arrayUtils';
 import './RegistrationApprovalPage.css';
 

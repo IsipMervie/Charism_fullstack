@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
@@ -10,47 +10,62 @@ import PerformanceOptimizer from './components/PerformanceOptimizer';
 
 // Utilities
 import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
+import { setupNetworkMonitoring, showNetworkStatus } from './utils/networkUtils';
 
-// Pages
-import HomePage from './components/HomePage';
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
-import EventListPage from './components/EventListPage';
-import EventDetailsPage from './components/EventDetailsPage';
-import CreateEventPage from './components/CreateEventPage';
-import EditEventPage from './components/EditEventPage';
-import EventAttendancePage from './components/EventAttendancePage';
-import EventParticipantsPage from './components/EventParticipants';
-import MyParticipationPage from './components/MyParticipationPage';
-import AdminDashboard from './components/AdminDashboard';
-import StaffDashboard from './components/StaffDashboard';
-import StudentDashboard from './components/StudentDashboard';
-import ManageUsersPage from './components/ManageUsersPage';
-import AdminManageEventsPage from './components/AdminManageEventsPage';
-import AdminManageMessagesPage from './components/AdminManageMessagesPage';
-import AnalyticsPage from './components/AnalyticsPage';
-import SettingsPage from './components/SettingsPage';
-import SchoolSettingsPage from './components/SchoolSettingsPage';
-import ContactUsPage from './components/ContactUsPage';
-import ForgotPasswordPage from './components/ForgotPasswordPage';
-import ResetPasswordPage from './components/ResetPasswordPage';
-import VerifyEmailPage from './components/VerifyEmailPage';
-import ChangePasswordPage from './components/ChangePasswordPage';
-import RegistrationApprovalPage from './components/RegistrationApprovalPage';
-import RegistrationManagementPage from './components/RegistrationManagementPage';
-import StaffApprovalPage from './components/StaffApprovalPage';
-import StudentsByYearPage from './components/StudentsByYearPage';
-import Students40HoursPage from './components/Students40HoursPage';
-import SimpleEventList from './components/SimpleEventList';
-import ProfilePage from './components/ProfilePage';
-import StudentDocumentationPage from './components/StudentDocumentationPage';
-import AdminViewStudentDocumentation from './components/AdminViewStudentDocumentation';
-import PublicEventRegistrationPage from './components/PublicEventRegistrationPage';
-import FeedbackPage from './components/FeedbackPage';
-import AdminManageFeedbackPage from './components/AdminManageFeedbackPage';
-import NotFoundPage from './components/NotFoundPage';
-import TestPage from './components/TestPage';
-import DebugInfo from './components/DebugInfo';
+// Lazy load pages for better performance
+const HomePage = React.lazy(() => import('./components/HomePage'));
+const LoginPage = React.lazy(() => import('./components/LoginPage'));
+const RegisterPage = React.lazy(() => import('./components/RegisterPage'));
+const EventListPage = React.lazy(() => import('./components/EventListPage'));
+const EventDetailsPage = React.lazy(() => import('./components/EventDetailsPage'));
+const CreateEventPage = React.lazy(() => import('./components/CreateEventPage'));
+const EditEventPage = React.lazy(() => import('./components/EditEventPage'));
+const EventAttendancePage = React.lazy(() => import('./components/EventAttendancePage'));
+const EventParticipantsPage = React.lazy(() => import('./components/EventParticipants'));
+const MyParticipationPage = React.lazy(() => import('./components/MyParticipationPage'));
+const AdminDashboard = React.lazy(() => import('./components/AdminDashboard'));
+const StaffDashboard = React.lazy(() => import('./components/StaffDashboard'));
+const StudentDashboard = React.lazy(() => import('./components/StudentDashboard'));
+const ManageUsersPage = React.lazy(() => import('./components/ManageUsersPage'));
+const AdminManageEventsPage = React.lazy(() => import('./components/AdminManageEventsPage'));
+const AdminManageMessagesPage = React.lazy(() => import('./components/AdminManageMessagesPage'));
+const AnalyticsPage = React.lazy(() => import('./components/AnalyticsPage'));
+const SettingsPage = React.lazy(() => import('./components/SettingsPage'));
+const SchoolSettingsPage = React.lazy(() => import('./components/SchoolSettingsPage'));
+const ContactUsPage = React.lazy(() => import('./components/ContactUsPage'));
+const ForgotPasswordPage = React.lazy(() => import('./components/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('./components/ResetPasswordPage'));
+const VerifyEmailPage = React.lazy(() => import('./components/VerifyEmailPage'));
+const ChangePasswordPage = React.lazy(() => import('./components/ChangePasswordPage'));
+const RegistrationApprovalPage = React.lazy(() => import('./components/RegistrationApprovalPage'));
+const RegistrationManagementPage = React.lazy(() => import('./components/RegistrationManagementPage'));
+const StaffApprovalPage = React.lazy(() => import('./components/StaffApprovalPage'));
+const StudentsByYearPage = React.lazy(() => import('./components/StudentsByYearPage'));
+const Students40HoursPage = React.lazy(() => import('./components/Students40HoursPage'));
+const SimpleEventList = React.lazy(() => import('./components/SimpleEventList'));
+const ProfilePage = React.lazy(() => import('./components/ProfilePage'));
+const StudentDocumentationPage = React.lazy(() => import('./components/StudentDocumentationPage'));
+const AdminViewStudentDocumentation = React.lazy(() => import('./components/AdminViewStudentDocumentation'));
+const PublicEventRegistrationPage = React.lazy(() => import('./components/PublicEventRegistrationPage'));
+const FeedbackPage = React.lazy(() => import('./components/FeedbackPage'));
+const AdminManageFeedbackPage = React.lazy(() => import('./components/AdminManageFeedbackPage'));
+const NotFoundPage = React.lazy(() => import('./components/NotFoundPage'));
+const TestPage = React.lazy(() => import('./components/TestPage'));
+const DebugInfo = React.lazy(() => import('./components/DebugInfo'));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    height: '200px',
+    fontSize: '18px',
+    color: '#666'
+  }}>
+    Loading...
+  </div>
+);
 
 function App() {
   // Setup global error handling
@@ -58,12 +73,23 @@ function App() {
     setupGlobalErrorHandler();
   }, []);
 
+  // Setup network monitoring
+  useEffect(() => {
+    const cleanup = setupNetworkMonitoring(
+      () => showNetworkStatus(true),  // onOnline
+      () => showNetworkStatus(false)  // onOffline
+    );
+
+    return cleanup;
+  }, []);
+
   return (
     <ErrorBoundary>
       <PerformanceOptimizer>
         <Router>
           <NavigationBar />
-          <Routes>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/test" element={<TestPage />} />
@@ -315,6 +341,7 @@ function App() {
           {/* 404 fallback */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
         
         {/* Debug Info - Remove this in production */}
         <DebugInfo />

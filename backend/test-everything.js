@@ -98,10 +98,10 @@ async function testEndpoint(endpoint) {
         return { success: true, status, message: 'Expected 401 for protected endpoint' };
       } else if (status === 400 && endpoint.method === 'POST') {
         console.log(`   ⚠️  ${status} - Bad Request (Expected for POST without data)`);
-        return { success: true, status, message: 'Expected 400 for POST without data' });
+        return { success: true, status, message: 'Expected 400 for POST without data' };
       } else if (status === 404 && endpoint.path.includes('test-')) {
         console.log(`   ⚠️  ${status} - Not Found (Expected for test endpoints)`);
-        return { success: true, status, message: 'Expected 404 for test endpoints' });
+        return { success: true, status, message: 'Expected 404 for test endpoints' };
       } else {
         console.log(`   ❌ ${status} - ${message}`);
         return { success: false, status, message };

@@ -14,7 +14,10 @@ class PerformanceMonitor {
       slowQuery: 1000     // 1 second
     };
     
-    this.init();
+    // Only initialize in production or when explicitly enabled
+    if (process.env.NODE_ENV === 'production' || process.env.REACT_APP_ENABLE_PERFORMANCE_MONITOR === 'true') {
+      this.init();
+    }
   }
 
   init() {
@@ -27,7 +30,7 @@ class PerformanceMonitor {
     // Monitor database query performance
     this.monitorDatabaseQueries();
     
-    // Monitor memory usage
+    // Monitor memory usage (less frequently)
     this.monitorMemoryUsage();
     
     // Monitor network performance
@@ -39,6 +42,8 @@ class PerformanceMonitor {
     if (typeof window !== 'undefined') {
       window.addEventListener('load', () => {
         const navigation = performance.getEntriesByType('navigation')[0];
+        if (!navigation) return;
+        
         const loadTime = navigation.loadEventEnd - navigation.loadEventStart;
         const domContentLoaded = navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart;
         
@@ -143,7 +148,7 @@ class PerformanceMonitor {
     }
   }
 
-  // Monitor memory usage
+  // Monitor memory usage (less frequently to reduce overhead)
   monitorMemoryUsage() {
     if (typeof window !== 'undefined' && 'memory' in performance) {
       setInterval(() => {
@@ -157,13 +162,13 @@ class PerformanceMonitor {
         
         // Log high memory usage
         const usagePercentage = (usage.usedJSHeapSize / usage.jsHeapSizeLimit) * 100;
-        if (usagePercentage > 80) {
+        if (usagePercentage > 85) { // Increased threshold
           console.warn(`⚠️ High memory usage: ${usagePercentage.toFixed(1)}%`);
         }
         
         // Send memory metrics
         this.sendMetrics('memory', usage);
-      }, 30000); // Check every 30 seconds
+      }, 60000); // Check every 60 seconds instead of 30
     }
   }
 
@@ -203,7 +208,7 @@ class PerformanceMonitor {
 
   // Send metrics to analytics
   sendMetrics(type, data) {
-    // You can integrate with Google Analytics, Sentry, or your own analytics service
+    // Only log in development, send to analytics in production
     if (process.env.NODE_ENV === 'development') {
       console.log(`📊 Performance Metric [${type}]:`, data);
     }

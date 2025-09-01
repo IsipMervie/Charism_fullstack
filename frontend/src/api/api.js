@@ -34,8 +34,38 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // Reduced from 30s to 15s for better user experience
+  timeout: 30000, // Increased to 30s for better reliability
+  retry: 3, // Add retry configuration
+  retryDelay: 1000, // 1 second delay between retries
 });
+
+// Add retry interceptor
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const { config } = error;
+    
+    // Only retry on network errors or 5xx server errors
+    if (error.code === 'ECONNABORTED' || 
+        error.code === 'ERR_NETWORK' || 
+        (error.response && error.response.status >= 500)) {
+      
+      config.retryCount = config.retryCount || 0;
+      
+      if (config.retryCount < (config.retry || 3)) {
+        config.retryCount += 1;
+        
+        // Wait before retrying
+        await new Promise(resolve => setTimeout(resolve, config.retryDelay || 1000));
+        
+        console.log(`🔄 Retrying request (${config.retryCount}/${config.retry || 3}):`, config.url);
+        return axiosInstance(config);
+      }
+    }
+    
+    return Promise.reject(error);
+  }
+);
 
 // Attach token if it exists
 axiosInstance.interceptors.request.use(
@@ -46,35 +76,42 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    // Don't override Content-Type for file uploads
-    if (config.data instanceof FormData) {
-      // Remove the default Content-Type to let the browser set it with boundary
-      delete config.headers['Content-Type'];
-    }
+    // Add request timestamp for debugging
+    config.metadata = { startTime: new Date() };
     
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Handle errors globally
+// Response interceptor for better error handling
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      const { status, data } = error.response;
-      if (status === 401) {
-        console.error('401 Unauthorized:', data.message || 'Please log in again.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        localStorage.removeItem('user');
-        // Optionally redirect to login:
-        // window.location.href = '/login';
-      }
-      if (status === 500) {
-        console.error('500 Server Error:', data.message || 'Try again later.');
-      }
+  (response) => {
+    // Log successful requests in development
+    if (process.env.NODE_ENV === 'development') {
+      const duration = new Date() - response.config.metadata.startTime;
+      console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`);
     }
+    return response;
+  },
+  (error) => {
+    // Log failed requests
+    if (error.config?.metadata?.startTime) {
+      const duration = new Date() - error.config.metadata.startTime;
+      console.error(`❌ ${error.config.method?.toUpperCase()} ${error.config.url} failed (${duration}ms):`, error.message);
+    }
+    
+    // Handle specific error types
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout - server may be slow or unavailable');
+    } else if (error.code === 'ERR_NETWORK') {
+      console.error('Network error - check internet connection');
+    } else if (error.response) {
+      console.error('Server error:', error.response.status, error.response.data);
+    }
+    
     return Promise.reject(error);
   }
 );

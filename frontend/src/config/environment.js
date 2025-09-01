@@ -1,7 +1,7 @@
 // Environment configuration for different deployment environments
 const config = {
   development: {
-    API_URL: 'http://localhost:5000/api',
+    API_URL: 'http://localhost:10000/api',
     FRONTEND_URL: 'http://localhost:3000',
     NODE_ENV: 'development'
   },

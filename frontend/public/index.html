@@ -61,9 +61,41 @@
           navigator.serviceWorker.register('/sw.js')
             .then((registration) => {
               console.log('Service Worker registered successfully:', registration.scope);
+              
+              // Handle service worker updates
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                console.log('Service Worker update found');
+                
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('New Service Worker installed, refreshing page...');
+                    window.location.reload();
+                  }
+                });
+              });
             })
             .catch((error) => {
-              console.log('Service Worker registration failed:', error);
+              console.error('Service Worker registration failed:', error);
+              
+              // Try to unregister any existing service workers and retry
+              navigator.serviceWorker.getRegistrations().then((registrations) => {
+                for (let registration of registrations) {
+                  registration.unregister();
+                }
+                console.log('Cleared old service workers, retrying registration...');
+                
+                // Retry registration after a delay
+                setTimeout(() => {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                      console.log('Service Worker registration retry successful:', registration.scope);
+                    })
+                    .catch((retryError) => {
+                      console.error('Service Worker registration retry failed:', retryError);
+                    });
+                }, 1000);
+              });
             });
         });
       }

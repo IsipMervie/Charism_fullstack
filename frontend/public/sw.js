@@ -1,7 +1,7 @@
 // Service Worker for Performance Optimization
-const CACHE_NAME = 'charism-cache-v1';
-const STATIC_CACHE = 'charism-static-v1';
-const API_CACHE = 'charism-api-v1';
+const CACHE_NAME = 'charism-cache-v2';
+const STATIC_CACHE = 'charism-static-v2';
+const API_CACHE = 'charism-api-v2';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -29,6 +29,8 @@ self.addEventListener('install', (event) => {
       })
       .catch((error) => {
         console.error('Failed to cache static files:', error);
+        // Continue installation even if caching fails
+        return self.skipWaiting();
       })
   );
 });
@@ -50,6 +52,10 @@ self.addEventListener('activate', (event) => {
       })
       .then(() => {
         console.log('Service Worker activated');
+        return self.clients.claim();
+      })
+      .catch((error) => {
+        console.error('Error during activation:', error);
         return self.clients.claim();
       })
   );
@@ -76,9 +82,8 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(fetch(request));
 });
 
-// Handle API requests with caching strategy
+// Handle API requests with improved caching strategy
 async function handleApiRequest(request) {
-  const cache = await caches.open(API_CACHE);
   const url = new URL(request.url);
   
   // Don't cache certain API endpoints
@@ -86,30 +91,53 @@ async function handleApiRequest(request) {
     '/api/auth/login',
     '/api/auth/logout',
     '/api/health',
-    '/api/status'
+    '/api/status',
+    '/api/auth/register'
   ];
   
   if (noCacheEndpoints.some(endpoint => url.pathname.includes(endpoint))) {
-    return fetch(request);
+    try {
+      return await fetch(request);
+    } catch (error) {
+      console.error('API request failed:', error);
+      return new Response('Network error', { status: 503 });
+    }
   }
 
   try {
-    // Try network first
-    const response = await fetch(request);
+    // Try network first with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    const response = await fetch(request, { signal: controller.signal });
+    clearTimeout(timeoutId);
     
     if (response.ok) {
-      // Cache successful responses
-      const responseClone = response.clone();
-      cache.put(request, responseClone);
+      // Only cache successful responses
+      try {
+        const cache = await caches.open(API_CACHE);
+        const responseClone = response.clone();
+        await cache.put(request, responseClone);
+      } catch (cacheError) {
+        console.warn('Failed to cache API response:', cacheError);
+        // Continue without caching
+      }
     }
     
     return response;
   } catch (error) {
+    console.log('Network request failed, trying cache:', error);
+    
     // If network fails, try cache
-    const cachedResponse = await cache.match(request);
-    if (cachedResponse) {
-      console.log('Serving API response from cache:', url.pathname);
-      return cachedResponse;
+    try {
+      const cache = await caches.open(API_CACHE);
+      const cachedResponse = await cache.match(request);
+      if (cachedResponse) {
+        console.log('Serving API response from cache:', url.pathname);
+        return cachedResponse;
+      }
+    } catch (cacheError) {
+      console.error('Cache lookup failed:', cacheError);
     }
     
     // If no cache, return error
@@ -117,40 +145,57 @@ async function handleApiRequest(request) {
   }
 }
 
-// Handle static file requests with cache first strategy
+// Handle static file requests with improved cache first strategy
 async function handleStaticRequest(request) {
-  const cache = await caches.open(STATIC_CACHE);
-  
-  // Check cache first
-  const cachedResponse = await cache.match(request);
-  if (cachedResponse) {
-    // Update cache in background
-    fetch(request).then((response) => {
-      if (response.ok) {
-        cache.put(request, response);
-      }
-    }).catch(() => {
-      // Ignore fetch errors for background updates
-    });
-    
-    return cachedResponse;
-  }
-  
-  // If not in cache, fetch from network
   try {
-    const response = await fetch(request);
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch (error) {
-    // Return offline page if available
-    const offlineResponse = await cache.match('/offline.html');
-    if (offlineResponse) {
-      return offlineResponse;
+    const cache = await caches.open(STATIC_CACHE);
+    
+    // Check cache first
+    const cachedResponse = await cache.match(request);
+    if (cachedResponse) {
+      // Update cache in background without blocking
+      fetch(request).then((response) => {
+        if (response.ok) {
+          cache.put(request, response).catch(() => {
+            // Ignore cache update errors
+          });
+        }
+      }).catch(() => {
+        // Ignore fetch errors for background updates
+      });
+      
+      return cachedResponse;
     }
     
-    return new Response('Offline', { status: 503 });
+    // If not in cache, fetch from network
+    try {
+      const response = await fetch(request);
+      if (response.ok) {
+        try {
+          await cache.put(request, response.clone());
+        } catch (cacheError) {
+          console.warn('Failed to cache static file:', cacheError);
+        }
+      }
+      return response;
+    } catch (error) {
+      console.error('Static file fetch failed:', error);
+      
+      // Return offline page if available
+      try {
+        const offlineResponse = await cache.match('/offline.html');
+        if (offlineResponse) {
+          return offlineResponse;
+        }
+      } catch (cacheError) {
+        console.error('Offline page lookup failed:', cacheError);
+      }
+      
+      return new Response('Offline', { status: 503 });
+    }
+  } catch (error) {
+    console.error('Static request handling failed:', error);
+    return new Response('Service unavailable', { status: 503 });
   }
 }
 
@@ -172,21 +217,25 @@ async function doBackgroundSync() {
 // Push notification handling
 self.addEventListener('push', (event) => {
   if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body,
-      icon: '/logo.png',
-      badge: '/logo.png',
-      vibrate: [100, 50, 100],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: 1
-      }
-    };
-    
-    event.waitUntil(
-      self.registration.showNotification(data.title, options)
-    );
+    try {
+      const data = event.data.json();
+      const options = {
+        body: data.body,
+        icon: '/logo.png',
+        badge: '/logo.png',
+        vibrate: [100, 50, 100],
+        data: {
+          dateOfArrival: Date.now(),
+          primaryKey: 1
+        }
+      };
+      
+      event.waitUntil(
+        self.registration.showNotification(data.title, options)
+      );
+    } catch (error) {
+      console.error('Push notification error:', error);
+    }
   }
 });
 

@@ -203,6 +203,7 @@ export const createOptimizedAPI = (baseURL, options = {}) => {
 
 // Bundle size optimization
 export const loadComponentLazy = (importFunc, fallback = null) => {
+  const React = require('react');
   const LazyComponent = React.lazy(importFunc);
   
   return (props) => (
@@ -214,6 +215,7 @@ export const loadComponentLazy = (importFunc, fallback = null) => {
 
 // Memory leak prevention
 export const useCleanup = (cleanupFn) => {
+  const React = require('react');
   React.useEffect(() => {
     return () => {
       if (typeof cleanupFn === 'function') {

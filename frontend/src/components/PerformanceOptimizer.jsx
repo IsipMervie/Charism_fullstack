@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { debounce, throttle } from '../utils/performanceOptimizer';
 
 // Performance Optimizer Component
@@ -6,8 +6,18 @@ const PerformanceOptimizer = ({ children }) => {
   const observerRef = useRef(null);
   const imageCache = useRef(new Map());
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    observeElement: (element) => {
+      if (observerRef.current && element) {
+        observerRef.current.observe(element);
+      }
+    },
+    imageCache: imageCache.current
+  }), []);
+
   useEffect(() => {
-    // Initialize Intersection Observer for lazy loading
+    // Initialize Intersection Observer for lazy loading with better performance
     if ('IntersectionObserver' in window) {
       observerRef.current = new IntersectionObserver(
         (entries) => {
@@ -28,26 +38,33 @@ const PerformanceOptimizer = ({ children }) => {
           });
         },
         {
-          rootMargin: '50px', // Start loading 50px before element is visible
-          threshold: 0.1
+          rootMargin: '100px', // Increased margin for better performance
+          threshold: 0.01 // Reduced threshold for faster loading
         }
       );
     }
 
-    // Preload critical resources
+    // Preload only critical resources
     preloadCriticalResources();
 
-    // Optimize scroll events
-    optimizeScrollEvents();
+    // Optimize scroll events with better throttling
+    const scrollHandler = throttle(() => {
+      // Only handle essential scroll-based optimizations
+      const scrollTop = window.pageYOffset;
+      document.body.classList.toggle('scrolled', scrollTop > 100);
+    }, 32); // Increased to ~30fps for better performance
+
+    window.addEventListener('scroll', scrollHandler, { passive: true });
 
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
+      window.removeEventListener('scroll', scrollHandler);
     };
   }, []);
 
-  // Lazy load images
+  // Lazy load images with better error handling
   const loadImage = (imgElement) => {
     const src = imgElement.dataset.src;
     if (!src || imageCache.current.has(src)) return;
@@ -66,66 +83,43 @@ const PerformanceOptimizer = ({ children }) => {
     img.src = src;
   };
 
-  // Lazy load components
+  // Lazy load components with better error handling
   const loadLazyComponent = (element) => {
     const componentName = element.dataset.lazyComponent;
     if (!componentName) return;
 
-    // Dynamic import for component
-    import(`../components/${componentName}`).then((module) => {
-      const Component = module.default;
-      // Render component or trigger loading state
-      element.classList.add('loaded');
-      observerRef.current?.unobserve(element);
-    }).catch((error) => {
-      console.error('Failed to load lazy component:', componentName, error);
-      element.classList.add('error');
-    });
+    // Dynamic import for component with timeout
+    const importPromise = import(`../components/${componentName}`);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Component load timeout')), 5000)
+    );
+
+    Promise.race([importPromise, timeoutPromise])
+      .then((module) => {
+        const Component = module.default;
+        element.classList.add('loaded');
+        observerRef.current?.unobserve(element);
+      })
+      .catch((error) => {
+        console.error('Failed to load lazy component:', componentName, error);
+        element.classList.add('error');
+      });
   };
 
-  // Preload critical resources
+  // Preload only essential critical resources
   const preloadCriticalResources = () => {
     const criticalResources = [
       '/logo.png',
-      '/favicon.ico',
-      '/manifest.json'
+      '/favicon.ico'
     ];
 
     criticalResources.forEach((resource) => {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.href = resource;
-      link.as = resource.endsWith('.json') ? 'fetch' : 'image';
+      link.as = 'image';
       document.head.appendChild(link);
     });
-  };
-
-  // Optimize scroll events
-  const optimizeScrollEvents = () => {
-    const scrollHandler = throttle(() => {
-      // Handle scroll-based optimizations
-      const scrollTop = window.pageYOffset;
-      const windowHeight = window.innerHeight;
-      
-      // Add scroll-based classes for animations
-      document.body.classList.toggle('scrolled', scrollTop > 100);
-      document.body.classList.toggle('near-bottom', scrollTop + windowHeight > document.documentElement.scrollHeight - 200);
-    }, 16); // ~60fps
-
-    window.addEventListener('scroll', scrollHandler, { passive: true });
-  };
-
-  // Observe elements for lazy loading
-  const observeElement = (element) => {
-    if (observerRef.current && element) {
-      observerRef.current.observe(element);
-    }
-  };
-
-  // Expose observe function to children
-  const contextValue = {
-    observeElement,
-    imageCache: imageCache.current
   };
 
   return (
@@ -147,7 +141,7 @@ export const usePerformance = () => {
   return context;
 };
 
-// Lazy Image Component
+// Lazy Image Component with better performance
 export const LazyImage = ({ src, alt, className = '', placeholder = null, ...props }) => {
   const { observeElement } = usePerformance();
   const imgRef = useRef(null);
@@ -165,12 +159,13 @@ export const LazyImage = ({ src, alt, className = '', placeholder = null, ...pro
       alt={alt}
       className={`lazy ${className}`}
       src={placeholder || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2YwZjBmMCIvPjwvc3ZnPg=='}
+      loading="lazy"
       {...props}
     />
   );
 };
 
-// Lazy Component Wrapper
+// Lazy Component Wrapper with better performance
 export const LazyComponent = ({ componentName, fallback = null, ...props }) => {
   const { observeElement } = usePerformance();
   const elementRef = useRef(null);
