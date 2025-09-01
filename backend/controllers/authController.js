@@ -3,6 +3,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const sendEmail = require('../utils/sendEmail');
+const { getEmailVerificationTemplate, getPasswordResetTemplate } = require('../utils/emailTemplates');
 const User = require('../models/User');
 
 // Use environment variable for JWT secret, with fallback for development only
@@ -87,56 +88,7 @@ exports.register = async (req, res) => {
       const verificationUrl = generateVerificationLink(token);
       
       let emailContent = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="color: #667eea; margin: 0;">🎉 Welcome to CHARISM!</h2>
-            <p style="color: #6c757d; margin: 10px 0;">Your account has been created successfully</p>
-          </div>
-          
-          <div style="background: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="color: #2d3748; margin-bottom: 20px;">Hello ${name},</h3>
-            <p style="color: #4a5568; line-height: 1.6; margin-bottom: 20px;">
-              Welcome to CHARISM Community Link! To complete your registration and start using the platform, 
-              please verify your email address by clicking the button below:
-            </p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${verificationUrl}" 
-                 style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                        color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; 
-                        font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
-                ✅ Verify Email Address
-              </a>
-            </div>
-            
-            <p style="color: #718096; font-size: 14px; margin-bottom: 20px;">
-              If the button doesn't work, you can copy and paste this link into your browser:
-            </p>
-            <p style="color: #667eea; font-size: 14px; word-break: break-all; background: #f7fafc; padding: 15px; border-radius: 5px;">
-              ${verificationUrl}
-            </p>
-          </div>
-          
-          ${role === 'Staff' ? `
-          <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h4 style="color: #856404; margin: 0 0 10px 0;">⚠️ Important Notice</h4>
-            <p style="color: #856404; margin: 0; line-height: 1.5;">
-              As a Staff member, your account requires admin approval before you can access the system. 
-              You will receive another email once your account has been approved.
-            </p>
-          </div>
-          ` : ''}
-          
-          <div style="text-align: center; color: #6c757d; font-size: 14px;">
-            <p>This link will expire in 24 hours for security reasons.</p>
-            <p>If you didn't create this account, please ignore this email.</p>
-            <p style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px; border-left: 4px solid #667eea;">
-              <strong>⚠️ This is an automated email. Please do not reply to this message.</strong><br>
-              If you need assistance, please contact support through the CHARISM platform.
-            </p>
-          </div>
-        </div>
-      `;
+    const emailContent = getEmailVerificationTemplate(verificationUrl, name);
 
       const emailResult = await sendEmail(newUser.email, 'Welcome to CHARISM - Verify Your Email', '', emailContent, true); // true = no-reply
       
@@ -280,54 +232,7 @@ exports.forgotPassword = async (req, res) => {
     
     const resetUrl = generatePasswordResetLink(token);
     
-    const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="color: #667eea; margin: 0;">🔐 Password Reset Request</h2>
-          <p style="color: #6c757d; margin: 10px 0;">CHARISM Community Link</p>
-        </div>
-        
-        <div style="background: white; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
-          <h3 style="color: #2d3748; margin-bottom: 20px;">Hello ${user.name},</h3>
-          <p style="color: #4a5568; line-height: 1.6; margin-bottom: 20px;">
-            We received a request to reset your password for your CHARISM account. 
-            Click the button below to create a new password:
-          </p>
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${resetUrl}" 
-               style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                      color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; 
-                      font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
-              🔑 Reset Password
-            </a>
-          </div>
-          
-          <p style="color: #718096; font-size: 14px; margin-bottom: 20px;">
-            If the button doesn't work, you can copy and paste this link into your browser:
-          </p>
-          <p style="color: #667eea; font-size: 14px; word-break: break-all; background: #f7fafc; padding: 15px; border-radius: 5px;">
-            ${resetUrl}
-          </p>
-          
-          <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 8px; margin-top: 20px;">
-            <h4 style="color: #856404; margin: 0 0 10px 0;">⚠️ Security Notice</h4>
-            <p style="color: #856404; margin: 0; line-height: 1.5;">
-              This link will expire in 1 hour for security reasons. If you didn't request this password reset, 
-              please ignore this email and your password will remain unchanged.
-            </p>
-          </div>
-        </div>
-        
-        <div style="text-align: center; color: #6c757d; font-size: 14px;">
-          <p>If you have any questions, please contact the system administrator.</p>
-          <p style="margin-top: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px; border-left: 4px solid #667eea;">
-            <strong>⚠️ This is an automated email. Please do not reply to this message.</strong><br>
-            If you need assistance, please contact support through the CHARISM platform.
-          </p>
-        </div>
-      </div>
-    `;
+    const emailContent = getPasswordResetTemplate(resetUrl, user.name);
 
     try {
       const emailResult = await sendEmail(user.email, 'CHARISM - Password Reset Request', '', emailContent, true); // true = no-reply

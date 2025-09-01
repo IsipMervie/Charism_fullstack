@@ -71,15 +71,23 @@ function getUserId() {
 // Test API connection
 export const testApiConnection = async () => {
   try {
+    console.log('🔍 Testing API connection to:', axiosInstance.defaults.baseURL);
     const response = await axiosInstance.get('/health');
+    console.log('✅ API connection successful:', response.status);
     return { success: true, data: response.data };
   } catch (error) {
-    console.error('API connection test failed:', error);
+    console.error('❌ API connection test failed:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      url: axiosInstance.defaults.baseURL + '/health'
+    });
     return { 
       success: false, 
       error: error.message,
       code: error.code,
-      status: error.response?.status
+      status: error.response?.status,
+      url: axiosInstance.defaults.baseURL + '/health'
     };
   }
 };
@@ -499,40 +507,55 @@ export const updateEvent = async (eventId, eventData) => {
 
 // Auth
 export const loginUser = async (email, password) => {
-  const maxRetries = 2;
+  const maxRetries = 3;
   let lastError;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔄 Login attempt ${attempt}/${maxRetries}`);
+      console.log(`🔄 Login attempt ${attempt}/${maxRetries} to: ${axiosInstance.defaults.baseURL}/auth/login`);
+      
+      // Test connection first on first attempt
+      if (attempt === 1) {
+        const connectionTest = await testApiConnection();
+        if (!connectionTest.success) {
+          throw new Error(`Cannot connect to server: ${connectionTest.error}`);
+        }
+      }
+      
       const response = await axiosInstance.post('/auth/login', { email, password });
+      console.log('✅ Login successful');
       return response.data;
     } catch (error) {
-      console.error(`Error logging in (attempt ${attempt}):`, error);
+      console.error(`❌ Login error (attempt ${attempt}):`, {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        url: axiosInstance.defaults.baseURL + '/auth/login'
+      });
       lastError = error;
       
       // Handle specific error types
       if (error.code === 'ECONNABORTED') {
         if (attempt < maxRetries) {
           console.log('⏳ Request timed out, retrying...');
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, 2000 * attempt)); // Exponential backoff
           continue;
         }
-        throw new Error('Login request timed out. Please check your connection and try again.');
+        throw new Error('Login request timed out. The server may be slow or unavailable. Please try again later.');
       } else if (error.code === 'ERR_NETWORK') {
         if (attempt < maxRetries) {
           console.log('⏳ Network error, retrying...');
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
           continue;
         }
         throw new Error('Network error. Please check your internet connection and try again.');
       } else if (error.code === 'ERR_CANCELED') {
         if (attempt < maxRetries) {
           console.log('⏳ Request canceled, retrying...');
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
           continue;
         }
-        throw new Error('Login request was canceled. Please try again.');
+        throw new Error('Login request was interrupted. Please try again.');
       }
       
       // Don't retry for server errors (4xx, 5xx)
@@ -543,7 +566,7 @@ export const loginUser = async (email, password) => {
       // Retry for other errors
       if (attempt < maxRetries) {
         console.log('⏳ Unexpected error, retrying...');
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
         continue;
       }
     }
@@ -556,8 +579,12 @@ export const loginUser = async (email, password) => {
     throw customError;
   }
   
-  // Generic error fallback
-  throw new Error('Login failed. Please try again.');
+  // Generic error fallback with more specific message
+  if (lastError.message.includes('Cannot connect to server')) {
+    throw lastError;
+  }
+  
+  throw new Error('Login failed. Please check your credentials and try again.');
 };
 
 export const registerUser = async (name, email, password, userId, academicYear, year, section, role, department) => {

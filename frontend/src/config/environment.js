@@ -29,4 +29,6 @@ export const fullConfig = currentConfig;
 // Log configuration (only in development)
 if (currentEnv === 'development') {
   console.log('🔧 Environment Configuration:', currentConfig);
+} else {
+  console.log('🌐 Production API URL:', currentConfig.API_URL);
 }
