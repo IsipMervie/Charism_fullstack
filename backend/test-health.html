@@ -22,14 +22,18 @@
     <div class="test-section">
         <h3>🌐 Endpoint Configuration</h3>
         <p><strong>Base URL:</strong> <span id="baseUrl" class="endpoint"></span></p>
+        <p><strong>Root Endpoint:</strong> <span id="rootUrl" class="endpoint"></span></p>
         <p><strong>Health Endpoint:</strong> <span id="healthUrl" class="endpoint"></span></p>
+        <p><strong>Status Endpoint:</strong> <span id="statusUrl" class="endpoint"></span></p>
         <p><strong>Test Endpoint:</strong> <span id="testUrl" class="endpoint"></span></p>
         <p><strong>Frontend Test Endpoint:</strong> <span id="frontendTestUrl" class="endpoint"></span></p>
     </div>
     
     <div class="test-section">
         <h3>🧪 Test Controls</h3>
+        <button onclick="testRoot()">Test Root Endpoint</button>
         <button onclick="testHealth()">Test Health Endpoint</button>
+        <button onclick="testStatus()">Test Status Endpoint</button>
         <button onclick="testTest()">Test Test Endpoint</button>
         <button onclick="testFrontendTest()">Test Frontend Test Endpoint</button>
         <button onclick="testAll()">Test All Endpoints</button>
@@ -62,7 +66,9 @@
         function initializePage() {
             const baseUrl = configs[currentConfig];
             document.getElementById('baseUrl').textContent = baseUrl;
+            document.getElementById('rootUrl').textContent = `${baseUrl}/`;
             document.getElementById('healthUrl').textContent = `${baseUrl}/api/health`;
+            document.getElementById('statusUrl').textContent = `${baseUrl}/api/status`;
             document.getElementById('testUrl').textContent = `${baseUrl}/api/test`;
             document.getElementById('frontendTestUrl').textContent = `${baseUrl}/api/frontend-test`;
             
@@ -128,8 +134,16 @@
         }
         
         // Test specific endpoints
+        function testRoot() {
+            testEndpoint('/', 'Root Endpoint');
+        }
+        
         function testHealth() {
             testEndpoint('/api/health', 'Health Endpoint');
+        }
+        
+        function testStatus() {
+            testEndpoint('/api/status', 'Status Endpoint');
         }
         
         function testTest() {
@@ -141,9 +155,11 @@
         }
         
         function testAll() {
-            testHealth();
-            setTimeout(() => testTest(), 1000);
-            setTimeout(() => testFrontendTest(), 2000);
+            testRoot();
+            setTimeout(() => testHealth(), 1000);
+            setTimeout(() => testStatus(), 2000);
+            setTimeout(() => testTest(), 3000);
+            setTimeout(() => testFrontendTest(), 4000);
         }
         
         // Utility functions

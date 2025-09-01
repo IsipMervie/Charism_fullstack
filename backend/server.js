@@ -206,6 +206,36 @@ if (require.main === module) {
   startServer();
 }
 
+// Root route for base URL
+app.get('/', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    res.json({
+      status: 'OK',
+      message: 'Charism Backend API Server',
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      endpoints: {
+        health: '/api/health',
+        test: '/api/test',
+        frontendTest: '/api/frontend-test',
+        auth: '/api/auth',
+        events: '/api/events',
+        users: '/api/users',
+        admin: '/api/admin'
+      },
+      note: 'This is the backend API server. Use specific endpoints for functionality.'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Root endpoint failed' 
+    });
+  }
+});
+
 // Health check (must come before other routes)
 app.get('/api/health', (req, res) => {
   try {
@@ -275,6 +305,44 @@ app.get('/api/frontend-test', (req, res) => {
     res.status(500).json({ 
       status: 'ERROR', 
       message: 'Frontend test failed' 
+    });
+  }
+});
+
+// Server status endpoint
+app.get('/api/status', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    const { mongoose } = require('./config/db');
+    
+    res.json({
+      status: 'OK',
+      message: 'Server Status',
+      timestamp: new Date().toISOString(),
+      server: {
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development',
+        version: '1.0.0'
+      },
+      database: {
+        connected: mongoose.connection.readyState === 1,
+        state: mongoose.connection.readyState
+      },
+      endpoints: {
+        root: '/',
+        health: '/api/health',
+        status: '/api/status',
+        test: '/api/test',
+        frontendTest: '/api/frontend-test'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Status endpoint failed',
+      error: error.message
     });
   }
 });

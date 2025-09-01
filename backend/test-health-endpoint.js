@@ -56,7 +56,9 @@ const main = async () => {
   
   for (const baseUrl of baseUrls) {
     try {
+      await testHealthEndpoint(`${baseUrl}/`, 'Root Endpoint');
       await testHealthEndpoint(`${baseUrl}/api/health`, 'Health Endpoint');
+      await testHealthEndpoint(`${baseUrl}/api/status`, 'Status Endpoint');
       await testHealthEndpoint(`${baseUrl}/api/test`, 'Test Endpoint');
       await testHealthEndpoint(`${baseUrl}/api/frontend-test`, 'Frontend Test Endpoint');
     } catch (error) {

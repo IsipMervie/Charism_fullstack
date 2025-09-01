@@ -54,6 +54,8 @@ app.get('/api/health', (req, res) => {
 ```
 
 #### Added Test Endpoints
+- `/` - Root endpoint with server information
+- `/api/status` - Server status and database connection info
 - `/api/test` - Simple connectivity test
 - `/api/frontend-test` - Frontend-specific test
 

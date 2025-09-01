@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .loading { background-color: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .endpoint { font-family: monospace; background: #f8f9fa; padding: 2px 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Backend Connection Test</h1>
+    <p>This page tests your backend connectivity without service worker interference.</p>
+    
+    <div>
+        <button onclick="testAllEndpoints()">🧪 Test All Endpoints</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        const API_BASE = 'https://charism-server-ua-backend.vercel.app';
+        
+        async function testEndpoint(endpoint, name) {
+            const resultDiv = document.getElementById('results');
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-result loading';
+            testDiv.innerHTML = `🔄 Testing ${name}...`;
+            resultDiv.appendChild(testDiv);
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Accept-Encoding': 'identity'
+                    }
+                });
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    testDiv.className = 'test-result success';
+                    testDiv.innerHTML = `
+                        ✅ <strong>${name}</strong> - SUCCESS!<br>
+                        Status: ${response.status}<br>
+                        Response Time: ${responseTime}ms<br>
+                        Data: <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    testDiv.className = 'test-result error';
+                    testDiv.innerHTML = `
+                        ❌ <strong>${name}</strong> - FAILED!<br>
+                        Status: ${response.status}<br>
+                        Response Time: ${responseTime}ms<br>
+                        Error: HTTP ${response.status}
+                    `;
+                }
+            } catch (error) {
+                testDiv.className = 'test-result error';
+                testDiv.innerHTML = `
+                    ❌ <strong>${name}</strong> - ERROR!<br>
+                    Error: ${error.message}<br>
+                    Type: ${error.name}<br>
+                    Code: ${error.code || 'N/A'}
+                `;
+            }
+        }
+        
+        async function testAllEndpoints() {
+            clearResults();
+            
+            const endpoints = [
+                { path: '/', name: 'Root Endpoint' },
+                { path: '/api/health', name: 'Health Endpoint' },
+                { path: '/api/status', name: 'Status Endpoint' },
+                { path: '/api/test', name: 'Test Endpoint' },
+                { path: '/api/frontend-test', name: 'Frontend Test Endpoint' }
+            ];
+            
+            for (const endpoint of endpoints) {
+                await testEndpoint(endpoint.path, endpoint.name);
+                // Small delay between tests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('🔧 Testing backend connection...');
+            testAllEndpoints();
+        };
+    </script>
+</body>
+</html>

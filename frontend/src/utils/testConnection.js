@@ -40,6 +40,49 @@ export const testBackendConnection = async () => {
     console.log('❌ XHR test failed:', xhrError.message);
   }
 
+  // Test 0.5: Root endpoint test
+  try {
+    console.log('📡 Testing root endpoint...');
+    const startTime = Date.now();
+    const response = await fetch(`${API_URL.replace('/api', '')}`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Encoding': 'identity'
+      }
+    });
+    const endTime = Date.now();
+    
+    if (response.ok) {
+      const data = await response.json();
+      results.tests.root = {
+        success: true,
+        status: response.status,
+        responseTime: endTime - startTime,
+        data: data
+      };
+      console.log('✅ Root endpoint successful:', data);
+    } else {
+      results.tests.root = {
+        success: false,
+        status: response.status,
+        error: `HTTP ${response.status}`
+      };
+      console.log('❌ Root endpoint failed:', response.status);
+    }
+  } catch (error) {
+    console.error('❌ Root endpoint error details:', error);
+    results.tests.root = {
+      success: false,
+      error: error.message,
+      code: error.code,
+      type: error.name,
+      details: error.toString()
+    };
+    console.log('❌ Root endpoint error:', error.message);
+  }
+
   // Test 1: Basic health check
   try {
     console.log('📡 Testing health endpoint...');
@@ -126,7 +169,50 @@ export const testBackendConnection = async () => {
     console.log('❌ Test endpoint error:', error.message);
   }
 
-  // Test 3: Frontend test endpoint
+  // Test 3: Status endpoint
+  try {
+    console.log('📡 Testing status endpoint...');
+    const startTime = Date.now();
+    const response = await fetch(`${API_URL}/status`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Encoding': 'identity'
+      }
+    });
+    const endTime = Date.now();
+    
+    if (response.ok) {
+      const data = await response.json();
+      results.tests.status = {
+        success: true,
+        status: response.status,
+        responseTime: endTime - startTime,
+        data: data
+      };
+      console.log('✅ Status endpoint successful:', data);
+    } else {
+      results.tests.status = {
+        success: false,
+        status: response.status,
+        error: `HTTP ${response.status}`
+      };
+      console.log('❌ Status endpoint failed:', response.status);
+    }
+  } catch (error) {
+    console.error('❌ Status endpoint error details:', error);
+    results.tests.status = {
+      success: false,
+      error: error.message,
+      code: error.code,
+      type: error.name,
+      details: error.toString()
+    };
+    console.log('❌ Status endpoint error:', error.message);
+  }
+
+  // Test 4: Frontend test endpoint
   try {
     console.log('📡 Testing frontend-test endpoint...');
     const startTime = Date.now();

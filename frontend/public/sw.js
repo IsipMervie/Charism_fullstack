@@ -1,3 +1,4 @@
+// TEMPORARILY DISABLED SERVICE WORKER - FIXING CACHE ERRORS
 // Simple service worker for API caching only
 const API_CACHE = 'api-v1';
 
@@ -25,14 +26,15 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - handle API requests only
+// Fetch event - DISABLED TEMPORARILY TO FIX ERRORS
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle API requests
+  // TEMPORARILY DISABLE API CACHING - PASS THROUGH ALL REQUESTS
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(handleAPIRequest(request));
+    console.log('🔧 Service Worker: Passing through API request:', url.pathname);
+    event.respondWith(fetch(request));
     return;
   }
 
@@ -40,43 +42,9 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(fetch(request));
 });
 
-// Simple API request handling
+// DISABLED - Simple API request handling
 async function handleAPIRequest(request) {
-  try {
-    // Try network first
-    const response = await fetch(request);
-    
-    // Only cache successful GET requests
-    if (response.ok && request.method === 'GET') {
-      try {
-        const cache = await caches.open(API_CACHE);
-        const responseClone = response.clone();
-        await cache.put(request, responseClone);
-      } catch (cacheError) {
-        // Ignore cache errors silently
-        console.warn('Cache error (ignored):', cacheError);
-      }
-    }
-    
-    return response;
-  } catch (error) {
-    console.log('Network request failed, trying cache:', error);
-    
-    // If network fails, try cache for GET requests only
-    if (request.method === 'GET') {
-      try {
-        const cache = await caches.open(API_CACHE);
-        const cachedResponse = await cache.match(request);
-        if (cachedResponse) {
-          console.log('Serving API response from cache:', url.pathname);
-          return cachedResponse;
-        }
-      } catch (cacheError) {
-        console.error('Cache lookup failed:', cacheError);
-      }
-    }
-    
-    // If no cache or not a GET request, return error
-    return new Response('Network error', { status: 503 });
-  }
+  // TEMPORARILY DISABLED TO FIX CACHE ERRORS
+  console.log('🔧 Service Worker: handleAPIRequest disabled');
+  return fetch(request);
 }
