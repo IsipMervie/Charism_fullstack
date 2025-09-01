@@ -399,8 +399,11 @@ app.use((req, res) => {
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
   if (mongoose.connection.readyState === 1) {
-    mongoose.connection.close(() => {
+    mongoose.connection.close().then(() => {
       console.log('MongoDB connection closed');
+      process.exit(0);
+    }).catch((err) => {
+      console.error('Error closing MongoDB connection:', err);
       process.exit(0);
     });
   } else {
@@ -411,8 +414,11 @@ process.on('SIGTERM', () => {
 process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully');
   if (mongoose.connection.readyState === 1) {
-    mongoose.connection.close(() => {
+    mongoose.connection.close().then(() => {
       console.log('MongoDB connection closed');
+      process.exit(0);
+    }).catch((err) => {
+      console.error('Error closing MongoDB connection:', err);
       process.exit(0);
     });
   } else {

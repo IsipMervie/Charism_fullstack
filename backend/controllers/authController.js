@@ -87,8 +87,7 @@ exports.register = async (req, res) => {
       
       const verificationUrl = generateVerificationLink(token);
       
-      let emailContent = `
-    const emailContent = getEmailVerificationTemplate(verificationUrl, name);
+      const emailContent = getEmailVerificationTemplate(verificationUrl, name);
 
       const emailResult = await sendEmail(newUser.email, 'Welcome to CHARISM - Verify Your Email', '', emailContent, true); // true = no-reply
       
@@ -261,7 +260,7 @@ exports.resetPassword = async (req, res) => {
   const tokenFromBody = req.body?.token;
   const token = tokenFromParams || tokenFromBody;
 
-  // Accept password field as `newPassword` or `password` (frontend variations)
+  // Accept password field as 'newPassword' or 'password' (frontend variations)
   const providedNewPassword = req.body?.newPassword || req.body?.password;
 
   if (!token) {
