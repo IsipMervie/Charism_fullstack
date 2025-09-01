@@ -1,23 +1,12 @@
-import React, { useEffect, useRef, useMemo } from 'react';
-import { debounce, throttle } from '../utils/performanceOptimizer';
+import React, { useEffect, useRef } from 'react';
 
-// Performance Optimizer Component
+// Simple Performance Optimizer Component
 const PerformanceOptimizer = ({ children }) => {
   const observerRef = useRef(null);
   const imageCache = useRef(new Map());
 
-  // Memoize the context value to prevent unnecessary re-renders
-  const contextValue = useMemo(() => ({
-    observeElement: (element) => {
-      if (observerRef.current && element) {
-        observerRef.current.observe(element);
-      }
-    },
-    imageCache: imageCache.current
-  }), []);
-
   useEffect(() => {
-    // Initialize Intersection Observer for lazy loading with better performance
+    // Simple Intersection Observer for lazy loading
     if ('IntersectionObserver' in window) {
       observerRef.current = new IntersectionObserver(
         (entries) => {
@@ -29,42 +18,33 @@ const PerformanceOptimizer = ({ children }) => {
               if (target.tagName === 'IMG' && target.dataset.src) {
                 loadImage(target);
               }
-              
-              // Handle lazy loading for components
-              if (target.dataset.lazyComponent) {
-                loadLazyComponent(target);
-              }
             }
           });
         },
         {
-          rootMargin: '100px', // Increased margin for better performance
-          threshold: 0.01 // Reduced threshold for faster loading
+          rootMargin: '50px',
+          threshold: 0.1
         }
       );
     }
 
-    // Preload only critical resources
-    preloadCriticalResources();
-
-    // Optimize scroll events with better throttling
-    const scrollHandler = throttle(() => {
-      // Only handle essential scroll-based optimizations
+    // Simple scroll optimization
+    const handleScroll = () => {
       const scrollTop = window.pageYOffset;
       document.body.classList.toggle('scrolled', scrollTop > 100);
-    }, 32); // Increased to ~30fps for better performance
+    };
 
-    window.addEventListener('scroll', scrollHandler, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
-      window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  // Lazy load images with better error handling
+  // Simple image lazy loading
   const loadImage = (imgElement) => {
     const src = imgElement.dataset.src;
     if (!src || imageCache.current.has(src)) return;
@@ -83,43 +63,14 @@ const PerformanceOptimizer = ({ children }) => {
     img.src = src;
   };
 
-  // Lazy load components with better error handling
-  const loadLazyComponent = (element) => {
-    const componentName = element.dataset.lazyComponent;
-    if (!componentName) return;
-
-    // Dynamic import for component with timeout
-    const importPromise = import(`../components/${componentName}`);
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Component load timeout')), 5000)
-    );
-
-    Promise.race([importPromise, timeoutPromise])
-      .then((module) => {
-        const Component = module.default;
-        element.classList.add('loaded');
-        observerRef.current?.unobserve(element);
-      })
-      .catch((error) => {
-        console.error('Failed to load lazy component:', componentName, error);
-        element.classList.add('error');
-      });
-  };
-
-  // Preload only essential critical resources
-  const preloadCriticalResources = () => {
-    const criticalResources = [
-      '/logo.png',
-      '/favicon.ico'
-    ];
-
-    criticalResources.forEach((resource) => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.href = resource;
-      link.as = 'image';
-      document.head.appendChild(link);
-    });
+  // Simple context value
+  const contextValue = {
+    observeElement: (element) => {
+      if (observerRef.current && element) {
+        observerRef.current.observe(element);
+      }
+    },
+    imageCache: imageCache.current
   };
 
   return (
@@ -141,7 +92,7 @@ export const usePerformance = () => {
   return context;
 };
 
-// Lazy Image Component with better performance
+// Simple Lazy Image Component
 export const LazyImage = ({ src, alt, className = '', placeholder = null, ...props }) => {
   const { observeElement } = usePerformance();
   const imgRef = useRef(null);
@@ -162,29 +113,6 @@ export const LazyImage = ({ src, alt, className = '', placeholder = null, ...pro
       loading="lazy"
       {...props}
     />
-  );
-};
-
-// Lazy Component Wrapper with better performance
-export const LazyComponent = ({ componentName, fallback = null, ...props }) => {
-  const { observeElement } = usePerformance();
-  const elementRef = useRef(null);
-
-  useEffect(() => {
-    if (elementRef.current) {
-      observeElement(elementRef.current);
-    }
-  }, [observeElement]);
-
-  return (
-    <div
-      ref={elementRef}
-      data-lazy-component={componentName}
-      className="lazy-component"
-      {...props}
-    >
-      {fallback}
-    </div>
   );
 };
 

@@ -8,66 +8,16 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Request deduplication cache
-const pendingRequests = new Map();
-
-// Create deduplicated request function
-const createDeduplicatedRequest = (config) => {
-  const requestKey = `${config.method}-${config.url}-${JSON.stringify(config.params || {})}`;
-  
-  if (pendingRequests.has(requestKey)) {
-    return pendingRequests.get(requestKey);
-  }
-  
-  const requestPromise = axiosInstance(config);
-  pendingRequests.set(requestKey, requestPromise);
-  
-  requestPromise.finally(() => {
-    pendingRequests.delete(requestKey);
-  });
-  
-  return requestPromise;
-};
-
+// Simple axios instance without complex retry logic
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Increased to 30s for better reliability
-  retry: 3, // Add retry configuration
-  retryDelay: 1000, // 1 second delay between retries
+  timeout: 15000, // Simple 15 second timeout
 });
 
-// Add retry interceptor
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const { config } = error;
-    
-    // Only retry on network errors or 5xx server errors
-    if (error.code === 'ECONNABORTED' || 
-        error.code === 'ERR_NETWORK' || 
-        (error.response && error.response.status >= 500)) {
-      
-      config.retryCount = config.retryCount || 0;
-      
-      if (config.retryCount < (config.retry || 3)) {
-        config.retryCount += 1;
-        
-        // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, config.retryDelay || 1000));
-        
-        console.log(`🔄 Retrying request (${config.retryCount}/${config.retry || 3}):`, config.url);
-        return axiosInstance(config);
-      }
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
-// Attach token if it exists
+// Simple request interceptor to add token
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -75,10 +25,6 @@ axiosInstance.interceptors.request.use(
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
-    // Add request timestamp for debugging
-    config.metadata = { startTime: new Date() };
-    
     return config;
   },
   (error) => {
@@ -86,30 +32,19 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor for better error handling
+// Simple response interceptor for error handling
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Log successful requests in development
-    if (process.env.NODE_ENV === 'development') {
-      const duration = new Date() - response.config.metadata.startTime;
-      console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`);
-    }
     return response;
   },
   (error) => {
-    // Log failed requests
-    if (error.config?.metadata?.startTime) {
-      const duration = new Date() - error.config.metadata.startTime;
-      console.error(`❌ ${error.config.method?.toUpperCase()} ${error.config.url} failed (${duration}ms):`, error.message);
-    }
-    
-    // Handle specific error types
+    // Simple error logging
     if (error.code === 'ECONNABORTED') {
-      console.error('Request timeout - server may be slow or unavailable');
+      console.error('Request timeout');
     } else if (error.code === 'ERR_NETWORK') {
-      console.error('Network error - check internet connection');
+      console.error('Network error');
     } else if (error.response) {
-      console.error('Server error:', error.response.status, error.response.data);
+      console.error('Server error:', error.response.status);
     }
     
     return Promise.reject(error);

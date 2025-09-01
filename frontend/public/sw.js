@@ -1,7 +1,7 @@
-// Service Worker for Performance Optimization
-const CACHE_NAME = 'charism-cache-v2';
-const STATIC_CACHE = 'charism-static-v2';
-const API_CACHE = 'charism-api-v2';
+// Simple service worker for caching
+const CACHE_NAME = 'communitylink-v1';
+const STATIC_CACHE = 'static-v1';
+const API_CACHE = 'api-v1';
 
 // Files to cache immediately
 const STATIC_FILES = [
@@ -10,8 +10,7 @@ const STATIC_FILES = [
   '/static/js/bundle.js',
   '/static/css/main.css',
   '/logo.png',
-  '/favicon.ico',
-  '/manifest.json'
+  '/favicon.ico'
 ];
 
 // Install event - cache static files
@@ -23,52 +22,39 @@ self.addEventListener('install', (event) => {
         console.log('Caching static files');
         return cache.addAll(STATIC_FILES);
       })
-      .then(() => {
-        console.log('Static files cached successfully');
-        return self.skipWaiting();
-      })
       .catch((error) => {
         console.error('Failed to cache static files:', error);
-        // Continue installation even if caching fails
-        return self.skipWaiting();
       })
   );
+  self.skipWaiting();
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('Service Worker activating...');
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== STATIC_CACHE && cacheName !== API_CACHE) {
-              console.log('Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-      .then(() => {
-        console.log('Service Worker activated');
-        return self.clients.claim();
-      })
-      .catch((error) => {
-        console.error('Error during activation:', error);
-        return self.clients.claim();
-      })
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== STATIC_CACHE && cacheName !== API_CACHE) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
+  self.clients.claim();
 });
 
-// Fetch event - serve from cache when possible
+// Fetch event - handle requests
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
   // Handle API requests
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(handleApiRequest(request));
+    event.respondWith(handleAPIRequest(request));
     return;
   }
 
@@ -78,49 +64,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For other requests, use network first
+  // Pass through other requests
   event.respondWith(fetch(request));
 });
 
-// Handle API requests with improved caching strategy
-async function handleApiRequest(request) {
-  const url = new URL(request.url);
-  
-  // Don't cache certain API endpoints
-  const noCacheEndpoints = [
-    '/api/auth/login',
-    '/api/auth/logout',
-    '/api/health',
-    '/api/status',
-    '/api/auth/register'
-  ];
-  
-  if (noCacheEndpoints.some(endpoint => url.pathname.includes(endpoint))) {
-    try {
-      return await fetch(request);
-    } catch (error) {
-      console.error('API request failed:', error);
-      return new Response('Network error', { status: 503 });
-    }
-  }
-
+// Simple API request handling without timeout
+async function handleAPIRequest(request) {
   try {
-    // Try network first with timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-    
-    const response = await fetch(request, { signal: controller.signal });
-    clearTimeout(timeoutId);
+    // Try network first
+    const response = await fetch(request);
     
     if (response.ok) {
-      // Only cache successful responses
+      // Cache successful responses
       try {
         const cache = await caches.open(API_CACHE);
         const responseClone = response.clone();
         await cache.put(request, responseClone);
       } catch (cacheError) {
         console.warn('Failed to cache API response:', cacheError);
-        // Continue without caching
       }
     }
     
@@ -145,7 +106,7 @@ async function handleApiRequest(request) {
   }
 }
 
-// Handle static file requests with improved cache first strategy
+// Simple static file handling
 async function handleStaticRequest(request) {
   try {
     const cache = await caches.open(STATIC_CACHE);
@@ -153,17 +114,6 @@ async function handleStaticRequest(request) {
     // Check cache first
     const cachedResponse = await cache.match(request);
     if (cachedResponse) {
-      // Update cache in background without blocking
-      fetch(request).then((response) => {
-        if (response.ok) {
-          cache.put(request, response).catch(() => {
-            // Ignore cache update errors
-          });
-        }
-      }).catch(() => {
-        // Ignore fetch errors for background updates
-      });
-      
       return cachedResponse;
     }
     
@@ -180,17 +130,6 @@ async function handleStaticRequest(request) {
       return response;
     } catch (error) {
       console.error('Static file fetch failed:', error);
-      
-      // Return offline page if available
-      try {
-        const offlineResponse = await cache.match('/offline.html');
-        if (offlineResponse) {
-          return offlineResponse;
-        }
-      } catch (cacheError) {
-        console.error('Offline page lookup failed:', cacheError);
-      }
-      
       return new Response('Offline', { status: 503 });
     }
   } catch (error) {

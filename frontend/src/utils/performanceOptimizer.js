@@ -130,74 +130,40 @@ export class CacheManager {
   }
 }
 
-// API request optimization
-export const createOptimizedAPI = (baseURL, options = {}) => {
-  const {
-    timeout = 30000,
-    retries = 3,
-    retryDelay = 1000,
-    cacheEnabled = true,
-    cacheTTL = 300000
-  } = options;
-  
-  const cache = cacheEnabled ? new CacheManager() : null;
-  
+// Simple API request utility without complex timeout logic
+export const createSimpleAPI = (baseURL) => {
   const makeRequest = async (endpoint, options = {}) => {
-    const cacheKey = `${endpoint}-${JSON.stringify(options)}`;
-    
-    // Check cache first
-    if (cache) {
-      const cached = cache.get(cacheKey);
-      if (cached) return cached;
-    }
-    
-    let lastError;
-    
-    for (let attempt = 1; attempt <= retries; attempt++) {
-      try {
-        const response = await fetch(`${baseURL}${endpoint}`, {
-          ...options,
-          signal: AbortSignal.timeout(timeout)
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    try {
+      const response = await fetch(`${baseURL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers
         }
-        
-        const data = await response.json();
-        
-        // Cache successful response
-        if (cache) {
-          cache.set(cacheKey, data, cacheTTL);
-        }
-        
-        return data;
-      } catch (error) {
-        lastError = error;
-        
-        if (attempt < retries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
-        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
     }
-    
-    throw lastError;
   };
   
   return {
     get: (endpoint) => makeRequest(endpoint, { method: 'GET' }),
     post: (endpoint, data) => makeRequest(endpoint, { 
       method: 'POST', 
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }),
     put: (endpoint, data) => makeRequest(endpoint, { 
       method: 'PUT', 
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }),
-    delete: (endpoint) => makeRequest(endpoint, { method: 'DELETE' }),
-    clearCache: () => cache?.clear()
+    delete: (endpoint) => makeRequest(endpoint, { method: 'DELETE' })
   };
 };
 
@@ -234,7 +200,7 @@ export default {
   preloadResource,
   optimizeScroll,
   CacheManager,
-  createOptimizedAPI,
+  createSimpleAPI,
   loadComponentLazy,
   useCleanup
 };
