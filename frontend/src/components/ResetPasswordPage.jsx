@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Form, Button } from 'react-bootstrap';
-import axios from 'axios';
+import { resetPassword } from '../api/api';
 import Swal from 'sweetalert2';
 import './ResetPasswordPage.css';
 
@@ -57,12 +57,10 @@ function ResetPasswordPage() {
     
     setLoading(true);
     try {
-      // Use the correct API endpoint
-      const response = await axios.post(`${process.env.REACT_APP_API_URL || ''}/api/auth/reset-password/${token}`, { 
-        password: password 
-      });
+      // Use the API service function
+      const response = await resetPassword(token, password);
       
-      if (response.data && response.data.message) {
+      if (response && response.message) {
         Swal.fire({
           icon: 'success',
           title: '🎉 Password Reset Successful!',

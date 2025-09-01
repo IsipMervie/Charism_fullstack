@@ -24,7 +24,13 @@ function AdminManageEventsPage() {
     setIsVisible(true);
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (retryCount = 0) => {
+    // Prevent multiple simultaneous calls
+    if (loading && retryCount === 0) {
+      console.log('⚠️ fetchEvents already in progress, skipping...');
+      return;
+    }
+    
     setLoading(true);
     try {
       // Check if user is logged in
@@ -50,7 +56,20 @@ function AdminManageEventsPage() {
       setError('');
     } catch (err) {
       console.error('Error fetching events:', err);
-      if (err.response?.status === 401) {
+      
+      // Handle specific error types
+      if (err.code === 'ECONNABORTED') {
+        if (retryCount < 2) {
+          setTimeout(() => {
+            fetchEvents(retryCount + 1);
+          }, 2000);
+          return;
+        } else {
+          setError('Request timeout after multiple attempts - server may be slow or overloaded. Please try again later.');
+        }
+      } else if (err.response?.status === 503) {
+        setError('Backend server is currently unavailable. Please try again later.');
+      } else if (err.response?.status === 401) {
         setError('Your session has expired. Please log in again.');
       } else if (err.response?.status === 403) {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -71,16 +90,16 @@ function AdminManageEventsPage() {
   useEffect(() => {
     fetchEvents();
     
-    // Add timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      if (loading) {
-        setError('Loading timeout. Please refresh the page.');
-        setLoading(false);
-      }
-    }, 30000); // 30 seconds timeout
+          // Add timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        if (loading) {
+          setError('Loading timeout. Please refresh the page.');
+          setLoading(false);
+        }
+      }, 30000);
     
     return () => clearTimeout(timeoutId);
-  }, [loading]);
+  }, []); // Remove loading dependency to prevent infinite loops
 
   const handleEdit = (eventId) => {
     navigate(`/events/${eventId}/edit`);

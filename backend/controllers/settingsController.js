@@ -20,7 +20,7 @@ exports.getSchoolSettings = async (req, res) => {
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',
         contactEmail: 'ceo@ua.edu.ph',
         logo: null,
-        brandName: 'CHARISM',
+        brandName: 'CHARISM'
       });
       await settings.save();
       console.log('Default settings created');
@@ -142,7 +142,7 @@ exports.getPublicSchoolSettings = async (req, res) => {
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',
         contactEmail: 'ceo@ua.edu.ph',
         logo: null,
-        brandName: 'CHARISM',
+        brandName: 'CHARISM'
       });
       await settings.save();
       console.log('Default public settings created');

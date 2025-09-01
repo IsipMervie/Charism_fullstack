@@ -37,19 +37,53 @@ function EventListPage() {
     departments: []
   });
 
-  // Fetch filter options from settings
+  // Fetch filter options from settings with caching
   const fetchFilterOptions = async () => {
-    // Prevent multiple simultaneous calls
+    // Prevent multiple simultaneous calls and use cache
     if (filterOptions.departments.length > 0) {
-      console.log('⚠️ Filter options already loaded, skipping...');
       return;
     }
     
-    try {
-      console.log('🔑 Fetching filter options using API utility');
+    // Check if we have cached settings (valid for 5 minutes)
+    const cachedSettings = sessionStorage.getItem('publicSettings');
+    const cachedTimestamp = sessionStorage.getItem('publicSettingsTimestamp');
+    
+    if (cachedSettings && cachedTimestamp) {
+      const cacheAge = Date.now() - parseInt(cachedTimestamp);
+      const cacheValid = cacheAge < 5 * 60 * 1000; // 5 minutes
       
+      if (cacheValid) {
+        try {
+          const settings = JSON.parse(cachedSettings);
+          const departments = safeSpread(settings?.departments, []);
+          const activeDepartments = safeMap(
+            safeFilter(departments, d => d && d.isActive),
+            d => d.name
+          );
+          
+          setFilterOptions(prev => ({
+            ...prev,
+            departments: activeDepartments
+          }));
+          return;
+        } catch (e) {
+          // If cache is invalid, remove it
+          sessionStorage.removeItem('publicSettings');
+          sessionStorage.removeItem('publicSettingsTimestamp');
+        }
+      } else {
+        // Cache expired, remove it
+        sessionStorage.removeItem('publicSettings');
+        sessionStorage.removeItem('publicSettingsTimestamp');
+      }
+    }
+    
+    try {
       const settings = await getPublicSettings();
-      console.log('⚙️ Full settings response:', settings);
+      
+      // Cache the settings for 5 minutes
+      sessionStorage.setItem('publicSettings', JSON.stringify(settings));
+      sessionStorage.setItem('publicSettingsTimestamp', Date.now().toString());
       
       // Use safe array utilities to prevent filter errors
       const departments = safeSpread(settings?.departments, []);
@@ -58,38 +92,28 @@ function EventListPage() {
         d => d.name
       );
       
-      console.log('🏢 Active departments from settings:', activeDepartments);
-      console.log('🏢 Raw departments data:', settings?.departments);
-      
       setFilterOptions(prev => ({
         ...prev,
         departments: activeDepartments
       }));
       
       // If no departments found, try to get them from events
-      if (activeDepartments.length === 0) {
-        console.log('⚠️ No departments found in settings, trying to extract from events...');
-        
-        // Handle both single department and departments array
+      if (activeDepartments.length === 0 && events.length > 0) {
+        // Simplified department extraction
         const eventDepartments = [...safeSet(
           safeMap(events, event => {
-            // Check if event has departments array
-            if (event.departments && Array.isArray(event.departments) && event.departments.length > 0) {
+            if (event.departments && Array.isArray(event.departments)) {
               return event.departments;
             }
-            // Check if event has single department
             if (event.department && typeof event.department === 'string') {
               return [event.department];
             }
-            // Check if event has department object with name
             if (event.department && typeof event.department === 'object' && event.department.name) {
               return [event.department.name];
             }
             return [];
-          }).flat().filter(Boolean) // Flatten arrays and remove null/undefined values
+          }).flat().filter(Boolean)
         )];
-        
-        console.log('🏢 Departments from events:', eventDepartments);
         
         if (eventDepartments.length > 0) {
           setFilterOptions(prev => ({
@@ -99,7 +123,7 @@ function EventListPage() {
         }
       }
     } catch (err) {
-      console.error('❌ Error fetching filter options:', err);
+      console.error('Error fetching filter options:', err);
       // Show SweetAlert warning
       Swal.fire({
         icon: 'warning',
@@ -114,19 +138,11 @@ function EventListPage() {
   };
 
   useEffect(() => {
-    console.log('🚀 EventListPage component mounted');
-    console.log('👤 Current user:', user);
-    console.log('🎭 Current role:', role);
     setIsVisible(true);
     
-    // Update user and role state
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const currentRole = localStorage.getItem('role');
-    console.log('📱 LocalStorage user:', currentUser);
-    console.log('📱 LocalStorage role:', currentRole);
-    
+    // Load data on mount
     refreshEvents();
-    fetchFilterOptions(); // Fetch filter options from settings
+    fetchFilterOptions();
     
     // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
@@ -134,48 +150,39 @@ function EventListPage() {
         setError('Loading timeout. Please refresh the page.');
         setLoading(false);
       }
-    }, 30000); // 30 seconds timeout
+    }, 30000);
     
     // Add focus event listener to refresh data when user returns to the page
     const handleFocus = () => {
-      console.log('🔄 Window focus event - refreshing events');
       refreshEvents();
     };
     
     window.addEventListener('focus', handleFocus);
     
     return () => {
-      console.log('🧹 EventListPage component unmounting');
       window.removeEventListener('focus', handleFocus);
-      clearTimeout(timeoutId); // Clean up timeout
+      clearTimeout(timeoutId);
     };
   }, []);
   
   // Update filter options when events are loaded
   useEffect(() => {
     if (events.length > 0 && filterOptions.departments.length === 0) {
-      console.log('🔄 Events loaded, updating department filter options...');
-      
-      // Handle both single department and departments array
+      // Simplified department extraction
       const eventDepartments = [...safeSet(
         safeMap(events, event => {
-          // Check if event has departments array
-          if (event.departments && Array.isArray(event.departments) && event.departments.length > 0) {
+          if (event.departments && Array.isArray(event.departments)) {
             return event.departments;
           }
-          // Check if event has single department
           if (event.department && typeof event.department === 'string') {
             return [event.department];
           }
-          // Check if event has department object with name
           if (event.department && typeof event.department === 'object' && event.department.name) {
             return [event.department.name];
           }
           return [];
-        }).flat().filter(Boolean) // Flatten arrays and remove null/undefined values
+        }).flat().filter(Boolean)
       )];
-      
-      console.log('🏢 Departments from events:', eventDepartments);
       
       if (eventDepartments.length > 0) {
         setFilterOptions(prev => ({
@@ -274,30 +281,14 @@ function EventListPage() {
   const refreshEvents = async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
     if (loading && retryCount === 0) {
-      console.log('⚠️ refreshEvents already in progress, skipping...');
       return;
     }
     
     try {
-      console.log('🔄 Starting refreshEvents...', retryCount > 0 ? `(Retry ${retryCount})` : '');
       setLoading(true);
       setError('');
       
-      console.log('📡 Calling getEvents()...');
       const eventsData = await getEvents();
-      console.log('✅ Events loaded:', eventsData);
-      
-      // Debug: Log the structure of first event to understand department format
-      if (eventsData && eventsData.length > 0) {
-        console.log('🔍 First event structure:', {
-          id: eventsData[0]._id,
-          title: eventsData[0].title,
-          department: eventsData[0].department,
-          departments: eventsData[0].departments,
-          departmentType: typeof eventsData[0].department,
-          departmentsType: Array.isArray(eventsData[0].departments)
-        });
-      }
       
       if (!eventsData || !Array.isArray(eventsData)) {
         throw new Error('Invalid events data received');
@@ -306,26 +297,20 @@ function EventListPage() {
       setEvents(eventsData);
       
       // Extract unique departments from events for filter options
-      // Handle both single department and departments array
       const uniqueDepartments = [...safeSet(
         safeMap(eventsData, event => {
-          // Check if event has departments array
-          if (event.departments && Array.isArray(event.departments) && event.departments.length > 0) {
+          if (event.departments && Array.isArray(event.departments)) {
             return event.departments;
           }
-          // Check if event has single department
           if (event.department && typeof event.department === 'string') {
             return [event.department];
           }
-          // Check if event has department object with name
           if (event.department && typeof event.department === 'object' && event.department.name) {
             return [event.department.name];
           }
           return [];
-        }).flat().filter(Boolean) // Flatten arrays and remove null/undefined values
+        }).flat().filter(Boolean)
       )].sort();
-      
-      console.log('🏢 Unique departments found:', uniqueDepartments);
       
       setFilterOptions({
         departments: uniqueDepartments
@@ -333,13 +318,10 @@ function EventListPage() {
       
       // Set joined events for students
       if (role === 'Student') {
-        console.log('👤 Processing student events...');
-        // Try multiple ways to get user ID
         let userId = user._id || user.id;
         if (!userId) {
           userId = localStorage.getItem('userId');
         }
-        console.log('🆔 User ID:', userId);
         
         if (userId) {
           const joined = safeMap(
@@ -352,11 +334,8 @@ function EventListPage() {
             ),
             event => event._id
           );
-          console.log('📋 Joined events:', joined);
         }
       }
-      
-      console.log('✅ refreshEvents completed successfully');
       
 
       

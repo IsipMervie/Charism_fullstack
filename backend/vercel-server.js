@@ -5,6 +5,13 @@ const path = require('path');
 
 // Import utilities and models
 const { globalErrorHandler } = require('./utils/errorHandler');
+const { 
+  performanceMiddleware, 
+  requestDeduplication, 
+  dbOptimization, 
+  compression, 
+  rateLimit 
+} = require('./middleware/performanceMiddleware');
 
 // Import models to ensure they are registered with Mongoose
 require('./models/Section');
@@ -18,6 +25,11 @@ require('./models/Message');
 require('./models/Feedback');
 
 const app = express();
+
+// Apply performance middleware first
+app.use(performanceMiddleware);
+app.use(compression);
+app.use(rateLimit);
 
 // Middleware
 app.use(cors({
@@ -81,7 +93,7 @@ app.use(cors({
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Headers', 'Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin');
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
@@ -100,6 +112,8 @@ app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+  // Add caching for static files
+  res.header('Cache-Control', 'public, max-age=300'); // 5 minutes
   next();
 });
 
@@ -215,8 +229,6 @@ app.get('/api/db-status', async (req, res) => {
     });
   }
 });
-
-
 
 // Simple test for database
 app.get('/api/test-db-simple', async (req, res) => {
@@ -337,6 +349,10 @@ const certificateRoutes = require('./routes/certificateRoutes');
 const contactUsRoutes = require('./routes/contactUsRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const fileRoutes = require('./routes/fileRoutes');
+
+// Apply database optimization middleware to API routes
+app.use('/api', dbOptimization);
+app.use('/api', requestDeduplication);
 
 // Use routes
 app.use('/api/auth', authRoutes);

@@ -13,6 +13,8 @@ const schoolSettingsSchema = new mongoose.Schema({
   },
   brandName: { type: String, required: true, default: 'CHARISM' }, // Brand name for navbar
   
+
+  
   // Academic Years management
   academicYears: [{
     name: { type: String, required: true },

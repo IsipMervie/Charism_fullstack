@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getPublicSchoolSettings } from '../api/api';
-import logo from './assets/logo.png';
+// Logo path - using public folder for better build compatibility
+const logo = '/logo.png';
 import './NavigationBar.css';
 
 function NavigationBar() {

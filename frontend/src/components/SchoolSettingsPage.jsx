@@ -14,7 +14,7 @@ function SchoolSettingsPage() {
     contactEmail: '',
     brandName: '',
     logo: null,
-    logoPreview: null,
+    logoPreview: null
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,7 +36,7 @@ function SchoolSettingsPage() {
         contactEmail: data.contactEmail || '',
         brandName: data.brandName || '',
         logo: null,
-        logoPreview: data.logo ? getLogoUrl(data.logo) : null,
+        logoPreview: data.logo ? getLogoUrl(data.logo) : null
       });
       setError('');
     } catch (err) {
@@ -58,7 +58,7 @@ function SchoolSettingsPage() {
     }, 30000); // 30 seconds timeout
     
     return () => clearTimeout(timeoutId);
-  }, [fetchSettings, loading]);
+  }, []); // Remove dependencies to prevent infinite loops
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -244,6 +244,24 @@ function SchoolSettingsPage() {
                 )}
               </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               {/* Submit Button */}
               <div className="form-actions">
                 <button 
@@ -291,7 +309,9 @@ function SchoolSettingsPage() {
                 <span className="info-label">Brand Name:</span>
                 <span className="info-value">{settings.brandName || 'Not set'}</span>
               </div>
-              
+
+
+
               {settings.logoPreview && (
                 <div className="info-item">
                   <span className="info-label">Logo:</span>

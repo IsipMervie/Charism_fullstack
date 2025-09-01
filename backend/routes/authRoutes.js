@@ -15,10 +15,10 @@ router.get('/verify-email/:token', authController.verifyEmail);
 // Forgot password (send reset link)
 router.post('/forgot-password', authController.forgotPassword);
 
-// Reset password using token
-router.post('/reset-password/:token', authController.resetPassword);
-// Also support reset without token in URL (token in body)
+// Reset password (token in body)
 router.post('/reset-password', authController.resetPassword);
+// Reset password using token in URL
+router.post('/reset-password/:token', authController.resetPassword);
 
 // Change password (user must be logged in)
 router.post('/change-password', authMiddleware, authController.changePassword);

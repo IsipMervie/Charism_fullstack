@@ -8,12 +8,33 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
+// Request deduplication cache
+const pendingRequests = new Map();
+
+// Create deduplicated request function
+const createDeduplicatedRequest = (config) => {
+  const requestKey = `${config.method}-${config.url}-${JSON.stringify(config.params || {})}`;
+  
+  if (pendingRequests.has(requestKey)) {
+    return pendingRequests.get(requestKey);
+  }
+  
+  const requestPromise = axiosInstance(config);
+  pendingRequests.set(requestKey, requestPromise);
+  
+  requestPromise.finally(() => {
+    pendingRequests.delete(requestKey);
+  });
+  
+  return requestPromise;
+};
+
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Increased from 15s to 30s for better reliability
+  timeout: 15000, // Reduced from 30s to 15s for better user experience
 });
 
 // Attach token if it exists
@@ -930,7 +951,7 @@ export const forgotPassword = async (email) => {
 
 export const resetPassword = async (token, newPassword) => {
   try {
-    const response = await axiosInstance.post('/auth/reset-password', { token, newPassword });
+    const response = await axiosInstance.post(`/auth/reset-password/${token}`, { newPassword });
     return response.data;
   } catch (error) {
     console.error('Error resetting password:', error);

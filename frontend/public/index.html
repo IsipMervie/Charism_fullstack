@@ -37,6 +37,11 @@
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     
+    <!-- Performance Optimization -->
+    <link rel="dns-prefetch" href="//charism-backend.vercel.app" />
+    <link rel="preload" href="%PUBLIC_URL%/logo.png" as="image" />
+    <link rel="preload" href="%PUBLIC_URL%/favicon.ico" as="image" />
+    
     <title>CHARISM Community Link - University of Antique</title>
   </head>
   <body>
@@ -48,5 +53,20 @@
       </div>
     </noscript>
     <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('Service Worker registered successfully:', registration.scope);
+            })
+            .catch((error) => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

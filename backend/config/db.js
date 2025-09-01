@@ -7,20 +7,14 @@ require('dotenv').config();
 const dbURI = process.env.MONGO_URI;
 const nodeEnv = process.env.NODE_ENV || 'development';
 
-// Lazy connection function - only called when needed
+// Optimized connection function for serverless
 const connectDB = async () => {
   console.log('🔍 MongoDB Connection Debug:');
   console.log('NODE_ENV:', nodeEnv);
   console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
-  console.log('MONGO_URI length:', process.env.MONGO_URI ? process.env.MONGO_URI.length : 0);
-  console.log('MONGO_URI preview:', process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 50) + '...' : 'Not set');
 
   if (!dbURI) {
     console.error('❌ No MongoDB URI found!');
-    console.error('Please set MONGO_URI environment variable');
-    console.error('Available env vars:', Object.keys(process.env));
-    
-    // In serverless, don't exit, just return null
     if (nodeEnv === 'production') {
       console.error('🚨 Production environment - continuing without DB connection');
       return null;
@@ -43,9 +37,8 @@ const connectDB = async () => {
   }
 
   console.log('✅ MongoDB URI format looks valid');
-  console.log('Using database:', dbURI.includes('mongodb.net') ? 'MongoDB Atlas' : 'Custom MongoDB');
 
-  const maxRetries = 5; // Increased retries
+  const maxRetries = 3; // Reduced retries for faster failure
   let retryCount = 0;
   
   while (retryCount < maxRetries) {
@@ -58,31 +51,36 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        serverSelectionTimeoutMS: 10000, // Reduced to 10 seconds for faster failure
-        socketTimeoutMS: 15000, // Reduced to 15 seconds for faster failure
-        maxPoolSize: 1, // Reduced for serverless
-        minPoolSize: 0, // Reduced for serverless
-        bufferCommands: true, // Enable buffering for better reliability
+        // Optimized timeouts for serverless
+        serverSelectionTimeoutMS: 5000, // Reduced to 5 seconds
+        socketTimeoutMS: 8000, // Reduced to 8 seconds
+        connectTimeoutMS: 5000, // Reduced to 5 seconds
+        
+        // Serverless-optimized pooling
+        maxPoolSize: 1,
+        minPoolSize: 0,
+        maxIdleTimeMS: 10000, // Reduced to 10 seconds
+        
+        // Performance optimizations
+        bufferCommands: true,
         family: 4, // Force IPv4
         retryWrites: true,
+        retryReads: true,
         w: 'majority',
-        // Serverless-specific options
-        maxIdleTimeMS: 15000, // Reduced for serverless
-        // Additional options for better reliability
-        autoIndex: false, // Disable auto-indexing in production
-        maxConnecting: 1, // Limit concurrent connections
-        // Connection pooling improvements
+        
+        // Disable expensive operations in production
+        autoIndex: false,
+        maxConnecting: 1,
+        
+        // Server API version
         serverApi: {
           version: '1',
           strict: false,
           deprecationErrors: false,
         },
-        // Timeout improvements
-        connectTimeoutMS: 10000, // Reduced to 10 seconds
-        heartbeatFrequencyMS: 5000, // Reduced for faster detection
-        // Retry logic
-        retryReads: true,
-        retryWrites: true,
+        
+        // Heartbeat optimization
+        heartbeatFrequencyMS: 3000, // Reduced for faster detection
       });
       
       console.log('✅ MongoDB connected successfully');
@@ -113,8 +111,8 @@ const connectDB = async () => {
           return null;
         }
       } else {
-        console.log(`⏳ Retrying in 3 seconds... (${retryCount}/${maxRetries})`);
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log(`⏳ Retrying in 1 second... (${retryCount}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced retry delay
       }
     }
   }
@@ -157,18 +155,18 @@ const getConnectionStatus = () => {
 let connection = null;
 let lazyConnection = null;
 
-// Lazy connection for Vercel - only connect when actually needed
+// Optimized lazy connection for Vercel - faster connection with better error handling
 const getLazyConnection = async () => {
   try {
     if (!lazyConnection || mongoose.connection.readyState !== 1) {
-      console.log('🔄 Initializing lazy database connection...');
+      console.log('🔄 Initializing optimized lazy database connection...');
       lazyConnection = connectDB();
     }
     
     if (lazyConnection) {
-      // Add timeout to prevent hanging
+      // Reduced timeout to prevent hanging
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database connection timeout')), 15000);
+        setTimeout(() => reject(new Error('Database connection timeout')), 8000); // Reduced to 8 seconds
       });
       
       await Promise.race([lazyConnection, timeoutPromise]);

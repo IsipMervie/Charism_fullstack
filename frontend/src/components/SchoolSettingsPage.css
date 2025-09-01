@@ -234,6 +234,44 @@
   line-height: 1.4;
 }
 
+/* Form Section Headers */
+.form-section-header {
+  margin: 2rem 0 1rem 0;
+  padding: 1rem 0;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.form-section-header h4 {
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.form-section-header p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Textarea styling */
+.form-input[rows] {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* URL link styling in current settings */
+.info-value a {
+  color: #2563eb;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.info-value a:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
 /* File Upload */
 .file-upload-wrapper {
   position: relative;
