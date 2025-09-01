@@ -11,6 +11,34 @@ export const testBackendConnection = async () => {
   console.log('🔍 Testing backend connection...');
   console.log('🌐 API URL:', API_URL);
   console.log('🏠 Current hostname:', window.location.hostname);
+  console.log('🔧 User Agent:', navigator.userAgent);
+  console.log('🌍 Protocol:', window.location.protocol);
+  
+  // Test 0: Basic connectivity test with XMLHttpRequest as fallback
+  try {
+    console.log('📡 Testing basic connectivity...');
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `${API_URL}/health`, false); // Synchronous for simple test
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('Accept-Encoding', 'identity');
+    
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        console.log('📊 XHR Status:', xhr.status);
+        console.log('📊 XHR Response:', xhr.responseText);
+      }
+    };
+    
+    xhr.send();
+    
+    if (xhr.status === 200) {
+      console.log('✅ XHR health check successful');
+    } else {
+      console.log('❌ XHR health check failed:', xhr.status);
+    }
+  } catch (xhrError) {
+    console.log('❌ XHR test failed:', xhrError.message);
+  }
 
   // Test 1: Basic health check
   try {
@@ -20,7 +48,8 @@ export const testBackendConnection = async () => {
       method: 'GET',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/json'
+        'Accept': 'application/json',
+        'Accept-Encoding': 'identity'
       }
     });
     const endTime = Date.now();
@@ -43,10 +72,13 @@ export const testBackendConnection = async () => {
       console.log('❌ Health check failed:', response.status);
     }
   } catch (error) {
+    console.error('❌ Health check error details:', error);
     results.tests.health = {
       success: false,
       error: error.message,
-      code: error.code
+      code: error.code,
+      type: error.name,
+      details: error.toString()
     };
     console.log('❌ Health check error:', error.message);
   }
@@ -57,7 +89,11 @@ export const testBackendConnection = async () => {
     const startTime = Date.now();
     const response = await fetch(`${API_URL}/test`, {
       method: 'GET',
-      mode: 'cors'
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Encoding': 'identity'
+      }
     });
     const endTime = Date.now();
     
@@ -79,10 +115,13 @@ export const testBackendConnection = async () => {
       console.log('❌ Test endpoint failed:', response.status);
     }
   } catch (error) {
+    console.error('❌ Test endpoint error details:', error);
     results.tests.test = {
       success: false,
       error: error.message,
-      code: error.code
+      code: error.code,
+      type: error.name,
+      details: error.toString()
     };
     console.log('❌ Test endpoint error:', error.message);
   }
@@ -93,7 +132,11 @@ export const testBackendConnection = async () => {
     const startTime = Date.now();
     const response = await fetch(`${API_URL}/frontend-test`, {
       method: 'GET',
-      mode: 'cors'
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Encoding': 'identity'
+      }
     });
     const endTime = Date.now();
     
@@ -115,10 +158,13 @@ export const testBackendConnection = async () => {
       console.log('❌ Frontend test endpoint failed:', response.status);
     }
   } catch (error) {
+    console.error('❌ Frontend test endpoint error details:', error);
     results.tests.frontendTest = {
       success: false,
       error: error.message,
-      code: error.code
+      code: error.code,
+      type: error.name,
+      details: error.toString()
     };
     console.log('❌ Frontend test endpoint error:', error.message);
   }

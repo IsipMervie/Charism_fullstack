@@ -7,6 +7,7 @@ import NavigationBar from './components/NavigationBar';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import PerformanceOptimizer from './components/PerformanceOptimizer';
+import ConnectionTest from './components/ConnectionTest';
 
 // Utilities
 import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
@@ -345,6 +346,7 @@ function App() {
         
         {/* Debug Info - Remove this in production */}
         <DebugInfo />
+        <ConnectionTest />
         
         </Router>
       </PerformanceOptimizer>

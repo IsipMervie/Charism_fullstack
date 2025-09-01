@@ -207,7 +207,77 @@ if (require.main === module) {
 }
 
 // Health check (must come before other routes)
-app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
+app.get('/api/health', (req, res) => {
+  try {
+    console.log('🔍 Health check requested from:', req.ip || req.connection.remoteAddress);
+    
+    // Set proper headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    const healthData = { 
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      message: 'Server is running',
+      version: '1.0.0'
+    };
+    
+    console.log('✅ Health check response:', healthData);
+    res.json(healthData);
+  } catch (error) {
+    console.error('❌ Health check error:', error);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Health check failed',
+      error: error.message 
+    });
+  }
+});
+
+// Simple test endpoint for frontend connectivity testing
+app.get('/api/test', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    res.json({
+      status: 'OK',
+      message: 'Test endpoint working',
+      timestamp: new Date().toISOString(),
+      frontend: 'Connection successful'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Test endpoint failed' 
+    });
+  }
+});
+
+// Frontend test endpoint
+app.get('/api/frontend-test', (req, res) => {
+  try {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    
+    res.json({
+      status: 'OK',
+      message: 'Frontend test successful',
+      timestamp: new Date().toISOString(),
+      backend: 'Running and accessible'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Frontend test failed' 
+    });
+  }
+});
 
 // Environment variables checker (for debugging)
 app.get('/api/env-check', (req, res) => {

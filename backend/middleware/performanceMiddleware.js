@@ -83,6 +83,11 @@ const dbOptimization = (req, res, next) => {
 
 // Response compression middleware
 const compression = (req, res, next) => {
+  // Skip compression for health and test endpoints to avoid encoding issues
+  if (req.path === '/api/health' || req.path === '/api/test' || req.path === '/api/frontend-test') {
+    return next();
+  }
+  
   // Check if response should be compressed
   const shouldCompress = req.headers['accept-encoding'] && 
                         (req.headers['accept-encoding'].includes('gzip') || 
