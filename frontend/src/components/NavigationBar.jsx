@@ -79,6 +79,18 @@ function NavigationBar() {
     setIsExpanded(false);
   };
 
+  // Handle dropdown toggle clicks - don't close mobile menu
+  const handleDropdownToggleClick = (event) => {
+    // Prevent the click from bubbling up and closing the mobile menu
+    event.stopPropagation();
+    // Don't close the mobile menu when toggling dropdowns
+  };
+
+  // Handle dropdown item clicks - close mobile menu
+  const handleDropdownItemClick = () => {
+    setIsExpanded(false);
+  };
+
   // Handle mobile menu toggle
   const handleMobileToggle = () => {
     setIsExpanded(!isExpanded);
@@ -291,13 +303,13 @@ function NavigationBar() {
               <NavDropdown 
                 title="Admin" 
                 id="navbar-admin-dropdown"
-                onClick={handleNavLinkClick}
+                onClick={handleDropdownToggleClick}
               >
                 <NavDropdown.Item 
                   as={Link} 
                   to="/admin/dashboard" 
                   active={location.pathname === '/admin/dashboard'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Dashboard
                 </NavDropdown.Item>
@@ -305,7 +317,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/events" 
                   active={location.pathname.startsWith('/events')}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Events
                 </NavDropdown.Item>
@@ -313,7 +325,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/manage-events" 
                   active={location.pathname === '/admin/manage-events'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Manage Events
                 </NavDropdown.Item>
@@ -321,7 +333,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/create-event" 
                   active={location.pathname === '/admin/create-event'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Create Event
                 </NavDropdown.Item>
@@ -329,7 +341,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/registration-approval" 
                   active={location.pathname === '/registration-approval'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Event Registered Approval
                 </NavDropdown.Item>
@@ -337,7 +349,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/manage-messages" 
                   active={location.pathname === '/admin/manage-messages'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Manage Messages
                 </NavDropdown.Item>
@@ -345,7 +357,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/manage-users" 
                   active={location.pathname === '/admin/manage-users'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Manage Users
                 </NavDropdown.Item>
@@ -353,7 +365,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/analytics" 
                   active={location.pathname === '/analytics'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Analytics
                 </NavDropdown.Item>
@@ -361,7 +373,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/school-settings" 
                   active={location.pathname === '/admin/school-settings'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   School Settings
                 </NavDropdown.Item>
@@ -369,7 +381,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/registration-management" 
                   active={location.pathname === '/admin/registration-management'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Manage Registration
                 </NavDropdown.Item>
@@ -377,7 +389,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/students-by-year" 
                   active={location.pathname === '/students-by-year'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Students by Year
                 </NavDropdown.Item>
@@ -385,7 +397,7 @@ function NavigationBar() {
                   as={Link} 
                   to="/admin/manage-feedback" 
                   active={location.pathname === '/admin/manage-feedback'}
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Manage Feedback
                 </NavDropdown.Item>
@@ -397,26 +409,26 @@ function NavigationBar() {
               <NavDropdown 
                 title="Account" 
                 id="navbar-account-dropdown"
-                onClick={handleNavLinkClick}
+                onClick={handleDropdownToggleClick}
               >
                 <NavDropdown.Item 
                   as={Link} 
                   to="/profile"
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Profile
                 </NavDropdown.Item>
                 <NavDropdown.Item 
                   as={Link} 
                   to="/settings"
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Settings
                 </NavDropdown.Item>
                 <NavDropdown.Item 
                   as={Link} 
                   to="/change-password"
-                  onClick={handleNavLinkClick}
+                  onClick={handleDropdownItemClick}
                 >
                   Change Password
                 </NavDropdown.Item>
