@@ -22,6 +22,12 @@ function AdminManageEventsPage() {
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
 
+  // Update ref when loading state changes
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  // Set visibility on mount
   useEffect(() => {
     setIsVisible(true);
   }, []);
@@ -157,7 +163,8 @@ function AdminManageEventsPage() {
     // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
       console.log('⏰ Timeout triggered, loading state:', loading);
-      if (loading) {
+      if (loading && isFetching) {
+        console.log('❌ Loading timeout - stopping loading');
         setError('Loading timeout. Please refresh the page.');
         setLoading(false);
         setIsFetching(false);
