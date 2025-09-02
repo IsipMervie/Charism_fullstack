@@ -1,7 +1,7 @@
 // frontend/src/components/AdminManageEventsPage.jsx
 // Simple but Creative Manage Events Page Design
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache } from '../api/api';
 import Swal from 'sweetalert2';
@@ -21,6 +21,7 @@ function AdminManageEventsPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
+  const loadingRef = useRef(true); // Use ref to track loading state
 
   // Update ref when loading state changes
   useEffect(() => {
