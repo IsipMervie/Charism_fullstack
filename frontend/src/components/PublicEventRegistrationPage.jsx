@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEventByRegistrationToken, registerForEventWithToken } from '../api/api';
 import Swal from 'sweetalert2';
@@ -16,18 +16,13 @@ function PublicEventRegistrationPage() {
   const [isRegistered, setIsRegistered] = useState(false);
   const [registering, setRegistering] = useState(false);
 
-  useEffect(() => {
-    checkAuthStatus();
-    fetchEventDetails();
-  }, [token, checkAuthStatus, fetchEventDetails]);
-
-  const checkAuthStatus = () => {
+  const checkAuthStatus = useCallback(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     setIsLoggedIn(!!(token && user));
-  };
+  }, []);
 
-  const fetchEventDetails = async () => {
+  const fetchEventDetails = useCallback(async () => {
     try {
       setLoading(true);
       const eventData = await getEventByRegistrationToken(token);
@@ -43,7 +38,12 @@ function PublicEventRegistrationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, isLoggedIn]);
+
+  useEffect(() => {
+    checkAuthStatus();
+    fetchEventDetails();
+  }, [checkAuthStatus, fetchEventDetails]);
 
   const handleLogin = () => {
     // Store the current URL to redirect back after login

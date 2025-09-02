@@ -81,7 +81,15 @@ function AdminManageEventsPage() {
       }
 
       console.log('🌐 Fetching events from API...');
-      const data = await getEvents();
+      
+      // Add a timeout to the API call
+      const apiTimeout = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('API timeout')), 8000); // 8 second timeout
+      });
+      
+      const dataPromise = getEvents();
+      const data = await Promise.race([dataPromise, apiTimeout]);
+      
       console.log('✅ Events fetched successfully, count:', data?.length || 0);
       
       // Cache the data
@@ -101,7 +109,9 @@ function AdminManageEventsPage() {
       });
       
       // Handle specific error types
-      if (err.code === 'ECONNABORTED') {
+      if (err.message === 'API timeout') {
+        setError('API request timed out. Please try again.');
+      } else if (err.code === 'ECONNABORTED') {
         if (retryCount < 2) {
           console.log(`🔄 Retrying fetchEvents (${retryCount + 1}/3)...`);
           setTimeout(() => {
@@ -134,15 +144,25 @@ function AdminManageEventsPage() {
   };
 
   useEffect(() => {
-    fetchEvents();
+    console.log('🚀 Component mounted, calling fetchEvents...');
     
-          // Add timeout to prevent infinite loading
-      const timeoutId = setTimeout(() => {
-        if (loading) {
-          setError('Loading timeout. Please refresh the page.');
-          setLoading(false);
-        }
-      }, 10000); // 10 seconds instead of 30
+    // Call fetchEvents with error handling
+    fetchEvents().catch(error => {
+      console.error('❌ fetchEvents failed:', error);
+      setError('Failed to load events. Please refresh the page.');
+      setLoading(false);
+      setIsFetching(false);
+    });
+    
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.log('⏰ Timeout triggered, loading state:', loading);
+      if (loading) {
+        setError('Loading timeout. Please refresh the page.');
+        setLoading(false);
+        setIsFetching(false);
+      }
+    }, 10000); // 10 seconds instead of 30
     
     return () => clearTimeout(timeoutId);
   }, []); // Remove loading dependency to prevent infinite loops
