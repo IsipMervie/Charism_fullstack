@@ -8,6 +8,7 @@ import { FaUser, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaCrown, FaU
 import {
   getUsers, updateUser, deleteUser
 } from '../api/api';
+import { getProfilePictureUrl } from '../utils/imageUtils';
 import './ManageUsersPage.css';
 
 function ManageUsersPage() {
@@ -178,11 +179,10 @@ function ManageUsersPage() {
     }
   };
 
-  // Get profile picture URL
-  const getProfilePictureUrl = (user) => {
+  // Get profile picture URL using image utilities
+  const getProfilePictureUrlLocal = (user) => {
     if (!user.profilePicture) return '/default-profile.png';
-    if (user.profilePicture.startsWith('http')) return user.profilePicture;
-    return `${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-server-ua-backend.vercel.app'}/uploads/profile-pictures/${user.profilePicture}`;
+    return getProfilePictureUrl(user.profilePicture, user._id) || '/default-profile.png';
   };
 
   // Get profile picture fallback
@@ -190,7 +190,7 @@ function ManageUsersPage() {
     if (user.profilePicture) {
       return (
         <img 
-          src={getProfilePictureUrl(user)} 
+          src={getProfilePictureUrlLocal(user)} 
           alt={`${user.name}'s profile`}
           className="profile-picture"
           onError={(e) => {

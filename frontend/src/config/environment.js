@@ -1,13 +1,13 @@
 // Environment configuration for different deployment environments
 const config = {
   development: {
-    API_URL: 'http://localhost:5000/api',
+    API_URL: 'http://localhost:10000/api',
     FRONTEND_URL: 'http://localhost:3000',
     NODE_ENV: 'development'
   },
   production: {
-    API_URL: process.env.REACT_APP_API_URL || 'https://charism-server-ua-backend.vercel.app/api',
-    FRONTEND_URL: 'https://charism.vercel.app',
+    API_URL: process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com/api',
+    FRONTEND_URL: 'https://charism.onrender.com',
     NODE_ENV: 'production'
   }
 };

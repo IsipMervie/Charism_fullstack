@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: charism-api
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        value: mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
+      - key: JWT_SECRET
+        value: mysecretkey123456789
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: https://charism.onrender.com
+      - key: FRONTEND_URL_PRODUCTION
+        value: https://charism.onrender.com
+      - key: CORS_ORIGINS
+        value: https://charism.onrender.com
+      - key: EMAIL_USER
+        value: nexacore91@gmail.com
+      - key: EMAIL_PASS
+        value: vikq reqx xtdq wglv
+      - key: EMAIL_SERVICE
+        value: gmail
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: MAX_FILE_SIZE
+        value: 5242880
+      - key: UPLOAD_PATH
+        value: ./uploads
+      - key: BCRYPT_ROUNDS
+        value: 12
+
+  - type: web
+    name: charism
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://charism-api.onrender.com/api
+
