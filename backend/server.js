@@ -271,6 +271,94 @@ app.get('/api/health', (req, res) => {
   }
 });
 
+// Database status endpoint
+app.get('/api/db-status', async (req, res) => {
+  try {
+    console.log('🔍 Database status check requested from:', req.ip || req.connection.remoteAddress);
+    
+    // Set proper headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    const { mongoose } = require('./config/db');
+    
+    // Check database connection status
+    const dbStatus = mongoose.connection.readyState;
+    let status = 'unknown';
+    let message = '';
+    
+    switch (dbStatus) {
+      case 0:
+        status = 'disconnected';
+        message = 'Database is disconnected';
+        break;
+      case 1:
+        status = 'connected';
+        message = 'Database is connected';
+        break;
+      case 2:
+        status = 'connecting';
+        message = 'Database is connecting';
+        break;
+      case 3:
+        status = 'disconnecting';
+        message = 'Database is disconnecting';
+        break;
+      default:
+        status = 'unknown';
+        message = 'Database status is unknown';
+    }
+    
+    // Try to ping the database if connected
+    let pingResult = 'unknown';
+    if (dbStatus === 1) {
+      try {
+        await mongoose.connection.db.admin().ping();
+        pingResult = 'success';
+      } catch (pingError) {
+        pingResult = 'failed';
+        console.error('Database ping failed:', pingError);
+      }
+    }
+    
+    const dbData = {
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      database: {
+        status: status,
+        readyState: dbStatus,
+        ping: pingResult,
+        host: mongoose.connection.host || 'unknown',
+        name: mongoose.connection.name || 'unknown',
+        message: message
+      }
+    };
+    
+    console.log('✅ Database status response:', dbData);
+    res.json(dbData);
+  } catch (error) {
+    console.error('❌ Database status check error:', error);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Database status check failed',
+      error: error.message,
+      database: {
+        status: 'error',
+        readyState: -1,
+        ping: 'failed',
+        host: 'unknown',
+        name: 'unknown',
+        message: 'Database status check failed'
+      }
+    });
+  }
+});
+
 // Simple test endpoint for frontend connectivity testing
 app.get('/api/test', (req, res) => {
   try {
