@@ -14,7 +14,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // Reduced to 15 seconds for better performance
+  timeout: 30000, // Increased to 30 seconds for better performance
 });
 
 // Simple request interceptor to add token
@@ -136,14 +136,36 @@ export const generateTokensForExistingEvents = async () => {
 
 // Users (Admin/Staff)
 export const getUsers = async (params = {}) => {
-  try {
-    const query = new URLSearchParams(params).toString();
-    const response = await axiosInstance.get(`/admin/users${query ? `?${query}` : ''}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch users. Please try again.');
+  const maxRetries = 3;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Fetching users attempt ${attempt}/${maxRetries}`);
+      const query = new URLSearchParams(params).toString();
+      const response = await axiosInstance.get(`/admin/users${query ? `?${query}` : ''}`);
+      console.log(`✅ Users fetched successfully on attempt ${attempt}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ Error fetching users (attempt ${attempt}/${maxRetries}):`, error);
+      lastError = error;
+      
+      // If it's a timeout error, wait before retrying
+      if (error.code === 'ECONNABORTED' && attempt < maxRetries) {
+        const waitTime = attempt * 2000; // 2s, 4s, 6s
+        console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      
+      // For other errors or last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw new Error('Failed to fetch users after multiple attempts. Please try again.');
+      }
+    }
   }
+  
+  throw lastError;
 };
 
 

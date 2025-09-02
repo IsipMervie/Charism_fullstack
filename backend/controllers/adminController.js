@@ -29,6 +29,15 @@ exports.getAdminDashboard = async (req, res) => {
 // Get all users (with optional search/filter)
 exports.getAllUsers = async (req, res) => {
   try {
+    console.log('🔍 Admin getAllUsers requested');
+    
+    // Check database connection first
+    const { mongoose } = require('../config/db');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('⚠️ Database not ready, attempting to connect...');
+      await mongoose.connection.asPromise();
+    }
+    
     const { search, role } = req.query;
     let query = {};
     if (search) {
@@ -40,9 +49,14 @@ exports.getAllUsers = async (req, res) => {
     if (role) {
       query.role = role;
     }
-    const users = await User.find(query).select('-password');
+    
+    console.log('📊 Fetching users with query:', query);
+    const users = await User.find(query).select('-password').lean();
+    console.log(`✅ Found ${users.length} users`);
+    
     res.json(users);
   } catch (err) {
+    console.error('❌ Error in getAllUsers:', err);
     res.status(500).json({ message: 'Error fetching users', error: err.message });
   }
 };
