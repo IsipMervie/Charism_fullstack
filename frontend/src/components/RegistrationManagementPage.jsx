@@ -1,7 +1,7 @@
 // frontend/src/components/RegistrationManagementPage.jsx
 // Simple but Creative Registration Management Page Design
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import { 
   FaSpinner, FaExclamationTriangle
@@ -59,27 +59,47 @@ function RegistrationManagementPage() {
     setIsVisible(true);
   }, []);
 
-  useEffect(() => {
-    // Check authentication status on component mount
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    
-    if (!token) {
-      setError('You are not logged in. Please log in to access this page.');
-      setLoading(false);
-      return;
-    }
-    
-    if (role !== 'Admin') {
-      setError('Access denied. Only administrators can access this page.');
-      setLoading(false);
-      return;
-    }
-    
-    fetchSettings();
-  }, [fetchSettings]);
+  // Check and automatically deactivate expired academic years
+  const checkAndUpdateExpiredAcademicYears = async (academicYearsData) => {
+    const currentDate = new Date();
+    const updatedAcademicYears = [...academicYearsData];
+    let hasChanges = false;
 
-  const fetchSettings = async () => {
+    for (let i = 0; i < updatedAcademicYears.length; i++) {
+      const academicYear = updatedAcademicYears[i];
+      
+      // Only check active academic years that have an end date
+      if (academicYear.isActive && academicYear.endDate) {
+        const endDate = new Date(academicYear.endDate);
+        
+        // If end date has passed, automatically deactivate
+        if (endDate < currentDate) {
+          try {
+            await toggleAcademicYearStatus(academicYear._id);
+            updatedAcademicYears[i] = { ...academicYear, isActive: false };
+            hasChanges = true;
+            
+            // Show notification for auto-deactivation
+            Swal.fire({
+              icon: 'info',
+              title: 'Academic Year Auto-Deactivated',
+              text: `"${academicYear.year || academicYear.name}" has been automatically deactivated as its end date has passed.`,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 5000
+            });
+          } catch (error) {
+            console.error(`Failed to auto-deactivate academic year ${academicYear._id}:`, error);
+          }
+        }
+      }
+    }
+
+    return updatedAcademicYears;
+  };
+
+  const fetchSettings = useCallback(async () => {
     setLoading(true);
     try {
       // Add caching for better performance
@@ -130,7 +150,27 @@ function RegistrationManagementPage() {
       setError(`Failed to fetch registration settings: ${err.message}`);
     }
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    // Check authentication status on component mount
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    
+    if (!token) {
+      setError('You are not logged in. Please log in to access this page.');
+      setLoading(false);
+      return;
+    }
+    
+    if (role !== 'Admin') {
+      setError('Access denied. Only administrators can access this page.');
+      setLoading(false);
+      return;
+    }
+    
+    fetchSettings();
+  }, [fetchSettings]);
 
   // Academic Years Management
   const handleAddAcademicYear = () => {
@@ -263,46 +303,6 @@ function RegistrationManagementPage() {
         timer: 3000
       });
     }
-  };
-
-  // Check and automatically deactivate expired academic years
-  const checkAndUpdateExpiredAcademicYears = async (academicYearsData) => {
-    const currentDate = new Date();
-    const updatedAcademicYears = [...academicYearsData];
-    let hasChanges = false;
-
-    for (let i = 0; i < updatedAcademicYears.length; i++) {
-      const academicYear = updatedAcademicYears[i];
-      
-      // Only check active academic years that have an end date
-      if (academicYear.isActive && academicYear.endDate) {
-        const endDate = new Date(academicYear.endDate);
-        
-        // If end date has passed, automatically deactivate
-        if (endDate < currentDate) {
-          try {
-            await toggleAcademicYearStatus(academicYear._id);
-            updatedAcademicYears[i] = { ...academicYear, isActive: false };
-            hasChanges = true;
-            
-            // Show notification for auto-deactivation
-            Swal.fire({
-              icon: 'info',
-              title: 'Academic Year Auto-Deactivated',
-              text: `"${academicYear.year || academicYear.name}" has been automatically deactivated as its end date has passed.`,
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 5000
-            });
-          } catch (error) {
-            console.error(`Failed to auto-deactivate academic year ${academicYear._id}:`, error);
-          }
-        }
-      }
-    }
-
-    return updatedAcademicYears;
   };
 
   // Sections Management
