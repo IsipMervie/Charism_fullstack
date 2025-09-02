@@ -2,7 +2,7 @@
 // Simple but Creative Event Details Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
+import { getEventDetails, getPublicEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt } from 'react-icons/fa';
@@ -129,7 +129,10 @@ function EventDetailsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const eventData = await getEventDetails(eventId);
+        // Use public API for unauthenticated users, authenticated API for logged-in users
+        const eventData = isAuthenticated 
+          ? await getEventDetails(eventId)
+          : await getPublicEventDetails(eventId);
         setEvent(eventData);
         setError('');
       } catch (err) {
@@ -138,6 +141,8 @@ function EventDetailsPage() {
           setError('Event not found');
         } else if (err.response?.status === 403) {
           setError('This event is not available for viewing');
+        } else if (err.response?.status === 401) {
+          setError('Authentication required to view this event');
         } else {
           setError('Error fetching event details');
         }
@@ -147,7 +152,7 @@ function EventDetailsPage() {
     };
 
     fetchData();
-  }, [eventId]);
+  }, [eventId, isAuthenticated]);
 
   useEffect(() => {
     if (error) {
