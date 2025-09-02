@@ -1,6 +1,6 @@
 // Redesigned Registration Approval Page - Super User Friendly
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getEvents, getAllEventRegistrations, approveRegistration, disapproveRegistration } from '../api/api';
 import Swal from 'sweetalert2';
 import { FaSpinner, FaSearch, FaEye, FaCheck, FaTimes, FaArrowLeft, FaFilter, FaMapMarkerAlt, FaUsers, FaClock, FaBuilding, FaUserGraduate } from 'react-icons/fa';
@@ -19,13 +19,29 @@ function RegistrationApprovalPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('events'); // 'events' or 'registrations'
 
+  const filterEvents = useCallback(() => {
+    if (!eventSearchTerm.trim()) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const searchLower = eventSearchTerm.toLowerCase();
+    const filtered = safeFilter(events, event => 
+      event.title.toLowerCase().includes(searchLower) ||
+      (event.location && event.location.toLowerCase().includes(searchLower)) ||
+      event.date.toLowerCase().includes(searchLower) ||
+      safeLength(event.attendance).toString().includes(searchLower)
+    );
+    setFilteredEvents(filtered);
+  }, [eventSearchTerm, events]);
+
   useEffect(() => {
     loadEvents();
   }, []);
 
   useEffect(() => {
     filterEvents();
-  }, [eventSearchTerm, events, filterEvents]);
+  }, [filterEvents]);
 
   const loadEvents = async () => {
     setLoading(true);
@@ -45,22 +61,6 @@ function RegistrationApprovalPage() {
       });
     }
     setLoading(false);
-  };
-
-  const filterEvents = () => {
-    if (!eventSearchTerm.trim()) {
-      setFilteredEvents(events);
-      return;
-    }
-
-    const searchLower = eventSearchTerm.toLowerCase();
-    const filtered = safeFilter(events, event => 
-      event.title.toLowerCase().includes(searchLower) ||
-      (event.location && event.location.toLowerCase().includes(searchLower)) ||
-      event.date.toLowerCase().includes(searchLower) ||
-      safeLength(event.attendance).toString().includes(searchLower)
-    );
-    setFilteredEvents(filtered);
   };
 
   const loadEventRegistrations = async (eventId) => {

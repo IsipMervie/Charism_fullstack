@@ -431,7 +431,7 @@ function AdminManageEventsPage() {
 
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
     const registrationUrl = `${frontendUrl}/events/register/${event.publicRegistrationToken}`;
-    const eventUrl = `${frontendUrl}/events/${event._id}`;
+
     const eventTitle = event.title;
     const eventDate = new Date(event.date).toLocaleDateString();
     const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
@@ -454,14 +454,7 @@ function AdminManageEventsPage() {
             </p>
           </div>
           
-          <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3; margin-bottom: 15px;">
-            <p style="margin: 0 0 10px 0; color: #1565c0; font-weight: 600;">
-              🔗 Event Link (Public View):
-            </p>
-            <code style="background: white; padding: 8px; border-radius: 4px; font-size: 12px; word-break: break-all; display: block; color: #333;">
-              ${eventUrl}
-            </code>
-          </div>
+
           
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
             <p style="margin: 0 0 10px 0; color: #2e7d32; font-weight: 600;">
@@ -474,8 +467,7 @@ function AdminManageEventsPage() {
         </div>
       `,
       confirmButtonText: '📋 Copy Registration Link',
-      showCancelButton: true,
-      cancelButtonText: '🔗 Copy Event Link',
+      showCancelButton: false,
       width: '600px',
       customClass: {
         popup: 'share-event-popup'
@@ -488,16 +480,6 @@ function AdminManageEventsPage() {
           icon: 'success',
           title: 'Registration Link Copied!',
           text: 'Registration link copied to clipboard',
-          timer: 2000,
-          showConfirmButton: false
-        });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // Copy event link to clipboard
-        navigator.clipboard.writeText(eventUrl);
-        Swal.fire({
-          icon: 'success',
-          title: 'Event Link Copied!',
-          text: 'Event link copied to clipboard',
           timer: 2000,
           showConfirmButton: false
         });
