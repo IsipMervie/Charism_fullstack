@@ -19,8 +19,8 @@ function AdminManageEventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isVisible, setIsVisible] = useState(false);
-  const navigate = useNavigate();
   const [isFetching, setIsFetching] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsVisible(true);
@@ -28,18 +28,24 @@ function AdminManageEventsPage() {
 
   const fetchEvents = async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
-    if (loading && retryCount === 0) {
+    if (isFetching && retryCount === 0) {
       console.log('⚠️ fetchEvents already in progress, skipping...');
       return;
     }
     
+    console.log('🔄 Starting fetchEvents, retry count:', retryCount);
+    setIsFetching(true);
     setLoading(true);
+    setError('');
+    
     try {
       // Check if user is logged in
       const token = localStorage.getItem('token');
       if (!token) {
+        console.log('❌ No token found');
         setError('Please log in to view this page.');
         setLoading(false);
+        setIsFetching(false);
         return;
       }
 
@@ -47,9 +53,13 @@ function AdminManageEventsPage() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const role = user.role || localStorage.getItem('role');
       
+      console.log('👤 User role:', role);
+      
       if (!role || (role !== 'Admin' && role !== 'Staff')) {
+        console.log('❌ Access denied for role:', role);
         setError(`Access denied. This page requires Admin or Staff role. Your current role is: ${role || 'Unknown'}`);
         setLoading(false);
+        setIsFetching(false);
         return;
       }
 
@@ -65,11 +75,14 @@ function AdminManageEventsPage() {
           console.log('📦 Using cached events data');
           setEvents(JSON.parse(cachedData));
           setLoading(false);
+          setIsFetching(false);
           return;
         }
       }
 
+      console.log('🌐 Fetching events from API...');
       const data = await getEvents();
+      console.log('✅ Events fetched successfully, count:', data?.length || 0);
       
       // Cache the data
       sessionStorage.setItem(cacheKey, JSON.stringify(data));
@@ -78,11 +91,19 @@ function AdminManageEventsPage() {
       setEvents(data);
       setError('');
     } catch (err) {
-      console.error('Error fetching events:', err);
+      console.error('❌ Error fetching events:', err);
+      console.error('❌ Error details:', {
+        message: err.message,
+        code: err.code,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data
+      });
       
       // Handle specific error types
       if (err.code === 'ECONNABORTED') {
         if (retryCount < 2) {
+          console.log(`🔄 Retrying fetchEvents (${retryCount + 1}/3)...`);
           setTimeout(() => {
             fetchEvents(retryCount + 1);
           }, 2000);
@@ -103,10 +124,12 @@ function AdminManageEventsPage() {
       } else if (err.response?.status === 500) {
         setError('Server error. Please try again later.');
       } else {
-        setError('Failed to fetch events. Please try again.');
+        setError(`Failed to fetch events: ${err.message || 'Unknown error'}`);
       }
     } finally {
+      console.log('🏁 fetchEvents completed');
       setLoading(false);
+      setIsFetching(false);
     }
   };
 
