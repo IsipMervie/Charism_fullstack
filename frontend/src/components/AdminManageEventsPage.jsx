@@ -33,7 +33,51 @@ function AdminManageEventsPage() {
     setIsVisible(true);
   }, []);
 
-  const fetchEvents = async (retryCount = 0) => {
+  // Check and refresh authentication if needed
+  const checkAuthentication = () => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      console.log('❌ No authentication found');
+      return false;
+    }
+    
+    // Check if token is expired (simple check)
+    try {
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      const now = Date.now() / 1000;
+      
+      if (tokenData.exp < now) {
+        console.log('❌ Token expired');
+        return false;
+      }
+      
+      console.log('✅ Token valid');
+      return true;
+    } catch (error) {
+      console.log('❌ Invalid token format');
+      return false;
+    }
+  };
+
+  // Handle authentication errors
+  const handleAuthError = () => {
+    console.log('🔐 Authentication error detected - redirecting to login');
+    Swal.fire({
+      title: 'Session Expired',
+      text: 'Your session has expired. Please log in again.',
+      icon: 'warning',
+      confirmButtonText: 'Log In',
+      showCancelButton: false
+    }).then(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/login');
+    });
+  };
+
+  const fetchEvents = useCallback(async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
     if (isFetching && retryCount === 0) {
       console.log('⚠️ fetchEvents already in progress, skipping...');
@@ -148,17 +192,27 @@ function AdminManageEventsPage() {
       setLoading(false);
       setIsFetching(false);
     }
-  };
+  }, [isFetching]); // Add isFetching to dependencies
 
   useEffect(() => {
     console.log('🚀 Component mounted, calling fetchEvents...');
     
+    // Check authentication first
+    if (!checkAuthentication()) {
+      handleAuthError();
+      return;
+    }
+    
     // Call fetchEvents with error handling
     fetchEvents().catch(error => {
       console.error('❌ fetchEvents failed:', error);
-      setError('Failed to load events. Please refresh the page.');
-      setLoading(false);
-      setIsFetching(false);
+      if (error.response?.status === 401) {
+        handleAuthError();
+      } else {
+        setError('Failed to load events. Please refresh the page.');
+        setLoading(false);
+        setIsFetching(false);
+      }
     });
     
     // Add timeout to prevent infinite loading
@@ -209,7 +263,7 @@ function AdminManageEventsPage() {
     } catch (err) {
       console.error('Error deleting event:', err);
       if (err.response?.status === 401) {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Your session has expired. Please log in again.' });
+        handleAuthError();
       } else if (err.response?.status === 403) {
         Swal.fire({ icon: 'error', title: 'Error', text: 'Access denied. This action requires Admin or Staff role.' });
       } else {
@@ -244,11 +298,15 @@ function AdminManageEventsPage() {
       fetchEvents();
     } catch (err) {
       console.error('Error toggling event visibility:', err);
-      Swal.fire({ 
-        icon: 'error', 
-        title: 'Error', 
-        text: err.message || 'Failed to update event visibility.' 
-      });
+      if (err.response?.status === 401) {
+        handleAuthError();
+      } else {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Error', 
+          text: err.message || 'Failed to update event visibility.' 
+        });
+      }
     }
   };
 

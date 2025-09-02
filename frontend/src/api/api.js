@@ -403,6 +403,17 @@ export const getEvents = async () => {
   }
 };
 
+// Public event details (no authentication required)
+export const getPublicEventDetails = async (eventId) => {
+  try {
+    const response = await axios.get(`${API_URL}/events/${eventId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching public event details:', error);
+    throw new Error('Failed to fetch event details. Please try again.');
+  }
+};
+
 export const getEventDetails = async (eventId) => {
   try {
     const response = await axiosInstance.get(`/events/${eventId}`);
