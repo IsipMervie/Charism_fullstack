@@ -155,18 +155,6 @@ function NavigationBar() {
           id="navbar-nav" 
           className={`justify-content-end ${isExpanded ? 'show' : ''}`}
         >
-          {/* Mobile menu header */}
-          <div className="mobile-menu-header">
-            <h6 className="mobile-menu-title">Navigation Menu</h6>
-            <button 
-              className="mobile-menu-close"
-              onClick={() => setIsExpanded(false)}
-              aria-label="Close menu"
-            >
-              ✕
-            </button>
-          </div>
-          
           <Nav className="navbar-nav-mobile">
             {/* Not logged in */}
             {!user && (

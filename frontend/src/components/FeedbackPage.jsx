@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Form, Alert, Spinner, Badge } from 'react-bootstrap';
 import { FaComment, FaPaperPlane, FaLightbulb, FaBug, FaStar, FaExclamationTriangle } from 'react-icons/fa';
 import { submitFeedback, getUserFeedback } from '../api/api';
@@ -21,6 +21,18 @@ const FeedbackPage = () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  const fetchUserFeedback = useCallback(async () => {
+    try {
+      setLoadingHistory(true);
+      const feedback = await getUserFeedback();
+      setUserFeedback(feedback);
+    } catch (err) {
+      console.error('Error fetching feedback:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (user._id) {
       fetchUserFeedback();
@@ -34,18 +46,6 @@ const FeedbackPage = () => {
       setLoadingHistory(false);
     }
   }, [user._id, user.email, user.firstName, user.lastName, fetchUserFeedback]);
-
-  const fetchUserFeedback = async () => {
-    try {
-      setLoadingHistory(true);
-      const feedback = await getUserFeedback();
-      setUserFeedback(feedback);
-    } catch (err) {
-      console.error('Error fetching feedback:', err);
-    } finally {
-      setLoadingHistory(false);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
