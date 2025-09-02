@@ -1,7 +1,7 @@
 // frontend/src/components/AdminManageEventsPage.jsx
 // Simple but Creative Manage Events Page Design
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache } from '../api/api';
 import Swal from 'sweetalert2';
@@ -20,6 +20,7 @@ function AdminManageEventsPage() {
   const [error, setError] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -57,10 +58,10 @@ function AdminManageEventsPage() {
       const cachedData = sessionStorage.getItem(cacheKey);
       const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
       
-      // Use cache if it's less than 30 seconds old
+      // Use cache if it's less than 10 seconds old
       if (cachedData && cacheTimestamp) {
         const cacheAge = Date.now() - parseInt(cacheTimestamp);
-        if (cacheAge < 30000) { // 30 seconds
+        if (cacheAge < 10000) { // 10 seconds instead of 30
           console.log('📦 Using cached events data');
           setEvents(JSON.parse(cachedData));
           setLoading(false);
@@ -118,7 +119,7 @@ function AdminManageEventsPage() {
           setError('Loading timeout. Please refresh the page.');
           setLoading(false);
         }
-      }, 30000);
+      }, 10000); // 10 seconds instead of 30
     
     return () => clearTimeout(timeoutId);
   }, []); // Remove loading dependency to prevent infinite loops
