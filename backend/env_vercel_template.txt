@@ -17,7 +17,7 @@ FRONTEND_URL=https://your-frontend-project.vercel.app
 BACKEND_URL=https://your-backend-project.vercel.app
 
 # REQUIRED: CORS Origins (comma-separated)
-CORS_ORIGINS=https://your-frontend-project.vercel.app,https://your-backend-project.vercel.app
+CORS_ORIGINS=https://your-frontend-project.vercel.app,https://your-backend-project.vercel.app,https://charism.onrender.com,https://*.onrender.com
 
 # REQUIRED: Environment
 NODE_ENV=production

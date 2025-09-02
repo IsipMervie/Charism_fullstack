@@ -16,10 +16,10 @@ EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password_here
 
 # CORS Origins (comma-separated)
-CORS_ORIGINS=https://charism.vercel.app,https://your-domain.com
+CORS_ORIGINS=https://charism.vercel.app,https://charism.onrender.com,https://*.onrender.com,https://your-domain.com
 
 # Frontend URLs
-FRONTEND_URL_PRODUCTION=https://charism.vercel.app
+FRONTEND_URL_PRODUCTION=https://charism.onrender.com
 FRONTEND_URL_VERCEL=https://charism.vercel.app
 
 # File Upload Limits

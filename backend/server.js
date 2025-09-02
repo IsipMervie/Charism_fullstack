@@ -36,6 +36,8 @@ app.use(cors({
           'http://localhost:3000',
           'https://charism.vercel.app',
           'https://charism-backend.vercel.app',
+          'https://charism.onrender.com',
+          'https://*.onrender.com',
           'https://vercel.app',
           'https://*.vercel.app'
         ];
@@ -62,9 +64,9 @@ app.use(cors({
         console.log('🚨 Production mode - allowing blocked origin for debugging');
         callback(null, true);
       } else {
-        // Additional fallback for Vercel domains
-        if (origin.includes('vercel.app') || origin.includes('vercel.com')) {
-          console.log('✅ Allowing Vercel domain:', origin);
+        // Additional fallback for Vercel and Render domains
+        if (origin.includes('vercel.app') || origin.includes('vercel.com') || origin.includes('onrender.com')) {
+          console.log('✅ Allowing Vercel/Render domain:', origin);
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));
