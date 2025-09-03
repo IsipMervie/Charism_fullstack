@@ -1,0 +1,6 @@
+{
+  "id": "68ae6910a3a065643d93be5c",
+  "email": "mtsgarcia.student@ua.edu.ph",
+  "name": "Maria Therese S. Garcia",
+  "role": "Student"
+}
