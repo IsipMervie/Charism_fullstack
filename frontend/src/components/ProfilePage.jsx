@@ -1,7 +1,7 @@
 // frontend/src/components/ProfilePage.jsx
 // Fresh Modern Profile Page Design
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FaUser, FaEnvelope, FaUserTie, FaIdCard, FaGraduationCap, 
   FaBuilding, FaCalendar, FaCrown, FaUserGraduate,
@@ -56,7 +56,7 @@ function ProfilePage() {
   };
 
   // Load profile data from localStorage and backend
-  const loadProfileData = async (showLoading = false) => {
+  const loadProfileData = useCallback(async (showLoading = false) => {
     if (showLoading) {
       setRefreshing(true);
     }
@@ -116,7 +116,7 @@ function ProfilePage() {
         setRefreshing(false);
       }
     }
-  };
+  }, []);
 
   // Manual refresh function
   const handleManualRefresh = async () => {
@@ -124,7 +124,7 @@ function ProfilePage() {
   };
 
   // Check if profile is in sync with backend
-  const checkProfileSync = async () => {
+  const checkProfileSync = useCallback(async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (user._id) {
@@ -143,7 +143,7 @@ function ProfilePage() {
     } catch (error) {
       console.error('Error checking profile sync:', error);
     }
-  };
+  }, [loadProfileData]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -224,7 +224,7 @@ function ProfilePage() {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [checkProfileSync, loadProfileData]);
+  }, []);
 
 
 

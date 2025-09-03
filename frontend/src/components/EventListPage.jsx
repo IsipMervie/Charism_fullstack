@@ -1,7 +1,7 @@
 // frontend/src/components/EventListPage.jsx
 // Simple but Creative Event List Page Design
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -163,7 +163,7 @@ function EventListPage() {
       window.removeEventListener('focus', handleFocus);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [refreshEvents]);
   
   // Update filter options when events are loaded
   useEffect(() => {
@@ -278,7 +278,7 @@ function EventListPage() {
   };
 
   // Refresh events and joined events
-  const refreshEvents = async (retryCount = 0) => {
+  const refreshEvents = useCallback(async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
     if (loading && retryCount === 0) {
       return;
@@ -388,7 +388,7 @@ function EventListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, role, user._id, user.id]);
 
   const handleFilterChange = (field, value) => {
     setPdfFilters(prev => ({
@@ -431,11 +431,7 @@ function EventListPage() {
     });
   };
 
-  useEffect(() => {
-    // Only call these functions once on mount
-    refreshEvents();
-    fetchFilterOptions();
-  }, []); // Remove dependencies to prevent infinite loops
+  // This useEffect was causing infinite loops - removed duplicate call
 
   const handleJoin = async (eventId) => {
     const event = events.find(e => e._id === eventId);
