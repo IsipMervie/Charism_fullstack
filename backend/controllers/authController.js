@@ -141,7 +141,15 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'User not found' });
     }
     
-    console.log('✅ User found:', { id: user._id, role: user.role, isVerified: user.isVerified });
+    console.log('✅ User found:', { 
+      id: user._id, 
+      role: user.role, 
+      isVerified: user.isVerified,
+      isApproved: user.isApproved,
+      hasPassword: !!user.password,
+      passwordLength: user.password ? user.password.length : 0,
+      passwordStartsWithHash: user.password ? user.password.startsWith('$2b$') : false
+    });
     
     if (!user.isVerified) {
       console.log('❌ User not verified:', email);
@@ -153,6 +161,23 @@ exports.login = async (req, res) => {
       console.log('❌ Staff user not approved:', email);
       return res.status(401).json({ 
         message: 'Your account is pending admin approval. Please wait for approval before logging in.' 
+      });
+    }
+
+    // Validate password field
+    if (!user.password) {
+      console.log('❌ User has no password field:', email);
+      return res.status(500).json({ 
+        message: 'Account configuration error. Please contact administrator.',
+        error: 'Missing password field'
+      });
+    }
+
+    if (!user.password.startsWith('$2b$')) {
+      console.log('❌ User password not properly hashed:', email);
+      return res.status(500).json({ 
+        message: 'Account configuration error. Please contact administrator.',
+        error: 'Invalid password format'
       });
     }
 
@@ -192,7 +217,17 @@ exports.login = async (req, res) => {
   } catch (err) {
     console.error('❌ Login error:', err);
     console.error('❌ Error stack:', err.stack);
-    res.status(500).json({ message: 'Error logging in', error: err.message });
+    console.error('❌ Error details:', {
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      email: email
+    });
+    res.status(500).json({ 
+      message: 'Error logging in', 
+      error: err.message,
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };
 
