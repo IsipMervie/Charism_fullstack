@@ -32,14 +32,10 @@ app.use(cors({
     // Get allowed origins from environment variable or use defaults
     const allowedOrigins = process.env.CORS_ORIGINS 
       ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-              : [
+      : [
           'http://localhost:3000',
-          'https://charism.vercel.app',
-          'https://charism-backend.vercel.app',
           'https://charism.onrender.com',
-          'https://*.onrender.com',
-          'https://vercel.app',
-          'https://*.vercel.app'
+          'https://*.onrender.com'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
@@ -64,9 +60,9 @@ app.use(cors({
         console.log('🚨 Production mode - allowing blocked origin for debugging');
         callback(null, true);
       } else {
-        // Additional fallback for Vercel and Render domains
-        if (origin.includes('vercel.app') || origin.includes('vercel.com') || origin.includes('onrender.com')) {
-          console.log('✅ Allowing Vercel/Render domain:', origin);
+        // Additional fallback for Render domains
+        if (origin.includes('onrender.com')) {
+          console.log('✅ Allowing Render domain:', origin);
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));
@@ -79,15 +75,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   optionsSuccessStatus: 200
 }));
-
-// Additional CORS headers for all responses
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-});
 
 // Handle preflight requests
 app.options('*', cors());
