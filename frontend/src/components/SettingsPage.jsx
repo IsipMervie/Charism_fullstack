@@ -6,6 +6,7 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { FaUser, FaSave, FaTimes, FaEye, FaEyeSlash, FaCamera, FaTrash, FaEnvelope, FaIdCard, FaGraduationCap, FaBuilding, FaCalendar, FaUserTie, FaSpinner, FaCheckCircle, FaCog, FaUserGraduate, FaExclamationTriangle } from 'react-icons/fa';
 
 import { updateUserProfile, getUserProfile, uploadProfilePicture, deleteProfilePicture, getPublicSettings } from '../api/api';
+import { getCurrentUserId } from '../utils/authUtils';
 import Swal from 'sweetalert2';
 import './SettingsPage.css';
 
@@ -275,11 +276,10 @@ function SettingsPage() {
     }
     
     // Get the current authenticated user's ID
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = currentUser._id;
+    const userId = getCurrentUserId();
     
     if (!userId) {
-      console.error('No user ID found in localStorage');
+      console.error('No user ID found');
       setMessage('Error: User not authenticated. Please log in again.');
       return;
     }
@@ -291,8 +291,6 @@ function SettingsPage() {
     
     console.log('User ID being sent:', userId);
     console.log('User ID type:', typeof userId);
-    console.log('Current authenticated user ID:', currentUser._id);
-    console.log('Are they the same?', userId === currentUser._id);
 
     setUploading(true);
     try {
@@ -344,11 +342,10 @@ function SettingsPage() {
     if (!profilePicture) return;
 
     // Get the current authenticated user's ID
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = currentUser._id;
+    const userId = getCurrentUserId();
     
     if (!userId) {
-      console.error('No user ID found in localStorage');
+      console.error('No user ID found');
       setMessage('Error: User not authenticated. Please log in again.');
       return;
     }
