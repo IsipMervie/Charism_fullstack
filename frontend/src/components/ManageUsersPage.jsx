@@ -1,7 +1,7 @@
 // frontend/src/components/ManageUsersPage.jsx
 // Fresh Simple but Creative Manage Users Page Design
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Form, Spinner, Modal, Badge, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FaUser, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaCrown, FaUserTie, FaUserGraduate } from 'react-icons/fa';
@@ -35,7 +35,7 @@ function ManageUsersPage() {
   }, []);
 
   // Fetch users
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -43,16 +43,17 @@ function ManageUsersPage() {
       if (search) params.search = search;
       if (roleFilter) params.role = roleFilter;
       const data = await getUsers(params);
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error('❌ Error in fetchUsers:', err);
       setError('Error fetching users. Please try again later.');
     }
     setLoading(false);
-  };
+  }, [search, roleFilter]);
 
   useEffect(() => {
     fetchUsers();
-  }, [roleFilter, fetchUsers]);
+  }, [fetchUsers]);
 
   // Search handler
   const handleSearch = (e) => {
