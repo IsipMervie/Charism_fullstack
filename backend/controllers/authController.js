@@ -117,38 +117,63 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
+    console.log('🔍 Login attempt for:', email);
+    console.log('📊 Request body:', { email, password: password ? '[HIDDEN]' : 'undefined' });
+    
     // Check if database is connected using lazy connection
     const { getLazyConnection } = require('../config/db');
+    console.log('🔄 Attempting database connection...');
+    
     const isConnected = await getLazyConnection();
+    console.log('📊 Database connection result:', isConnected);
     
     if (!isConnected) {
-      console.log('Database not connected during login attempt');
+      console.log('❌ Database not connected during login attempt');
       return res.status(500).json({ 
         message: 'Database connection not ready. Please try again.',
         error: 'Database not connected'
       });
     }
 
+    console.log('✅ Database connected, searching for user...');
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'User not found' });
-    if (!user.isVerified) return res.status(401).json({ message: 'Please verify your email before logging in.' });
+    
+    if (!user) {
+      console.log('❌ User not found:', email);
+      return res.status(400).json({ message: 'User not found' });
+    }
+    
+    console.log('✅ User found:', { id: user._id, role: user.role, isVerified: user.isVerified });
+    
+    if (!user.isVerified) {
+      console.log('❌ User not verified:', email);
+      return res.status(401).json({ message: 'Please verify your email before logging in.' });
+    }
 
     // Check if staff user is approved
     if (user.role === 'Staff' && !user.isApproved) {
+      console.log('❌ Staff user not approved:', email);
       return res.status(401).json({ 
         message: 'Your account is pending admin approval. Please wait for approval before logging in.' 
       });
     }
 
+    console.log('🔐 Checking password...');
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    
+    if (!isMatch) {
+      console.log('❌ Invalid password for:', email);
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
+    console.log('✅ Password verified, generating token...');
     const token = jwt.sign({ 
       userId: user._id, 
       role: user.role,
       email: user.email 
     }, JWT_SECRET, { expiresIn: '1h' });
 
+    console.log('✅ Login successful for:', email);
     res.status(200).json({
       message: 'Login successful',
       token,
@@ -167,7 +192,8 @@ exports.login = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Login error:', err);
+    console.error('❌ Login error:', err);
+    console.error('❌ Error stack:', err.stack);
     res.status(500).json({ message: 'Error logging in', error: err.message });
   }
 };

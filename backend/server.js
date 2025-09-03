@@ -225,6 +225,45 @@ app.get('/', (req, res) => {
   }
 });
 
+// Test database connection endpoint
+app.get('/api/test-db-connection', async (req, res) => {
+  try {
+    console.log('🔍 Testing database connection...');
+    
+    const { getLazyConnection } = require('./config/db');
+    const isConnected = await getLazyConnection();
+    
+    console.log('📊 Database connection result:', isConnected);
+    
+    if (isConnected) {
+      // Try to query the database
+      const User = require('./models/User');
+      const userCount = await User.countDocuments();
+      
+      res.json({
+        status: 'OK',
+        message: 'Database connection successful',
+        userCount,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(500).json({
+        status: 'ERROR',
+        message: 'Database connection failed',
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    console.error('❌ Database test error:', error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Database test failed',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Health check (must come before other routes)
 app.get('/api/health', (req, res) => {
   try {
