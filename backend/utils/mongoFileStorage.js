@@ -39,6 +39,45 @@ const uploadProfilePicture = multer({
   }
 }).single('profilePicture');
 
+// Add error handling wrapper for profile picture upload
+const uploadProfilePictureWithErrorHandling = (req, res, next) => {
+  uploadProfilePicture(req, res, (err) => {
+    if (err) {
+      console.error('Multer error in profile picture upload:', err);
+      
+      if (err instanceof multer.MulterError) {
+        // Multer-specific errors
+        switch (err.code) {
+          case 'LIMIT_FILE_SIZE':
+            return res.status(400).json({ 
+              message: 'File too large. Maximum size is 5MB.' 
+            });
+          case 'LIMIT_FILE_COUNT':
+            return res.status(400).json({ 
+              message: 'Too many files. Only one file allowed.' 
+            });
+          case 'LIMIT_UNEXPECTED_FILE':
+            return res.status(400).json({ 
+              message: 'Unexpected file field name. Use "profilePicture".' 
+            });
+          default:
+            return res.status(400).json({ 
+              message: 'File upload error: ' + err.message 
+            });
+        }
+      } else {
+        // Custom errors (like file type validation)
+        return res.status(400).json({ 
+          message: err.message || 'File upload failed' 
+        });
+      }
+    }
+    
+    // No error, continue to next middleware
+    next();
+  });
+};
+
 const uploadEventImage = multer({
   storage: storage,
   fileFilter: imageFilter,
@@ -106,6 +145,7 @@ const getFileSize = (bytes) => {
 
 module.exports = {
   uploadProfilePicture,
+  uploadProfilePictureWithErrorHandling,
   uploadEventImage,
   uploadLogo,
   uploadEventDocs,

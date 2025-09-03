@@ -69,11 +69,19 @@ exports.uploadProfilePicture = async (req, res) => {
     console.log('req.user.role:', req.user.role);
     console.log('req.user.id type:', typeof req.user.id);
     console.log('req.params.id type:', typeof req.params.id);
+    console.log('req.body:', req.body);
+    console.log('req.headers:', req.headers);
     
     if (!req.file) {
       console.log('No file uploaded');
       return res.status(400).json({ message: 'No file uploaded' });
     }
+
+    console.log('File details:');
+    console.log('- Original name:', req.file.originalname);
+    console.log('- Mimetype:', req.file.mimetype);
+    console.log('- Size:', req.file.size);
+    console.log('- Buffer length:', req.file.buffer ? req.file.buffer.length : 'No buffer');
 
     const userId = req.params.id;
     const user = await User.findById(userId);
@@ -94,10 +102,12 @@ exports.uploadProfilePicture = async (req, res) => {
 
     // Get file info for MongoDB storage
     const imageInfo = getImageInfo(req.file);
+    console.log('Image info created:', imageInfo);
     
     // Update user with new profile picture data
     user.profilePicture = imageInfo;
     await user.save();
+    console.log('User saved successfully');
 
     res.status(200).json({
       message: 'Profile picture uploaded successfully',
@@ -105,6 +115,7 @@ exports.uploadProfilePicture = async (req, res) => {
       profilePictureUrl: `/api/files/profile-picture/${userId}`
     });
   } catch (err) {
+    console.error('Error in uploadProfilePicture:', err);
     res.status(500).json({ message: 'Error uploading profile picture', error: err.message });
   }
 };
