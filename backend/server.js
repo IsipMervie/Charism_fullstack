@@ -535,8 +535,18 @@ app.use(globalErrorHandler);
 
 // Global database health check middleware - MUST come BEFORE routes
 app.use(async (req, res, next) => {
-  // Skip health check endpoints
-  if (req.path === '/api/health' || req.path === '/api/env-check' || req.path === '/api/test-db') {
+  // Skip health check endpoints and basic endpoints
+  if (req.path === '/api/health' || 
+      req.path === '/api/env-check' || 
+      req.path === '/api/test-db' ||
+      req.path === '/api/test' ||
+      req.path === '/api/frontend-test' ||
+      req.path === '/api/status' ||
+      req.path === '/api/db-status' ||
+      req.path === '/api/test-db-connection' ||
+      req.path === '/api/test-models' ||
+      req.path === '/api/uploads-health' ||
+      req.path === '/api/file-status') {
     return next();
   }
   
