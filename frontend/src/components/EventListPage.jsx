@@ -37,6 +37,117 @@ function EventListPage() {
     departments: []
   });
 
+  // Refresh events and joined events
+  const refreshEvents = useCallback(async (retryCount = 0) => {
+    // Prevent multiple simultaneous calls
+    if (loading && retryCount === 0) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError('');
+      
+      const eventsData = await getEvents();
+      
+      if (!eventsData || !Array.isArray(eventsData)) {
+        throw new Error('Invalid events data received');
+      }
+      
+      setEvents(eventsData);
+      
+      // Extract unique departments from events for filter options
+      const uniqueDepartments = [...safeSet(
+        safeMap(eventsData, event => {
+          if (event.departments && Array.isArray(event.departments)) {
+            return event.departments;
+          }
+          if (event.department && typeof event.department === 'string') {
+            return [event.department];
+          }
+          if (event.department && typeof event.department === 'object' && event.department.name) {
+            return [event.department.name];
+          }
+          return [];
+        }).flat().filter(Boolean)
+      )].sort();
+      
+      setFilterOptions({
+        departments: uniqueDepartments
+      });
+      
+      // Set joined events for students
+      if (role === 'Student') {
+        let userId = user._id || user.id;
+        if (!userId) {
+          userId = localStorage.getItem('userId');
+        }
+        
+        if (userId) {
+          const joined = safeMap(
+            safeFilter(eventsData, event => 
+              event.attendance && 
+              event.attendance.some(a => {
+                const attUserId = a.userId?._id || a.userId;
+                return attUserId === userId;
+              })
+            ),
+            event => event._id
+          );
+        }
+      }
+      
+    } catch (err) {
+      console.error('❌ Error in refreshEvents:', err);
+      
+      // Handle timeout errors with retry logic
+      if (err.message && err.message.includes('timeout') && retryCount < 2) {
+        console.log(`⏰ Timeout detected, retrying... (${retryCount + 1}/3)`);
+        setError(`Connection timeout. Retrying... (${retryCount + 1}/3)`);
+        
+        // Wait 2 seconds before retry
+        setTimeout(() => {
+          refreshEvents(retryCount + 1);
+        }, 2000);
+        return;
+      }
+      
+      let errorMessage = 'Failed to load events.';
+      
+      if (err.response?.status === 503) {
+        errorMessage = '🚨 Backend server is currently unavailable. The service is temporarily down.';
+      } else if (err.message.includes('Database not connected')) {
+        errorMessage = 'Database temporarily unavailable. Please try again later.';
+      } else if (err.message.includes('timeout')) {
+        errorMessage = 'Connection timeout. The server may be slow. Please try again.';
+      } else if (err.response?.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (err.message) {
+        errorMessage = `Failed to load events: ${err.message}`;
+      }
+      
+      setError(errorMessage);
+      
+      // Show SweetAlert for the error
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to Load Events',
+        text: errorMessage,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'OK',
+        showCancelButton: true,
+        cancelButtonText: 'Retry',
+        cancelButtonColor: '#6b7280'
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          refreshEvents();
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, role, user._id, user.id]);
+
   // Fetch filter options from settings with caching
   const fetchFilterOptions = async () => {
     // Prevent multiple simultaneous calls and use cache
@@ -277,118 +388,7 @@ function EventListPage() {
     }
   };
 
-  // Refresh events and joined events
-  const refreshEvents = useCallback(async (retryCount = 0) => {
-    // Prevent multiple simultaneous calls
-    if (loading && retryCount === 0) {
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      setError('');
-      
-      const eventsData = await getEvents();
-      
-      if (!eventsData || !Array.isArray(eventsData)) {
-        throw new Error('Invalid events data received');
-      }
-      
-      setEvents(eventsData);
-      
-      // Extract unique departments from events for filter options
-      const uniqueDepartments = [...safeSet(
-        safeMap(eventsData, event => {
-          if (event.departments && Array.isArray(event.departments)) {
-            return event.departments;
-          }
-          if (event.department && typeof event.department === 'string') {
-            return [event.department];
-          }
-          if (event.department && typeof event.department === 'object' && event.department.name) {
-            return [event.department.name];
-          }
-          return [];
-        }).flat().filter(Boolean)
-      )].sort();
-      
-      setFilterOptions({
-        departments: uniqueDepartments
-      });
-      
-      // Set joined events for students
-      if (role === 'Student') {
-        let userId = user._id || user.id;
-        if (!userId) {
-          userId = localStorage.getItem('userId');
-        }
-        
-        if (userId) {
-          const joined = safeMap(
-            safeFilter(eventsData, event => 
-              event.attendance && 
-              event.attendance.some(a => {
-                const attUserId = a.userId?._id || a.userId;
-                return attUserId === userId;
-              })
-            ),
-            event => event._id
-          );
-        }
-      }
-      
 
-      
-    } catch (err) {
-      console.error('❌ Error in refreshEvents:', err);
-      
-      // Handle timeout errors with retry logic
-      if (err.message && err.message.includes('timeout') && retryCount < 2) {
-        console.log(`⏰ Timeout detected, retrying... (${retryCount + 1}/3)`);
-        setError(`Connection timeout. Retrying... (${retryCount + 1}/3)`);
-        
-        // Wait 2 seconds before retry
-        setTimeout(() => {
-          refreshEvents(retryCount + 1);
-        }, 2000);
-        return;
-      }
-      
-      let errorMessage = 'Failed to load events.';
-      
-      if (err.response?.status === 503) {
-        errorMessage = '🚨 Backend server is currently unavailable. The service is temporarily down.';
-      } else if (err.message.includes('Database not connected')) {
-        errorMessage = 'Database temporarily unavailable. Please try again later.';
-      } else if (err.message.includes('timeout')) {
-        errorMessage = 'Connection timeout. The server may be slow. Please try again.';
-      } else if (err.response?.status === 500) {
-        errorMessage = 'Server error. Please try again later.';
-      } else if (err.message) {
-        errorMessage = `Failed to load events: ${err.message}`;
-      }
-      
-      setError(errorMessage);
-      
-      // Show SweetAlert for the error
-      Swal.fire({
-        icon: 'error',
-        title: 'Failed to Load Events',
-        text: errorMessage,
-        confirmButtonColor: '#ef4444',
-        confirmButtonText: 'OK',
-        showCancelButton: true,
-        cancelButtonText: 'Retry',
-        cancelButtonColor: '#6b7280'
-      }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.cancel) {
-          refreshEvents();
-        }
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [loading, role, user._id, user.id]);
 
   const handleFilterChange = (field, value) => {
     setPdfFilters(prev => ({
