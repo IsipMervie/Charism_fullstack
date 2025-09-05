@@ -12,7 +12,6 @@ function SchoolSettingsPage() {
   const [settings, setSettings] = useState({
     schoolName: '',
     contactEmail: '',
-    brandName: '',
     logo: null,
     logoPreview: null
   });
@@ -34,7 +33,6 @@ function SchoolSettingsPage() {
       setSettings({
         schoolName: data.schoolName || '',
         contactEmail: data.contactEmail || '',
-        brandName: data.brandName || '',
         logo: null,
         logoPreview: data.logo ? getLogoUrl(data.logo) : null
       });
@@ -86,12 +84,23 @@ function SchoolSettingsPage() {
       const formData = new FormData();
       formData.append('schoolName', settings.schoolName);
       formData.append('contactEmail', settings.contactEmail);
-      formData.append('brandName', settings.brandName);
       if (settings.logo) formData.append('logo', settings.logo);
 
       await updateSchoolSettings(formData);
       setMessage('School settings updated successfully!');
       Swal.fire({ icon: 'success', title: 'Success', text: 'School settings updated successfully!' });
+      
+      // Refresh the settings to show updated values in Current School Information
+      setLoading(true);
+      await fetchSettings();
+      
+      // Clear any temporary logo preview if a new logo was uploaded
+      if (settings.logo) {
+        setSettings(prev => ({
+          ...prev,
+          logo: null
+        }));
+      }
     } catch (err) {
       setError('Error updating school settings.');
       Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Error updating school settings.' });
@@ -194,22 +203,6 @@ function SchoolSettingsPage() {
                 <p className="form-hint">This email will be used for system communications</p>
               </div>
 
-              {/* Brand Name Field */}
-              <div className="form-group">
-                <label className="form-label">
-                  <FaTag className="label-icon" />
-                  Brand Name
-                </label>
-                <input
-                  type="text"
-                  name="brandName"
-                  value={settings.brandName}
-                  onChange={handleChange}
-                  placeholder="e.g., CHARISM"
-                  className="form-input"
-                />
-                <p className="form-hint">Optional brand name for the application</p>
-              </div>
 
               {/* Logo Upload Field */}
               <div className="form-group">
@@ -305,10 +298,6 @@ function SchoolSettingsPage() {
                 <span className="info-value">{settings.contactEmail || 'Not set'}</span>
               </div>
               
-              <div className="info-item">
-                <span className="info-label">Brand Name:</span>
-                <span className="info-value">{settings.brandName || 'Not set'}</span>
-              </div>
 
 
 

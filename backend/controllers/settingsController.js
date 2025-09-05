@@ -19,8 +19,7 @@ exports.getSchoolSettings = async (req, res) => {
       settings = new SchoolSettings({
         schoolName: 'UNIVERSITY OF THE ASSUMPTION',
         contactEmail: 'ceo@ua.edu.ph',
-        logo: null,
-        brandName: 'CHARISM'
+        logo: null
       });
       await settings.save();
       console.log('Default settings created');
@@ -65,10 +64,9 @@ exports.updateSchoolSettings = async (req, res) => {
       settings = new SchoolSettings();
     }
     
-    const { schoolName, contactEmail, brandName } = req.body;
+    const { schoolName, contactEmail } = req.body;
     if (schoolName) settings.schoolName = schoolName;
     if (contactEmail) settings.contactEmail = contactEmail;
-    if (brandName) settings.brandName = brandName;
     
     if (req.file) {
       console.log('Logo file received, updating...');

@@ -11,7 +11,6 @@ const schoolSettingsSchema = new mongoose.Schema({
     filename: { type: String },       // Stored filename
     uploadedAt: { type: Date }
   },
-  brandName: { type: String, required: true, default: 'CHARISM' }, // Brand name for navbar
   
 
   

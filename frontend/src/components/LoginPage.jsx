@@ -6,7 +6,6 @@ import { Button, Form, Container } from 'react-bootstrap';
 import { loginUser, testApiConnection } from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { runConnectionDiagnostic, getDiagnosticSummary } from '../utils/connectionDiagnostic';
 import './LoginPage.css';
 
 function LoginPage() {
@@ -14,7 +13,6 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [diagnosticRunning, setDiagnosticRunning] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -156,44 +154,6 @@ function LoginPage() {
     setLoading(false);
   };
 
-  const handleDiagnostic = async () => {
-    setDiagnosticRunning(true);
-    try {
-      const results = await runConnectionDiagnostic();
-      const summary = getDiagnosticSummary(results);
-      
-      let icon = 'info';
-      let title = 'Connection Diagnostic';
-      let text = `Status: ${summary.overall}\n\n`;
-      
-      if (summary.issues.length > 0) {
-        icon = 'warning';
-        text += `Issues found:\n${summary.issues.join('\n')}\n\n`;
-        text += `Recommendations:\n${summary.recommendations.join('\n')}`;
-      } else {
-        icon = 'success';
-        text += 'All connection tests passed successfully!';
-      }
-      
-      Swal.fire({
-        icon: icon,
-        title: title,
-        text: text,
-        confirmButtonText: 'OK',
-        width: '600px'
-      });
-    } catch (error) {
-      console.error('Diagnostic error:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Diagnostic Failed',
-        text: 'Unable to run connection diagnostic. Please try again.',
-        confirmButtonText: 'OK'
-      });
-    } finally {
-      setDiagnosticRunning(false);
-    }
-  };
 
   return (
     <div className="login-page">
@@ -266,19 +226,6 @@ function LoginPage() {
             </Link>
           </div>
 
-          {/* Diagnostic Button */}
-          <div className="diagnostic-section">
-            <Button 
-              type="button" 
-              variant="outline-secondary" 
-              size="sm"
-              onClick={handleDiagnostic}
-              disabled={diagnosticRunning}
-              className="diagnostic-button"
-            >
-              {diagnosticRunning ? 'Running Tests...' : '🔧 Connection Diagnostic'}
-            </Button>
-          </div>
 
           {/* Login Info */}
           <div className="login-info">

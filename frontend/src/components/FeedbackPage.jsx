@@ -153,7 +153,7 @@ const FeedbackPage = () => {
             Feedback & Suggestions
           </h2>
           <p className="page-subtitle">
-            Help us improve CommunityLink by sharing your thoughts, reporting issues, or suggesting new features
+            Help us improve Charism by sharing your thoughts, reporting issues, or suggesting new features
           </p>
         </div>
       </div>
