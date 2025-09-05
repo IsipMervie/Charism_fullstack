@@ -193,6 +193,7 @@ const StudentDocumentationPage = () => {
   };
 
   const getFileIcon = (fileType) => {
+    if (!fileType) return '📎';
     if (fileType.includes('pdf')) return '📄';
     if (fileType.includes('word') || fileType.includes('document')) return '📝';
     if (fileType.includes('image')) return '🖼️';
@@ -200,6 +201,7 @@ const StudentDocumentationPage = () => {
   };
 
   const getFileTypeBadge = (fileType) => {
+    if (!fileType) return <Badge bg="secondary">FILE</Badge>;
     if (fileType.includes('pdf')) return <Badge bg="danger">PDF</Badge>;
     if (fileType.includes('word') || fileType.includes('document')) return <Badge bg="primary">DOC</Badge>;
     if (fileType.includes('image')) return <Badge bg="success">IMAGE</Badge>;
@@ -207,7 +209,7 @@ const StudentDocumentationPage = () => {
   };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -215,13 +217,18 @@ const StudentDocumentationPage = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!dateString) return 'Unknown date';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   // Filter documentation based on search and filters

@@ -95,7 +95,10 @@ exports.getStudentsByYear = async (req, res) => {
       return res.json({});
     }
 
-    const students = await User.find({ role: 'Student' })
+    const students = await User.find({ 
+      role: 'Student',
+      isVerified: true  // Only include students with verified emails
+    })
       .select('name email department academicYear year section')
       .sort('academicYear name');
 
@@ -151,7 +154,10 @@ exports.getStudentsByYearFilterOptions = async (req, res) => {
       });
     }
 
-    const students = await User.find({ role: 'Student' })
+    const students = await User.find({ 
+      role: 'Student',
+      isVerified: true  // Only include students with verified emails
+    })
       .select('department year section academicYear')
       .lean();
 

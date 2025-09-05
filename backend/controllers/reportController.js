@@ -91,7 +91,8 @@ const studentsByYearPDF = async (req, res) => {
     // Build query with filters
     let query = { 
       role: 'Student',
-      academicYear: year 
+      academicYear: year,
+      isVerified: true  // Only include students with verified emails
     };
 
     if (department) query.department = department;
