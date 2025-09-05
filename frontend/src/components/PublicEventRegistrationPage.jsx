@@ -73,6 +73,8 @@ function PublicEventRegistrationPage() {
     // Store the current URL to redirect back after login (include hash)
     const currentUrl = window.location.hash || `#${window.location.pathname}`;
     console.log('Storing redirect URL:', currentUrl);
+    console.log('Current location:', window.location.href);
+    console.log('Current hash:', window.location.hash);
     localStorage.setItem('redirectAfterLogin', currentUrl);
     navigate('/login');
   };
@@ -81,6 +83,8 @@ function PublicEventRegistrationPage() {
     // Store the current URL to redirect back after registration (include hash)
     const currentUrl = window.location.hash || `#${window.location.pathname}`;
     console.log('Storing redirect URL:', currentUrl);
+    console.log('Current location:', window.location.href);
+    console.log('Current hash:', window.location.hash);
     localStorage.setItem('redirectAfterLogin', currentUrl);
     navigate('/register');
   };

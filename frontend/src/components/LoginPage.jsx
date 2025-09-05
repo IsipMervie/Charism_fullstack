@@ -68,10 +68,23 @@ function LoginPage() {
       // Check if there's a redirect URL stored
       const redirectUrl = localStorage.getItem('redirectAfterLogin');
       console.log('Login redirect URL:', redirectUrl);
-      if (redirectUrl) {
+      console.log('Redirect URL type:', typeof redirectUrl);
+      console.log('Redirect URL length:', redirectUrl ? redirectUrl.length : 0);
+      
+      if (redirectUrl && redirectUrl.trim() !== '') {
         localStorage.removeItem('redirectAfterLogin');
         console.log('Redirecting to:', redirectUrl);
-        navigate(redirectUrl);
+        
+        // Handle hash URLs properly
+        if (redirectUrl.startsWith('#')) {
+          // Remove the # and navigate to the path
+          const path = redirectUrl.substring(1);
+          console.log('Navigating to path:', path);
+          navigate(path);
+        } else {
+          console.log('Navigating to full URL:', redirectUrl);
+          navigate(redirectUrl);
+        }
       } else {
         switch (user.role) {
           case 'Admin': navigate('/admin/dashboard'); break;
