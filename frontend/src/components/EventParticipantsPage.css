@@ -388,7 +388,13 @@
 .event-participants-card td:nth-child(4) { font-weight: var(--font-semibold); }
 
 /* Loading state */
-.event-participants-container p { text-align: center; color: var(--text-secondary); font-style: italic; }
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  padding: var(--space-8);
+}
 
 /* Responsive design */
 @media (max-width: 768px) {

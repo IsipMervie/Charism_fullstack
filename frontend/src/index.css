@@ -1,5 +1,20 @@
 /* Modern Responsive Design System with Blue Theme */
 
+/* Global Loading Text Fix - Prevent loading text from spinning */
+.loading-text, 
+.loading-text *,
+[class*="loading"] p,
+[class*="loading"] span,
+[class*="loading"] div:not([class*="spinner"]):not([class*="ring"]):not([class*="dot"]),
+/* Prevent any text inside loading containers from spinning */
+.loading-container *:not([class*="spinner"]):not([class*="ring"]):not([class*="dot"]),
+.loading-section *:not([class*="spinner"]):not([class*="ring"]):not([class*="dot"]),
+.loading-overlay *:not([class*="spinner"]):not([class*="ring"]):not([class*="dot"]),
+.loading-fullscreen *:not([class*="spinner"]):not([class*="ring"]):not([class*="dot"]) {
+  transform: none !important;
+  animation: none !important;
+}
+
 :root {
   /* Color Palette - Blue Theme */
   --primary-color: #1e40af;

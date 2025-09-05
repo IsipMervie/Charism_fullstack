@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getEventParticipants, approveAttendance, disapproveAttendance, generateReport } from '../api/api';
 import Swal from 'sweetalert2';
 import { FaCheck, FaTimes, FaDownload } from 'react-icons/fa';
+import LoadingSpinner from './LoadingSpinner';
 import './EventParticipantsPage.css';
 
 function EventParticipantsPage() {
@@ -204,7 +205,11 @@ function EventParticipantsPage() {
   return (
     <div className="event-participants-container">
       <div className="event-participants-card">
-        {loading ? <p>Loading...</p> : null}
+        {loading ? (
+          <div className="loading-container">
+            <LoadingSpinner size="medium" variant="primary" text="Loading participants..." />
+          </div>
+        ) : null}
         <div className="participants-header">
           <h2>Participants</h2>
           <button 

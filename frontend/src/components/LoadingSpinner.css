@@ -7,6 +7,12 @@
   text-align: center;
 }
 
+/* Global rule to prevent loading text from spinning */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot) {
+  transform: none !important;
+  animation: none !important;
+}
+
 .spinner-container {
   position: relative;
   display: inline-block;
@@ -44,6 +50,9 @@
   font-size: 0.9rem;
   color: #64748b;
   font-weight: 500;
+  /* Ensure text never rotates */
+  transform: none !important;
+  animation: none !important;
 }
 
 /* Size Variants */
