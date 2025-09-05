@@ -624,8 +624,6 @@ const EventAttendancePage = memo(() => {
                                 <span className="unavailable-reason">Event Completed - Time Has Passed</span>
                               ) : event.status === 'Completed' ? (
                                 <span className="unavailable-reason">Event Manually Completed</span>
-                              ) : hasNotStarted ? (
-                                <span className="unavailable-reason">Registration Not Open - Event Hasn't Started Yet</span>
                               ) : isTimeExpired ? (
                                 <span className="unavailable-reason">Registration Closed - Event Time Has Passed</span>
                               ) : (

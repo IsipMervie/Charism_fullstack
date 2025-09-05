@@ -1171,7 +1171,8 @@ function EventListPage() {
                 const pendingRegistrationsCount = safeFilter(attendance, a => a.registrationApproved === false && a.status === 'Pending').length;
                 const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';
                 
-                // Check if event is available for registration (not completed, has slots, time hasn't passed, and event has started)
+                // Check if event is available for registration (not completed, has slots, time hasn't passed)
+                // Allow registration before event starts - only block after event ends
                 const now = new Date();
                 const eventDate = new Date(event.date);
                 const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
@@ -1180,7 +1181,7 @@ function EventListPage() {
                 const hasNotStarted = eventStartTime > now;
                 const hasAvailableSlots = maxParticipants === 0 || availableSlots > 0;
                 const eventStatus = getEventStatus(event);
-                const isAvailable = eventStatus !== 'completed' && event.status !== 'Completed' && hasAvailableSlots && !isTimeExpired && !hasNotStarted;
+                const isAvailable = eventStatus !== 'completed' && event.status !== 'Completed' && hasAvailableSlots && !isTimeExpired;
 
                 return (
                   <div key={event._id} className="event-card">
@@ -1269,8 +1270,6 @@ function EventListPage() {
                                   <span className="unavailable-reason">Event Completed - Time Has Passed</span>
                                 ) : event.status === 'Completed' ? (
                                   <span className="unavailable-reason">Event Manually Completed</span>
-                                ) : hasNotStarted ? (
-                                  <span className="unavailable-reason">Registration Not Open - Event Hasn't Started Yet</span>
                                 ) : isTimeExpired ? (
                                   <span className="unavailable-reason">Registration Closed - Event Time Has Passed</span>
                                 ) : (
