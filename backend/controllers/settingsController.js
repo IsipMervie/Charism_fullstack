@@ -142,10 +142,10 @@ exports.getPublicSchoolSettings = async (req, res) => {
       console.log('⚠️ No settings found, returning defaults');
       const defaultSettings = {
         schoolName: 'CHARISM Community Link',
-        schoolLogo: '',
+        contactEmail: 'ceo@ua.edu.ph',
+        logo: '',
         schoolAddress: '',
         schoolPhone: '',
-        schoolEmail: '',
         schoolWebsite: '',
         schoolDescription: 'Welcome to CHARISM Community Link',
         isActive: true
@@ -154,13 +154,13 @@ exports.getPublicSchoolSettings = async (req, res) => {
       return res.json(defaultSettings);
     }
 
-    // Return only public fields
+    // Return only public fields with correct field names for frontend
     const publicSettings = {
       schoolName: settings.schoolName || 'CHARISM Community Link',
-      schoolLogo: settings.schoolLogo || '',
+      contactEmail: settings.contactEmail || settings.schoolEmail || '',
+      logo: settings.logo || settings.schoolLogo || '',
       schoolAddress: settings.schoolAddress || '',
       schoolPhone: settings.schoolPhone || '',
-      schoolEmail: settings.schoolEmail || '',
       schoolWebsite: settings.schoolWebsite || '',
       schoolDescription: settings.schoolDescription || 'Welcome to CHARISM Community Link',
       isActive: settings.isActive !== false // Default to true if not set
