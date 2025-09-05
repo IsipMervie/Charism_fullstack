@@ -95,6 +95,9 @@ try {
   app.use('/api/feedback', require('./routes/feedbackRoutes'));
   console.log('✅ Feedback routes loaded');
   
+  app.use('/api/reports', require('./routes/reportRoutes'));
+  console.log('✅ Reports routes loaded');
+  
   console.log('✅ All routes loaded successfully!');
 } catch (error) {
   console.error('❌ Error loading routes:', error);

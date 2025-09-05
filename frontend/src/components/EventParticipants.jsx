@@ -327,7 +327,7 @@ function EventParticipantsPage() {
                           </button>
                         </>
                       )}
-                      {(participant.status === 'Approved' || participant.status === 'Disapproved') && (
+                      {(participant.status === 'Approved' || participant.status === 'Disapproved' || participant.status === 'Attended') && (
                         <>
                           <button 
                             className={`approve-btn ${!participant.timeOut ? 'disabled' : ''}`}
@@ -433,7 +433,7 @@ function EventParticipantsPage() {
                       </button>
                     </>
                   )}
-                  {(participant.status === 'Approved' || participant.status === 'Disapproved') && (
+                  {(participant.status === 'Approved' || participant.status === 'Disapproved' || participant.status === 'Attended') && (
                     <>
                       <button 
                         className={`approve-btn ${!participant.timeOut ? 'disabled' : ''}`}

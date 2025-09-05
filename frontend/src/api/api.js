@@ -1092,7 +1092,17 @@ export const updateSchoolSettings = async (formData) => {
 export const generateReport = async (reportType, params = {}) => {
   try {
     let url = `/reports/${reportType}`;
-    if (Object.keys(params).length > 0) {
+    
+    // Handle special case for event-attendance report
+    if (reportType === 'event-attendance' && params.eventId) {
+      url = `/reports/${reportType}/${params.eventId}`;
+      // Remove eventId from params to avoid duplicate
+      const { eventId, ...otherParams } = params;
+      if (Object.keys(otherParams).length > 0) {
+        const queryString = new URLSearchParams(otherParams).toString();
+        url += `?${queryString}`;
+      }
+    } else if (Object.keys(params).length > 0) {
       const queryString = new URLSearchParams(params).toString();
       url += `?${queryString}`;
     }
