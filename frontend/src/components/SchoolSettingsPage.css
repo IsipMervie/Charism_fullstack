@@ -455,6 +455,15 @@
   margin-bottom: 1rem;
 }
 
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
+
 .error-message {
   max-width: 500px;
   margin: 0 auto;

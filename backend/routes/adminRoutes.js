@@ -7,7 +7,10 @@ const adminController = require('../controllers/adminController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 
-// All routes here are protected: only Admins can access
+// Special route for Staff access to events with user data (must come BEFORE general admin middleware)
+router.get('/events-with-user-data', authMiddleware, roleMiddleware(['Admin', 'Staff']), adminController.getEventsWithUserData);
+
+// All other routes here are protected: only Admins can access
 router.use(authMiddleware, roleMiddleware('Admin'));
 
 // Dashboard analytics
@@ -25,7 +28,6 @@ router.get('/students-40-hours', adminController.getStudents40Hours);
 
 // Event management
 router.get('/events', adminController.getAllEvents);
-router.get('/events-with-user-data', adminController.getEventsWithUserData);
 router.delete('/events/:id', adminController.deleteEvent);
 
 // Message management (contact-us)

@@ -617,6 +617,15 @@ button.action-button.delete-button * {
   animation: spin 1s linear infinite;
 }
 
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
+
 .loading-section h3 {
   font-size: 1.5rem;
   font-weight: 600;

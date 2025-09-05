@@ -1030,6 +1030,15 @@
   margin: 0 auto 1.5rem;
 }
 
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

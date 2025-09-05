@@ -270,6 +270,12 @@ exports.getEventsWithUserData = async (req, res) => {
     
     console.log(`✅ Found ${events.length} events with populated user data`);
     
+    // Debug: Check if user data is populated
+    if (events.length > 0 && events[0].attendance && events[0].attendance.length > 0) {
+      console.log('🔍 Sample attendance user data:', events[0].attendance[0].userId);
+      console.log('🔍 User data type:', typeof events[0].attendance[0].userId);
+    }
+    
     res.json(events);
   } catch (err) {
     console.error('❌ Error in getEventsWithUserData:', err);

@@ -49,6 +49,8 @@ const AdminViewStudentDocumentation = () => {
       // Fetch all events with populated user data
       const eventsData = await getEventsWithUserData();
       console.log('📅 Events with user data fetched:', eventsData.length);
+      console.log('🔍 Sample event data:', eventsData[0]);
+      console.log('🔍 Sample attendance data:', eventsData[0]?.attendance?.[0]);
       setEvents(eventsData);
 
              // Fetch documentation for all events
@@ -74,6 +76,7 @@ const AdminViewStudentDocumentation = () => {
                   
                   if (att.userId && typeof att.userId === 'object') {
                     // User data is now populated, so we can access the fields directly
+                    console.log('✅ User data is populated object:', att.userId);
                     userName = att.userId.name || 
                               (att.userId.firstName && att.userId.lastName ? `${att.userId.firstName} ${att.userId.lastName}` : null) ||
                               att.userId.firstName ||
@@ -81,9 +84,14 @@ const AdminViewStudentDocumentation = () => {
                               'Unknown Student';
                     
                     userEmail = att.userId.email || 'No email available';
+                    console.log('✅ Extracted from populated data - Name:', userName, 'Email:', userEmail);
                   } else if (att.userId && typeof att.userId === 'string') {
                     // If userId is still just a string ID, we need to fetch user data separately
                     console.log('⚠️ User data not populated, userId is string:', att.userId);
+                    userName = 'Unknown Student';
+                    userEmail = 'No email available';
+                  } else {
+                    console.log('❌ No userId found in attendance:', att);
                     userName = 'Unknown Student';
                     userEmail = 'No email available';
                   }
