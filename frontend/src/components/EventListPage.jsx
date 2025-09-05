@@ -21,6 +21,7 @@ function EventListPage() {
   
   // Use ref to prevent infinite loops
   const isLoadingRef = useRef(false);
+  const hasLoadedRef = useRef(false);
 
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
@@ -47,6 +48,11 @@ function EventListPage() {
       return;
     }
     
+    // If we've already loaded successfully, don't reload unless explicitly requested
+    if (hasLoadedRef.current && retryCount === 0) {
+      return;
+    }
+    
     try {
       isLoadingRef.current = true;
       setLoading(true);
@@ -59,6 +65,7 @@ function EventListPage() {
       }
       
       setEvents(eventsData);
+      hasLoadedRef.current = true;
       
       // Extract unique departments from events for filter options
       const uniqueDepartments = [...safeSet(
@@ -152,6 +159,12 @@ function EventListPage() {
       isLoadingRef.current = false;
     }
   }, []); // Remove dependencies to prevent infinite loop
+
+  // Manual refresh function for user-triggered refreshes
+  const handleManualRefresh = useCallback(() => {
+    hasLoadedRef.current = false;
+    refreshEvents();
+  }, [refreshEvents]);
 
   // Fetch filter options from settings with caching
   const fetchFilterOptions = async () => {
@@ -276,7 +289,7 @@ function EventListPage() {
       const now = Date.now();
       if (!lastRefresh || (now - parseInt(lastRefresh)) > 30000) {
         localStorage.setItem('lastEventsRefresh', now.toString());
-        refreshEvents();
+        handleManualRefresh();
       }
     };
     
@@ -809,7 +822,9 @@ function EventListPage() {
 
   // Filter events by status, search, and department restrictions
   const filteredEvents = useMemo(() => {
-    return safeFilter(events, event => {
+    if (!events || events.length === 0) return [];
+    
+    return events.filter(event => {
       // Search filter
       const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -824,15 +839,12 @@ function EventListPage() {
         const userDepartment = user.department;
         
         if (event.isForAllDepartments) {
-          matchesDepartment = true; // All departments can access
+          matchesDepartment = true;
         } else if (event.departments && event.departments.length > 0) {
-          // Check if user's department is in the allowed departments array
           matchesDepartment = event.departments.includes(userDepartment);
         } else if (event.department) {
-          // Check if user's department matches the single department
           matchesDepartment = event.department === userDepartment;
         } else {
-          // Event has no department restriction
           matchesDepartment = true;
         }
       }
@@ -848,7 +860,7 @@ function EventListPage() {
         <div className="loading-section">
           <h3>Loading Events...</h3>
           <p>Please wait while we fetch the latest events</p>
-          <button onClick={refreshEvents} className="refresh-button">
+          <button onClick={handleManualRefresh} className="refresh-button">
             Refresh
           </button>
         </div>
@@ -884,7 +896,7 @@ function EventListPage() {
           )}
           
           <div className="error-actions">
-            <button onClick={refreshEvents} className="refresh-button primary">
+            <button onClick={handleManualRefresh} className="refresh-button primary">
               🔄 Try Again
             </button>
             {error.includes('timeout') && (
