@@ -63,6 +63,7 @@ const AdminViewStudentDocumentation = () => {
               console.log(`🔍 Checking attendance for documentation...`);
               event.attendance.forEach((att, index) => {
                 console.log(`👤 Attendance ${index}: userId=${att.userId?._id || att.userId}, has documentation: ${!!att.documentation}`);
+                console.log(`👤 User data:`, att.userId);
                 // Only include students who have approved registrations
                 if (att.registrationApproved && att.documentation && att.documentation.files && att.documentation.files.length > 0) {
                   console.log(`🔍 Direct extraction: Found ${att.documentation.files.length} files for user ${att.userId?.name || att.userId}`);
@@ -76,7 +77,10 @@ const AdminViewStudentDocumentation = () => {
                     eventTime: event.time,
                     eventLocation: event.location,
                     // Add fallback user info if userId is just an ID
-                    userName: att.userId?.name || att.userId?.firstName + ' ' + att.userId?.lastName || 'Unknown Student',
+                    userName: att.userId?.name || 
+                             (att.userId?.firstName && att.userId?.lastName ? 
+                               `${att.userId.firstName} ${att.userId.lastName}` : 
+                               att.userId?.firstName || att.userId?.lastName || 'Unknown Student'),
                     userEmail: att.userId?.email || 'No email available'
                   });
                   console.log(`✅ Direct extraction: Added documentation for ${event.title}`);
@@ -586,7 +590,7 @@ const AdminViewStudentDocumentation = () => {
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Time:</span>
-                    <span className="detail-value">{selectedDocumentation.eventTime}</span>
+                    <span className="detail-value">{selectedDocumentation.eventTime || 'Time not specified'}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Location:</span>

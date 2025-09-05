@@ -419,21 +419,25 @@ const StudentDocumentationPage = () => {
                     {doc.documentation.flatMap(userDoc => 
                       userDoc.files.map((file, fileIndex) => {
                         console.log('File data:', file);
+                        // Extract file data from the nested structure
+                        const fileData = file._doc || file;
+                        console.log('Extracted file data:', fileData);
+                        
                         return (
                         <div key={fileIndex} className="file-item">
                           <div className="file-info">
-                            <span className="file-icon">{getFileIcon(file.fileType)}</span>
+                            <span className="file-icon">{getFileIcon(fileData.contentType)}</span>
                             <div className="file-details">
                               <div className="file-header">
-                                <span className="file-name">{file.originalName}</span>
-                                {getFileTypeBadge(file.fileType)}
+                                <span className="file-name">{fileData.originalName}</span>
+                                {getFileTypeBadge(fileData.contentType)}
                               </div>
                               <div className="file-meta">
-                                <span className="file-size">{formatFileSize(file.fileSize)}</span>
-                                <span className="file-date">{formatDate(file.uploadDate)}</span>
+                                <span className="file-size">{formatFileSize(fileData.fileSize)}</span>
+                                <span className="file-date">{formatDate(fileData.uploadDate)}</span>
                               </div>
-                              {file.description && (
-                                <p className="file-description">{file.description}</p>
+                              {fileData.description && (
+                                <p className="file-description">{fileData.description}</p>
                               )}
                             </div>
                           </div>
@@ -443,11 +447,11 @@ const StudentDocumentationPage = () => {
                               variant="outline-primary"
                               size="sm"
                               onClick={() => {
-                                console.log('Download clicked:', { eventId: doc.eventId, filename: file.filename, originalName: file.originalName });
-                                handleDownload(doc.eventId, file.filename, file.originalName);
+                                console.log('Download clicked:', { eventId: doc.eventId, filename: fileData.filename, originalName: fileData.originalName });
+                                handleDownload(doc.eventId, fileData.filename, fileData.originalName);
                               }}
-                              disabled={!file.filename}
-                              title={file.filename ? "Download file" : "File information missing"}
+                              disabled={!fileData.filename}
+                              title={fileData.filename ? "Download file" : "File information missing"}
                             >
                               <FaDownload />
                             </Button>
@@ -455,11 +459,11 @@ const StudentDocumentationPage = () => {
                               variant="outline-danger"
                               size="sm"
                               onClick={() => {
-                                console.log('Delete clicked:', { eventId: doc.eventId, filename: file.filename, originalName: file.originalName });
-                                handleDelete(doc.eventId, file.filename, file.originalName);
+                                console.log('Delete clicked:', { eventId: doc.eventId, filename: fileData.filename, originalName: fileData.originalName });
+                                handleDelete(doc.eventId, fileData.filename, fileData.originalName);
                               }}
-                              disabled={!file.filename}
-                              title={file.filename ? "Delete file" : "File information missing"}
+                              disabled={!fileData.filename}
+                              title={fileData.filename ? "Delete file" : "File information missing"}
                             >
                               <FaTrash />
                             </Button>
