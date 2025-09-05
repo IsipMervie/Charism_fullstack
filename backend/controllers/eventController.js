@@ -128,7 +128,7 @@ exports.getAllEvents = async (req, res) => {
       try {
         const connectionPromise = getLazyConnection();
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Connection timeout')), 2000); // Very aggressive 2 second timeout
+          setTimeout(() => reject(new Error('Connection timeout')), 3000); // Increased to 3 seconds
         });
         
         isConnected = await Promise.race([connectionPromise, timeoutPromise]);
@@ -143,8 +143,9 @@ exports.getAllEvents = async (req, res) => {
       console.error('Database not connected, returning empty events list');
       return res.json({ 
         events: [],
-        message: 'Database temporarily unavailable',
-        totalEvents: 0
+        message: 'Unable to load events at this time. Please try again later.',
+        totalEvents: 0,
+        error: 'SERVICE_TEMPORARILY_UNAVAILABLE'
       });
     }
     
@@ -283,9 +284,48 @@ exports.getEventDetails = async (req, res) => {
     console.log('User role:', req.user?.role || 'Unknown');
     console.log('User ID:', req.user?.userId || req.user?.id || req.user?._id || 'Unknown');
     
-    const event = await Event.findById(req.params.eventId)
+    // Check database connection first with fallback
+    const { mongoose, getLazyConnection } = require('../config/db');
+    let isConnected = mongoose.connection.readyState === 1;
+    
+    if (!isConnected) {
+      console.log('🔄 Database not connected, attempting lazy connection...');
+      try {
+        const connectionPromise = getLazyConnection();
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Database connection timeout')), 8000);
+        });
+        
+        isConnected = await Promise.race([connectionPromise, timeoutPromise]);
+      } catch (error) {
+        console.error('❌ Database connection failed:', error.message);
+        // Return a more user-friendly error instead of 503
+        return res.status(500).json({ 
+          message: 'Unable to fetch event details at this time. Please try again later.',
+          error: 'SERVICE_TEMPORARILY_UNAVAILABLE'
+        });
+      }
+    }
+    
+    if (!isConnected) {
+      console.error('❌ Database not available');
+      return res.status(500).json({ 
+        message: 'Unable to fetch event details at this time. Please try again later.',
+        error: 'SERVICE_TEMPORARILY_UNAVAILABLE'
+      });
+    }
+    
+    // Add timeout protection for the query
+    const queryPromise = Event.findById(req.params.eventId)
       .populate('createdBy', 'name')
-      .populate('attendance.userId', 'name email department academicYear');
+      .populate('attendance.userId', 'name email department academicYear')
+      .maxTimeMS(10000); // 10 second timeout for the query
+    
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Query timeout')), 10000);
+    });
+    
+    const event = await Promise.race([queryPromise, timeoutPromise]);
     
     if (!event) {
       console.log('❌ Event not found');
@@ -385,6 +425,20 @@ exports.getEventDetails = async (req, res) => {
       return res.status(400).json({ 
         message: 'Invalid event ID format.',
         error: 'INVALID_ID_FORMAT'
+      });
+    }
+    
+    if (err.message === 'Database connection timeout' || err.message === 'Query timeout') {
+      return res.status(500).json({ 
+        message: 'Unable to fetch event details at this time. Please try again later.',
+        error: 'SERVICE_TEMPORARILY_UNAVAILABLE'
+      });
+    }
+    
+    if (err.name === 'MongoNetworkTimeoutError' || err.name === 'MongoServerError') {
+      return res.status(500).json({ 
+        message: 'Unable to fetch event details at this time. Please try again later.',
+        error: 'SERVICE_TEMPORARILY_UNAVAILABLE'
       });
     }
     
