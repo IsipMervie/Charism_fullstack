@@ -430,7 +430,7 @@ function AdminManageEventsPage() {
     }
 
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
-    const registrationUrl = `${frontendUrl}/events/register/${event.publicRegistrationToken}`;
+    const registrationUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
 
     const eventTitle = event.title;
     const eventDate = new Date(event.date).toLocaleDateString();
