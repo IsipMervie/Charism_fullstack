@@ -179,10 +179,29 @@ const getLazyConnection = async () => {
   }
 };
 
+// Initialize database function for server startup
+const initializeDatabase = async () => {
+  try {
+    console.log('🔄 Initializing database connection...');
+    const conn = await connectDB();
+    if (conn) {
+      console.log('✅ Database connection established');
+      return conn;
+    } else {
+      console.log('⚠️ Database connection failed, continuing without DB');
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    return null;
+  }
+};
+
 // Export both mongoose and connection promise
 module.exports = { 
   mongoose, 
   connection, 
   getConnectionStatus,
-  getLazyConnection 
+  getLazyConnection,
+  initializeDatabase
 };

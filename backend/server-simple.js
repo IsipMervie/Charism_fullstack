@@ -4,6 +4,20 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// Import database configuration
+const { initializeDatabase } = require('./config/db');
+
+// Import models to ensure they are registered with Mongoose
+require('./models/Section');
+require('./models/YearLevel');
+require('./models/Department');
+require('./models/AcademicYear');
+require('./models/User');
+require('./models/SchoolSettings');
+require('./models/Event');
+require('./models/Message');
+require('./models/Feedback');
+
 const app = express();
 
 // Basic middleware
@@ -105,13 +119,29 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start server
+// Initialize database and start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔗 Test endpoint: http://localhost:${PORT}/api/test`);
-});
+
+async function startServer() {
+  try {
+    // Initialize database connection
+    console.log('🔄 Initializing database connection...');
+    await initializeDatabase();
+    console.log('✅ Database connection established');
+    
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🔗 Test endpoint: http://localhost:${PORT}/api/test`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;

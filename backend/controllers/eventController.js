@@ -41,8 +41,18 @@ exports.getAllEvents = async (req, res) => {
     }
     
     // Check if we can connect to database using lazy connection
-    const { mongoose } = require('../config/db');
+    const { mongoose, getLazyConnection } = require('../config/db');
     let isConnected = mongoose.connection.readyState === 1;
+    
+    // Try to establish connection if not connected
+    if (!isConnected) {
+      console.log('🔄 Database not connected, attempting lazy connection...');
+      try {
+        isConnected = await getLazyConnection();
+      } catch (error) {
+        console.error('❌ Lazy connection failed:', error);
+      }
+    }
     
     if (!isConnected) {
       console.error('Database not connected, returning empty events list');
