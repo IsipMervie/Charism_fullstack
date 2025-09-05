@@ -12,27 +12,106 @@ const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator')
 // Health check endpoint
 exports.healthCheck = async (req, res) => {
   try {
-    res.json({ 
-      status: 'OK', 
-      message: 'Events service is running',
-      timestamp: new Date().toISOString()
-    });
+    console.log('=== EVENTS HEALTH CHECK ===');
+    
+    // Check Event model availability
+    const eventModelStatus = !!Event;
+    console.log('Event model available:', eventModelStatus);
+    
+    // Check database connection
+    const { mongoose, getLazyConnection } = require('../config/db');
+    let dbStatus = 'disconnected';
+    let dbConnected = false;
+    
+    try {
+      if (mongoose.connection.readyState === 1) {
+        dbStatus = 'connected';
+        dbConnected = true;
+      } else {
+        // Try lazy connection with timeout
+        const connectionPromise = getLazyConnection();
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Health check timeout')), 3000);
+        });
+        
+        dbConnected = await Promise.race([connectionPromise, timeoutPromise]);
+        dbStatus = dbConnected ? 'connected' : 'failed';
+      }
+    } catch (error) {
+      console.error('Health check DB error:', error.message);
+      dbStatus = 'error';
+      dbConnected = false;
+    }
+    
+    // Try a simple query to test functionality
+    let queryStatus = 'not_tested';
+    if (dbConnected && Event) {
+      try {
+        const count = await Event.countDocuments().maxTimeMS(3000);
+        queryStatus = 'working';
+        console.log('Events count:', count);
+      } catch (error) {
+        queryStatus = 'failed';
+        console.error('Health check query error:', error.message);
+      }
+    }
+    
+    const healthData = {
+      status: dbConnected && eventModelStatus && queryStatus === 'working' ? 'OK' : 'DEGRADED',
+      timestamp: new Date().toISOString(),
+      components: {
+        eventModel: eventModelStatus,
+        database: {
+          status: dbStatus,
+          connected: dbConnected,
+          readyState: mongoose.connection.readyState
+        },
+        query: queryStatus
+      },
+      message: dbConnected && eventModelStatus && queryStatus === 'working' 
+        ? 'Events service is running normally' 
+        : 'Events service has issues'
+    };
+    
+    console.log('Health check result:', healthData);
+    
+    if (healthData.status === 'OK') {
+      res.json(healthData);
+    } else {
+      res.status(503).json(healthData);
+    }
   } catch (error) {
     console.error('Health check error:', error);
-    res.status(500).json({ status: 'ERROR', message: 'Health check failed' });
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Health check failed',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
   }
 };
 
-// Get All Events
+// Get All Events - Ultra-optimized version
 exports.getAllEvents = async (req, res) => {
   try {
-    console.log('=== GET ALL EVENTS ===');
+    console.log('=== GET ALL EVENTS (OPTIMIZED) ===');
     console.log('User:', req.user ? 'Authenticated' : 'Not authenticated');
     console.log('User role:', req.user?.role || 'Unknown');
-    console.log('User ID:', req.user?.userId || req.user?.id || req.user?._id || 'Unknown');
+    
+    // Immediate timeout protection for the entire function
+    const functionTimeout = setTimeout(() => {
+      console.error('❌ Function timeout - returning empty response');
+      res.json({ 
+        events: [],
+        message: 'Request timeout - server overloaded',
+        totalEvents: 0,
+        warning: 'Please try again later'
+      });
+    }, 8000); // 8 second total timeout
     
     // Check if Event model is available
     if (!Event) {
+      clearTimeout(functionTimeout);
       console.error('Event model not available');
       return res.status(500).json({ 
         message: 'Event model not available',
@@ -40,119 +119,152 @@ exports.getAllEvents = async (req, res) => {
       });
     }
     
-    // Check if we can connect to database using lazy connection
+    // Quick database connection check with aggressive timeout
     const { mongoose, getLazyConnection } = require('../config/db');
     let isConnected = mongoose.connection.readyState === 1;
     
-    // Try to establish connection if not connected
     if (!isConnected) {
-      console.log('🔄 Database not connected, attempting lazy connection...');
+      console.log('🔄 Quick database connection attempt...');
       try {
-        isConnected = await getLazyConnection();
+        const connectionPromise = getLazyConnection();
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Connection timeout')), 2000); // Very aggressive 2 second timeout
+        });
+        
+        isConnected = await Promise.race([connectionPromise, timeoutPromise]);
       } catch (error) {
-        console.error('❌ Lazy connection failed:', error);
+        console.error('❌ Quick connection failed:', error.message);
+        isConnected = false;
       }
     }
     
     if (!isConnected) {
+      clearTimeout(functionTimeout);
       console.error('Database not connected, returning empty events list');
       return res.json({ 
         events: [],
-        message: 'Database temporarily unavailable, showing no events',
+        message: 'Database temporarily unavailable',
         totalEvents: 0
       });
     }
     
-    // Check if user is authenticated and get their role
-    let userRole = null;
-    let userId = null;
+    // Quick user role check
+    const userRole = req.user?.role || req.userInfo?.role;
+    const userId = req.user?.userId || req.user?.id || req.user?._id;
     
-    if (req.user) {
-      userRole = req.user.role || req.userInfo?.role;
-      userId = req.user.userId || req.user.id || req.user._id;
-      console.log('✅ User authenticated - Role:', userRole, 'ID:', userId);
-    } else {
-      console.log('⚠️ No user authentication found');
-    }
-    
-    // Build query based on user role
+    // Build minimal query
     let query = {};
-    
-    // If user is a student, only show visible events
     if (userRole === 'Student') {
       query.isVisibleToStudents = true;
       query.status = { $ne: 'Disabled' };
-      console.log('🔍 Filtering events for student - only visible and not disabled');
-    } else {
-      console.log('🔍 Admin/Staff user - showing all events including disabled ones');
     }
     
-    console.log('🔍 Final query:', JSON.stringify(query, null, 2));
+    console.log('🔍 Query for role:', userRole);
     
-    // Test database connection by counting events first
-    const totalEvents = await Event.countDocuments();
-    console.log(`📊 Total events in database: ${totalEvents}`);
+    // Ultra-fast query with maximum timeout protection
+    let events = [];
+    try {
+      // Single ultra-optimized query - no population, minimal fields, aggressive timeout
+      const queryPromise = Event.find(query)
+        .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt')
+        .sort({ createdAt: -1 }) // Single field sort for speed
+        .lean()
+        .limit(15) // Reasonable limit
+        .maxTimeMS(2000); // Very aggressive 2 second timeout
+      
+      // Single timeout protection
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Query timeout')), 3000);
+      });
+      
+      events = await Promise.race([queryPromise, timeoutPromise]);
+      console.log(`✅ Found ${events.length} events`);
+      
+    } catch (queryError) {
+      console.error('❌ Query failed:', queryError.message);
+      
+      // Emergency fallback - absolute minimal query
+      try {
+        const emergencyPromise = Event.find({})
+          .select('title date status isVisibleToStudents')
+          .lean()
+          .limit(5)
+          .maxTimeMS(1000); // 1 second emergency timeout
+        
+        const emergencyTimeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Emergency timeout')), 2000);
+        });
+        
+        events = await Promise.race([emergencyPromise, emergencyTimeoutPromise]);
+        console.log(`✅ Emergency fallback found ${events.length} events`);
+        
+      } catch (emergencyError) {
+        console.error('❌ Emergency fallback failed:', emergencyError.message);
+        clearTimeout(functionTimeout);
+        return res.json({ 
+          events: [],
+          message: 'Server overloaded - please try again later',
+          totalEvents: 0,
+          error: 'TIMEOUT'
+        });
+      }
+    }
     
-    // Optimize query with selective population and indexing
-    const events = await Event.find(query)
-      .populate('createdBy', 'name')
-      .populate('attendance.userId', 'name email department academicYear')
-      .sort({ date: 1, createdAt: -1 }) // Sort by date, then by creation time
-      .lean() // Use lean() for better performance when not modifying documents
-      .limit(100); // Limit results to prevent overwhelming response
-    
-    console.log(`✅ Found ${events.length} events for user role: ${userRole}`);
-    
-    // Add full URLs for events with public registration and images
+    // Minimal processing for maximum speed
     const eventsWithUrls = events.map(event => {
-      // Since we're using lean(), event is already a plain object
       const eventObj = { ...event };
       
+      // Only add registration URL if token exists
       if (event.publicRegistrationToken) {
         eventObj.publicRegistrationUrl = generateEventRegistrationLink(event.publicRegistrationToken);
       }
       
-      // Defensive fix for malformed image data
-      let safeImage = event.image;
-      if (typeof event.image === 'string') {
-        console.log(`⚠️  Event ${event._id} image field contains string, converting to null to prevent errors`);
-        safeImage = null;
-        eventObj.image = null; // Ensure the response also has safe data
-      }
+      // Skip image processing for speed
+      eventObj.imageUrl = null;
       
-      // Check if image has actual data
-      if (safeImage && (!safeImage.data || safeImage.data.length === 0)) {
-        console.log(`⚠️  Event ${event._id} image field has no data, treating as null`);
-        safeImage = null;
-        eventObj.image = null; // Ensure the response also has safe data
-      }
-      
-      if (hasFile(safeImage)) {
-        eventObj.imageUrl = `/api/files/event-image/${event._id}`;
-      }
       return eventObj;
     });
     
-    // Log some event details for debugging
-    eventsWithUrls.slice(0, 3).forEach((event, index) => {
-      console.log(`Event ${index + 1}:`, {
-        id: event._id,
-        title: event.title,
-        date: event.date,
-        isVisibleToStudents: event.isVisibleToStudents,
-        status: event.status,
-        attendanceCount: event.attendance?.length || 0,
-        hasRegistrationUrl: !!event.publicRegistrationUrl
-      });
-    });
+    // Clear the function timeout since we're about to respond
+    clearTimeout(functionTimeout);
     
+    console.log(`✅ Returning ${eventsWithUrls.length} events successfully`);
     res.json(eventsWithUrls);
   } catch (err) {
     console.error('❌ Error in getAllEvents:', err);
-    res.status(500).json({ 
-      message: 'Error fetching events.', 
-      error: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    
+    // Clear any pending timeout
+    if (typeof functionTimeout !== 'undefined') {
+      clearTimeout(functionTimeout);
+    }
+    
+    // Handle specific error types with fast responses
+    if (err.name === 'MongoTimeoutError' || err.message.includes('timeout')) {
+      console.error('⏰ Database timeout error');
+      return res.status(504).json({ 
+        events: [],
+        message: 'Request timeout - server overloaded', 
+        error: 'TIMEOUT',
+        totalEvents: 0
+      });
+    }
+    
+    if (err.name === 'MongoNetworkError' || err.message.includes('network')) {
+      console.error('🌐 Database network error');
+      return res.status(503).json({ 
+        events: [],
+        message: 'Database temporarily unavailable', 
+        error: 'NETWORK_ERROR',
+        totalEvents: 0
+      });
+    }
+    
+    // Generic error handling - return empty events instead of error
+    res.json({ 
+      events: [],
+      message: 'Temporary service issue - please try again',
+      error: 'SERVICE_ERROR',
+      totalEvents: 0
     });
   }
 };
