@@ -19,7 +19,14 @@ function PublicEventRegistrationPage() {
   const checkAuthStatus = useCallback(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    setIsLoggedIn(!!(token && user));
+    const isAuthenticated = !!(token && user);
+    setIsLoggedIn(isAuthenticated);
+    
+    // If user just logged in and we have a stored redirect, stay on this page
+    if (isAuthenticated && window.location.hash.includes('/events/register/')) {
+      // User is on the registration page and logged in, don't redirect
+      console.log('User is authenticated and on registration page');
+    }
   }, []);
 
   const fetchEventDetails = useCallback(async () => {
@@ -45,15 +52,32 @@ function PublicEventRegistrationPage() {
     fetchEventDetails();
   }, [checkAuthStatus, fetchEventDetails]);
 
+  // Listen for authentication changes (when user logs in)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      checkAuthStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check periodically in case of same-tab login
+    const interval = setInterval(checkAuthStatus, 1000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [checkAuthStatus]);
+
   const handleLogin = () => {
-    // Store the current URL to redirect back after login
-    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+    // Store the current URL to redirect back after login (include hash)
+    localStorage.setItem('redirectAfterLogin', window.location.hash || window.location.pathname);
     navigate('/login');
   };
 
   const handleRegister = () => {
-    // Store the current URL to redirect back after registration
-    localStorage.setItem('redirectAfterLogin', window.location.pathname);
+    // Store the current URL to redirect back after registration (include hash)
+    localStorage.setItem('redirectAfterLogin', window.location.hash || window.location.pathname);
     navigate('/register');
   };
 
