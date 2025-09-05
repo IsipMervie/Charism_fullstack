@@ -67,6 +67,28 @@ const AdminViewStudentDocumentation = () => {
                 // Only include students who have approved registrations
                 if (att.registrationApproved && att.documentation && att.documentation.files && att.documentation.files.length > 0) {
                   console.log(`🔍 Direct extraction: Found ${att.documentation.files.length} files for user ${att.userId?.name || att.userId}`);
+                  
+                  // Extract user information with better fallbacks
+                  let userName = 'Unknown Student';
+                  let userEmail = 'No email available';
+                  
+                  if (att.userId) {
+                    // Try different possible name fields
+                    userName = att.userId.name || 
+                              att.userId.fullName ||
+                              (att.userId.firstName && att.userId.lastName ? `${att.userId.firstName} ${att.userId.lastName}` : null) ||
+                              att.userId.firstName ||
+                              att.userId.lastName ||
+                              'Unknown Student';
+                    
+                    // Try different possible email fields
+                    userEmail = att.userId.email || 
+                               att.userId.emailAddress ||
+                               'No email available';
+                  }
+                  
+                  console.log(`👤 Extracted user info: name="${userName}", email="${userEmail}"`);
+                  
                   documentationData.push({
                     userId: att.userId,
                     files: att.documentation.files,
@@ -74,14 +96,10 @@ const AdminViewStudentDocumentation = () => {
                     eventId: event._id,
                     eventTitle: event.title,
                     eventDate: event.date,
-                    eventTime: event.time,
+                    eventTime: event.time || event.startTime || event.endTime || 'Time not specified',
                     eventLocation: event.location,
-                    // Add fallback user info if userId is just an ID
-                    userName: att.userId?.name || 
-                             (att.userId?.firstName && att.userId?.lastName ? 
-                               `${att.userId.firstName} ${att.userId.lastName}` : 
-                               att.userId?.firstName || att.userId?.lastName || 'Unknown Student'),
-                    userEmail: att.userId?.email || 'No email available'
+                    userName: userName,
+                    userEmail: userEmail
                   });
                   console.log(`✅ Direct extraction: Added documentation for ${event.title}`);
                 }
@@ -565,11 +583,11 @@ const AdminViewStudentDocumentation = () => {
                 <div className="detail-grid">
                   <div className="detail-item">
                     <span className="detail-label">Name:</span>
-                    <span className="detail-value">{selectedDocumentation.userName || selectedDocumentation.userId?.name || 'Unknown Student'}</span>
+                    <span className="detail-value">{selectedDocumentation.userName}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Email:</span>
-                    <span className="detail-value">{selectedDocumentation.userEmail || selectedDocumentation.userId?.email || 'No email available'}</span>
+                    <span className="detail-value">{selectedDocumentation.userEmail}</span>
                   </div>
                 </div>
               </div>
@@ -590,7 +608,7 @@ const AdminViewStudentDocumentation = () => {
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Time:</span>
-                    <span className="detail-value">{selectedDocumentation.eventTime || 'Time not specified'}</span>
+                    <span className="detail-value">{selectedDocumentation.eventTime}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Location:</span>

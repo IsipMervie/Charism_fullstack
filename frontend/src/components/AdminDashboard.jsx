@@ -9,7 +9,6 @@ import { axiosInstance } from '../api/api';
 import { FaUsers, FaCalendarAlt, FaChartBar, FaTrophy, FaUserCheck, FaEnvelope, FaCog, FaBuilding, FaFile, FaUser } from 'react-icons/fa';
 
 import { getLogoUrl } from '../utils/imageUtils';
-import DatabaseStatus from './DatabaseStatus';
 
 import './AdminDashboard.css';
 
@@ -86,9 +85,6 @@ function AdminDashboard() {
       </div>
 
               <div className={`admin-dashboard-container ${isVisible ? 'visible' : ''}`}>
-          {/* Database Status Alert */}
-          <DatabaseStatus />
-          
           {/* Header Section */}
           <div className="header-section">
           <div className="header-content">
