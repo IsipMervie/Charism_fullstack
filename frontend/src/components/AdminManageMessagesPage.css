@@ -655,8 +655,8 @@
 }
 
 .btn.action-button.delete-button {
-  background: white !important;
-  color: #ef4444 !important;
+  background: #ef4444 !important;
+  color: white !important;
   border-color: #ef4444 !important;
 }
 
@@ -970,8 +970,8 @@ button .button-icon {
   }
 
   .btn.action-button.delete-button {
-    background: white !important;
-    color: #ef4444 !important;
+    background: #ef4444 !important;
+    color: white !important;
     border-color: #ef4444 !important;
   }
 
@@ -1051,8 +1051,8 @@ button .button-icon {
   }
 
   .btn.action-button.delete-button {
-    background: white !important;
-    color: #ef4444 !important;
+    background: #ef4444 !important;
+    color: white !important;
     border-color: #ef4444 !important;
   }
   

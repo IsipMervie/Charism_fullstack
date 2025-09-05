@@ -65,6 +65,18 @@ function EventListPage() {
         throw new Error('Invalid events data received');
       }
       
+      // Debug: Check if events have image data
+      const eventsWithImages = eventsData.filter(event => event.image);
+      console.log('🖼️ Events with images:', eventsWithImages.length);
+      if (eventsWithImages.length > 0) {
+        console.log('🔍 Sample event with image:', {
+          eventId: eventsWithImages[0]._id,
+          title: eventsWithImages[0].title,
+          imageData: eventsWithImages[0].image,
+          imageUrl: getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id)
+        });
+      }
+      
       setEvents(eventsData);
       hasLoadedRef.current = true;
       
@@ -1251,20 +1263,49 @@ function EventListPage() {
                 return (
                   <div key={event._id} className="event-card">
                     {/* Event Image */}
-                    {event.image && (
-                      <div className="event-image-wrapper">
+                    <div className="event-image-wrapper">
+                      {event.image ? (
                         <img
-                                                      src={getEventImageUrl(event.image, event._id)}
+                          src={getEventImageUrl(event.image, event._id)}
                           alt={event.title}
                           className="event-image"
+                          onError={(e) => {
+                            console.error('❌ Event image failed to load:', {
+                              eventId: event._id,
+                              eventTitle: event.title,
+                              imageData: event.image,
+                              imageUrl: getEventImageUrl(event.image, event._id)
+                            });
+                            e.target.style.display = 'none';
+                            // Show fallback
+                            const fallback = e.target.nextSibling;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                          onLoad={() => {
+                            console.log('✅ Event image loaded successfully:', {
+                              eventId: event._id,
+                              eventTitle: event.title,
+                              imageUrl: getEventImageUrl(event.image, event._id)
+                            });
+                          }}
                         />
-                        <div className="event-status">
-                          <span className={`status-badge ${getStatusColor(eventStatus)}`}>
-                            {eventStatus.charAt(0).toUpperCase() + eventStatus.slice(1)}
-                          </span>
-                        </div>
+                      ) : null}
+                      
+                      {/* Fallback image when no image or image fails to load */}
+                      <div 
+                        className="event-image-fallback" 
+                        style={{ display: event.image ? 'none' : 'flex' }}
+                      >
+                        <div className="fallback-icon">📅</div>
+                        <div className="fallback-text">Event Image</div>
                       </div>
-                    )}
+                      
+                      <div className="event-status">
+                        <span className={`status-badge ${getStatusColor(eventStatus)}`}>
+                          {eventStatus.charAt(0).toUpperCase() + eventStatus.slice(1)}
+                        </span>
+                      </div>
+                    </div>
 
                     {/* Event Content */}
                     <div className="event-content">

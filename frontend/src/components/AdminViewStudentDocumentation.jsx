@@ -65,9 +65,11 @@ const AdminViewStudentDocumentation = () => {
               console.log(`🔍 Checking attendance for documentation...`);
               event.attendance.forEach((att, index) => {
                 console.log(`👤 Attendance ${index}: userId=${att.userId?._id || att.userId}, has documentation: ${!!att.documentation}`);
+                console.log(`👤 Registration approved: ${att.registrationApproved}`);
+                console.log(`👤 Documentation files count: ${att.documentation?.files?.length || 0}`);
                 console.log(`👤 User data:`, att.userId);
-                // Only include students who have approved registrations
-                if (att.registrationApproved && att.documentation && att.documentation.files && att.documentation.files.length > 0) {
+                // Include students who have documentation files (regardless of registration approval status)
+                if (att.documentation && att.documentation.files && att.documentation.files.length > 0) {
                   console.log(`🔍 Direct extraction: Found ${att.documentation.files.length} files for user ${att.userId?.name || att.userId}`);
                   
                   // Extract user information from populated user data
