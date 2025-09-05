@@ -1,7 +1,7 @@
 // frontend/src/components/EventListPage.jsx
 // Simple but Creative Event List Page Design
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -18,6 +18,9 @@ function EventListPage() {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  
+  // Use ref to prevent infinite loops
+  const isLoadingRef = useRef(false);
 
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
@@ -39,12 +42,13 @@ function EventListPage() {
 
   // Refresh events and joined events
   const refreshEvents = useCallback(async (retryCount = 0) => {
-    // Prevent multiple simultaneous calls
-    if (loading && retryCount === 0) {
+    // Prevent multiple simultaneous calls using ref
+    if (isLoadingRef.current && retryCount === 0) {
       return;
     }
     
     try {
+      isLoadingRef.current = true;
       setLoading(true);
       setError('');
       
@@ -145,8 +149,9 @@ function EventListPage() {
       });
     } finally {
       setLoading(false);
+      isLoadingRef.current = false;
     }
-  }, [loading, role, user._id, user.id]);
+  }, []); // Remove dependencies to prevent infinite loop
 
   // Fetch filter options from settings with caching
   const fetchFilterOptions = async () => {
@@ -260,6 +265,7 @@ function EventListPage() {
       if (loading) {
         setError('Loading timeout. Please refresh the page.');
         setLoading(false);
+        isLoadingRef.current = false;
       }
     }, 30000);
     
@@ -280,7 +286,7 @@ function EventListPage() {
       window.removeEventListener('focus', handleFocus);
       clearTimeout(timeoutId);
     };
-  }, [refreshEvents]);
+  }, []); // Remove refreshEvents dependency to prevent infinite loop
   
   // Update filter options when events are loaded
   useEffect(() => {
@@ -308,7 +314,7 @@ function EventListPage() {
         }));
       }
     }
-  }, [events, filterOptions.departments.length]);
+  }, [events]); // Remove filterOptions.departments.length dependency
 
 
 
@@ -802,45 +808,38 @@ function EventListPage() {
   };
 
   // Filter events by status, search, and department restrictions
-  const filteredEvents = safeFilter(events, event => {
-    // Search filter
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (event.location && event.location.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    // Status filter
-    const matchesStatus = filter === 'all' || filter === getEventStatus(event);
-    
-    // Department restriction filter (only for students)
-    let matchesDepartment = true;
-    if (role === 'Student') {
-      const userDepartment = user.department;
-      console.log(`🔍 Department check for event "${event.title}":`, {
-        userDepartment,
-        eventDepartment: event.department,
-        eventDepartments: event.departments,
-        isForAllDepartments: event.isForAllDepartments
-      });
+  const filteredEvents = useMemo(() => {
+    return safeFilter(events, event => {
+      // Search filter
+      const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (event.location && event.location.toLowerCase().includes(searchTerm.toLowerCase()));
       
-      if (event.isForAllDepartments) {
-        matchesDepartment = true; // All departments can access
-        console.log(`✅ Event "${event.title}" is for all departments`);
-      } else if (event.departments && event.departments.length > 0) {
-        // Check if user's department is in the allowed departments array
-        matchesDepartment = event.departments.includes(userDepartment);
-        console.log(`🔍 Event "${event.title}" departments: ${event.departments.join(', ')}, User: ${userDepartment}, Match: ${matchesDepartment}`);
-      } else if (event.department) {
-        // Check if user's department matches the single department
-        matchesDepartment = event.department === userDepartment;
-        console.log(`🔍 Event "${event.title}" department: ${event.department}, User: ${userDepartment}, Match: ${matchesDepartment}`);
-      } else {
-        matchesDepartment = true; // No department restriction
-        console.log(`✅ Event "${event.title}" has no department restriction`);
+      // Status filter
+      const matchesStatus = filter === 'all' || filter === getEventStatus(event);
+      
+      // Department restriction filter (only for students)
+      let matchesDepartment = true;
+      if (role === 'Student') {
+        const userDepartment = user.department;
+        
+        if (event.isForAllDepartments) {
+          matchesDepartment = true; // All departments can access
+        } else if (event.departments && event.departments.length > 0) {
+          // Check if user's department is in the allowed departments array
+          matchesDepartment = event.departments.includes(userDepartment);
+        } else if (event.department) {
+          // Check if user's department matches the single department
+          matchesDepartment = event.department === userDepartment;
+        } else {
+          // Event has no department restriction
+          matchesDepartment = true;
+        }
       }
-    }
-    
-    return matchesSearch && matchesStatus && matchesDepartment;
-  });
+      
+      return matchesSearch && matchesStatus && matchesDepartment;
+    });
+  }, [events, searchTerm, filter, role, user.department]);
 
   // Loading state
   if (loading) {
@@ -1149,7 +1148,6 @@ function EventListPage() {
                   return attUserId === userId;
                 });
                 
-                console.log(`🔍 Event ${event.title}: User ID ${userId}, Found attendance:`, att);
                 const isJoined = attendance.some(a => {
                   const attUserId = a.userId?._id || a.userId;
                   return attUserId === userId;

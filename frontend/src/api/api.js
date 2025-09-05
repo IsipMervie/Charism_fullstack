@@ -409,7 +409,7 @@ export const getEvents = async () => {
     } else if (data && Array.isArray(data.events)) {
       return data.events;
     } else {
-      console.warn('getEvents: Unexpected response format, returning empty array:', data);
+      console.warn('⚠️ getEvents: Unexpected response format, returning empty array:', data);
       return [];
     }
   } catch (error) {
