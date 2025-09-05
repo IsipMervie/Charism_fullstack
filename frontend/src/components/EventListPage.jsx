@@ -18,6 +18,7 @@ function EventListPage() {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [joinedEvents, setJoinedEvents] = useState([]);
   
   // Use ref to prevent infinite loops
   const isLoadingRef = useRef(false);
@@ -105,6 +106,7 @@ function EventListPage() {
             }),
             event => event._id
           );
+          setJoinedEvents(joined);
         }
       }
       

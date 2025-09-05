@@ -50,17 +50,19 @@ function StudentDashboard() {
         
         // Filter events where the user is in attendance
         const myEvents = events.filter(event =>
-          event.attendance && event.attendance.some(a => 
-            a.userId === user._id || (a.userId && a.userId._id === user._id)
-          )
+          event.attendance && event.attendance.some(a => {
+            const attUserId = a.userId?._id || a.userId;
+            return attUserId === user._id || attUserId === user.id;
+          })
         );
         
         // Calculate approved hours
         let approvedHours = 0;
         myEvents.forEach(event => {
-          const att = event.attendance.find(a => 
-            a.userId === user._id || (a.userId && a.userId._id === user._id)
-          );
+          const att = event.attendance.find(a => {
+            const attUserId = a.userId?._id || a.userId;
+            return attUserId === user._id || attUserId === user.id;
+          });
           if (att && att.status === 'Approved') {
             approvedHours += event.hours || 0;
           }

@@ -25,7 +25,10 @@ function MyParticipationPage() {
         const events = await getEvents();
         // Filter events where the user is in attendance
         const myEvents = events.filter(event =>
-          event.attendance && event.attendance.some(a => a.userId === user._id || (a.userId && a.userId._id === user._id))
+          event.attendance && event.attendance.some(a => {
+            const attUserId = a.userId?._id || a.userId;
+            return attUserId === user._id || attUserId === user.id;
+          })
         );
         setParticipation(myEvents);
         
@@ -35,7 +38,10 @@ function MyParticipationPage() {
         let pendingEvents = 0;
         
         myEvents.forEach(event => {
-          const att = event.attendance.find(a => a.userId === user._id || (a.userId && a.userId._id === user._id));
+          const att = event.attendance.find(a => {
+            const attUserId = a.userId?._id || a.userId;
+            return attUserId === user._id || attUserId === user.id;
+          });
           if (att && att.status === 'Approved') {
             totalHours += event.hours || 0;
             approvedEvents++;
@@ -300,7 +306,10 @@ function MyParticipationPage() {
           ) : (
             <div className="participation-grid">
               {participation.map(event => {
-                const att = event.attendance.find(a => a.userId === user._id || (a.userId && a.userId._id === user._id));
+                const att = event.attendance.find(a => {
+                  const attUserId = a.userId?._id || a.userId;
+                  return attUserId === user._id || attUserId === user.id;
+                });
                 return (
                   <div key={event._id} className="participation-card">
                     <div className="card-header">

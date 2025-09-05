@@ -104,7 +104,10 @@ const EventAttendancePage = memo(() => {
         const joined = eventsData
           .filter(event =>
             event.attendance &&
-            event.attendance.some(a => a.userId === user._id || (a.userId && a.userId._id === user._id))
+            event.attendance.some(a => {
+              const attUserId = a.userId?._id || a.userId;
+              return attUserId === user._id || attUserId === user.id;
+            })
           )
           .map(event => event._id);
         setJoinedEvents(joined);
@@ -248,7 +251,10 @@ const EventAttendancePage = memo(() => {
     const event = events.find(e => e._id === eventId);
     if (!event) return;
 
-    const att = event.attendance?.find(a => a.userId === user._id);
+    const att = event.attendance?.find(a => {
+      const attUserId = a.userId?._id || a.userId;
+      return attUserId === user._id || attUserId === user.id;
+    });
 
     // Check if Time In has been recorded before Time Out
     if (!att || !att.timeIn) {
@@ -523,7 +529,10 @@ const EventAttendancePage = memo(() => {
         ) : (
           <div className="events-grid">
             {filteredEvents.map(event => {
-              const att = event.attendance?.find(a => (a.userId === user._id || (a.userId && a.userId._id === user._id)));
+              const att = event.attendance?.find(a => {
+                const attUserId = a.userId?._id || a.userId;
+                return attUserId === user._id || attUserId === user.id;
+              });
               const isJoined = joinedEvents.includes(event._id);
 
               // Calculate available slots and status
