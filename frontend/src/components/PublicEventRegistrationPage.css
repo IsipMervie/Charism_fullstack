@@ -231,6 +231,15 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
+
 .error-message {
   text-align: center;
   color: white;

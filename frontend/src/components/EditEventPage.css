@@ -165,6 +165,15 @@
 .loading-section, .error-section { text-align: center; padding: var(--space-10); color: var(--text-secondary); }
 .loading-spinner { width: 2rem; height: 2rem; border: 2px solid var(--border-light); border-radius: 50%; border-top-color: var(--primary-color); animation: spin 1s linear infinite; margin: 0 auto var(--space-3); }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
 .retry-btn { padding: var(--space-2) var(--space-4); border: 1px solid var(--border-medium); border-radius: var(--radius-md); background-color: var(--white); cursor: pointer; }
 .retry-btn:hover { background-color: var(--gray-50); }
 

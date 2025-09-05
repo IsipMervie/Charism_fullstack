@@ -262,6 +262,15 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
+
 .loading-section h3 {
   font-size: 1.5rem;
   margin: 0 0 12px 0;

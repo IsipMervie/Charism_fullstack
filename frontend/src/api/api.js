@@ -435,7 +435,20 @@ export const getEvents = async () => {
 export const getEventsWithUserData = async () => {
   try {
     console.log('🔄 Fetching events with user data from API...');
-    const response = await axiosInstance.get('/admin/events-with-user-data');
+    
+    // Check user role to determine which endpoint to use
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userRole = user.role;
+    
+    let endpoint = '/admin/events-with-user-data';
+    if (userRole === 'Staff') {
+      endpoint = '/staff/events-with-user-data';
+      console.log('👤 Staff user detected, using staff endpoint');
+    } else {
+      console.log('👤 Admin user detected, using admin endpoint');
+    }
+    
+    const response = await axiosInstance.get(endpoint);
     console.log('✅ Events with user data API response received');
     
     // Ensure we always return an array

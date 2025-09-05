@@ -626,6 +626,15 @@
   }
 }
 
+/* Ensure text inside loading spinner never spins */
+.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
+.loading-spinner h3,
+.loading-spinner p,
+.loading-spinner span {
+  animation: none !important;
+  transform: none !important;
+}
+
 .loading-section h3 {
   color: #1e293b;
   margin-bottom: 0.5rem;

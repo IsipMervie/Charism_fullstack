@@ -580,6 +580,8 @@ app.use('/api/analytics', require('./routes/analyticsRoutes'));
 console.log(' Analytics routes loaded');
 app.use('/api/admin', require('./routes/adminRoutes'));
 console.log(' Admin routes loaded');
+app.use('/api/staff', require('./routes/staffRoutes'));
+console.log(' Staff routes loaded');
 app.use('/api/academic-years', require('./routes/academicYearRoutes'));
 console.log(' Academic years routes loaded');
 app.use('/api/certificates', require('./routes/certificateRoutes'));
