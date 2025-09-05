@@ -1196,82 +1196,6 @@
   box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
 }
 
-/* Registration Link Styles */
-.registration-link {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 8px;
-}
-
-.registration-link .detail-label {
-  color: #64748b;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.link-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.registration-url {
-  background: #f1f5f9;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  color: #475569;
-  border: 1px solid #cbd5e1;
-  flex: 1;
-  min-width: 200px;
-  word-break: break-all;
-}
-
-.copy-link-btn {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.copy-link-btn:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-}
-
-.copy-link-btn:active {
-  transform: translateY(0);
-}
-
-/* Responsive adjustments for registration link */
-@media (max-width: 768px) {
-  .link-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .registration-url {
-    min-width: auto;
-    font-size: 0.8rem;
-  }
-  
-  .copy-link-btn {
-    align-self: flex-start;
-  }
-}
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
@@ -1301,10 +1225,6 @@
   
   .loading-spinner {
     animation: none;
-  }
-  
-  .copy-link-btn:hover {
-    transform: none;
   }
 }
 

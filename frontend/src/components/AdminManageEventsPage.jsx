@@ -456,17 +456,9 @@ function AdminManageEventsPage() {
           
 
           
-          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
-            <p style="margin: 0 0 10px 0; color: #2e7d32; font-weight: 600;">
-              📋 Registration Link:
-            </p>
-            <code style="background: white; padding: 8px; border-radius: 4px; font-size: 12px; word-break: break-all; display: block; color: #333;">
-              ${registrationUrl}
-            </code>
-          </div>
         </div>
       `,
-      confirmButtonText: '📋 Copy Registration Link',
+      confirmButtonText: '📋 Copy Link',
       showCancelButton: false,
       width: '600px',
       customClass: {
@@ -760,33 +752,6 @@ function AdminManageEventsPage() {
                             </div>
                           )}
 
-                          {/* Show registration link if public registration is enabled */}
-                          {event.isPublicRegistrationEnabled && event.publicRegistrationToken && (
-                            <div className="detail-item registration-link">
-                              <span className="detail-label">Registration Link:</span>
-                              <div className="link-container">
-                                <code className="registration-url">
-                                  {`${window.location.origin}/#/events/register/${event.publicRegistrationToken}`}
-                                </code>
-                                <button
-                                  className="copy-link-btn"
-                                  onClick={() => {
-                                    navigator.clipboard.writeText(`${window.location.origin}/#/events/register/${event.publicRegistrationToken}`);
-                                    Swal.fire({
-                                      icon: 'success',
-                                      title: 'Link Copied!',
-                                      text: 'Registration link copied to clipboard',
-                                      timer: 2000,
-                                      showConfirmButton: false
-                                    });
-                                  }}
-                                  title="Copy registration link"
-                                >
-                                  📋 Copy
-                                </button>
-                              </div>
-                            </div>
-                          )}
                         </div>
 
                         {/* Action Buttons */}
