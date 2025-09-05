@@ -8,7 +8,7 @@ import {
   FaSpinner, FaCheckCircle, FaUsers
 } from 'react-icons/fa';
 import { axiosInstance } from '../api/api';
-import { getProfilePictureUrl as getImageUrl } from '../utils/imageUtils';
+import { getProfilePictureUrl } from '../utils/imageUtils';
 import './ProfilePage.css';
 
 function ProfilePage() {
@@ -29,13 +29,18 @@ function ProfilePage() {
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
 
   // Get profile picture URL from user object with cache busting
-  const getProfilePictureUrl = (filename) => {
-    if (!filename) return null;
+  const getProfilePictureUrlWithTimestamp = (filename, userId) => {
+    if (!filename || !userId) return null;
     
     // Use the image utilities for consistent URL handling
     const timestamp = Date.now();
-    const baseUrl = getImageUrl(filename);
-    return baseUrl ? `${baseUrl}?t=${timestamp}` : null;
+    const baseUrl = getProfilePictureUrl(filename, userId);
+    
+    if (!baseUrl) return null;
+    
+    // Add cache busting timestamp
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${separator}t=${timestamp}`;
   };
 
   // Fetch user profile from backend to get the latest profile picture
@@ -77,8 +82,8 @@ function ProfilePage() {
       setSection(user.section || '');
       
       // Set profile picture from localStorage first (for immediate display)
-      if (user.profilePicture) {
-        const fullUrl = getProfilePictureUrl(user.profilePicture, user._id);
+      if (user.profilePicture && user._id) {
+        const fullUrl = getProfilePictureUrlWithTimestamp(user.profilePicture, user._id);
         console.log('ProfilePage - Setting profile picture from localStorage:', fullUrl);
         setProfilePictureUrl(fullUrl);
       }
@@ -86,8 +91,8 @@ function ProfilePage() {
       // Fetch latest user profile from backend to get updated profile picture
       if (user._id) {
         const backendUser = await fetchUserProfile(user._id);
-        if (backendUser && backendUser.profilePicture) {
-          const fullUrl = getProfilePictureUrl(backendUser.profilePicture, backendUser._id);
+        if (backendUser && backendUser.profilePicture && backendUser._id) {
+          const fullUrl = getProfilePictureUrlWithTimestamp(backendUser.profilePicture, backendUser._id);
           console.log('ProfilePage - Found profile picture from backend:', fullUrl);
           setProfilePictureUrl(fullUrl);
           
@@ -168,9 +173,11 @@ function ProfilePage() {
       const { profilePicture } = event.detail;
       if (profilePicture) {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const fullUrl = getProfilePictureUrl(profilePicture, currentUser._id);
-        console.log('ProfilePage - Profile picture changed event received:', fullUrl);
-        setProfilePictureUrl(fullUrl);
+        if (currentUser._id) {
+          const fullUrl = getProfilePictureUrlWithTimestamp(profilePicture, currentUser._id);
+          console.log('ProfilePage - Profile picture changed event received:', fullUrl);
+          setProfilePictureUrl(fullUrl);
+        }
         
         // Update localStorage user object
         currentUser.profilePicture = profilePicture;
@@ -308,7 +315,9 @@ function ProfilePage() {
                   className="profile-picture"
                   onError={(e) => {
                     console.error('Profile picture failed to load:', e.target.src);
-                    e.target.style.display = 'none';
+                    // Set a default profile picture or hide the image
+                    e.target.src = '/default-avatar.png';
+                    e.target.onerror = null; // Prevent infinite loop
                   }}
                   onLoad={() => {
                     console.log('Profile picture loaded successfully:', profilePictureUrl);

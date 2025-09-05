@@ -7,7 +7,6 @@ import NavigationBar from './components/NavigationBar';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import PerformanceOptimizer from './components/PerformanceOptimizer';
-import ConnectionTest from './components/ConnectionTest';
 
 // Utilities
 import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
@@ -52,7 +51,6 @@ const FeedbackPage = React.lazy(() => import('./components/FeedbackPage'));
 const AdminManageFeedbackPage = React.lazy(() => import('./components/AdminManageFeedbackPage'));
 const NotFoundPage = React.lazy(() => import('./components/NotFoundPage'));
 const TestPage = React.lazy(() => import('./components/TestPage'));
-const DebugInfo = React.lazy(() => import('./components/DebugInfo'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -344,9 +342,6 @@ function App() {
         </Routes>
         </Suspense>
         
-        {/* Debug Info - Remove this in production */}
-        <DebugInfo />
-        <ConnectionTest />
         
         </Router>
       </PerformanceOptimizer>
