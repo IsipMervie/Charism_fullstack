@@ -67,8 +67,10 @@ function LoginPage() {
       
       // Check if there's a redirect URL stored
       const redirectUrl = localStorage.getItem('redirectAfterLogin');
+      console.log('Login redirect URL:', redirectUrl);
       if (redirectUrl) {
         localStorage.removeItem('redirectAfterLogin');
+        console.log('Redirecting to:', redirectUrl);
         navigate(redirectUrl);
       } else {
         switch (user.role) {

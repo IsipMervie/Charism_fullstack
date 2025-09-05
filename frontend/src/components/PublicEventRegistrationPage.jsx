@@ -71,13 +71,17 @@ function PublicEventRegistrationPage() {
 
   const handleLogin = () => {
     // Store the current URL to redirect back after login (include hash)
-    localStorage.setItem('redirectAfterLogin', window.location.hash || window.location.pathname);
+    const currentUrl = window.location.hash || `#${window.location.pathname}`;
+    console.log('Storing redirect URL:', currentUrl);
+    localStorage.setItem('redirectAfterLogin', currentUrl);
     navigate('/login');
   };
 
   const handleRegister = () => {
     // Store the current URL to redirect back after registration (include hash)
-    localStorage.setItem('redirectAfterLogin', window.location.hash || window.location.pathname);
+    const currentUrl = window.location.hash || `#${window.location.pathname}`;
+    console.log('Storing redirect URL:', currentUrl);
+    localStorage.setItem('redirectAfterLogin', currentUrl);
     navigate('/register');
   };
 
@@ -92,18 +96,25 @@ function PublicEventRegistrationPage() {
       const result = await registerForEventWithToken(token);
       
       Swal.fire({
-        title: 'Success!',
-        text: result.message,
+        title: 'Registration Successful!',
+        text: `You have successfully registered for "${event.title}". You can stay on this page or go to your dashboard.`,
         icon: 'success',
-        confirmButtonText: 'Great!'
+        showCancelButton: true,
+        confirmButtonText: 'Stay Here',
+        cancelButtonText: 'Go to Dashboard',
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#6b7280'
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          navigate('/dashboard');
+        }
+        // If user clicks "Stay Here" or closes dialog, do nothing (stay on page)
       });
 
       setIsRegistered(true);
       
-      // Redirect to event details or dashboard
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 2000);
+      // Stay on the event registration page to show success
+      // User can manually navigate away if they want
       
     } catch (err) {
       Swal.fire({
