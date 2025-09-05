@@ -74,7 +74,10 @@ const AdminViewStudentDocumentation = () => {
                     eventTitle: event.title,
                     eventDate: event.date,
                     eventTime: event.time,
-                    eventLocation: event.location
+                    eventLocation: event.location,
+                    // Add fallback user info if userId is just an ID
+                    userName: att.userId?.name || att.userId?.firstName + ' ' + att.userId?.lastName || 'Unknown Student',
+                    userEmail: att.userId?.email || 'No email available'
                   });
                   console.log(`✅ Direct extraction: Added documentation for ${event.title}`);
                 }
@@ -558,11 +561,11 @@ const AdminViewStudentDocumentation = () => {
                 <div className="detail-grid">
                   <div className="detail-item">
                     <span className="detail-label">Name:</span>
-                    <span className="detail-value">{selectedDocumentation.userId.name}</span>
+                    <span className="detail-value">{selectedDocumentation.userName || selectedDocumentation.userId?.name || 'Unknown Student'}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Email:</span>
-                    <span className="detail-value">{selectedDocumentation.userId.email}</span>
+                    <span className="detail-value">{selectedDocumentation.userEmail || selectedDocumentation.userId?.email || 'No email available'}</span>
                   </div>
                 </div>
               </div>

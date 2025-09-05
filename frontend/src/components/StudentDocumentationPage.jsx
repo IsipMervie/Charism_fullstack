@@ -417,7 +417,9 @@ const StudentDocumentationPage = () => {
                   
                   <div className="files-list">
                     {doc.documentation.flatMap(userDoc => 
-                      userDoc.files.map((file, fileIndex) => (
+                      userDoc.files.map((file, fileIndex) => {
+                        console.log('File data:', file);
+                        return (
                         <div key={fileIndex} className="file-item">
                           <div className="file-info">
                             <span className="file-icon">{getFileIcon(file.fileType)}</span>
@@ -440,7 +442,10 @@ const StudentDocumentationPage = () => {
                             <Button
                               variant="outline-primary"
                               size="sm"
-                              onClick={() => handleDownload(doc.eventId, file.filename, file.originalName)}
+                              onClick={() => {
+                                console.log('Download clicked:', { eventId: doc.eventId, filename: file.filename, originalName: file.originalName });
+                                handleDownload(doc.eventId, file.filename, file.originalName);
+                              }}
                               disabled={!file.filename}
                               title={file.filename ? "Download file" : "File information missing"}
                             >
@@ -449,7 +454,10 @@ const StudentDocumentationPage = () => {
                             <Button
                               variant="outline-danger"
                               size="sm"
-                              onClick={() => handleDelete(doc.eventId, file.filename, file.originalName)}
+                              onClick={() => {
+                                console.log('Delete clicked:', { eventId: doc.eventId, filename: file.filename, originalName: file.originalName });
+                                handleDelete(doc.eventId, file.filename, file.originalName);
+                              }}
                               disabled={!file.filename}
                               title={file.filename ? "Delete file" : "File information missing"}
                             >
@@ -457,7 +465,8 @@ const StudentDocumentationPage = () => {
                             </Button>
                           </div>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>

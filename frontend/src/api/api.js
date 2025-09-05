@@ -937,7 +937,7 @@ export const disapproveAttendance = async (eventId, userId, reason) => {
 // Certificate Generation
 export const generateCertificate = async (userId) => {
   try {
-    const response = await axiosInstance.get(`/certificates/${userId}`, {
+    const response = await axiosInstance.get(`/certificates/generate/${userId}`, {
       responseType: 'blob',
     });
     
