@@ -93,3 +93,22 @@ export const safeSpread = (input, fallback = []) => {
     return fallback;
   }
 };
+
+/**
+ * Safely gets attendance array from an event object
+ * @param {Object} event - The event object
+ * @returns {Array} - The attendance array or empty array
+ */
+export const safeGetAttendance = (event) => {
+  if (!event || typeof event !== 'object') {
+    return [];
+  }
+  
+  // Check if attendance exists and is an array
+  if (Array.isArray(event.attendance)) {
+    return event.attendance;
+  }
+  
+  // If attendance is undefined or not an array, return empty array
+  return [];
+};

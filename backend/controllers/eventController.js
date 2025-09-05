@@ -164,9 +164,9 @@ exports.getAllEvents = async (req, res) => {
     // Ultra-fast query with maximum timeout protection
     let events = [];
     try {
-      // Single ultra-optimized query - no population, minimal fields, aggressive timeout
+      // Single ultra-optimized query - include attendance field for frontend
       const queryPromise = Event.find(query)
-        .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt')
+        .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt attendance')
         .sort({ createdAt: -1 }) // Single field sort for speed
         .lean()
         .limit(15) // Reasonable limit
@@ -186,7 +186,7 @@ exports.getAllEvents = async (req, res) => {
       // Emergency fallback - absolute minimal query
       try {
         const emergencyPromise = Event.find({})
-          .select('title date status isVisibleToStudents')
+          .select('title date status isVisibleToStudents attendance')
           .lean()
           .limit(5)
           .maxTimeMS(1000); // 1 second emergency timeout
@@ -213,6 +213,11 @@ exports.getAllEvents = async (req, res) => {
     // Minimal processing for maximum speed
     const eventsWithUrls = events.map(event => {
       const eventObj = { ...event };
+      
+      // Ensure attendance field exists (frontend expects this)
+      if (!eventObj.attendance) {
+        eventObj.attendance = [];
+      }
       
       // Only add registration URL if token exists
       if (event.publicRegistrationToken) {

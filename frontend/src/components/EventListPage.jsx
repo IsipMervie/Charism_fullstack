@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
-import { safeFilter, safeMap, safeSet, safeSpread } from '../utils/arrayUtils';
+import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../utils/arrayUtils';
 import './EventListPage.css';
 
 function EventListPage() {
@@ -85,13 +85,13 @@ function EventListPage() {
         
         if (userId) {
           const joined = safeMap(
-            safeFilter(eventsData, event => 
-              event.attendance && 
-              event.attendance.some(a => {
+            safeFilter(eventsData, event => {
+              const attendance = safeGetAttendance(event);
+              return attendance.some(a => {
                 const attUserId = a.userId?._id || a.userId;
                 return attUserId === userId;
-              })
-            ),
+              });
+            }),
             event => event._id
           );
         }
@@ -263,9 +263,15 @@ function EventListPage() {
       }
     }, 30000);
     
-    // Add focus event listener to refresh data when user returns to the page
+    // Add focus event listener to refresh data when user returns to the page (with debouncing)
     const handleFocus = () => {
-      refreshEvents();
+      // Only refresh if it's been more than 30 seconds since last refresh
+      const lastRefresh = localStorage.getItem('lastEventsRefresh');
+      const now = Date.now();
+      if (!lastRefresh || (now - parseInt(lastRefresh)) > 30000) {
+        localStorage.setItem('lastEventsRefresh', now.toString());
+        refreshEvents();
+      }
     };
     
     window.addEventListener('focus', handleFocus);
@@ -1137,23 +1143,22 @@ function EventListPage() {
                   userId = localStorage.getItem('userId');
                 }
                 
-                const att = event.attendance?.find(a => {
+                const attendance = safeGetAttendance(event);
+                const att = attendance.find(a => {
                   const attUserId = a.userId?._id || a.userId;
                   return attUserId === userId;
                 });
                 
                 console.log(`🔍 Event ${event.title}: User ID ${userId}, Found attendance:`, att);
-                const isJoined = // setJoinedEvents(joined); // Removed as per edit hint
-                  event.attendance && 
-                  event.attendance.some(a => {
-                    const attUserId = a.userId?._id || a.userId;
-                    return attUserId === userId;
-                  });
+                const isJoined = attendance.some(a => {
+                  const attUserId = a.userId?._id || a.userId;
+                  return attUserId === userId;
+                });
 
                 // Calculate available slots and status - only count approved registrations
                 const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
-                const approvedAttendanceCount = safeFilter(event.attendance, a => a.registrationApproved === true).length;
-                const pendingRegistrationsCount = safeFilter(event.attendance, a => a.registrationApproved === false && a.status === 'Pending').length;
+                const approvedAttendanceCount = safeFilter(attendance, a => a.registrationApproved === true).length;
+                const pendingRegistrationsCount = safeFilter(attendance, a => a.registrationApproved === false && a.status === 'Pending').length;
                 const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';
                 
                 // Check if event is available for registration (not completed, has slots, time hasn't passed, and event has started)
