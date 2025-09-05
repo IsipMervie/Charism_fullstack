@@ -1,7 +1,7 @@
 // Fresh Modern My Participation Page Design
 
 import React, { useEffect, useState } from 'react';
-import { getEvents } from '../api/api';
+import { getEvents, generateCertificate } from '../api/api';
 import { 
   FaCalendarAlt, FaClock, FaTrophy, FaSpinner, 
   FaCheckCircle, FaTimes, FaUserGraduate,
@@ -68,22 +68,7 @@ function MyParticipationPage() {
   // Certificate Download Handler
   const handleDownloadCertificate = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/certificates/generate/${user._id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      if (!response.ok) throw new Error('Failed to generate certificate');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `certificate-${user._id}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      await generateCertificate(user._id);
       
       // Show success message
       alert('Certificate downloaded successfully!');

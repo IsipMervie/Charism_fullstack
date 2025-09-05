@@ -155,8 +155,19 @@ const StudentDocumentationPage = () => {
 
   const handleDownload = async (eventId, filename, originalName) => {
     try {
+      // Check if filename is valid
+      if (!filename) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Download Failed',
+          text: 'File information is missing. Cannot download this file.'
+        });
+        return;
+      }
+      
       await downloadDocumentationFile(eventId, filename, originalName);
     } catch (err) {
+      console.error('Download error:', err);
       Swal.fire({
         icon: 'error',
         title: 'Download Failed',
@@ -166,9 +177,19 @@ const StudentDocumentationPage = () => {
   };
 
   const handleDelete = async (eventId, filename, originalName) => {
+    // Check if filename is valid
+    if (!filename) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Delete Failed',
+        text: 'File information is missing. Cannot delete this file.'
+      });
+      return;
+    }
+
     const result = await Swal.fire({
       title: 'Delete File?',
-      text: `Are you sure you want to delete "${originalName}"? This action cannot be undone.`,
+      text: `Are you sure you want to delete "${originalName || 'this file'}"? This action cannot be undone.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -182,6 +203,7 @@ const StudentDocumentationPage = () => {
         Swal.fire('Deleted!', 'File has been deleted.', 'success');
         await fetchData();
       } catch (err) {
+        console.error('Delete error:', err);
         Swal.fire('Error!', 'Failed to delete file.', 'error');
       }
     }
@@ -419,7 +441,8 @@ const StudentDocumentationPage = () => {
                               variant="outline-primary"
                               size="sm"
                               onClick={() => handleDownload(doc.eventId, file.filename, file.originalName)}
-                              title="Download file"
+                              disabled={!file.filename}
+                              title={file.filename ? "Download file" : "File information missing"}
                             >
                               <FaDownload />
                             </Button>
@@ -427,7 +450,8 @@ const StudentDocumentationPage = () => {
                               variant="outline-danger"
                               size="sm"
                               onClick={() => handleDelete(doc.eventId, file.filename, file.originalName)}
-                              title="Delete file"
+                              disabled={!file.filename}
+                              title={file.filename ? "Delete file" : "File information missing"}
                             >
                               <FaTrash />
                             </Button>
