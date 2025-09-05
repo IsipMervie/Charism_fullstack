@@ -882,6 +882,23 @@ export const approveAttendance = async (eventId, userId) => {
     return response.data;
   } catch (error) {
     console.error('Error approving attendance:', error);
+    
+    // Handle specific error messages from backend
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    
+    // Handle different error types
+    if (error.response?.status === 403) {
+      throw new Error('You do not have permission to approve attendance.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Event or attendance record not found.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Invalid approval request.');
+    } else if (error.response?.status === 401) {
+      throw new Error('Please log in to approve attendance.');
+    }
+    
     throw new Error('Failed to approve attendance. Please try again.');
   }
 };
@@ -894,6 +911,23 @@ export const disapproveAttendance = async (eventId, userId, reason) => {
     return response.data;
   } catch (error) {
     console.error('Error disapproving attendance:', error);
+    
+    // Handle specific error messages from backend
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    
+    // Handle different error types
+    if (error.response?.status === 403) {
+      throw new Error('You do not have permission to disapprove attendance.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Event or attendance record not found.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Invalid disapproval request.');
+    } else if (error.response?.status === 401) {
+      throw new Error('Please log in to disapprove attendance.');
+    }
+    
     throw new Error('Failed to disapprove attendance. Please try again.');
   }
 };

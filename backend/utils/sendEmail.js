@@ -55,7 +55,7 @@ const sendEmail = async (to, subject, text, html, isNoReply = true) => {
   const transporter = createTransporter();
   
   const mailOptions = {
-    from: isNoReply ? `"CHARISM Community Link" <${NO_REPLY_EMAIL}>` : `"CHARISM Community Link" <${EMAIL_USER}>`,
+    from: isNoReply ? `"CHARISM" <${NO_REPLY_EMAIL}>` : `"CHARISM" <${EMAIL_USER}>`,
     to,
     subject,
     text: text || undefined,

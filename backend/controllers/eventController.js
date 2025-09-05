@@ -907,7 +907,9 @@ exports.approveAttendance = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    const attendance = event.attendance.find(a => a.userId.toString() === userId);
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
+    );
 
     if (!attendance) {
       return res.status(404).json({ message: 'Attendance record not found.' });
@@ -969,8 +971,8 @@ exports.disapproveAttendance = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    const attendance = event.attendance.find(
-      a => a.userId.toString() === userId
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
     );
 
     if (!attendance) {
