@@ -25,6 +25,7 @@ router.get('/students-40-hours', adminController.getStudents40Hours);
 
 // Event management
 router.get('/events', adminController.getAllEvents);
+router.get('/events-with-user-data', adminController.getEventsWithUserData);
 router.delete('/events/:id', adminController.deleteEvent);
 
 // Message management (contact-us)

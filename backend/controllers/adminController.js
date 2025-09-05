@@ -249,6 +249,34 @@ exports.deleteMessage = async (req, res) => {
   }
 };
 
+// Get events with populated user data for admin documentation
+exports.getEventsWithUserData = async (req, res) => {
+  try {
+    console.log('🔍 Admin getEventsWithUserData requested');
+    
+    // Check database connection first
+    const { mongoose } = require('../config/db');
+    if (mongoose.connection.readyState !== 1) {
+      console.log('⚠️ Database not ready, attempting to connect...');
+      await mongoose.connection.asPromise();
+    }
+    
+    // Get events with populated user data in attendance
+    const events = await Event.find({})
+      .populate('attendance.userId', 'name email firstName lastName department year section')
+      .select('title description date startTime endTime time location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt attendance')
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    console.log(`✅ Found ${events.length} events with populated user data`);
+    
+    res.json(events);
+  } catch (err) {
+    console.error('❌ Error in getEventsWithUserData:', err);
+    res.status(500).json({ message: 'Error fetching events with user data', error: err.message });
+  }
+};
+
 // Get all events (with optional search/filter)
 exports.getAllEvents = async (req, res) => {
   try {

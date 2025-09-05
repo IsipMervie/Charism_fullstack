@@ -431,6 +431,40 @@ export const getEvents = async () => {
   }
 };
 
+// Get events with populated user data for admin documentation
+export const getEventsWithUserData = async () => {
+  try {
+    console.log('🔄 Fetching events with user data from API...');
+    const response = await axiosInstance.get('/admin/events-with-user-data');
+    console.log('✅ Events with user data API response received');
+    
+    // Ensure we always return an array
+    const data = response.data;
+    if (Array.isArray(data)) {
+      return data;
+    } else {
+      console.warn('⚠️ getEventsWithUserData: Unexpected response format, returning empty array:', data);
+      return [];
+    }
+  } catch (error) {
+    console.error('❌ Error fetching events with user data:', error);
+    
+    // Handle specific error types
+    if (error.code === 'ECONNABORTED') {
+      console.warn('⚠️ Events with user data API timeout - server may be slow or overloaded');
+    } else if (error.response?.status === 503) {
+      console.error('🚨 Events with user data API 503 - Backend server is DOWN or unavailable');
+    } else if (error.response?.status === 500) {
+      console.warn('⚠️ Events with user data API server error - backend issue');
+    } else if (error.response?.status === 404) {
+      console.warn('⚠️ Events with user data API endpoint not found - routing issue');
+    }
+    
+    // Return empty array instead of throwing error to prevent crashes
+    return [];
+  }
+};
+
 // Public event details (no authentication required)
 export const getPublicEventDetails = async (eventId) => {
   try {

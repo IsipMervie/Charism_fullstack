@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge, Modal, Table, Button } from 'react-bootstrap';
 import { FaFile, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaSpinner, FaList, FaBuilding, FaDownload } from 'react-icons/fa';
-import { getEvents, downloadDocumentationFile } from '../api/api';
+import { getEvents, getEventsWithUserData, downloadDocumentationFile } from '../api/api';
 import Swal from 'sweetalert2';
 import './AdminViewStudentDocumentation.css';
 
@@ -46,9 +46,9 @@ const AdminViewStudentDocumentation = () => {
         console.log('❌ User does not have Admin/Staff role:', currentUser.role);
       }
       
-      // Fetch all events
-      const eventsData = await getEvents();
-      console.log('📅 Events fetched:', eventsData.length);
+      // Fetch all events with populated user data
+      const eventsData = await getEventsWithUserData();
+      console.log('📅 Events with user data fetched:', eventsData.length);
       setEvents(eventsData);
 
              // Fetch documentation for all events
@@ -68,26 +68,28 @@ const AdminViewStudentDocumentation = () => {
                 if (att.registrationApproved && att.documentation && att.documentation.files && att.documentation.files.length > 0) {
                   console.log(`🔍 Direct extraction: Found ${att.documentation.files.length} files for user ${att.userId?.name || att.userId}`);
                   
-                  // Extract user information with better fallbacks
+                  // Extract user information from populated user data
                   let userName = 'Unknown Student';
                   let userEmail = 'No email available';
                   
-                  if (att.userId) {
-                    // Try different possible name fields
+                  if (att.userId && typeof att.userId === 'object') {
+                    // User data is now populated, so we can access the fields directly
                     userName = att.userId.name || 
-                              att.userId.fullName ||
                               (att.userId.firstName && att.userId.lastName ? `${att.userId.firstName} ${att.userId.lastName}` : null) ||
                               att.userId.firstName ||
                               att.userId.lastName ||
                               'Unknown Student';
                     
-                    // Try different possible email fields
-                    userEmail = att.userId.email || 
-                               att.userId.emailAddress ||
-                               'No email available';
+                    userEmail = att.userId.email || 'No email available';
+                  } else if (att.userId && typeof att.userId === 'string') {
+                    // If userId is still just a string ID, we need to fetch user data separately
+                    console.log('⚠️ User data not populated, userId is string:', att.userId);
+                    userName = 'Unknown Student';
+                    userEmail = 'No email available';
                   }
                   
                   console.log(`👤 Extracted user info: name="${userName}", email="${userEmail}"`);
+                  console.log(`👤 User data type:`, typeof att.userId, att.userId);
                   
                   documentationData.push({
                     userId: att.userId,
