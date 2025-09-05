@@ -201,14 +201,28 @@ const EventAttendancePage = memo(() => {
 
     const eventDate = new Date(event.date);
     const eventDateTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
-
-    // Check if event has started
+    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     const now = new Date();
-    if (eventDateTime > now) {
+
+    // Check if event has started (allow 1 hour before)
+    const earliestTimeIn = new Date(eventDateTime.getTime() - 60 * 60 * 1000);
+    if (now < earliestTimeIn) {
       Swal.fire({
         icon: 'warning',
-        title: 'Event Not Started',
-        text: 'This event has not started yet. Please wait until the event begins before timing in.',
+        title: 'Too Early to Time In',
+        text: `This event hasn't started yet. You can time in starting from ${earliestTimeIn.toLocaleString()}.`,
+        confirmButtonColor: '#ffc107'
+      });
+      return;
+    }
+
+    // Check if event has ended (allow 1 hour after)
+    const latestTimeIn = new Date(eventEndTime.getTime() + 60 * 60 * 1000);
+    if (now > latestTimeIn) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Too Late to Time In',
+        text: 'The time in window for this event has closed.',
         confirmButtonColor: '#ffc107'
       });
       return;
@@ -260,8 +274,36 @@ const EventAttendancePage = memo(() => {
     if (!att || !att.timeIn) {
       Swal.fire({
         icon: 'warning',
-        title: 'Time In First',
+        title: 'Time In Required',
         text: 'You must time in before you can time out.',
+        confirmButtonColor: '#ffc107'
+      });
+      return;
+    }
+
+    // Check if user has already timed out
+    if (att.timeOut) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Already Timed Out',
+        text: 'You have already timed out for this event.',
+        confirmButtonColor: '#6c757d'
+      });
+      return;
+    }
+
+    // Check if enough time has passed since time in (at least 5 minutes)
+    const timeInDate = new Date(att.timeIn);
+    const now = new Date();
+    const timeDiff = now.getTime() - timeInDate.getTime();
+    const minDuration = 5 * 60 * 1000; // 5 minutes
+
+    if (timeDiff < minDuration) {
+      const remainingTime = Math.ceil((minDuration - timeDiff) / (60 * 1000));
+      Swal.fire({
+        icon: 'warning',
+        title: 'Too Soon to Time Out',
+        text: `You must wait at least 5 minutes after time in. Please wait ${remainingTime} more minute(s).`,
         confirmButtonColor: '#ffc107'
       });
       return;

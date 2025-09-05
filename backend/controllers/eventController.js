@@ -742,8 +742,11 @@ exports.timeIn = async (req, res) => {
   try {
     const { eventId, userId } = req.params;
     
+    // Get user ID from request (handle different formats)
+    const requestUserId = req.user.userId || req.user.id || req.user._id;
+    
     // Verify user is trying to time in for themselves
-    if (req.user.userId !== userId) {
+    if (requestUserId !== userId) {
       return res.status(403).json({ message: 'Can only time in for yourself.' });
     }
 
@@ -754,7 +757,7 @@ exports.timeIn = async (req, res) => {
     }
 
     const attendance = event.attendance.find(
-      a => a.userId.toString() === userId
+      a => a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
     );
 
     if (!attendance) {
@@ -772,7 +775,29 @@ exports.timeIn = async (req, res) => {
       return res.status(400).json({ message: 'Already timed in.' });
     }
 
-    attendance.timeIn = new Date();
+    // Add validation for reasonable time in (not too early or too late)
+    const now = new Date();
+    const eventDate = new Date(event.date);
+    const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
+    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    
+    // Allow time in up to 1 hour before event starts and up to 1 hour after event ends
+    const earliestTimeIn = new Date(eventStartTime.getTime() - 60 * 60 * 1000); // 1 hour before
+    const latestTimeIn = new Date(eventEndTime.getTime() + 60 * 60 * 1000); // 1 hour after
+    
+    if (now < earliestTimeIn) {
+      return res.status(400).json({ 
+        message: `Too early to time in. You can time in starting from ${earliestTimeIn.toLocaleString()}.` 
+      });
+    }
+    
+    if (now > latestTimeIn) {
+      return res.status(400).json({ 
+        message: `Too late to time in. The time in window has closed.` 
+      });
+    }
+
+    attendance.timeIn = now;
     await event.save();
 
     res.json({ message: 'Time in recorded successfully.' });
@@ -787,8 +812,11 @@ exports.timeOut = async (req, res) => {
   try {
     const { eventId, userId } = req.params;
     
+    // Get user ID from request (handle different formats)
+    const requestUserId = req.user.userId || req.user.id || req.user._id;
+    
     // Verify user is trying to time out for themselves
-    if (req.user.userId !== userId) {
+    if (requestUserId !== userId) {
       return res.status(403).json({ message: 'Can only time out for yourself.' });
     }
 
@@ -799,7 +827,7 @@ exports.timeOut = async (req, res) => {
     }
 
     const attendance = event.attendance.find(
-      a => a.userId.toString() === userId
+      a => a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
     );
 
     if (!attendance) {
@@ -821,7 +849,27 @@ exports.timeOut = async (req, res) => {
       return res.status(400).json({ message: 'Already timed out.' });
     }
 
-    attendance.timeOut = new Date();
+    // Add validation for reasonable time out (must be after time in)
+    const now = new Date();
+    const timeInDate = new Date(attendance.timeIn);
+    
+    // Check if time out is at least 5 minutes after time in
+    const minDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+    if (now.getTime() - timeInDate.getTime() < minDuration) {
+      return res.status(400).json({ 
+        message: 'Time out must be at least 5 minutes after time in.' 
+      });
+    }
+    
+    // Check if time out is not too far in the future (within 24 hours of time in)
+    const maxDuration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    if (now.getTime() - timeInDate.getTime() > maxDuration) {
+      return res.status(400).json({ 
+        message: 'Time out cannot be more than 24 hours after time in.' 
+      });
+    }
+
+    attendance.timeOut = now;
     await event.save();
 
     res.json({ message: 'Time out recorded successfully.' });

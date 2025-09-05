@@ -469,6 +469,23 @@ export const timeIn = async (eventId) => {
     return response.data;
   } catch (error) {
     console.error('Error timing in:', error);
+    
+    // Handle specific error messages from backend
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    
+    // Handle different error types
+    if (error.response?.status === 403) {
+      throw new Error('You can only time in for yourself.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Event not found or you are not registered for this event.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Invalid time in request.');
+    } else if (error.response?.status === 401) {
+      throw new Error('Please log in to time in.');
+    }
+    
     throw new Error('Failed to time in. Please try again.');
   }
 };
@@ -480,6 +497,23 @@ export const timeOut = async (eventId) => {
     return response.data;
   } catch (error) {
     console.error('Error timing out:', error);
+    
+    // Handle specific error messages from backend
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    
+    // Handle different error types
+    if (error.response?.status === 403) {
+      throw new Error('You can only time out for yourself.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Event not found or you are not registered for this event.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Invalid time out request.');
+    } else if (error.response?.status === 401) {
+      throw new Error('Please log in to time out.');
+    }
+    
     throw new Error('Failed to time out. Please try again.');
   }
 };
