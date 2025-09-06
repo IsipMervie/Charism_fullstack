@@ -20,6 +20,19 @@ require('./models/Feedback');
 
 const app = express();
 
+// Set server timeout for long-running requests (like analytics)
+app.use((req, res, next) => {
+  // Set timeout to 90 seconds for analytics endpoints
+  if (req.path === '/analytics' || req.path.startsWith('/analytics/')) {
+    req.setTimeout(90000); // 90 seconds
+    res.setTimeout(90000);
+  } else {
+    req.setTimeout(30000); // 30 seconds for other endpoints
+    res.setTimeout(30000);
+  }
+  next();
+});
+
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {

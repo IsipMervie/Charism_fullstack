@@ -49,11 +49,24 @@ function AnalyticsPage() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
+        console.log('🔄 Fetching analytics data...');
         const analytics = await getAnalytics();
+        console.log('✅ Analytics data received:', analytics);
         setData(analytics || {});
         setError('');
       } catch (err) {
         console.error('Failed to fetch analytics:', err);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Database connection issue - showing default values';
+        if (err.message.includes('timeout')) {
+          errorMessage = 'Request timed out - server may be slow. Please try again.';
+        } else if (err.message.includes('network')) {
+          errorMessage = 'Network error - please check your connection.';
+        } else if (err.message.includes('multiple attempts')) {
+          errorMessage = 'Server is temporarily unavailable. Please try again later.';
+        }
+        
         // Set default data with error message
         setData({
           totalUsers: 0,
@@ -69,7 +82,7 @@ function AnalyticsPage() {
           totalHours: 0,
           message: 'Database temporarily unavailable'
         });
-        setError('Database connection issue - showing default values');
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

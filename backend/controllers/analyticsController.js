@@ -4,6 +4,9 @@ const Message = require('../models/Message');
 
 exports.getAnalytics = async (req, res) => {
   try {
+    console.log('📊 Starting analytics calculation...');
+    const startTime = Date.now();
+    
     // Check database connection first
     const { getLazyConnection } = require('../config/db');
     let isConnected = false;
@@ -186,24 +189,31 @@ exports.getAnalytics = async (req, res) => {
       dailyUsers = [5, 3, 7, 2, 4, 6, 3];
     }
 
-    // Get department-wise statistics
+    // Get department-wise statistics (optimized)
     let departmentStats = [];
     try {
+      console.log('📊 Calculating department statistics...');
       const departments = await User.distinct('department');
+      
+      // Get all students grouped by department in one query
+      const studentsByDept = await User.aggregate([
+        { $match: { role: 'Student', department: { $exists: true, $ne: null } } },
+        { $group: { _id: '$department', count: { $sum: 1 } } }
+      ]);
+      
+      // Get department stats in parallel
       departmentStats = await Promise.all(
         departments.map(async (dept) => {
-          const deptStudents = await User.countDocuments({ 
-            role: 'Student', 
-            department: dept 
-          });
+          const deptStudents = studentsByDept.find(s => s._id === dept)?.count || 0;
           
+          // Simplified event count - just count events that have attendance from this department
           const deptEvents = await Event.countDocuments({
             'attendance.userId': {
-              $in: (await User.find({ role: 'Student', department: dept })).map(u => u._id)
+              $in: (await User.find({ role: 'Student', department: dept }, '_id')).map(u => u._id)
             },
             'isVisibleToStudents': true,
             'status': { $ne: 'Disabled' }
-          });
+          }).catch(() => 0);
           
           return {
             department: dept,
@@ -216,22 +226,29 @@ exports.getAnalytics = async (req, res) => {
       console.log('Error calculating department statistics:', deptError);
     }
 
-    // Get academic year statistics
+    // Get academic year statistics (optimized)
     let yearStats = [];
     try {
+      console.log('📊 Calculating year statistics...');
       const academicYears = await User.distinct('academicYear');
+      
+      // Get all students grouped by academic year in one query
+      const studentsByYear = await User.aggregate([
+        { $match: { role: 'Student', academicYear: { $exists: true, $ne: null } } },
+        { $group: { _id: '$academicYear', count: { $sum: 1 } } }
+      ]);
+      
+      // Get year stats in parallel
       yearStats = await Promise.all(
         academicYears.map(async (year) => {
-          const yearStudents = await User.countDocuments({ 
-            role: 'Student', 
-            academicYear: year 
-          });
+          const yearStudents = studentsByYear.find(s => s._id === year)?.count || 0;
           
+          // Simplified event count
           const yearEvents = await Event.countDocuments({
             'attendance.userId': {
-              $in: (await User.find({ role: 'Student', academicYear: year })).map(u => u._id)
+              $in: (await User.find({ role: 'Student', academicYear: year }, '_id')).map(u => u._id)
             }
-          });
+          }).catch(() => 0);
           
           return {
             academicYear: year,
@@ -243,6 +260,10 @@ exports.getAnalytics = async (req, res) => {
     } catch (yearError) {
       console.log('Error calculating year statistics:', yearError);
     }
+
+    const endTime = Date.now();
+    const processingTime = endTime - startTime;
+    console.log(`✅ Analytics calculation completed in ${processingTime}ms`);
 
     res.json({
       // Basic counts
@@ -280,7 +301,8 @@ exports.getAnalytics = async (req, res) => {
       
       // Success flag
       success: true,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      processingTime: `${processingTime}ms`
     });
 
   } catch (err) {

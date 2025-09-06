@@ -770,23 +770,53 @@ export const toggleEventAvailability = async (eventId) => {
 
 // Analytics
 export const getAnalytics = async () => {
-  try {
-    const response = await axiosInstance.get('/analytics');
-    return response.data;
-  } catch (error) {
-    // Fallback to legacy endpoint if the new one is not available
-    if (error?.response?.status === 404) {
-      try {
-        const legacy = await axiosInstance.get('/events/analytics');
-        return legacy.data;
-      } catch (legacyErr) {
-        console.error('Error fetching analytics (legacy):', legacyErr);
-        throw new Error('Failed to fetch analytics. Please try again.');
+  const maxRetries = 3;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Fetching analytics attempt ${attempt}/${maxRetries}`);
+      
+      // Use longer timeout for analytics (60 seconds)
+      const response = await axiosInstance.get('/analytics', {
+        timeout: 60000
+      });
+      
+      console.log(`✅ Analytics fetched successfully on attempt ${attempt}`);
+      return response.data;
+    } catch (error) {
+      console.error(`❌ Error fetching analytics (attempt ${attempt}/${maxRetries}):`, error);
+      lastError = error;
+      
+      // If it's a timeout error, wait before retrying
+      if (error.code === 'ECONNABORTED' && attempt < maxRetries) {
+        const waitTime = attempt * 3000; // 3s, 6s, 9s
+        console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      
+      // For other errors or last attempt, try fallback
+      if (attempt === maxRetries) {
+        // Fallback to legacy endpoint if the new one is not available
+        if (error?.response?.status === 404) {
+          try {
+            console.log('🔄 Trying legacy analytics endpoint...');
+            const legacy = await axiosInstance.get('/events/analytics', {
+              timeout: 60000
+            });
+            return legacy.data;
+          } catch (legacyErr) {
+            console.error('Error fetching analytics (legacy):', legacyErr);
+            throw new Error('Failed to fetch analytics. Please try again.');
+          }
+        }
+        throw new Error('Failed to fetch analytics after multiple attempts. Please try again.');
       }
     }
-    console.error('Error fetching analytics:', error);
-    throw new Error('Failed to fetch analytics. Please try again.');
   }
+  
+  throw lastError;
 };
 
 // Change Password

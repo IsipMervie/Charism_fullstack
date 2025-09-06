@@ -31,10 +31,23 @@ function AdminDashboard() {
     const fetchAnalytics = async () => {
       setLoading(true);
       try {
+        console.log('🔄 AdminDashboard: Fetching analytics data...');
         const data = await getAnalytics();
+        console.log('✅ AdminDashboard: Analytics data received:', data);
         setAnalytics(data);
       } catch (err) {
-        console.error('Failed to fetch analytics:', err);
+        console.error('AdminDashboard: Failed to fetch analytics:', err);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Database temporarily unavailable';
+        if (err.message.includes('timeout')) {
+          errorMessage = 'Request timed out - server may be slow';
+        } else if (err.message.includes('network')) {
+          errorMessage = 'Network error - check connection';
+        } else if (err.message.includes('multiple attempts')) {
+          errorMessage = 'Server temporarily unavailable';
+        }
+        
         // Set default analytics with error message
         setAnalytics({
           totalUsers: 0,
@@ -48,7 +61,7 @@ function AdminDashboard() {
           completedEvents: 0,
           approvedAttendance: 0,
           totalHours: 0,
-          message: 'Database temporarily unavailable'
+          message: errorMessage
         });
       }
       setLoading(false);

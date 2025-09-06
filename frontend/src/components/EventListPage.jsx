@@ -73,8 +73,29 @@ function EventListPage() {
           eventId: eventsWithImages[0]._id,
           title: eventsWithImages[0].title,
           imageData: eventsWithImages[0].image,
-          imageUrl: getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id)
+          imageUrl: getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id),
+          backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
         });
+        
+        // Test image URL accessibility
+        const testImageUrl = getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id);
+        if (testImageUrl) {
+          fetch(testImageUrl, { method: 'HEAD' })
+            .then(response => {
+              console.log('🖼️ Image URL test result:', {
+                url: testImageUrl,
+                status: response.status,
+                ok: response.ok,
+                contentType: response.headers.get('content-type')
+              });
+            })
+            .catch(error => {
+              console.error('❌ Image URL test failed:', {
+                url: testImageUrl,
+                error: error.message
+              });
+            });
+        }
       }
       
       setEvents(eventsData);
@@ -1274,7 +1295,8 @@ function EventListPage() {
                               eventId: event._id,
                               eventTitle: event.title,
                               imageData: event.image,
-                              imageUrl: getEventImageUrl(event.image, event._id)
+                              imageUrl: getEventImageUrl(event.image, event._id),
+                              backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
                             });
                             e.target.style.display = 'none';
                             // Show fallback
