@@ -34,11 +34,28 @@ function NavigationBar() {
       setUser(parsedUser);
       setRole(parsedUser?.role || localStorage.getItem('role'));
     };
+    
+    const refreshSchoolSettings = () => {
+      // Refresh school settings when they might have changed
+      const fetchSchoolSettings = async () => {
+        try {
+          const settings = await getPublicSchoolSettings();
+          setSchoolSettings(settings);
+        } catch (error) {
+          console.error('Failed to refresh school settings:', error);
+        }
+      };
+      fetchSchoolSettings();
+    };
+    
     window.addEventListener('storage', syncUser);
     window.addEventListener('userChanged', syncUser);
+    window.addEventListener('schoolSettingsChanged', refreshSchoolSettings);
+    
     return () => {
       window.removeEventListener('storage', syncUser);
       window.removeEventListener('userChanged', syncUser);
+      window.removeEventListener('schoolSettingsChanged', refreshSchoolSettings);
     };
   }, []);
 
@@ -50,8 +67,6 @@ function NavigationBar() {
   // Fetch school settings for navbar with error handling
   useEffect(() => {
     const fetchSchoolSettings = async () => {
-      if (isLoading) return; // Prevent multiple simultaneous requests
-      
       setIsLoading(true);
       try {
         const settings = await getPublicSchoolSettings();
@@ -66,7 +81,7 @@ function NavigationBar() {
     };
     
     fetchSchoolSettings();
-  }, [isLoading]);
+  }, []); // Remove isLoading dependency to prevent infinite loop
 
   const handleLogout = () => {
     localStorage.clear();

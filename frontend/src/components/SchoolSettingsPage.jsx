@@ -53,7 +53,7 @@ function SchoolSettingsPage() {
         setError('Loading timeout. Please refresh the page.');
         setLoading(false);
       }
-    }, 30000); // 30 seconds timeout
+    }, 60000); // 60 seconds timeout to match API timeout
     
     return () => clearTimeout(timeoutId);
   }, []); // Remove dependencies to prevent infinite loops
@@ -93,6 +93,9 @@ function SchoolSettingsPage() {
       // Refresh the settings to show updated values in Current School Information
       setLoading(true);
       await fetchSettings();
+      
+      // Notify other components that school settings have changed
+      window.dispatchEvent(new Event('schoolSettingsChanged'));
       
       // Clear any temporary logo preview if a new logo was uploaded
       if (settings.logo) {

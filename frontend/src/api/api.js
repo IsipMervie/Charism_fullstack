@@ -8,13 +8,13 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Simple axios instance with longer timeout
+// Simple axios instance with longer timeout and retry logic
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Increased to 30 seconds for better performance
+  timeout: 60000, // Increased to 60 seconds for slow server
 });
 
 // Simple request interceptor to add token
@@ -38,21 +38,26 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Simple response interceptor for error handling
+// Enhanced response interceptor for error handling
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    // Better error logging
+    // Better error logging with more details
     if (error.code === 'ECONNABORTED') {
-      console.error('Request timeout - server may be slow');
+      console.error('Request timeout - server may be slow or overloaded');
     } else if (error.code === 'ERR_NETWORK') {
-      console.error('Network error - check connection');
+      console.error('Network error - check connection or server may be down');
     } else if (error.code === 'ERR_CANCELED') {
       console.error('Request was canceled/aborted');
     } else if (error.response) {
-      console.error('Server error:', error.response.status);
+      console.error('Server error:', error.response.status, error.response.statusText);
+      if (error.response.status === 0) {
+        console.error('CORS or network issue - server may be unreachable');
+      }
+    } else {
+      console.error('Unknown error:', error.message);
     }
     
     return Promise.reject(error);
