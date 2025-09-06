@@ -75,6 +75,7 @@ const AdminViewStudentDocumentation = () => {
                   // Extract user information from populated user data
                   let userName = 'Unknown Student';
                   let userEmail = 'No email available';
+                  let userId = att.userId;
                   
                   if (att.userId && typeof att.userId === 'object') {
                     // User data is now populated, so we can access the fields directly
@@ -86,23 +87,30 @@ const AdminViewStudentDocumentation = () => {
                               'Unknown Student';
                     
                     userEmail = att.userId.email || 'No email available';
-                    console.log('✅ Extracted from populated data - Name:', userName, 'Email:', userEmail);
+                    userId = att.userId._id || att.userId;
+                    console.log('✅ Extracted from populated data - Name:', userName, 'Email:', userEmail, 'ID:', userId);
                   } else if (att.userId && typeof att.userId === 'string') {
                     // If userId is still just a string ID, we need to fetch user data separately
                     console.log('⚠️ User data not populated, userId is string:', att.userId);
                     userName = 'Unknown Student';
                     userEmail = 'No email available';
+                    userId = att.userId;
                   } else {
                     console.log('❌ No userId found in attendance:', att);
                     userName = 'Unknown Student';
                     userEmail = 'No email available';
+                    userId = null;
                   }
                   
                   console.log(`👤 Extracted user info: name="${userName}", email="${userEmail}"`);
                   console.log(`👤 User data type:`, typeof att.userId, att.userId);
                   
                   documentationData.push({
-                    userId: att.userId,
+                    userId: {
+                      _id: userId,
+                      name: userName,
+                      email: userEmail
+                    },
                     files: att.documentation.files,
                     lastUpdated: att.documentation.lastUpdated,
                     eventId: event._id,
@@ -128,6 +136,7 @@ const AdminViewStudentDocumentation = () => {
        }
       
       console.log(`📊 Total documentation entries collected:`, documentationData.length);
+      console.log(`📊 Documentation data sample:`, documentationData[0]);
       setAllDocumentation(documentationData);
     } catch (err) {
       setError('Failed to fetch data. Please try again.');
@@ -166,38 +175,34 @@ const AdminViewStudentDocumentation = () => {
      // Filter documentation based on search and filters
    const filteredDocumentation = allDocumentation.filter(doc => {
      const matchesSearch = !searchTerm || 
-       doc.userId.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       doc.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       doc.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
        doc.eventTitle?.toLowerCase().includes(searchTerm.toLowerCase());
      
      const matchesEvent = !filterEvent || doc.eventTitle === filterEvent;
-     const matchesStudent = !filterStudent || doc.userId.name === filterStudent;
+     const matchesStudent = !filterStudent || doc.userName === filterStudent;
      
-     // Additional check: ensure student has actually joined the event
-     const studentHasJoinedEvent = events.some(event => 
-       event._id === doc.eventId && 
-       event.attendance?.some(att => 
-         (att.userId._id === doc.userId._id || att.userId === doc.userId._id) && 
-         att.registrationApproved
-       )
-     );
-     
-           return matchesSearch && matchesEvent && matchesStudent && studentHasJoinedEvent;
+     // Show all documentation regardless of registration approval status
+     // The important thing is that the student uploaded files
+     return matchesSearch && matchesEvent && matchesStudent;
     });
 
     // Get unique events for filter dropdown
     const uniqueEvents = [...new Set(events.map(event => event.title))];
     
-         // Get unique students for filter dropdown (only those who have joined the selected event)
+         // Get unique students for filter dropdown (all students who have uploaded documentation)
      const uniqueStudents = filterEvent 
        ? [...new Set(
-           events
-             .find(event => event.title === filterEvent)
-             ?.attendance
-               ?.filter(att => att.registrationApproved) // Only approved registrations
-               ?.map(att => att.userId?.name)
-               ?.filter(Boolean) || []
+           allDocumentation
+             .filter(doc => doc.eventTitle === filterEvent)
+             .map(doc => doc.userName)
+             .filter(Boolean)
          )]
-       : [];
+       : [...new Set(
+           allDocumentation
+             .map(doc => doc.userName)
+             .filter(Boolean)
+         )];
 
     console.log(`🔍 Filtered documentation:`, filteredDocumentation);
     console.log(`📊 All documentation:`, allDocumentation);
@@ -366,20 +371,12 @@ const AdminViewStudentDocumentation = () => {
                    value={filterStudent}
                    onChange={(e) => setFilterStudent(e.target.value)}
                    className="filter-select"
-                   disabled={!filterEvent}
                  >
-                   <option value="">
-                     {filterEvent ? 'All Students in Event' : 'Select an event first'}
-                   </option>
-                   {filterEvent && uniqueStudents.map(student => (
+                   <option value="">All Students</option>
+                   {uniqueStudents.map(student => (
                      <option key={student} value={student}>{student}</option>
                    ))}
                  </select>
-                 {!filterEvent && (
-                   <small className="filter-hint">
-                     Please select an event first to see available students
-                   </small>
-                 )}
                </div>
 
               
