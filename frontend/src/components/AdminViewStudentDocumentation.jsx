@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge, Modal, Table, Button } from 'react-bootstrap';
 import { FaFile, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaList, FaBuilding, FaDownload } from 'react-icons/fa';
 import { getEvents, getEventsWithUserData, downloadDocumentationFile } from '../api/api';
+import { formatTimeRange12Hour, formatTime12Hour } from '../utils/timeUtils';
 import Swal from 'sweetalert2';
 import './AdminViewStudentDocumentation.css';
 
@@ -105,6 +106,59 @@ const AdminViewStudentDocumentation = () => {
                   console.log(`👤 Extracted user info: name="${userName}", email="${userEmail}"`);
                   console.log(`👤 User data type:`, typeof att.userId, att.userId);
                   
+                  // Format event time properly
+                  const formatEventTime = () => {
+                    // Debug logging
+                    console.log('Event time data for admin view:', {
+                      eventTitle: event.title,
+                      startTime: event.startTime,
+                      endTime: event.endTime,
+                      hasStartTime: !!event.startTime,
+                      hasEndTime: !!event.endTime,
+                      startTimeType: typeof event.startTime,
+                      endTimeType: typeof event.endTime
+                    });
+                    
+                    // If we have both start and end times, show the range
+                    if (event.startTime && event.endTime && 
+                        event.startTime.trim() !== '' && event.endTime.trim() !== '') {
+                      return formatTimeRange12Hour(event.startTime, event.endTime);
+                    }
+                    // If we only have start time, try to calculate end time from hours
+                    else if (event.startTime && event.startTime.trim() !== '') {
+                      if (event.hours) {
+                        try {
+                          // Calculate end time by adding hours to start time
+                          const [startHours, startMinutes] = event.startTime.split(':').map(Number);
+                          const startTimeInMinutes = startHours * 60 + startMinutes;
+                          const endTimeInMinutes = startTimeInMinutes + (event.hours * 60);
+                          
+                          const endHours = Math.floor(endTimeInMinutes / 60);
+                          const endMinutes = endTimeInMinutes % 60;
+                          
+                          // Handle day overflow (if event goes past midnight)
+                          const displayEndHours = endHours >= 24 ? endHours - 24 : endHours;
+                          const endTimeString = `${displayEndHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+                          
+                          return formatTimeRange12Hour(event.startTime, endTimeString);
+                        } catch (error) {
+                          console.error('Error calculating end time:', error);
+                          return `${formatTime12Hour(event.startTime)} (start time only)`;
+                        }
+                      } else {
+                        return `${formatTime12Hour(event.startTime)} (start time only)`;
+                      }
+                    }
+                    // If we only have end time, show it with a note
+                    else if (event.endTime && event.endTime.trim() !== '') {
+                      return `${formatTime12Hour(event.endTime)} (end time only)`;
+                    }
+                    // No time information available
+                    else {
+                      return 'Time not specified';
+                    }
+                  };
+
                   documentationData.push({
                     userId: {
                       _id: userId,
@@ -116,7 +170,7 @@ const AdminViewStudentDocumentation = () => {
                     eventId: event._id,
                     eventTitle: event.title,
                     eventDate: event.date,
-                    eventTime: event.time || event.startTime || event.endTime || 'Time not specified',
+                    eventTime: formatEventTime(),
                     eventLocation: event.location,
                     userName: userName,
                     userEmail: userEmail

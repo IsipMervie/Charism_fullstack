@@ -418,19 +418,45 @@ const StudentDocumentationPage = () => {
                             startTime: doc.eventStartTime,
                             endTime: doc.eventEndTime,
                             hasStartTime: !!doc.eventStartTime,
-                            hasEndTime: !!doc.eventEndTime
+                            hasEndTime: !!doc.eventEndTime,
+                            startTimeType: typeof doc.eventStartTime,
+                            endTimeType: typeof doc.eventEndTime
                           });
                           
                           // If we have both start and end times, show the range
-                          if (doc.eventStartTime && doc.eventEndTime) {
+                          if (doc.eventStartTime && doc.eventEndTime && 
+                              doc.eventStartTime.trim() !== '' && doc.eventEndTime.trim() !== '') {
                             return formatTimeRange12Hour(doc.eventStartTime, doc.eventEndTime);
                           }
-                          // If we only have start time, show it with a note
-                          else if (doc.eventStartTime) {
-                            return `${formatTime12Hour(doc.eventStartTime)} (start time only)`;
+                          // If we only have start time, try to calculate end time from hours
+                          else if (doc.eventStartTime && doc.eventStartTime.trim() !== '') {
+                            // Find the event hours from the events array
+                            const eventData = events.find(e => e._id === doc.eventId);
+                            if (eventData && eventData.hours) {
+                              try {
+                                // Calculate end time by adding hours to start time
+                                const [startHours, startMinutes] = doc.eventStartTime.split(':').map(Number);
+                                const startTimeInMinutes = startHours * 60 + startMinutes;
+                                const endTimeInMinutes = startTimeInMinutes + (eventData.hours * 60);
+                                
+                                const endHours = Math.floor(endTimeInMinutes / 60);
+                                const endMinutes = endTimeInMinutes % 60;
+                                
+                                // Handle day overflow (if event goes past midnight)
+                                const displayEndHours = endHours >= 24 ? endHours - 24 : endHours;
+                                const endTimeString = `${displayEndHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+                                
+                                return formatTimeRange12Hour(doc.eventStartTime, endTimeString);
+                              } catch (error) {
+                                console.error('Error calculating end time:', error);
+                                return `${formatTime12Hour(doc.eventStartTime)} (start time only)`;
+                              }
+                            } else {
+                              return `${formatTime12Hour(doc.eventStartTime)} (start time only)`;
+                            }
                           }
                           // If we only have end time, show it with a note
-                          else if (doc.eventEndTime) {
+                          else if (doc.eventEndTime && doc.eventEndTime.trim() !== '') {
                             return `${formatTime12Hour(doc.eventEndTime)} (end time only)`;
                           }
                           // No time information available
