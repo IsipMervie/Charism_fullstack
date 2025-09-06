@@ -548,15 +548,15 @@ function EventListPage() {
           <p><strong>Service Hours:</strong> ${event.hours} hours</p>
           ${event.requiresApproval ? `
           <br>
-          <div style="background-color: #fff3cd; padding: 10px; border-radius: 5px; border-left: 4px solid #ffc107;">
-            <p style="margin: 0; color: #856404;"><strong>⚠️ Approval Required:</strong></p>
-            <p style="margin: 5px 0 0 0; color: #856404;">Your registration will be reviewed by staff/admin before you can participate.</p>
+          <div className="approval-warning">
+            <p className="approval-warning-title"><strong>⚠️ Approval Required:</strong></p>
+            <p className="approval-warning-text">Your registration will be reviewed by staff/admin before you can participate.</p>
           </div>
           ` : ''}
           <br>
-          <div style="background-color: #d1ecf1; padding: 10px; border-radius: 5px; border-left: 4px solid #17a2b8;">
-            <p style="margin: 0; color: #0c5460;"><strong>📋 Important Reminders:</strong></p>
-            <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #0c5460;">
+          <div className="important-reminders">
+            <p className="important-reminders-title"><strong>📋 Important Reminders:</strong></p>
+            <ul className="important-reminders-list">
               ${event.requiresApproval ? '<li>Wait for approval before timing in</li>' : ''}
               <li>You can time in 5 minutes before the event starts</li>
               <li>Time in window closes 30 minutes after event starts</li>
@@ -1096,14 +1096,14 @@ function EventListPage() {
             </ul>
           </div>
           
-          <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '5px' }}>
+          <div className="debug-info">
             <strong>Debug Info:</strong>
             <div>Role: {role}</div>
             <div>User: {user._id || user.id || 'No user ID'}</div>
             <div>Events loaded: {events.length}</div>
             <div>Loading state: {loading ? 'Yes' : 'No'}</div>
             {is503Error && (
-              <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#fee2e2', borderRadius: '4px', color: '#dc2626' }}>
+              <div className="server-error">
                 <strong>Server Error:</strong> HTTP 503 Service Unavailable
               </div>
             )}

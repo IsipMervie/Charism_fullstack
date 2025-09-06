@@ -76,7 +76,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  background: linear-gradient(90deg, var(--info), var(--primary));
   border-radius: 24px 24px 0 0;
 }
 
@@ -207,7 +207,7 @@
 .stat-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -533,7 +533,7 @@
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -563,7 +563,7 @@
   justify-content: center;
   font-size: 3rem;
   color: white;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
 }
 
 /* Profile Avatar Container */
@@ -644,7 +644,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   display: flex;
   align-items: center;
   justify-content: center;

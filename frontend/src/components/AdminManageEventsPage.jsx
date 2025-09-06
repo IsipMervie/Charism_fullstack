@@ -320,7 +320,7 @@ function AdminManageEventsPage() {
             <li>⚠️ Events are NOT automatically completed by time</li>
             <li>⚠️ This action cannot be undone automatically</li>
           </ul>
-          <p style="color: #dc2626; font-weight: 600;">Are you sure you want to continue?</p>
+          <p className="confirmation-text-danger">Are you sure you want to continue?</p>
         </div>
       `,
       icon: 'question',
@@ -373,7 +373,7 @@ function AdminManageEventsPage() {
             <li>👥 Show it to students (they can register)</li>
             <li>⚠️ This will allow students to join again</li>
           </ul>
-          <p style="color: #2563eb; font-weight: 600;">Are you sure you want to continue?</p>
+          <p className="confirmation-text-primary">Are you sure you want to continue?</p>
         </div>
       `,
       icon: 'question',
@@ -437,15 +437,15 @@ function AdminManageEventsPage() {
       title: 'Share Event',
       html: `
         <div style="text-align: left; max-width: 500px;">
-          <h4 style="color: #2c3e50; margin-bottom: 15px;">${eventTitle}</h4>
-          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <p style="margin: 5px 0; color: #495057;">
+          <h4 className="event-details-title">${eventTitle}</h4>
+          <div className="event-details-info">
+            <p className="event-details-item">
               <strong>📅 Date:</strong> ${eventDate}
             </p>
-            <p style="margin: 5px 0; color: #495057;">
+            <p className="event-details-item">
               <strong>🕐 Time:</strong> ${eventTime}
             </p>
-            <p style="margin: 5px 0; color: #495057;">
+            <p className="event-details-item">
               <strong>📍 Location:</strong> ${eventLocation}
             </p>
           </div>

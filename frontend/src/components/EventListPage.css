@@ -1543,3 +1543,63 @@
     left: 0.75rem;
   }
 }
+
+/* Approval Warning Styles */
+.approval-warning {
+  background-color: var(--warning-light);
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 4px solid var(--warning);
+  margin: 10px 0;
+}
+
+.approval-warning-title {
+  margin: 0;
+  color: var(--warning-dark);
+  font-weight: 600;
+}
+
+.approval-warning-text {
+  margin: 5px 0 0 0;
+  color: var(--warning-dark);
+}
+
+/* Important Reminders Styles */
+.important-reminders {
+  background-color: var(--info-light);
+  padding: 10px;
+  border-radius: 5px;
+  border-left: 4px solid var(--info);
+  margin: 10px 0;
+}
+
+.important-reminders-title {
+  margin: 0;
+  color: var(--info-dark);
+  font-weight: 600;
+}
+
+.important-reminders-list {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+  color: var(--info-dark);
+}
+
+/* Debug Info Styles */
+.debug-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: var(--bg-secondary);
+  border-radius: 5px;
+  color: var(--text-primary);
+}
+
+/* Server Error Styles */
+.server-error {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: var(--error-light);
+  border-radius: 4px;
+  color: var(--error-dark);
+  font-weight: 600;
+}

@@ -12,7 +12,7 @@
   
   --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-tertiary: #64748b;
+  --text-tertiary: #6b7280;
   --text-inverse: #ffffff;
   
   --border-primary: #e2e8f0;
@@ -33,6 +33,7 @@
   --success-shadow-lg: rgba(16, 185, 129, 0.4);
   --error-shadow: rgba(239, 68, 68, 0.3);
   --error-shadow-lg: rgba(239, 68, 68, 0.4);
+  --error-focus: rgba(239, 68, 68, 0.15);
   --warning-shadow: rgba(245, 158, 11, 0.3);
   --warning-shadow-lg: rgba(245, 158, 11, 0.4);
   --info-shadow: rgba(14, 165, 233, 0.3);
@@ -128,7 +129,7 @@
   
   --text-primary: #ffffff;
   --text-secondary: #e2e8f0;
-  --text-tertiary: #cbd5e1;
+  --text-tertiary: #94a3b8;
   --text-inverse: #0f172a;
   
   --border-primary: #334155;
@@ -149,6 +150,7 @@
   --success-shadow-lg: rgba(52, 211, 153, 0.4);
   --error-shadow: rgba(248, 113, 113, 0.3);
   --error-shadow-lg: rgba(248, 113, 113, 0.4);
+  --error-focus: rgba(248, 113, 113, 0.15);
   --warning-shadow: rgba(251, 191, 36, 0.3);
   --warning-shadow-lg: rgba(251, 191, 36, 0.4);
   --info-shadow: rgba(34, 211, 238, 0.3);
@@ -157,7 +159,7 @@
   /* Brand Colors - Adjusted for dark theme */
   --primary: #3b82f6;
   --primary-hover: #2563eb;
-  --primary-light: #1e40af;
+  --primary-light: #3b82f6;
   --primary-dark: #1d4ed8;
   
   --secondary: #94a3b8;

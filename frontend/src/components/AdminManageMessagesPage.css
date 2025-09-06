@@ -1805,7 +1805,7 @@ button .button-icon {
 }
 
 .modal-mark-read-button {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -2014,7 +2014,7 @@ button .button-icon {
 .modal-admin-response {
   margin: 1.5rem 0;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-light));
   border-radius: 12px;
   border: 1px solid #bfdbfe;
   position: relative;
@@ -2055,7 +2055,7 @@ button .button-icon {
 }
 
 .edit-response-button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   color: white;
   border: 2px solid #3b82f6;
   padding: 0.5rem 1rem;
@@ -2070,7 +2070,7 @@ button .button-icon {
 }
 
 .edit-response-button:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary-hover), var(--primary-dark));
   color: white;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px var(--primary-shadow-lg);
@@ -2107,7 +2107,7 @@ button .button-icon {
 
 /* Update Button Styling */
 .modal-update-button {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, var(--warning), var(--warning-hover));
   color: white;
   border: 2px solid #f59e0b;
   padding: 0.75rem 1.5rem;
@@ -2121,7 +2121,7 @@ button .button-icon {
 }
 
 .modal-update-button:hover {
-  background: linear-gradient(135deg, #d97706, #b45309);
+  background: linear-gradient(135deg, var(--warning-hover), var(--warning-dark));
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--warning-shadow-lg);
@@ -2151,7 +2151,7 @@ button .button-icon {
 
 /* Reply Button Styling */
 .modal-reply-button {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
   border: 2px solid var(--success);
   padding: 0.75rem 1.5rem;
@@ -2165,7 +2165,7 @@ button .button-icon {
 }
 
 .modal-reply-button:hover {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, var(--success-hover), var(--success-dark));
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--success-shadow);
@@ -2190,7 +2190,7 @@ button .button-icon {
 
 /* Status Badge for Replied Messages */
 .status-badge.replied {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
   border: 2px solid var(--success);
 }

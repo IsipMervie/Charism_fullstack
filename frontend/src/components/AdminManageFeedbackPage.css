@@ -537,14 +537,14 @@
 }
 
 .view-button {
-  background: #6b7280;
+  background: var(--secondary);
   color: white;
   border: 2px solid #6b7280;
   box-shadow: 0 4px 15px rgba(107, 114, 128, 0.2);
 }
 
 .view-button:hover {
-  background: #4b5563;
+  background: var(--secondary-dark);
   color: white;
   box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
 }
@@ -557,7 +557,7 @@
 }
 
 .respond-button:hover {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, var(--success-hover), var(--success-dark));
   color: white;
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
@@ -570,7 +570,7 @@
 }
 
 .delete-button:hover {
-  background: #ef4444;
+  background: var(--error);
   color: white;
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
@@ -729,7 +729,7 @@
 
 .pagination .page-link:hover {
   color: var(--primary-dark);
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-light));
   border-color: var(--primary);
   transform: translateY(-1px);
 }
@@ -960,7 +960,7 @@
 }
 
 .modal-close-button {
-  background: #64748b;
+  background: var(--secondary);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -969,7 +969,7 @@
 }
 
 .modal-close-button:hover {
-  background: #475569;
+  background: var(--secondary-dark);
   transform: translateY(-1px);
 }
 
@@ -1004,7 +1004,7 @@
   padding: 1rem;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #f9fafb;
+  background: var(--bg-secondary);
   font-weight: 500;
 }
 

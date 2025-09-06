@@ -158,9 +158,9 @@ const EventAttendancePage = memo(() => {
           <p><strong>Location:</strong> ${event.location || 'TBD'}</p>
           <p><strong>Service Hours:</strong> ${event.hours} hours</p>
           <br>
-          <div style="background-color: #fff3cd; padding: 10px; border-radius: 5px; border-left: 4px solid #ffc107;">
-            <p style="margin: 0; color: #856404;"><strong>Important Reminders:</strong></p>
-            <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #856404;">
+          <div className="important-reminders">
+            <p className="important-reminders-title"><strong>Important Reminders:</strong></p>
+            <ul className="important-reminders-list">
               <li>You can time in 5 minutes before the event starts</li>
               <li>Time in window closes 30 minutes after event starts</li>
               <li>Make sure to time out when you leave</li>
@@ -522,8 +522,8 @@ const EventAttendancePage = memo(() => {
       
       {/* PDF Filter Options for Admin/Staff */}
       {(role === 'Admin' || role === 'Staff') && (
-        <div className="pdf-filters-section" style={{ margin: '16px 0', padding: '16px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-          <h6 style={{ marginBottom: '12px', color: '#495057' }}>PDF Filter Options:</h6>
+        <div className="pdf-filters-section">
+          <h6 className="pdf-filters-title">PDF Filter Options:</h6>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
             <div>
               <label style={{ fontSize: '14px', fontWeight: '500', marginBottom: '4px', display: 'block' }}>Status:</label>

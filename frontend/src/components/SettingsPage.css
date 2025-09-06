@@ -78,7 +78,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
   border-radius: 24px 24px 0 0;
 }
 
@@ -95,7 +95,7 @@
 .icon-symbol {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -120,7 +120,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -261,7 +261,7 @@
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-primary) 100%);
   border-radius: 20px;
   border: 1px solid rgba(59, 130, 246, 0.1);
   margin: 1rem 0;
@@ -272,7 +272,7 @@
   height: 160px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  background: linear-gradient(135deg, var(--border-primary), var(--border-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -352,26 +352,26 @@
 }
 
 .action-button.upload-button {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   color: white !important;
   border: none !important;
 }
 
 .action-button.upload-button:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  background: linear-gradient(135deg, var(--primary-hover), var(--primary-dark)) !important;
   color: white !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px var(--primary-shadow-lg);
 }
 
 .action-button.delete-button {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  background: linear-gradient(135deg, var(--error-hover), var(--error-dark)) !important;
   color: white !important;
   border: none !important;
 }
 
 .action-button.delete-button:hover {
-  background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
+  background: linear-gradient(135deg, var(--error-dark), var(--error-dark)) !important;
   color: white !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px var(--error-shadow);
@@ -393,14 +393,14 @@
 
 .btn.action-button.upload-button,
 .action-button.btn.upload-button {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   color: white !important;
   border: none !important;
 }
 
 .btn.action-button.delete-button,
 .action-button.btn.delete-button {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  background: linear-gradient(135deg, var(--error-hover), var(--error-dark)) !important;
   color: white !important;
   border: none !important;
 }
@@ -418,7 +418,7 @@
 
 /* Stronger overrides for button visibility */
 button.action-button.upload-button {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   color: white !important;
   border: none !important;
   display: flex !important;
@@ -430,7 +430,7 @@ button.action-button.upload-button {
 }
 
 button.action-button.delete-button {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  background: linear-gradient(135deg, var(--error-hover), var(--error-dark)) !important;
   color: white !important;
   border: none !important;
   display: flex !important;
@@ -461,7 +461,7 @@ button.action-button.delete-button * {
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   color: white !important;
   border: none;
   border-radius: 12px;
@@ -490,7 +490,7 @@ button.action-button.delete-button * {
 }
 
 .save-button.has-changes {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   box-shadow: 0 8px 25px var(--primary-shadow-lg) !important;
 }
 
@@ -518,20 +518,20 @@ button.action-button.delete-button * {
 /* Bootstrap overrides for save button */
 .btn.save-button,
 .save-button.btn {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   color: white !important;
   border: none !important;
 }
 
 .btn.save-button:hover,
 .save-button.btn:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  background: linear-gradient(135deg, var(--primary-hover), var(--primary-dark)) !important;
   color: white !important;
 }
 
 .btn.save-button:focus,
 .save-button.btn:focus {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   color: white !important;
   box-shadow: 0 0 0 0.25rem var(--primary-focus) !important;
 }
@@ -839,7 +839,7 @@ button.action-button.delete-button * {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  background: linear-gradient(135deg, var(--border-primary), var(--border-secondary));
   border: 4px solid #ffffff;
   box-shadow: 0 8px 25px var(--primary-shadow);
   color: var(--text-secondary);
@@ -890,13 +890,13 @@ button.action-button.delete-button * {
 }
 
 .settings-profile-upload .upload-button {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   border: none;
   color: white;
 }
 
 .settings-profile-upload .upload-button:hover {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   transform: translateY(-2px);
   box-shadow: 0 8px 25px var(--primary-shadow-lg);
 }

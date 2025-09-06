@@ -5,7 +5,7 @@
 
 .registration-approval-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-primary) 100%);
   padding: 2rem 1rem;
   margin-top: 70px;
 }
@@ -31,7 +31,7 @@
   font-weight: 700;
   color: var(--primary-dark);
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -57,7 +57,7 @@
 
 /* Search and Controls Section */
 .search-controls-section {
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
   padding: 2rem;
   display: flex;
   gap: 1rem;
@@ -223,7 +223,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #1e40af);
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
@@ -250,7 +250,7 @@
 }
 
 .event-date-badge {
-  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 20px;
@@ -334,7 +334,7 @@
 .view-registrations-btn {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
   border-radius: 10px;
@@ -368,7 +368,7 @@
 
 /* Registrations Header */
 .registrations-header {
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
   color: white;
   padding: 2rem;
   display: flex;
@@ -721,7 +721,7 @@
 }
 
 .action-button.approve {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
 }
 
@@ -731,7 +731,7 @@
 }
 
 .action-button.disapprove {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, var(--error), var(--error-hover));
   color: white;
 }
 

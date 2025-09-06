@@ -179,15 +179,15 @@
 
 .event-date {
   font-weight: 600;
-  color: #2c3e50 !important;
+  color: var(--text-primary) !important;
 }
 
 .event-location {
-  color: #6c757d !important;
+  color: var(--text-secondary) !important;
 }
 
 .event-description {
-  color: #6c757d !important;
+  color: var(--text-secondary) !important;
   line-height: 1.6 !important;
 }
 
