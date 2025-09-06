@@ -72,18 +72,19 @@ function EventListPage() {
       }
       
       // Debug: Check if events have image data
-      const eventsWithImages = eventsData.filter(event => event.imageUrl);
+      const eventsWithImages = eventsData.filter(event => event.image);
       console.log('🖼️ Events with images:', eventsWithImages.length);
       if (eventsWithImages.length > 0) {
         console.log('🔍 Sample event with image:', {
           eventId: eventsWithImages[0]._id,
           title: eventsWithImages[0].title,
-          imageUrl: eventsWithImages[0].imageUrl,
+          imageData: eventsWithImages[0].image,
+          imageUrl: getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id),
           backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
         });
         
         // Test image URL accessibility
-        const testImageUrl = eventsWithImages[0].imageUrl;
+        const testImageUrl = getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id);
         if (testImageUrl) {
           fetch(testImageUrl, { method: 'HEAD' })
             .then(response => {
@@ -1288,43 +1289,7 @@ function EventListPage() {
 
                 return (
                   <div key={event._id} className="event-card">
-                    {/* Event Image */}
-                    <div className="event-image-wrapper">
-                      {event.imageUrl ? (
-                        <img
-                          src={event.imageUrl}
-                          alt={event.title}
-                          className="event-image"
-                          onError={(e) => {
-                            console.error('❌ Event image failed to load:', {
-                              eventId: event._id,
-                              eventTitle: event.title,
-                              imageUrl: event.imageUrl,
-                              backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
-                            });
-                            e.target.style.display = 'none';
-                            // Show fallback
-                            const fallback = e.target.nextSibling;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                          onLoad={() => {
-                            console.log('✅ Event image loaded successfully:', {
-                              eventId: event._id,
-                              eventTitle: event.title,
-                              imageUrl: event.imageUrl
-                            });
-                          }}
-                        />
-                      ) : null}
-                      
-                      
-                      <div className="event-status">
-                        <span className={`status-badge ${getStatusColor(eventStatus)}`}>
-                          {eventStatus.charAt(0).toUpperCase() + eventStatus.slice(1)}
-                        </span>
-                      </div>
-                    </div>
-
+                   
                     {/* Event Content */}
                     <div className="event-content">
                       <h3 className="event-title">{event.title}</h3>

@@ -28,6 +28,22 @@ function NavigationBar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Fetch school settings function (shared)
+  const fetchSchoolSettings = async () => {
+    setIsLoading(true);
+    try {
+      const settings = await getPublicSchoolSettings();
+      setSchoolSettings(settings);
+      console.log('School settings refreshed in navbar:', settings);
+    } catch (error) {
+      console.error('Failed to fetch school settings:', error);
+      // Keep default values and don't show error to user
+      // The navbar will still work with default branding
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const syncUser = () => {
       const parsedUser = getUserFromStorage();
@@ -36,15 +52,7 @@ function NavigationBar() {
     };
     
     const refreshSchoolSettings = () => {
-      // Refresh school settings when they might have changed
-      const fetchSchoolSettings = async () => {
-        try {
-          const settings = await getPublicSchoolSettings();
-          setSchoolSettings(settings);
-        } catch (error) {
-          console.error('Failed to refresh school settings:', error);
-        }
-      };
+      console.log('School settings changed event received, refreshing...');
       fetchSchoolSettings();
     };
     
@@ -64,22 +72,8 @@ function NavigationBar() {
     setIsExpanded(false);
   }, [location.pathname]);
 
-  // Fetch school settings for navbar with error handling
+  // Initial fetch of school settings
   useEffect(() => {
-    const fetchSchoolSettings = async () => {
-      setIsLoading(true);
-      try {
-        const settings = await getPublicSchoolSettings();
-        setSchoolSettings(settings);
-      } catch (error) {
-        console.error('Failed to fetch school settings:', error);
-        // Keep default values and don't show error to user
-        // The navbar will still work with default branding
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
     fetchSchoolSettings();
   }, []); // Remove isLoading dependency to prevent infinite loop
 

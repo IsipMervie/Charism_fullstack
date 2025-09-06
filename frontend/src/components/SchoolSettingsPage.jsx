@@ -95,6 +95,7 @@ function SchoolSettingsPage() {
       await fetchSettings();
       
       // Notify other components that school settings have changed
+      console.log('Dispatching schoolSettingsChanged event...');
       window.dispatchEvent(new Event('schoolSettingsChanged'));
       
       // Clear any temporary logo preview if a new logo was uploaded

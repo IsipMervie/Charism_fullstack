@@ -684,6 +684,7 @@ function AdminManageEventsPage() {
 
                   return (
                     <div key={event._id} className="event-card">
+                     
                       {/* Event Content */}
                       <div className="event-content">
                         <h3 className="event-title">{event.title}</h3>
