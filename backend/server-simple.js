@@ -122,7 +122,7 @@ app.use((error, req, res, next) => {
 });
 
 // Initialize database and start server
-const PORT = process.env.PORT || 5000;
+const PORT = 5000; // Force port 5000 for local development
 
 async function startServer() {
   try {
