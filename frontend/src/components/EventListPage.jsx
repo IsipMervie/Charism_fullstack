@@ -1406,7 +1406,7 @@ function EventListPage() {
                          ) : event.department ? (
                            <span className="single-department">{event.department}</span>
                          ) : (
-                           <span className="no-department">No restrictions</span>
+                           <span className="no-department">All Departments</span>
                          )}
                        </div>
 

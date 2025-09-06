@@ -1,3 +1,5 @@
+@import '../styles/themes.css';
+
 /* Simple but Creative Admin Dashboard Design */
 
 .admin-dashboard-page {
@@ -75,7 +77,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  background: linear-gradient(90deg, var(--info), var(--primary));
   border-radius: 20px 20px 0 0;
 }
 
@@ -93,13 +95,13 @@
 .icon-symbol {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 8px 25px var(--primary-shadow);
   transition: transform 0.3s ease;
 }
 
@@ -116,7 +118,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -141,12 +143,12 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   color: white;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow);
 }
 
 
@@ -165,7 +167,7 @@
   border-radius: 16px;
   padding: 2rem;
   box-shadow: var(--shadow-md);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-secondary);
   margin-bottom: 3rem;
   position: relative;
 }
@@ -177,7 +179,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  background: linear-gradient(90deg, var(--info), var(--primary));
   border-radius: 16px 16px 0 0;
 }
 
@@ -196,7 +198,7 @@
   height: 100px;
   border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow-sm);
   transition: transform 0.3s ease;
 }
 
@@ -207,12 +209,12 @@
 .logo-placeholder {
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--border-primary));
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow-sm);
 }
 
 .logo-icon {
@@ -261,9 +263,9 @@
   margin: 0;
   border-radius: 8px;
   border: none;
-  background: #fef2f2;
+  background: var(--error-light);
   color: var(--error-dark);
-  border-left: 4px solid #ef4444;
+  border-left: 4px solid var(--error);
 }
 
 /* Actions Section */
@@ -271,7 +273,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -339,14 +341,14 @@
 
 .action-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 35px var(--shadow-md);
   background: rgba(255, 255, 255, 0.95);
 }
 
 .action-icon {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -394,8 +396,8 @@
 
 .completed-button:hover .button-icon {
   color: var(--success) !important;
-  fill: #10b981 !important;
-  stroke: #10b981 !important;
+  fill: var(--success) !important;
+  stroke: var(--success) !important;
 }
 
 .staff-approvals-button:hover {
@@ -404,8 +406,8 @@
 
 .staff-approvals-button:hover .button-icon {
   color: var(--warning) !important;
-  fill: #f59e0b !important;
-  stroke: #f59e0b !important;
+  fill: var(--warning) !important;
+  stroke: var(--warning) !important;
 }
 
 .manage-messages-button:hover {
@@ -414,8 +416,8 @@
 
 .manage-messages-button:hover .button-icon {
   color: var(--error) !important;
-  fill: #ef4444 !important;
-  stroke: #ef4444 !important;
+  fill: var(--error) !important;
+  stroke: var(--error) !important;
 }
 
 .school-settings-button:hover {
@@ -424,18 +426,18 @@
 
 .school-settings-button:hover .button-icon {
   color: var(--text-tertiary) !important;
-  fill: #6b7280 !important;
-  stroke: #6b7280 !important;
+  fill: var(--secondary) !important;
+  stroke: var(--secondary) !important;
 }
 
 .student-documentation-button:hover {
-  border-color: #8b5cf6;
+  border-color: var(--primary);
 }
 
 .student-documentation-button:hover .button-icon {
   color: var(--primary) !important;
-  fill: #8b5cf6 !important;
-  stroke: #8b5cf6 !important;
+  fill: var(--primary) !important;
+  stroke: var(--primary) !important;
 }
 
 /* Ensure student documentation button icon is always visible */
@@ -466,8 +468,8 @@
   position: relative !important;
   z-index: 10 !important;
   color: var(--primary) !important;
-  fill: #2563eb !important;
-  stroke: #2563eb !important;
+  fill: var(--primary) !important;
+  stroke: var(--primary) !important;
 }
 
 /* Fallback icon styles */
@@ -608,7 +610,7 @@
 
 /* Focus States for Accessibility */
 .action-button:focus {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 

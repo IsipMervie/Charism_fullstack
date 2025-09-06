@@ -8,15 +8,15 @@
   justify-content: center;
   align-items: center;
   min-height: 80vh;
-  background-color: #f4f4f4;
+  background-color: var(--bg-secondary);
   padding: 20px;
 }
 
 .verify-box {
-  background-color: #fff;
+  background-color: var(--bg-primary);
   padding: 36px 28px;
   border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px var(--shadow-md);
   max-width: 450px;
   width: 100%;
   text-align: center;
@@ -26,7 +26,7 @@
 .verify-box h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
-  color: #222;
+  color: var(--text-primary);
 }
 
 .verify-box p {
@@ -35,12 +35,12 @@
 }
 
 .success-message {
-  color: #2e7d32;
+  color: var(--success-dark);
   font-weight: bold;
 }
 
 .error-message {
-  color: #c62828;
+  color: var(--error-dark);
   font-weight: bold;
 }
 

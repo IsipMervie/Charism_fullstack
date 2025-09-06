@@ -1,3 +1,6 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Super User-Friendly Registration Approval Page Design */
 
 .registration-approval-page {
@@ -19,7 +22,7 @@
   background: white;
   padding: 2.5rem;
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 8px 30px var(--primary-focus);
   border: 1px solid #e2e8f0;
 }
 
@@ -47,7 +50,7 @@
 .events-view {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 4px 20px var(--primary-focus);
   border: 1px solid #f1f5f9;
   overflow: hidden;
 }
@@ -87,12 +90,12 @@
   background: white;
   transition: all 0.3s ease;
   color: var(--text-primary);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow-md);
 }
 
 .search-input:focus {
   outline: none;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px var(--shadow-lg);
   transform: translateY(-1px);
 }
 
@@ -148,7 +151,7 @@
 /* Search Results Info */
 .search-results-info {
   padding: 1rem 2rem;
-  background: #f1f5f9;
+  background: var(--bg-tertiary);
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
@@ -169,7 +172,7 @@
 
 .clear-search-button {
   padding: 0.5rem 1rem;
-  background: #fee2e2;
+  background: var(--error-light);
   color: var(--error-dark);
   border: 1px solid #fecaca;
   border-radius: 6px;
@@ -183,7 +186,7 @@
 }
 
 .clear-search-button:hover {
-  background: #fecaca;
+  background: var(--error-light);
   transform: translateY(-1px);
 }
 
@@ -197,7 +200,7 @@
 
 /* Event Card */
 .event-card {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border: 2px solid #e2e8f0;
   border-radius: 16px;
   padding: 1.5rem;
@@ -209,8 +212,8 @@
 
 .event-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.15);
-  border-color: #3b82f6;
+  box-shadow: 0 12px 30px var(--primary-shadow);
+  border-color: var(--primary);
 }
 
 .event-card::before {
@@ -254,7 +257,7 @@
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 8px var(--primary-shadow-lg);
 }
 
 .event-meta {
@@ -273,7 +276,7 @@
 }
 
 .meta-icon {
-  color: #3b82f6;
+  color: var(--primary);
   font-size: 0.9rem;
   width: 16px;
 }
@@ -296,17 +299,17 @@
 }
 
 .status-item.pending {
-  background: #fef3c7;
+  background: var(--warning-light);
   border: 1px solid #fbbf24;
 }
 
 .status-item.approved {
-  background: #d1fae5;
+  background: var(--success-light);
   border: 1px solid #10b981;
 }
 
 .status-item.disapproved {
-  background: #fee2e2;
+  background: var(--error-light);
   border: 1px solid #ef4444;
 }
 
@@ -347,7 +350,7 @@
 
 .view-registrations-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 6px 20px var(--primary-shadow-lg);
 }
 
 .btn-icon {
@@ -358,7 +361,7 @@
 .registrations-view {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 4px 20px var(--primary-focus);
   border: 1px solid #f1f5f9;
   overflow: hidden;
 }
@@ -377,7 +380,7 @@
 
 .back-button {
   padding: 0.75rem 1.5rem;
-  background: #2563eb;
+  background: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -388,13 +391,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow-lg);
 }
 
 .back-button:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 6px 20px var(--primary-shadow-lg);
 }
 
 .event-title {
@@ -409,7 +412,7 @@
 /* Event Info Card */
 .event-info-card {
   padding: 1.5rem 2rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-bottom: 1px solid #e2e8f0;
 }
 
@@ -430,7 +433,7 @@
 }
 
 .info-icon {
-  color: #3b82f6;
+  color: var(--primary);
   font-size: 1.2rem;
   width: 24px;
 }
@@ -461,7 +464,7 @@
 /* Search and Filter Section */
 .search-filter-section {
   padding: 1.5rem 2rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   gap: 1rem;
@@ -491,8 +494,8 @@
 
 .filter-select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-shadow);
 }
 
 /* Registrations Container */
@@ -516,17 +519,17 @@
 }
 
 .group-title.pending {
-  color: #92400e;
-  border-bottom-color: #fbbf24;
+  color: var(--warning-dark);
+  border-bottom-color: var(--warning);
 }
 
 .group-title.approved {
-  color: #065f46;
+  color: var(--success-dark);
   border-bottom-color: var(--success);
 }
 
 .group-title.disapproved {
-  color: #991b1b;
+  color: var(--error-dark);
   border-bottom-color: var(--error);
 }
 
@@ -542,7 +545,7 @@
 
 /* Registration Card */
 .registration-card {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 1.5rem;
@@ -550,8 +553,8 @@
 }
 
 .registration-card:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 6px 20px var(--primary-focus);
 }
 
 .registration-card.pending {
@@ -613,12 +616,12 @@
 }
 
 .detail-item:hover {
-  border-color: #3b82f6;
+  border-color: var(--primary);
   color: var(--text-primary);
 }
 
 .detail-icon {
-  color: #3b82f6;
+  color: var(--primary);
   font-size: 0.8rem;
 }
 
@@ -636,18 +639,18 @@
 }
 
 .status-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--warning-light);
+  color: var(--warning-dark);
 }
 
 .status-badge.approved {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-light);
+  color: var(--success-dark);
 }
 
 .status-badge.disapproved {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-light);
+  color: var(--error-dark);
 }
 
 /* Registration Meta */
@@ -689,7 +692,7 @@
 .meta-value.reason {
   color: var(--error-dark);
   font-style: italic;
-  background: #fef2f2;
+  background: var(--error-light);
   padding: 0.5rem;
   border-radius: 6px;
   border: 1px solid #fecaca;
@@ -724,7 +727,7 @@
 
 .action-button.approve:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 6px 20px var(--success-shadow);
 }
 
 .action-button.disapprove {
@@ -734,7 +737,7 @@
 
 .action-button.disapprove:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 6px 20px var(--error-shadow);
 }
 
 .action-icon {
@@ -748,7 +751,7 @@
 }
 
 .loading-spinner {
-  color: #3b82f6;
+  color: var(--primary);
 }
 
 .loading-spinner .spinner {

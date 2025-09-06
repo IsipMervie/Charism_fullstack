@@ -1,3 +1,5 @@
+@import '../styles/themes.css';
+
 /* Fresh Modern Student Dashboard Design */
 
 .student-dashboard {
@@ -48,7 +50,7 @@
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -89,13 +91,13 @@
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 10px 30px var(--primary-shadow);
   transition: all 0.3s ease;
 }
 
 .icon-symbol:hover {
   transform: translateY(-5px) rotate(5deg);
-  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 15px 40px var(--primary-shadow-lg);
 }
 
 .header-text {
@@ -156,7 +158,7 @@
   color: white;
   font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow);
 }
 
 .user-icon {
@@ -185,7 +187,7 @@
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   display: flex;
@@ -218,13 +220,13 @@
   height: 80px;
   border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px var(--shadow-lg);
   transition: all 0.3s ease;
 }
 
 .school-logo:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 35px var(--shadow-xl);
 }
 
 .logo-placeholder {
@@ -235,7 +237,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px var(--shadow-sm);
 }
 
 .logo-icon {
@@ -313,7 +315,7 @@
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   display: flex;
@@ -324,7 +326,7 @@
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px var(--shadow-xl);
 }
 
 .stat-icon {
@@ -365,7 +367,7 @@
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -401,7 +403,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px var(--shadow-sm);
 }
 
 .progress-info {
@@ -477,7 +479,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -519,7 +521,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px var(--shadow-sm);
   transition: all 0.3s ease;
   cursor: pointer;
   display: flex;
@@ -531,7 +533,7 @@
 
 .action-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 35px var(--shadow-md);
   background: rgba(255, 255, 255, 0.95);
 }
 
@@ -600,7 +602,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 3rem 2rem;
   text-align: center;
@@ -778,7 +780,7 @@
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -863,7 +865,7 @@
 
 .upcoming-event-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 20px 40px var(--success-shadow);
   border-color: var(--success);
 }
 
@@ -960,12 +962,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 15px var(--success-shadow);
 }
 
 .view-more-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 25px var(--success-shadow-lg);
 }
 
 .view-more-button:active {
@@ -1008,12 +1010,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+  box-shadow: 0 4px 15px var(--secondary-shadow);
 }
 
 .view-events-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+  box-shadow: 0 8px 25px var(--secondary-shadow);
 }
 
 /* Responsive Design */
@@ -1098,7 +1100,7 @@
 /* Focus States */
 .action-card:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 0 3px var(--primary-shadow);
 }
 
 /* Reduced Motion */

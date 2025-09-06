@@ -5,7 +5,7 @@
 
 .not-found-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   padding: 2rem 0;
   position: relative;
   overflow-x: hidden;
@@ -26,7 +26,7 @@
   border-radius: 20px;
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   z-index: 2;
@@ -40,13 +40,13 @@
 .icon-circle {
   width: 120px;
   height: 120px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  background: linear-gradient(135deg, var(--error) 0%, var(--error-hover) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 10px 30px var(--error-shadow-lg);
   animation: pulse 2s infinite;
 }
 
@@ -60,11 +60,11 @@
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+    box-shadow: 0 10px 30px var(--error-shadow-lg);
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+    box-shadow: 0 15px 40px var(--error-shadow-lg);
   }
 }
 
@@ -72,9 +72,9 @@
 .error-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: var(--text-primary);
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -83,7 +83,7 @@
 /* Error Description */
 .error-description {
   font-size: 1.1rem;
-  color: #4a5568;
+  color: var(--text-secondary);
   line-height: 1.6;
   max-width: 500px;
   margin: 0 auto 2rem;
@@ -91,7 +91,7 @@
 
 /* Suggestions Section */
 .suggestions-title {
-  color: #2d3748;
+  color: var(--text-primary);
   font-weight: 600;
   margin-bottom: 1.5rem;
 }
@@ -109,8 +109,8 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background: #f7fafc;
-  border: 2px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-primary);
   border-radius: 12px;
   cursor: pointer;
   transition: all var(--transition-normal);
@@ -118,10 +118,10 @@
 }
 
 .suggestion-item:hover {
-  background: #edf2f7;
-  border-color: #667eea;
+  background: var(--bg-tertiary);
+  border-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 8px 25px var(--primary-shadow);
 }
 
 .suggestion-icon {
@@ -131,7 +131,7 @@
 
 .suggestion-item span {
   font-weight: 500;
-  color: #4a5568;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -151,40 +151,40 @@
 }
 
 .action-buttons .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 4px 15px var(--primary-shadow-lg);
 }
 
 .action-buttons .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
 }
 
 .action-buttons .btn-outline-primary {
-  border: 2px solid #667eea;
-  color: #667eea;
+  border: 2px solid var(--primary);
+  color: var(--primary);
   background: transparent;
 }
 
 .action-buttons .btn-outline-primary:hover {
-  background: #667eea;
+  background: var(--primary);
   color: white;
   transform: translateY(-2px);
 }
 
 /* Additional Help */
 .additional-help {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-primary);
   padding-top: 1.5rem;
 }
 
 .additional-help p {
-  color: #718096;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
 }
 
 .additional-help .btn-link {
-  color: #667eea;
+  color: var(--primary);
   font-weight: 500;
   padding: 0;
   border: none;
@@ -192,7 +192,7 @@
 }
 
 .additional-help .btn-link:hover {
-  color: #764ba2;
+  color: var(--primary);
   text-decoration: underline;
 }
 
@@ -277,20 +277,20 @@
   }
   
   .error-title {
-    color: #e2e8f0;
+    color: var(--text-secondary);
   }
   
   .error-description {
-    color: #a0aec0;
+    color: var(--text-tertiary);
   }
   
   .suggestions-title {
-    color: #e2e8f0;
+    color: var(--text-secondary);
   }
   
   .suggestion-item {
     background: rgba(45, 55, 72, 0.9);
-    border-color: #4a5568;
+    border-color: var(--text-secondary);
   }
   
   .suggestion-item:hover {
@@ -298,15 +298,15 @@
   }
   
   .suggestion-item span {
-    color: #e2e8f0;
+    color: var(--text-secondary);
   }
   
   .additional-help {
-    border-top-color: #4a5568;
+    border-top-color: var(--text-secondary);
   }
   
   .additional-help p {
-    color: #a0aec0;
+    color: var(--text-tertiary);
   }
 }
 

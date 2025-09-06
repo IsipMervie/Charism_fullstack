@@ -69,7 +69,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 30px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
 }
@@ -81,7 +81,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
   border-radius: 20px 20px 0 0;
 }
 
@@ -106,13 +106,13 @@
 .icon-symbol {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 25px var(--primary-shadow);
   transition: transform 0.3s ease;
 }
 
@@ -129,7 +129,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 1rem 0;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -163,7 +163,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background: #2563eb;
+  background: var(--primary);
   color: white;
   border: none;
   border-radius: 12px;
@@ -171,18 +171,18 @@
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal);
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow);
   white-space: nowrap;
 }
 
 .download-pdf-button:hover {
   transform: translateY(-2px);
-  background: #1d4ed8;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+  background: var(--primary-hover);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
 }
 
 .download-pdf-button:disabled {
-  background: #6b7280;
+  background: var(--secondary);
   color: var(--text-tertiary);
   cursor: not-allowed;
   opacity: 0.7;
@@ -191,7 +191,7 @@
 
 .download-pdf-button:disabled:hover {
   transform: none;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow);
 }
 
 .button-icon {
@@ -203,7 +203,7 @@
   margin-bottom: 3rem;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 30px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -232,7 +232,7 @@
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -242,7 +242,7 @@
   color: var(--text-primary);
   margin: 0 0 1rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-primary);
   position: relative;
 }
 
@@ -253,7 +253,7 @@
   left: 0;
   width: 50px;
   height: 2px;
-  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
 }
 
 .description-text {
@@ -274,7 +274,7 @@
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
 }
@@ -286,7 +286,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
   border-radius: 16px 16px 0 0;
 }
 
@@ -303,7 +303,7 @@
   align-items: center;
   margin-bottom: 1rem;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-secondary);
 }
 
 .info-item:last-child {
@@ -333,32 +333,32 @@
 }
 
 .status-badge.available {
-  background: #dbeafe;
+  background: var(--primary-light);
   color: var(--primary-dark);
 }
 
 .status-badge.unavailable {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-light);
+  color: var(--error-dark);
 }
 
 .status-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--warning-light);
+  color: var(--warning-dark);
 }
 
 .status-badge.approved {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-light);
+  color: var(--success-dark);
 }
 
 .status-badge.disapproved {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-light);
+  color: var(--error-dark);
 }
 
 .status-badge.attended {
-  background: #dbeafe;
+  background: var(--primary-light);
   color: var(--primary-dark);
 }
 
@@ -392,7 +392,7 @@
 .participants-table td {
   padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
   font-size: 0.9rem;
   vertical-align: middle;
 }
@@ -470,7 +470,7 @@
 
 .action-button:focus {
   outline: none;
-  border-color: #ffffff;
+  border-color: var(--text-primary);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
@@ -479,25 +479,25 @@
 }
 
 .approve-button {
-  background: #059669;
+  background: var(--success-hover);
   color: white;
-  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+  box-shadow: 0 4px 15px var(--success-shadow);
 }
 
 .approve-button:hover {
-  background: #047857;
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
+  background: var(--success-dark);
+  box-shadow: 0 6px 20px var(--success-shadow-lg);
 }
 
 .disapprove-button {
-  background: #dc2626;
+  background: var(--error-hover);
   color: white;
-  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+  box-shadow: 0 4px 15px var(--error-shadow);
 }
 
 .disapprove-button:hover {
-  background: #b91c1c;
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+  background: var(--error-dark);
+  box-shadow: 0 6px 20px var(--error-shadow-lg);
 }
 
 .download-reflection-button {
@@ -505,7 +505,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
   border-radius: 8px;
@@ -517,7 +517,7 @@
 
 .download-reflection-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow);
 }
 
 .no-attachment {
@@ -544,7 +544,7 @@
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #1e293b;
+  background: var(--bg-tertiary);
   color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
@@ -590,27 +590,27 @@
 }
 
 .status-badge.pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--warning-light);
+  color: var(--warning-dark);
   border-color: var(--warning);
 }
 
 .status-badge.approved {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-light);
+  color: var(--success-dark);
   border-color: var(--success);
 }
 
 .status-badge.disapproved {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-light);
+  color: var(--error-dark);
   border-color: var(--error);
 }
 
 .status-badge.attended {
-  background: #dbeafe;
+  background: var(--primary-light);
   color: var(--primary-dark);
-  border-color: #3b82f6;
+  border-color: var(--primary);
 }
 
 /* No Participants */
@@ -648,7 +648,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background: #2563eb;
+  background: var(--primary);
   color: white;
   border: none;
   border-radius: 12px;
@@ -656,13 +656,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal);
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 15px var(--primary-shadow);
 }
 
 .back-button:hover {
   transform: translateY(-2px);
-  background: #1d4ed8;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+  background: var(--primary-hover);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
 }
 
 /* Loading and Error States */
@@ -673,15 +673,15 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .loading-spinner {
   width: 3rem;
   height: 3rem;
-  border: 3px solid #e2e8f0;
-  border-top: 3px solid #2563eb;
+  border: 3px solid var(--border-primary);
+  border-top: 3px solid var(--primary);
   border-radius: 50%;
   margin: 0 auto 1rem;
 }
@@ -792,7 +792,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -840,7 +840,7 @@
 }
 
 .event-actions .action-button.share-button {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
   font-size: 1rem;
   font-weight: 600;
@@ -854,16 +854,16 @@
 }
 
 .event-actions .action-button.share-button:hover {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, var(--success-hover), var(--success-dark));
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 25px var(--success-shadow);
 }
 
 /* Focus States for Accessibility */
 .action-button:focus,
 .download-pdf-button:focus,
 .back-button:focus {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -918,22 +918,22 @@
 }
 
 .back-button {
-  background: #6b7280;
+  background: var(--secondary);
   color: white;
 }
 
 .back-button:hover {
-  background: #4b5563;
+  background: var(--secondary-dark);
   transform: translateY(-2px);
 }
 
 .login-button {
-  background: #1e40af;
+  background: var(--primary-dark);
   color: white;
 }
 
 .login-button:hover {
-  background: #1e3a8a;
+  background: var(--primary-dark);
   transform: translateY(-2px);
 }
 
@@ -949,7 +949,7 @@
 }
 
 .event-description p {
-  color: #4a5568;
+  color: var(--text-secondary);
   line-height: 1.6;
   font-size: 1.1rem;
 }
@@ -967,7 +967,7 @@
   padding: 1.5rem;
   border-radius: 12px;
   border: 1px solid var(--border-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-sm);
 }
 
 .detail-card h4 {
@@ -978,7 +978,7 @@
 }
 
 .detail-card p {
-  color: #4a5568;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 1rem;
 }
@@ -1000,7 +1000,7 @@
 
 .status-badge.status-completed {
   background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  color: var(--primary);
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
@@ -1018,8 +1018,8 @@
 
 /* Public Registration Notice */
 .public-registration-notice {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  border: 1px solid #93c5fd;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-light) 100%);
+  border: 1px solid var(--primary-light);
   border-radius: 12px;
   padding: 1.5rem;
   margin: 2rem 0;
@@ -1039,7 +1039,7 @@
 }
 
 .public-register-button {
-  background: #1e40af;
+  background: var(--primary-dark);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -1050,7 +1050,7 @@
 }
 
 .public-register-button:hover {
-  background: #1e3a8a;
+  background: var(--primary-dark);
   transform: translateY(-2px);
 }
 
@@ -1085,22 +1085,22 @@
 }
 
 .edit-button {
-  background: #10b981;
+  background: var(--success);
   color: white;
 }
 
 .edit-button:hover {
-  background: #059669;
+  background: var(--success-hover);
   transform: translateY(-2px);
 }
 
 .participants-button {
-  background: #3b82f6;
+  background: var(--primary);
   color: white;
 }
 
 .participants-button:hover {
-  background: #2563eb;
+  background: var(--primary);
   transform: translateY(-2px);
 }
 
@@ -1168,21 +1168,21 @@
 }
 
 .approve-button {
-  background: #10b981;
+  background: var(--success);
   color: white;
 }
 
 .approve-button:hover {
-  background: #059669;
+  background: var(--success-hover);
 }
 
 .disapprove-button {
-  background: #ef4444;
+  background: var(--error);
   color: white;
 }
 
 .disapprove-button:hover {
-  background: #dc2626;
+  background: var(--error-hover);
 }
 
 /* Responsive Design */

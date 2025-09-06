@@ -24,6 +24,20 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   
+  /* Color-specific shadows */
+  --primary-shadow: rgba(37, 99, 235, 0.35);
+  --primary-shadow-lg: rgba(37, 99, 235, 0.45);
+  --primary-focus: rgba(37, 99, 235, 0.15);
+  --secondary-shadow: rgba(107, 114, 128, 0.2);
+  --success-shadow: rgba(16, 185, 129, 0.3);
+  --success-shadow-lg: rgba(16, 185, 129, 0.4);
+  --error-shadow: rgba(239, 68, 68, 0.3);
+  --error-shadow-lg: rgba(239, 68, 68, 0.4);
+  --warning-shadow: rgba(245, 158, 11, 0.3);
+  --warning-shadow-lg: rgba(245, 158, 11, 0.4);
+  --info-shadow: rgba(14, 165, 233, 0.3);
+  --info-shadow-lg: rgba(14, 165, 233, 0.4);
+  
   /* Brand Colors */
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
@@ -126,6 +140,20 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
   
+  /* Color-specific shadows for dark theme */
+  --primary-shadow: rgba(59, 130, 246, 0.35);
+  --primary-shadow-lg: rgba(59, 130, 246, 0.45);
+  --primary-focus: rgba(59, 130, 246, 0.15);
+  --secondary-shadow: rgba(148, 163, 184, 0.2);
+  --success-shadow: rgba(52, 211, 153, 0.3);
+  --success-shadow-lg: rgba(52, 211, 153, 0.4);
+  --error-shadow: rgba(248, 113, 113, 0.3);
+  --error-shadow-lg: rgba(248, 113, 113, 0.4);
+  --warning-shadow: rgba(251, 191, 36, 0.3);
+  --warning-shadow-lg: rgba(251, 191, 36, 0.4);
+  --info-shadow: rgba(34, 211, 238, 0.3);
+  --info-shadow-lg: rgba(34, 211, 238, 0.4);
+  
   /* Brand Colors - Adjusted for dark theme */
   --primary: #3b82f6;
   --primary-hover: #2563eb;
@@ -212,7 +240,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary) !important;
 }
 
-p, span, div, label, small {
+p, span, div, label, small, strong, em, b, i {
   color: var(--text-primary);
 }
 
@@ -226,6 +254,58 @@ p, span, div, label, small {
 
 .text-muted {
   color: var(--text-tertiary) !important;
+}
+
+/* Bootstrap and common class overrides */
+.text-dark {
+  color: var(--text-primary) !important;
+}
+
+.text-light {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: var(--text-tertiary) !important;
+}
+
+.lead {
+  color: var(--text-secondary) !important;
+}
+
+.display-1, .display-2, .display-3, .display-4 {
+  color: var(--text-primary) !important;
+}
+
+/* List items */
+li {
+  color: var(--text-primary);
+}
+
+/* Table text */
+td, th {
+  color: var(--text-primary);
+}
+
+/* Alert text */
+.alert {
+  color: var(--text-primary);
+}
+
+.alert-success {
+  color: var(--success-dark);
+}
+
+.alert-warning {
+  color: var(--warning-dark);
+}
+
+.alert-danger {
+  color: var(--error-dark);
+}
+
+.alert-info {
+  color: var(--info-dark);
 }
 
 /* Form elements */
@@ -266,6 +346,92 @@ button {
 
 .card-text, .modal-body {
   color: var(--text-secondary);
+}
+
+/* Additional UI element overrides */
+.nav-link {
+  color: var(--nav-text) !important;
+}
+
+.nav-link:hover {
+  color: var(--primary) !important;
+}
+
+.dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-hover) !important;
+}
+
+.badge {
+  color: var(--text-primary) !important;
+}
+
+.badge-primary {
+  color: var(--text-inverse) !important;
+}
+
+.badge-secondary {
+  color: var(--text-inverse) !important;
+}
+
+.badge-success {
+  color: var(--text-inverse) !important;
+}
+
+.badge-warning {
+  color: var(--text-inverse) !important;
+}
+
+.badge-danger {
+  color: var(--text-inverse) !important;
+}
+
+.badge-info {
+  color: var(--text-inverse) !important;
+}
+
+/* Progress bars */
+.progress-bar {
+  color: var(--text-inverse) !important;
+}
+
+/* Pagination */
+.page-link {
+  color: var(--primary) !important;
+}
+
+.page-link:hover {
+  color: var(--primary-hover) !important;
+}
+
+.page-item.active .page-link {
+  color: var(--text-inverse) !important;
+}
+
+/* Tooltips */
+.tooltip {
+  color: var(--text-inverse) !important;
+}
+
+.tooltip-inner {
+  color: var(--text-inverse) !important;
+}
+
+/* Popovers */
+.popover {
+  color: var(--text-primary) !important;
+}
+
+.popover-header {
+  color: var(--text-primary) !important;
+}
+
+.popover-body {
+  color: var(--text-secondary) !important;
 }
 
 /* Disable transitions for users who prefer reduced motion */

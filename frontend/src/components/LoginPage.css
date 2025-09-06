@@ -1,3 +1,5 @@
+@import '../styles/themes.css';
+
 /* Simple but Creative Login Page Design (Matching Contact Page Style) */
 
 .login-page {
@@ -76,7 +78,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  background: linear-gradient(90deg, var(--info), var(--primary));
   border-radius: 20px 20px 0 0;
 }
 
@@ -93,14 +95,14 @@
 .icon-symbol {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   font-size: 2rem;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 8px 25px var(--primary-shadow);
   transition: transform 0.3s ease;
 }
 
@@ -113,7 +115,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -142,9 +144,9 @@
   width: 100%;
   padding: 1rem 1.25rem;
   font-size: 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--bg-primary);
   transition: all 0.3s ease;
   color: var(--text-primary);
 }
@@ -152,8 +154,8 @@
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px var(--primary-focus);
   transform: translateY(-1px);
 }
 
@@ -167,7 +169,7 @@
   left: 50%;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  background: linear-gradient(90deg, var(--info), var(--primary));
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
@@ -183,7 +185,7 @@
   padding: 1rem 2rem !important;
   font-size: 1rem !important;
   font-weight: 600 !important;
-  background: #2563eb !important;
+  background: var(--primary) !important;
   border: none !important;
   border-radius: 12px !important;
   color: white !important;
@@ -210,8 +212,8 @@
 
 .login-button:hover {
   transform: translateY(-2px) !important;
-  background: #1d4ed8 !important;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35) !important;
+  background: var(--primary-hover) !important;
+  box-shadow: 0 10px 25px var(--primary-shadow) !important;
 }
 
 .login-button:active {
@@ -219,7 +221,7 @@
 }
 
 .login-button.loading {
-  background: linear-gradient(135deg, #94a3b8, #64748b);
+  background: linear-gradient(135deg, var(--secondary), var(--secondary));
   cursor: not-allowed;
 }
 
@@ -270,7 +272,7 @@ input[type="submit"].login-button:hover,
 }
 
 .link-text:hover {
-  background: rgba(37, 99, 235, 0.1);
+  background: var(--primary-light);
   color: var(--primary);
   text-decoration: none;
   transform: translateY(-1px);
@@ -288,7 +290,7 @@ input[type="submit"].login-button:hover,
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  background: linear-gradient(90deg, transparent, var(--border-primary), transparent);
 }
 
 .divider span {
@@ -306,7 +308,7 @@ input[type="submit"].login-button:hover,
 
 .diagnostic-button {
   background: transparent;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border-primary);
   color: var(--text-secondary);
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
@@ -316,7 +318,7 @@ input[type="submit"].login-button:hover,
 }
 
 .diagnostic-button:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-color: var(--text-tertiary);
   color: var(--text-secondary);
   text-decoration: none;
@@ -334,7 +336,7 @@ input[type="submit"].login-button:hover,
   gap: 1.5rem;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-primary);
 }
 
 .info-item {
@@ -344,20 +346,20 @@ input[type="submit"].login-button:hover,
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 12px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   transition: all 0.3s ease;
   text-align: center;
 }
 
 .info-item:hover {
-  background: #f1f5f9;
+  background: var(--bg-tertiary);
   transform: translateY(-2px);
 }
 
 .info-icon {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -480,7 +482,7 @@ input[type="submit"].login-button:hover,
 .form-input:focus,
 .login-button:focus,
 .link-text:focus {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 

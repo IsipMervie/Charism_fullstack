@@ -2,16 +2,16 @@
 .error-boundary-container {
   min-height: 100vh;
   padding: 2rem 1rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--border-primary) 100%);
 }
 
 .error-boundary-content {
   text-align: center;
-  background: white;
+  background: var(--bg-primary);
   padding: 3rem 2rem;
   border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-primary);
 }
 
 .error-icon {
@@ -69,12 +69,12 @@
 }
 
 .error-details-alert summary:hover {
-  color: #3b82f6;
+  color: var(--primary);
 }
 
 .error-stack {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   padding: 1rem;
   font-size: 0.8rem;
@@ -100,20 +100,20 @@
   font-weight: 600;
   border-radius: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .error-action-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .error-help {
   text-align: left;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .error-help p {
@@ -183,55 +183,55 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .error-boundary-container {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   }
   
   .error-boundary-content {
-    background: #0f172a;
-    border-color: #334155;
-    color: #f1f5f9;
+    background: var(--bg-primary);
+    border-color: var(--border-primary);
+    color: var(--text-primary);
   }
   
   .error-title {
-    color: #f1f5f9;
+    color: var(--text-primary);
   }
   
   .error-description {
-    color: #cbd5e1;
+    color: var(--text-tertiary);
   }
   
   .error-help {
-    background: #1e293b;
-    border-color: #334155;
+    background: var(--bg-secondary);
+    border-color: var(--border-primary);
   }
   
   .error-help p {
-    color: #f1f5f9;
+    color: var(--text-primary);
   }
   
   .error-help li {
-    color: #cbd5e1;
+    color: var(--text-tertiary);
   }
   
   .error-stack {
-    background: #1e293b;
-    border-color: #334155;
-    color: #cbd5e1;
+    background: var(--bg-secondary);
+    border-color: var(--border-primary);
+    color: var(--text-tertiary);
   }
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .error-boundary-content {
-    border: 3px solid #000000;
+    border: 3px solid var(--text-primary);
   }
   
   .error-action-btn {
-    border: 2px solid #000000;
+    border: 2px solid var(--text-primary);
   }
   
   .error-help {
-    border: 2px solid #000000;
+    border: 2px solid var(--text-primary);
   }
 }
 

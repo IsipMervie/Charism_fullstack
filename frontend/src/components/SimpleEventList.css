@@ -1,3 +1,6 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Simple Event List Styles */
 .simple-event-list {
   max-width: 1200px;
@@ -10,10 +13,10 @@
   text-align: center;
   margin-bottom: 40px;
   padding: 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-xl);
 }
 
 .header h1 {
@@ -30,9 +33,9 @@
 
 .refresh-btn {
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--primary-light);
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--primary-light);
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
@@ -41,8 +44,8 @@
 }
 
 .refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--primary-light);
+  border-color: var(--primary-light);
   transform: translateY(-2px);
 }
 
@@ -55,20 +58,20 @@
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border: 4px solid var(--border-primary);
+  border-top: 4px solid var(--primary);
   border-radius: 50%;
   margin: 0 auto 20px;
 }
 
 .error-container h2 {
-  color: #dc3545;
+  color: var(--error);
   margin-bottom: 16px;
 }
 
 .retry-btn {
   padding: 12px 24px;
-  background: #dc3545;
+  background: var(--error);
   color: white;
   border: none;
   border-radius: 8px;
@@ -78,17 +81,17 @@
 }
 
 .retry-btn:hover {
-  background: #c82333;
+  background: var(--error-hover);
   transform: translateY(-2px);
 }
 
 .no-events h3 {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin-bottom: 16px;
 }
 
 .no-events p {
-  color: #6c757d;
+  color: var(--text-secondary);
   opacity: 0.8;
 }
 
@@ -113,7 +116,7 @@
 .event-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  border-color: #667eea;
+  border-color: var(--primary);
 }
 
 .event-header {
@@ -125,7 +128,7 @@
 
 .event-header h3 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 20px;
   font-weight: 600;
   line-height: 1.3;
@@ -144,23 +147,23 @@
 }
 
 .status-upcoming {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--success-light);
+  color: var(--success-dark);
 }
 
 .status-today {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--warning-light);
+  color: var(--warning-dark);
 }
 
 .status-past {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--error-light);
+  color: var(--error-dark);
 }
 
 .status-unknown {
-  background-color: #e2e3e5;
-  color: #383d41;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .event-info {
@@ -169,7 +172,7 @@
 
 .event-info p {
   margin: 8px 0;
-  color: #495057;
+  color: var(--text-primary);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -193,17 +196,17 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 16px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-primary);
 }
 
 .attendance-count {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
 }
 
 .click-hint {
-  color: #667eea;
+  color: var(--primary);
   font-size: 12px;
   font-weight: 500;
   opacity: 0.8;
@@ -251,12 +254,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 24px 24px 16px 24px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 24px;
   font-weight: 600;
 }
@@ -265,7 +268,7 @@
   background: none;
   border: none;
   font-size: 28px;
-  color: #6c757d;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0;
   width: 32px;
@@ -278,8 +281,8 @@
 }
 
 .close-btn:hover {
-  background-color: #f8f9fa;
-  color: #495057;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .modal-body {
@@ -293,26 +296,26 @@
 .event-detail strong {
   display: block;
   margin-bottom: 8px;
-  color: #2c3e50;
+  color: var(--text-primary);
   font-size: 14px;
   font-weight: 600;
 }
 
 .event-detail p {
   margin: 8px 0 0 0;
-  color: #495057;
+  color: var(--text-primary);
   line-height: 1.6;
 }
 
 .modal-footer {
   padding: 16px 24px 24px 24px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-primary);
   text-align: right;
 }
 
 .close-modal-btn {
   padding: 12px 24px;
-  background: #6c757d;
+  background: var(--secondary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -323,7 +326,7 @@
 }
 
 .close-modal-btn:hover {
-  background: #5a6268;
+  background: var(--secondary-dark);
 }
 
 /* Responsive Design */

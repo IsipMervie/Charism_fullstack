@@ -103,7 +103,7 @@
   justify-content: center;
   margin: 0 auto;
   font-size: 2rem;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
   transition: transform 0.3s ease;
 }
 
@@ -157,7 +157,7 @@
   outline: none;
   border-color: var(--primary);
   background: var(--bg-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--primary-shadow);
   transform: translateY(-1px);
 }
 
@@ -191,7 +191,7 @@
   padding: 1rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  background: #2563eb;
+  background: var(--primary);
   border: none;
   border-radius: 12px;
   color: white;
@@ -218,8 +218,8 @@
 
 .contact-button:hover {
   transform: translateY(-2px);
-  background: #1d4ed8;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+  background: var(--primary-hover);
+  box-shadow: 0 10px 25px var(--primary-shadow-lg);
 }
 
 .contact-button:active {

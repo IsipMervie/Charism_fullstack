@@ -1,3 +1,6 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 .loading-container {
   display: flex;
   justify-content: center;
@@ -13,7 +16,7 @@
 
 .loading-content h4 {
   margin: 1rem 0;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -27,21 +30,21 @@
 .progress-bar {
   flex: 1;
   height: 8px;
-  background: #e9ecef;
+  background: var(--border-primary);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #007bff, #0056b3);
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
   border-radius: 4px;
   transition: width 0.3s ease;
 }
 
 .progress-text {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
   min-width: 40px;
 }
@@ -49,10 +52,10 @@
 .timeout-message {
   margin-top: 1rem;
   padding: 1rem;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: var(--warning-light);
+  border: 1px solid var(--warning-light);
   border-radius: 8px;
-  color: #856404;
+  color: var(--warning-dark);
 }
 
 .timeout-message p {
@@ -78,18 +81,18 @@
 }
 
 .loading-error h4 {
-  color: #dc3545;
+  color: var(--error);
   margin-bottom: 1rem;
 }
 
 .loading-error p {
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.5;
 }
 
 .retry-button {
-  background: #007bff;
+  background: var(--primary);
   color: white;
   border: none;
   padding: 0.75rem 2rem;
@@ -100,7 +103,7 @@
 }
 
 .retry-button:hover {
-  background: #0056b3;
+  background: var(--primary-dark);
 }
 
 /* Animation for loading spinner */

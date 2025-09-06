@@ -20,7 +20,7 @@
   right: -50%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgb(37 99 235 / 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--primary-shadow) 0%, transparent 70%);
   z-index: 1;
 }
 
@@ -31,7 +31,7 @@
   left: -50%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgb(16 185 129 / 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--success-shadow) 0%, transparent 70%);
   z-index: 1;
 }
 
@@ -117,7 +117,7 @@
 .edit-event-form textarea:focus {
   border-color: var(--primary-color);
   outline: 0;
-  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1), var(--shadow-sm);
+  box-shadow: 0 0 0 3px var(--primary-focus), var(--shadow-sm);
   transform: translateY(-1px);
 }
 

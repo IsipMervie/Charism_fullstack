@@ -1,4 +1,5 @@
 /* Enhanced Navigation Bar - Responsive Design with Theme Support */
+@import '../styles/themes.css';
 
 .navbar-custom {
   background: var(--nav-bg);
@@ -31,19 +32,19 @@
   transition: all 0.3s ease;
   padding: 0.5rem 1rem;
   border-radius: 12px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border-primary);
   max-width: 280px;
   order: 1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px var(--shadow-sm);
 }
 
 .navbar-brand:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--border-primary) 100%);
+  box-shadow: 0 6px 16px var(--shadow-md);
   text-decoration: none;
-  border-color: rgba(148, 163, 184, 0.6);
+  border-color: var(--border-secondary);
 }
 
 .navbar-logo {
@@ -52,12 +53,12 @@
   flex-shrink: 0;
   border-radius: 8px;
   transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 2px 4px var(--shadow-sm));
 }
 
 .navbar-logo:hover {
   transform: scale(1.05);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  filter: drop-shadow(0 4px 8px var(--shadow-md));
 }
 
 .navbar-title {
@@ -69,12 +70,12 @@
   flex-shrink: 0;
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  text-shadow: 0 1px 2px var(--shadow-sm);
 }
 
 .navbar-title:hover {
   color: var(--text-primary);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px var(--shadow-md);
 }
 
 /* Hamburger Toggler - Enhanced Design */
@@ -82,7 +83,7 @@
   border: none;
   font-size: 1.1rem;
   color: var(--text-secondary);
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   outline: none;
   transition: all 0.3s ease;
   padding: 0.75rem;
@@ -98,8 +99,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-primary);
+  box-shadow: 0 2px 8px var(--shadow-sm);
   min-width: 48px;
   overflow: hidden;
 }
@@ -117,11 +118,11 @@
 }
 
 .navbar-toggler:hover {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--border-primary) 100%);
   color: var(--text-primary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  border-color: rgba(148, 163, 184, 0.6);
+  box-shadow: 0 6px 16px var(--shadow-md);
+  border-color: var(--border-secondary);
 }
 
 .navbar-toggler:hover::before {
@@ -129,7 +130,7 @@
 }
 
 .navbar-toggler:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px var(--primary-shadow);
   outline: none;
 }
 
@@ -169,7 +170,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
+  background: linear-gradient(135deg, transparent 0%, var(--primary-light) 100%);
   border-radius: 10px;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -177,11 +178,11 @@
 
 .nav-link:hover {
   color: var(--text-primary);
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   transform: translateY(-2px);
   text-decoration: none;
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-shadow);
+  box-shadow: 0 4px 12px var(--shadow-sm);
 }
 
 .nav-link:hover::before {
@@ -191,10 +192,10 @@
 .nav-link.active {
   font-weight: 700;
   color: var(--text-primary);
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border-color: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px var(--primary-shadow-lg);
 }
 
 .nav-link.active::before {
@@ -203,9 +204,9 @@
 
 /* Dropdown styles - Enhanced */
 .navbar-nav .dropdown-menu {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  border: 1px solid var(--border-primary);
+  box-shadow: 0 12px 32px var(--shadow-lg);
   border-radius: 12px;
   margin-top: 0.5rem;
   padding: 0.75rem 0;
@@ -246,18 +247,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
+  background: linear-gradient(135deg, transparent 0%, var(--primary-light) 100%);
   border-radius: 8px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .navbar-nav .dropdown-item:hover {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   color: var(--text-primary);
   transform: translateX(4px);
   text-decoration: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px var(--shadow-sm);
 }
 
 .navbar-nav .dropdown-item:hover::before {
@@ -265,10 +266,10 @@
 }
 
 .navbar-nav .dropdown-item.active {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px var(--primary-shadow-lg);
 }
 
 .navbar-nav .dropdown-item.active::before {
@@ -331,9 +332,9 @@
     top: 60px;
     left: 0;
     right: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     padding: 1rem 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 24px var(--shadow-lg);
     display: none;
     flex-direction: column;
     gap: 0;
@@ -377,12 +378,12 @@
     border: 1px solid rgba(226, 232, 240, 0.5);
     font-size: 0.9rem;
     font-weight: 500;
-    color: #334155;
+    color: var(--text-primary);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     margin: 0;
     margin-bottom: 0.125rem;
     position: relative;
@@ -398,17 +399,17 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
+    background: linear-gradient(135deg, transparent 0%, var(--primary-light) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   .navbar-nav-mobile .nav-link:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
     color: var(--text-primary);
     transform: translateX(4px);
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-shadow);
+    box-shadow: 0 2px 8px var(--shadow-sm);
   }
 
   .navbar-nav-mobile .nav-link:hover::before {
@@ -416,11 +417,11 @@
   }
 
   .navbar-nav-mobile .nav-link.active {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     font-weight: 600;
     border-color: var(--primary);
-    box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 3px 10px var(--primary-shadow-lg);
   }
 
   .navbar-nav-mobile .nav-link.active::before {
@@ -432,10 +433,10 @@
     position: static;
     float: none;
     width: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     border: 1px solid rgba(226, 232, 240, 0.5);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px var(--shadow-sm);
     margin: 0.25rem 0;
     padding: 0.5rem 0;
     animation: dropdownSlideIn 0.2s ease;
@@ -457,7 +458,7 @@
     padding: 0.625rem 1rem;
     border-bottom: 1px solid rgba(226, 232, 240, 0.3);
     font-size: 0.85rem;
-    color: #334155;
+    color: var(--text-primary);
     transition: all 0.3s ease;
     border-radius: 6px;
     margin: 0 0.25rem;
@@ -473,17 +474,17 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
+    background: linear-gradient(135deg, transparent 0%, var(--primary-light) 100%);
     border-radius: 6px;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
   .navbar-nav-mobile .dropdown-item:hover {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-shadow) 100%);
     color: var(--text-primary);
     transform: translateX(3px);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 4px var(--shadow-sm);
   }
 
   .navbar-nav-mobile .dropdown-item:hover::before {
@@ -491,10 +492,10 @@
   }
 
   .navbar-nav-mobile .dropdown-item.active {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     font-weight: 600;
-    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 2px 6px var(--primary-shadow-lg);
   }
 
   .navbar-nav-mobile .dropdown-item.active::before {
@@ -592,7 +593,7 @@
     margin-top: 0;
     box-shadow: none;
     border: none;
-    background: #f8f9fa;
+    background: var(--bg-secondary);
   }
 }
 
@@ -606,7 +607,7 @@
 .navbar-toggler:focus,
 .nav-link:focus,
 .dropdown-item:focus { 
-  outline: 2px solid #3b82f6; 
+  outline: 2px solid var(--primary); 
   outline-offset: 2px; 
 }
 
@@ -651,9 +652,9 @@ body {
 }
 
 .navbar-custom {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #f0f0f0 !important;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08) !important;
+  background-color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+  box-shadow: 0 2px 20px var(--shadow-lg) !important;
 }
 
 /* Ensure proper spacing for fixed navbar */
@@ -674,7 +675,7 @@ body {
 /* Enhanced Mobile menu overlay */
 @media (max-width: 992px) {
   .navbar-collapse.show {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     backdrop-filter: blur(15px);
   }
 
@@ -694,7 +695,7 @@ body {
 
   /* Enhanced mobile menu close button */
   .navbar-toggler[aria-expanded="true"] {
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--border-primary) 100%);
     color: var(--text-primary);
     transform: rotate(90deg);
     transition: transform 0.3s ease;
@@ -720,7 +721,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--shadow-lg);
     z-index: -1;
     backdrop-filter: blur(5px);
   }
@@ -731,17 +732,17 @@ body {
   }
 
   .navbar-collapse::-webkit-scrollbar-track {
-    background: rgba(241, 245, 249, 0.5);
+    background: var(--bg-tertiary);
     border-radius: 4px;
   }
 
   .navbar-collapse::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.6);
+    background: var(--border-secondary);
     border-radius: 4px;
   }
 
   .navbar-collapse::-webkit-scrollbar-thumb:hover {
-    background: rgba(100, 116, 139, 0.8);
+    background: var(--border-dark);
   }
 
   /* Enhanced mobile dropdown styling */
@@ -753,7 +754,7 @@ body {
 
   .navbar-nav-mobile .dropdown.show .dropdown-toggle::after {
     transform: rotate(180deg);
-    color: #3b82f6;
+    color: var(--primary);
   }
 
   /* Mobile dropdown animation */

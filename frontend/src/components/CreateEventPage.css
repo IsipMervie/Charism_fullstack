@@ -1,3 +1,5 @@
+@import '../styles/themes.css';
+
 /* CreateEventPage.css - Modern Responsive Design with Blue Theme */
 
 .create-event-page {
@@ -49,16 +51,16 @@
 
 .create-event-page .form-control {
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   padding: 12px 16px;
   font-size: 16px;
   transition: all 0.3s ease;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 .create-event-page .form-control:focus {
   border-color: var(--primary-dark);
-  box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
+  box-shadow: 0 0 0 0.2rem var(--primary-focus);
   background: white;
   transform: translateY(-2px);
 }
@@ -86,13 +88,13 @@
 }
 
 .create-event-page .btn-primary {
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-  box-shadow: 0 4px 15px rgba(30, 64, 175, 0.4);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  box-shadow: 0 4px 15px var(--primary-shadow);
 }
 
 .create-event-page .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.6);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
 }
 
 .create-event-page .btn-primary:active {
@@ -100,19 +102,19 @@
 }
 
 .create-event-page .btn-outline-primary {
-  border: 2px solid #1e40af;
+  border: 2px solid var(--primary-dark);
   color: var(--primary-dark);
   background: transparent;
 }
 
 .create-event-page .btn-outline-primary:hover {
-  background: #1e40af;
+  background: var(--primary-dark);
   color: white;
   transform: translateY(-2px);
 }
 
 .create-event-page .btn-outline-primary.active {
-  background: #1e40af;
+  background: var(--primary-dark);
   color: white;
   border-color: var(--primary-dark);
 }
@@ -124,7 +126,7 @@
 
 .create-event-page .form-check-input:focus {
   border-color: var(--primary-dark);
-  box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
+  box-shadow: 0 0 0 0.2rem var(--primary-focus);
 }
 
 .create-event-page .department-tags {
@@ -135,13 +137,13 @@
 
 .create-event-page .img-thumbnail {
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   transition: all 0.3s ease;
 }
 
 .create-event-page .img-thumbnail:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.15);
+  box-shadow: 0 8px 25px var(--primary-shadow);
 }
 
 /* Animation classes */
@@ -206,43 +208,43 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .create-event-page {
-    background: #0f172a;
+    background: var(--bg-primary);
   }
   
   .create-event-page::before {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   }
   
   .create-event-page .card {
-    background: rgba(30, 41, 59, 0.95);
-    border-color: rgba(51, 65, 85, 0.5);
+  background: var(--bg-card);
+  border-color: var(--border-primary);
   }
   
   .create-event-page .form-label {
-    color: #e2e8f0;
+    color: var(--text-secondary);
   }
   
   .create-event-page .form-control {
-    background: rgba(51, 65, 85, 0.9);
+    background: var(--bg-secondary);
     border-color: var(--text-secondary);
-    color: #e2e8f0;
+    color: var(--text-secondary);
   }
   
   .create-event-page .form-control:focus {
-    background: #1e293b;
-    color: #e2e8f0;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
   }
 }
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
   .create-event-page .card {
-    border: 3px solid #000;
+    border: 3px solid var(--text-primary);
     background: white;
   }
   
   .create-event-page .btn {
-    border: 2px solid #000;
+    border: 2px solid var(--text-primary);
   }
 }
 
@@ -267,7 +269,7 @@
   
   .create-event-page .card {
     box-shadow: none;
-    border: 1px solid #000;
+    border: 1px solid var(--text-primary);
   }
   
   .create-event-page .btn {

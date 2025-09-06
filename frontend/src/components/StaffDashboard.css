@@ -50,7 +50,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -92,13 +92,13 @@
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 10px 30px var(--primary-shadow);
   transition: all var(--transition-normal);
 }
 
 .icon-symbol:hover {
   transform: translateY(-5px) rotate(5deg);
-  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 15px 40px var(--primary-shadow-lg);
 }
 
 .header-text {
@@ -137,7 +137,7 @@
   color: white;
   border-radius: 20px;
   font-weight: 600;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 25px var(--primary-shadow);
 }
 
 .user-icon {
@@ -158,8 +158,8 @@
   backdrop-filter: blur(25px);
   border-radius: 24px;
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.08),
-    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 20px 40px var(--shadow-lg),
+    0 8px 16px var(--shadow-md),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 2.5rem;
@@ -171,8 +171,8 @@
 .school-info-card:hover {
   transform: translateY(-2px);
   box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.12),
-    0 12px 24px rgba(0, 0, 0, 0.08),
+    0 25px 50px var(--shadow-xl),
+    0 12px 24px var(--shadow-lg),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
@@ -251,13 +251,13 @@
   height: 80px;
   border-radius: 16px;
   object-fit: cover;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px var(--shadow-lg);
   transition: all var(--transition-normal);
 }
 
 .school-logo:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 35px var(--shadow-xl);
 }
 
 .logo-placeholder {
@@ -268,7 +268,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px var(--shadow-sm);
 }
 
 .logo-icon {
@@ -312,7 +312,7 @@
 }
 
 .contact-value {
-  color: #0ea5e9;
+  color: var(--primary);
   font-weight: 600;
   text-decoration: none;
 }
@@ -359,7 +359,7 @@
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px var(--shadow-xl);
 }
 
 .stat-icon {
@@ -440,7 +440,7 @@
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px var(--shadow-sm);
   padding: 2rem;
   cursor: pointer;
   transition: all var(--transition-normal);
@@ -465,7 +465,7 @@
 
 .action-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 35px var(--shadow-md);
   background: rgba(255, 255, 255, 0.95);
 }
 
@@ -559,7 +559,7 @@
 
 .staff-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px var(--shadow-sm);
   background: rgba(255, 255, 255, 0.95);
 }
 
@@ -784,7 +784,7 @@
 /* Focus States */
 .action-card:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 0 3px var(--primary-shadow);
 }
 
 /* Reduced Motion */

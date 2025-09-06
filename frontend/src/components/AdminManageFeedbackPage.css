@@ -1,8 +1,11 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Simple but Creative Manage Feedback Page Design */
 
 .manage-feedback-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   padding: 2rem 1rem;
   margin-top: 70px;
   position: relative;
@@ -63,10 +66,10 @@
   gap: 1.5rem;
   margin-bottom: 3rem;
   padding: 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
   position: relative;
 }
 
@@ -77,7 +80,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  background: linear-gradient(90deg, var(--info), var(--primary));
   border-radius: 20px 20px 0 0;
 }
 
@@ -102,7 +105,7 @@
 .icon-symbol {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -125,7 +128,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -148,9 +151,9 @@
 .stat-item {
   text-align: center;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   min-width: 120px;
   transition: transform 0.3s ease;
 }
@@ -208,9 +211,9 @@
   width: 100%;
   padding: 1rem 1.25rem 1rem 3rem;
   font-size: 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--bg-primary);
   transition: all 0.3s ease;
   color: var(--text-primary);
 }
@@ -261,10 +264,10 @@
 
 /* Feedback Card */
 .feedback-card {
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
@@ -281,18 +284,18 @@
 }
 
 .feedback-card.pending {
-  border-left: 4px solid #f59e0b;
-  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+  border-left: 4px solid var(--warning);
+  background: linear-gradient(135deg, var(--warning-light) 0%, var(--bg-primary) 100%);
 }
 
 .feedback-card.working-on-it {
-  border-left: 4px solid #2563eb;
-  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+  border-left: 4px solid var(--primary);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-primary) 100%);
 }
 
 .feedback-card.resolve {
-  border-left: 4px solid #10b981;
-  background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+  border-left: 4px solid var(--success);
+  background: linear-gradient(135deg, var(--success-light) 0%, var(--bg-primary) 100%);
 }
 
 /* Feedback Header */
@@ -301,8 +304,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
   flex-wrap: wrap;
   gap: 0.5rem;
 }
@@ -325,17 +328,17 @@
 }
 
 .status-badge.pending {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, var(--warning), var(--warning-hover));
   color: white;
 }
 
 .status-badge.working-on-it {
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   color: white;
 }
 
 .status-badge.resolve {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
 }
 
@@ -367,14 +370,14 @@
   align-items: center;
   gap: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-primary);
   flex-wrap: wrap;
 }
 
 .sender-icon {
   color: var(--primary);
   font-size: 1.2rem;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
   padding: 0.75rem;
   border-radius: 50%;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
@@ -444,7 +447,7 @@
   left: 0;
   right: 0;
   height: 40px;
-  background: linear-gradient(transparent, #ffffff);
+  background: linear-gradient(transparent, var(--bg-primary));
   pointer-events: none;
 }
 
@@ -454,13 +457,13 @@
   align-items: center;
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-primary);
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
 .expand-button {
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -507,7 +510,7 @@
   display: flex;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-top: 1px solid #e2e8f0;
   position: relative;
   z-index: 10;
@@ -547,7 +550,7 @@
 }
 
 .respond-button {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
   color: white;
   border: 2px solid #10b981;
   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
@@ -576,10 +579,10 @@
 .no-feedback {
   text-align: center;
   padding: 3rem 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
 }
 
 .no-feedback-icon {
@@ -607,10 +610,10 @@
 .error-section {
   text-align: center;
   padding: 4rem 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
 }
 
 .loading-spinner {
@@ -671,7 +674,7 @@
 
 .retry-button {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   color: white;
   border: none;
   border-radius: 8px;
@@ -694,10 +697,10 @@
   gap: 1rem;
   margin-top: 2rem;
   padding: 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
 }
 
 .pagination-info {
@@ -708,7 +711,7 @@
 
 .pagination .page-link {
   color: var(--primary);
-  border-color: #e2e8f0;
+  border-color: var(--text-secondary);
   padding: 0.875rem 1.125rem;
   font-weight: 600;
   border-radius: 8px;
@@ -718,7 +721,7 @@
 }
 
 .pagination .page-item.active .page-link {
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   color: white;
@@ -733,8 +736,8 @@
 
 .pagination .page-item.disabled .page-link {
   color: var(--text-tertiary);
-  background: #f1f5f9;
-  border-color: #e2e8f0;
+  background: var(--bg-tertiary);
+  border-color: var(--text-secondary);
 }
 
 /* Responsive Design */
@@ -924,8 +927,8 @@
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border-bottom: 1px solid var(--border-primary);
   border-radius: 16px 16px 0 0;
   padding: 1.5rem;
 }
@@ -949,7 +952,7 @@
 }
 
 .modal-footer {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-top: 1px solid #e2e8f0;
   border-radius: 0 0 16px 16px;
   padding: 1.5rem;
@@ -971,7 +974,7 @@
 }
 
 .modal-respond-button {
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  background: linear-gradient(135deg, var(--info), var(--primary));
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;

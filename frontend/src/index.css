@@ -26,7 +26,7 @@
   --success-color: var(--success);
   --warning-color: var(--warning);
   --danger-color: var(--error);
-  --info-color: #06b6d4;
+  --info-color: var(--info);
   
   /* Neutral Colors */
   --white: #ffffff;
@@ -398,25 +398,25 @@ a:hover {
 }
 
 .alert-success {
-  color: #065f46;
+  color: var(--success-dark);
   background-color: #d1fae5;
   border-color: #a7f3d0;
 }
 
 .alert-warning {
-  color: #92400e;
+  color: var(--warning-dark);
   background-color: #fef3c7;
   border-color: #fde68a;
 }
 
 .alert-danger {
-  color: #991b1b;
+  color: var(--error-dark);
   background-color: #fee2e2;
   border-color: #fecaca;
 }
 
 .alert-info {
-  color: #0c4a6e;
+  color: var(--primary-dark);
   background-color: #e0f2fe;
   border-color: #bae6fd;
 }

@@ -61,7 +61,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 3rem;
   margin-bottom: 2rem;
@@ -101,7 +101,7 @@
   color: white;
   font-size: 0.8rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px var(--shadow-lg);
   white-space: nowrap;
 }
 
@@ -141,8 +141,8 @@
 }
 
 .refresh-button:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
+  background: var(--border-primary);
+  border-color: var(--text-tertiary);
   transform: scale(1.05);
 }
 
@@ -276,13 +276,13 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 25px var(--shadow-md);
   transition: all var(--transition-normal);
 }
 
 .detail-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 35px var(--shadow-lg);
   background: rgba(255, 255, 255, 0.95);
 }
 
@@ -503,7 +503,7 @@
 /* Focus States */
 .action-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 0 0 3px var(--primary-shadow-lg);
 }
 
 /* Reduced Motion */
@@ -538,13 +538,13 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
   transition: all var(--transition-normal);
 }
 
 .profile-picture-container:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 12px 35px var(--primary-shadow-lg);
 }
 
 .profile-picture {
@@ -586,13 +586,13 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px var(--shadow-lg);
   transition: all var(--transition-normal);
 }
 
 .role-badge:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px var(--shadow-xl);
 }
 
 /* Responsive Design for Profile Picture */
@@ -631,13 +631,13 @@
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid #ffffff;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
   transition: all var(--transition-normal);
 }
 
 .profile-image:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 12px 35px var(--primary-shadow-lg);
 }
 
 .profile-image-placeholder {
@@ -651,13 +651,13 @@
   font-size: 3rem;
   color: white;
   border: 4px solid #ffffff;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 25px var(--primary-shadow-lg);
   transition: all var(--transition-normal);
 }
 
 .profile-image-placeholder:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 12px 35px var(--primary-shadow-lg);
 }
 
 /* Responsive Design for Profile Image */
@@ -696,10 +696,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: #f0fdf4;
+  background: var(--success-light);
   border: 1px solid #bbf7d0;
   border-radius: 12px;
-  color: #166534;
+  color: var(--success-dark);
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -707,7 +707,7 @@
 .sync-dot {
   width: 8px;
   height: 8px;
-  background: #22c55e;
+  background: var(--success);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
 }
