@@ -428,7 +428,7 @@ exports.getEventDetails = async (req, res) => {
         publicRegistrationUrl: event.publicRegistrationToken ? generateEventRegistrationLink(event.publicRegistrationToken) : null,
         status: event.status,
         image: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : event.image,
-        imageUrl: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : (hasFile(event.image) ? `/api/files/event-image/${event._id}` : null),
+        imageUrl: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : `/api/files/event-image/${event._id}`,
         // Don't include attendance data for public users
         attendanceCount: event.attendance?.length || 0
       };

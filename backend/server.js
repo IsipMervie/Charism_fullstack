@@ -49,22 +49,15 @@ app.use(cors({
           'http://localhost:3000',
           'https://charism.onrender.com',
           'https://charism-api.onrender.com',
-          'https://*.onrender.com',
-          'https://*.vercel.app'
+          'https://charism.vercel.app',
+          'https://charism-server-ua-backend.vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
     console.log('🔍 Request origin:', origin);
     
-    // Check if origin is allowed (including wildcard matching)
-    const isAllowed = allowedOrigins.some(allowedOrigin => {
-      if (allowedOrigin.includes('*')) {
-        // Handle wildcard domains like *.vercel.app
-        const pattern = allowedOrigin.replace('*', '.*');
-        return new RegExp(pattern).test(origin);
-      }
-      return allowedOrigin === origin;
-    });
+    // Check if origin is allowed
+    const isAllowed = allowedOrigins.includes(origin);
     if (isAllowed) {
       console.log('✅ CORS allowed for origin:', origin);
       callback(null, true);

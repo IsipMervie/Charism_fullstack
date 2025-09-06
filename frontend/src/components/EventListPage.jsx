@@ -72,19 +72,18 @@ function EventListPage() {
       }
       
       // Debug: Check if events have image data
-      const eventsWithImages = eventsData.filter(event => event.image);
+      const eventsWithImages = eventsData.filter(event => event.imageUrl);
       console.log('🖼️ Events with images:', eventsWithImages.length);
       if (eventsWithImages.length > 0) {
         console.log('🔍 Sample event with image:', {
           eventId: eventsWithImages[0]._id,
           title: eventsWithImages[0].title,
-          imageData: eventsWithImages[0].image,
-          imageUrl: getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id),
+          imageUrl: eventsWithImages[0].imageUrl,
           backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
         });
         
         // Test image URL accessibility
-        const testImageUrl = getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id);
+        const testImageUrl = eventsWithImages[0].imageUrl;
         if (testImageUrl) {
           fetch(testImageUrl, { method: 'HEAD' })
             .then(response => {
@@ -1291,17 +1290,16 @@ function EventListPage() {
                   <div key={event._id} className="event-card">
                     {/* Event Image */}
                     <div className="event-image-wrapper">
-                      {event.image ? (
+                      {event.imageUrl ? (
                         <img
-                          src={getEventImageUrl(event.image, event._id)}
+                          src={event.imageUrl}
                           alt={event.title}
                           className="event-image"
                           onError={(e) => {
                             console.error('❌ Event image failed to load:', {
                               eventId: event._id,
                               eventTitle: event.title,
-                              imageData: event.image,
-                              imageUrl: getEventImageUrl(event.image, event._id),
+                              imageUrl: event.imageUrl,
                               backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
                             });
                             e.target.style.display = 'none';
@@ -1313,7 +1311,7 @@ function EventListPage() {
                             console.log('✅ Event image loaded successfully:', {
                               eventId: event._id,
                               eventTitle: event.title,
-                              imageUrl: getEventImageUrl(event.image, event._id)
+                              imageUrl: event.imageUrl
                             });
                           }}
                         />
@@ -1322,7 +1320,7 @@ function EventListPage() {
                       {/* Fallback image when no image or image fails to load */}
                       <div 
                         className="event-image-fallback" 
-                        style={{ display: event.image ? 'none' : 'flex' }}
+                        style={{ display: event.imageUrl ? 'none' : 'flex' }}
                       >
                         <div className="fallback-icon">📅</div>
                         <div className="fallback-text">Event Image</div>
