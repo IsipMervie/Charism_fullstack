@@ -584,8 +584,8 @@ function EventListPage() {
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     const now = new Date();
 
-    // Check if event has started (allow 1 hour before)
-    const earliestTimeIn = new Date(eventDateTime.getTime() - 60 * 60 * 1000);
+    // Check if event has started (allow 30 minutes before for flexibility)
+    const earliestTimeIn = new Date(eventDateTime.getTime() - 30 * 60 * 1000);
     if (now < earliestTimeIn) {
       Swal.fire({
         icon: 'warning',

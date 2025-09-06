@@ -480,10 +480,14 @@ function SettingsPage() {
                     {/* Show temporary profile picture if available, otherwise show current */}
                     {(tempProfilePicture || profilePicture) ? (
                       <img
-                        src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-api.onrender.com'}/uploads/profile-pictures/${tempProfilePicture || profilePicture}`}
+                        src={`${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com'}/files/profile-picture/${getCurrentUserId()}`}
                         alt="Profile"
                         className="rounded-circle"
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                        onError={(e) => {
+                          console.error('Profile picture failed to load:', e.target.src);
+                          e.target.style.display = 'none';
+                        }}
                       />
                     ) : null}
                     
