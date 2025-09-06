@@ -406,12 +406,21 @@ export const getEvents = async () => {
     console.log('🔄 Fetching events from API...');
     const response = await axiosInstance.get('/events');
     console.log('✅ Events API response received');
+    console.log('📊 Full response:', {
+      status: response.status,
+      statusText: response.statusText,
+      data: response.data,
+      dataType: typeof response.data,
+      isArray: Array.isArray(response.data)
+    });
     
     // Ensure we always return an array
     const data = response.data;
     if (Array.isArray(data)) {
+      console.log('✅ Returning array data, length:', data.length);
       return data;
     } else if (data && Array.isArray(data.events)) {
+      console.log('✅ Returning nested events array, length:', data.events.length);
       return data.events;
     } else {
       console.warn('⚠️ getEvents: Unexpected response format, returning empty array:', data);

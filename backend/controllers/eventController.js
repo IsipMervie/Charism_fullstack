@@ -107,7 +107,7 @@ exports.getAllEvents = async (req, res) => {
         totalEvents: 0,
         warning: 'Please try again later'
       });
-    }, 8000); // 8 second total timeout
+    }, 15000); // 15 second total timeout for slow server
     
     // Check if Event model is available
     if (!Event) {
@@ -171,11 +171,11 @@ exports.getAllEvents = async (req, res) => {
         .sort({ createdAt: -1 }) // Single field sort for speed
         .lean()
         .limit(15) // Reasonable limit
-        .maxTimeMS(2000); // Very aggressive 2 second timeout
+        .maxTimeMS(10000); // Increased to 10 seconds for slow server
       
       // Single timeout protection
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Query timeout')), 3000);
+        setTimeout(() => reject(new Error('Query timeout')), 12000);
       });
       
       events = await Promise.race([queryPromise, timeoutPromise]);
@@ -190,10 +190,10 @@ exports.getAllEvents = async (req, res) => {
           .select('title date status isVisibleToStudents attendance')
           .lean()
           .limit(5)
-          .maxTimeMS(1000); // 1 second emergency timeout
+          .maxTimeMS(5000); // 5 second emergency timeout
         
         const emergencyTimeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Emergency timeout')), 2000);
+          setTimeout(() => reject(new Error('Emergency timeout')), 8000);
         });
         
         events = await Promise.race([emergencyPromise, emergencyTimeoutPromise]);
