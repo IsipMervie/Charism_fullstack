@@ -584,25 +584,24 @@ function EventListPage() {
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     const now = new Date();
 
-    // Check if event has started (allow time in 30 minutes after event starts)
-    const earliestTimeIn = new Date(eventDateTime.getTime() + 30 * 60 * 1000);
-    if (now < earliestTimeIn) {
+    // Check if event has started (can time in when event starts)
+    if (now < eventDateTime) {
       Swal.fire({
         icon: 'warning',
         title: 'Too Early to Time In',
-        text: `You can time in starting from ${earliestTimeIn.toLocaleString()} (30 minutes after event starts).`,
+        text: `You can time in starting from ${eventDateTime.toLocaleString()} (when event starts).`,
         confirmButtonColor: '#ffc107'
       });
       return;
     }
 
-    // Check if event has ended (allow 1 hour after)
-    const latestTimeIn = new Date(eventEndTime.getTime() + 60 * 60 * 1000);
+    // Check if time-in window has closed (30 minutes after event starts)
+    const latestTimeIn = new Date(eventDateTime.getTime() + 30 * 60 * 1000);
     if (now > latestTimeIn) {
       Swal.fire({
         icon: 'warning',
-        title: 'Too Late to Time In',
-        text: 'The time in window for this event has closed.',
+        title: 'Time In Window Closed',
+        text: `The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).`,
         confirmButtonColor: '#ffc107'
       });
       return;

@@ -856,19 +856,18 @@ exports.timeIn = async (req, res) => {
     const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     
-    // Allow time in 30 minutes after event starts and up to 1 hour after event ends
-    const earliestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
-    const latestTimeIn = new Date(eventEndTime.getTime() + 60 * 60 * 1000); // 1 hour after
-    
-    if (now < earliestTimeIn) {
+    // Check if event has started (can time in when event starts)
+    if (now < eventStartTime) {
       return res.status(400).json({ 
-        message: `Too early to time in. You can time in starting from ${earliestTimeIn.toLocaleString()}.` 
+        message: `Too early to time in. You can time in starting from ${eventStartTime.toLocaleString()}.` 
       });
     }
     
+    // Check if time-in window has closed (30 minutes after event starts)
+    const latestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
     if (now > latestTimeIn) {
       return res.status(400).json({ 
-        message: `Too late to time in. The time in window has closed.` 
+        message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()}.` 
       });
     }
 
