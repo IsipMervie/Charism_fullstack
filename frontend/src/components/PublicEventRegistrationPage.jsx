@@ -102,18 +102,10 @@ function PublicEventRegistrationPage() {
       
       Swal.fire({
         title: 'Registration Successful!',
-        text: `You have successfully registered for "${event.title}". You can stay on this page or go to your dashboard.`,
+        text: `You have successfully registered for "${event.title}". You can stay on this page.`,
         icon: 'success',
-        showCancelButton: true,
-        confirmButtonText: 'Stay Here',
-        cancelButtonText: 'Go to Dashboard',
-        confirmButtonColor: '#10b981',
-        cancelButtonColor: '#6b7280'
-      }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.cancel) {
-          navigate('/dashboard');
-        }
-        // If user clicks "Stay Here" or closes dialog, do nothing (stay on page)
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#10b981'
       });
 
       setIsRegistered(true);

@@ -1317,14 +1317,6 @@ function EventListPage() {
                         />
                       ) : null}
                       
-                      {/* Fallback image when no image or image fails to load */}
-                      <div 
-                        className="event-image-fallback" 
-                        style={{ display: event.imageUrl ? 'none' : 'flex' }}
-                      >
-                        <div className="fallback-icon">📅</div>
-                        <div className="fallback-text">Event Image</div>
-                      </div>
                       
                       <div className="event-status">
                         <span className={`status-badge ${getStatusColor(eventStatus)}`}>
