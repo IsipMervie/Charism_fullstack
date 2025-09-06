@@ -292,7 +292,7 @@ exports.getAllEvents = async (req, res) => {
       }
       
       // Generate imageUrl if image exists
-      eventObj.imageUrl = (typeof event.image === 'string' || !event.image || !event.image.data) ? null : `/api/files/event-image/${event._id}`;
+      eventObj.imageUrl = event.image && event.image.data ? `/api/files/event-image/${event._id}` : null;
       
       return eventObj;
     });
