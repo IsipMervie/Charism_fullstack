@@ -224,7 +224,7 @@
   gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .label-icon {
@@ -299,7 +299,7 @@
 }
 
 .search-input::placeholder {
-  color: #9ca3af;
+  color: var(--text-tertiary);
 }
 
 /* Filter Toggle Button */
@@ -311,7 +311,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.9);
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -447,8 +447,8 @@
 }
 
 .clear-filters-button:hover {
-  border-color: #ef4444;
-  color: #ef4444;
+  border-color: var(--error);
+  color: var(--error);
   background: rgba(239, 68, 68, 0.1);
 }
 
@@ -472,7 +472,7 @@
   gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .filter-icon {
@@ -513,7 +513,7 @@
   height: 20px;
   border: none;
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--error);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -617,7 +617,7 @@
   height: 32px;
   border: none;
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--error);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -642,7 +642,7 @@
   border: 2px solid #ef4444;
   border-radius: 8px;
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--error);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -685,7 +685,7 @@
 .active-filters-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .active-filter-tag {
@@ -778,7 +778,7 @@
   gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
 }
 
 .option-icon {
@@ -911,7 +911,7 @@
 }
 
 .results-icon {
-  color: #2563eb;
+  color: var(--primary);
 }
 
 .results-count {
@@ -922,7 +922,7 @@
 
 .filtered-indicator {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   margin-left: 0.5rem;
 }
 
@@ -1008,7 +1008,7 @@
 }
 
 .status-icon {
-  color: #10b981;
+  color: var(--success);
   font-size: 0.8rem;
 }
 
@@ -1021,7 +1021,7 @@
   background: rgba(102, 126, 234, 0.08);
   border-bottom: 1px solid rgba(102, 126, 234, 0.15);
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1133,7 +1133,7 @@
   background: rgba(37, 99, 235, 0.1);
   border-radius: 12px;
   font-size: 0.9rem;
-  color: #2563eb;
+  color: var(--primary);
   font-weight: 500;
 }
 
@@ -1161,13 +1161,13 @@
 
 .loading-spinner {
   font-size: 3rem;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 1.5rem;
 }
 
 .error-icon {
   font-size: 3rem;
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1.5rem;
 }
 

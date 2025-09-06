@@ -40,7 +40,7 @@
 }
 
 .sun-icon {
-  color: #f59e0b;
+  color: var(--warning);
 }
 
 .moon-icon {

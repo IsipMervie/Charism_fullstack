@@ -48,7 +48,7 @@
 .spinner-text {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
   /* Ensure text never rotates */
   transform: none !important;
@@ -107,23 +107,23 @@
 
 /* Color Variants */
 .spinner-primary {
-  color: #1e40af;
+  color: var(--primary-dark);
 }
 
 .spinner-secondary {
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .spinner-success {
-  color: #10b981;
+  color: var(--success);
 }
 
 .spinner-warning {
-  color: #f59e0b;
+  color: var(--warning);
 }
 
 .spinner-danger {
-  color: #ef4444;
+  color: var(--error);
 }
 
 .spinner-info {
@@ -135,7 +135,7 @@
 }
 
 .spinner-dark {
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 /* Full Screen Loading */

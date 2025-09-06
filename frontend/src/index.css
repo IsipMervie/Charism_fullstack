@@ -17,15 +17,15 @@
 
 :root {
   /* Color Palette - Blue Theme */
-  --primary-color: #1e40af;
+  --primary-color: var(--primary-dark);
   --primary-dark: #1e3a8a;
   --primary-light: #3b82f6;
   --primary-lighter: #60a5fa;
   --primary-lightest: #dbeafe;
-  --secondary-color: #64748b;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --danger-color: #ef4444;
+  --secondary-color: var(--text-secondary);
+  --success-color: var(--success);
+  --warning-color: var(--warning);
+  --danger-color: var(--error);
   --info-color: #06b6d4;
   
   /* Neutral Colors */
@@ -280,8 +280,8 @@ a:hover {
 }
 
 .btn-success:hover {
-  background-color: #059669;
-  border-color: #059669;
+  background-color: var(--success-dark);
+  border-color: var(--success-dark);
   color: var(--white);
 }
 
@@ -292,8 +292,8 @@ a:hover {
 }
 
 .btn-danger:hover {
-  background-color: #dc2626;
-  border-color: #dc2626;
+  background-color: var(--error-dark);
+  border-color: var(--error-dark);
   color: var(--white);
 }
 

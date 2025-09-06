@@ -111,7 +111,7 @@
 .login-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -120,7 +120,7 @@
 }
 
 .login-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0;
 }
@@ -146,19 +146,19 @@
   border-radius: 12px;
   background: #ffffff;
   transition: all 0.3s ease;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--primary);
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   transform: translateY(-1px);
 }
 
 .form-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 .input-focus-line {
@@ -235,9 +235,9 @@ input[type="submit"].login-button,
 .login-form .btn,
 .login-form button,
 .login-form input[type="submit"] {
-  background-color: #2563eb !important;
+  background-color: var(--primary) !important;
   background-image: none !important;
-  border-color: #2563eb !important;
+  border-color: var(--primary) !important;
   color: white !important;
 }
 
@@ -247,9 +247,9 @@ input[type="submit"].login-button:hover,
 .login-form .btn:hover,
 .login-form button:hover,
 .login-form input[type="submit"]:hover {
-  background-color: #1d4ed8 !important;
+  background-color: var(--primary) !important;
   background-image: none !important;
-  border-color: #1d4ed8 !important;
+  border-color: var(--primary) !important;
 }
 
 /* Links */
@@ -260,7 +260,7 @@ input[type="submit"].login-button:hover,
 
 .link-text {
   display: block;
-  color: #2563eb;
+  color: var(--primary);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem;
@@ -271,7 +271,7 @@ input[type="submit"].login-button:hover,
 
 .link-text:hover {
   background: rgba(37, 99, 235, 0.1);
-  color: #1d4ed8;
+  color: var(--primary);
   text-decoration: none;
   transform: translateY(-1px);
 }
@@ -292,7 +292,7 @@ input[type="submit"].login-button:hover,
 }
 
 .divider span {
-  color: #94a3b8;
+  color: var(--text-tertiary);
   font-size: 0.9rem;
   font-weight: 500;
   padding: 0 1rem;
@@ -307,7 +307,7 @@ input[type="submit"].login-button:hover,
 .diagnostic-button {
   background: transparent;
   border: 1px solid #cbd5e1;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -317,8 +317,8 @@ input[type="submit"].login-button:hover,
 
 .diagnostic-button:hover {
   background: #f8fafc;
-  border-color: #94a3b8;
-  color: #475569;
+  border-color: var(--text-tertiary);
+  color: var(--text-secondary);
   text-decoration: none;
 }
 
@@ -371,13 +371,13 @@ input[type="submit"].login-button:hover,
   margin: 0 0 0.25rem 0;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .info-text p {
   margin: 0;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 /* Responsive Design */

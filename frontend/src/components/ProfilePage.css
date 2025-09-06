@@ -157,7 +157,7 @@
 }
 
 .refresh-button:hover .refresh-icon {
-  color: #2563eb;
+  color: var(--primary);
 }
 
 .refresh-button:disabled {
@@ -255,7 +255,7 @@
 }
 
 .details-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
@@ -294,14 +294,14 @@
 }
 
 .detail-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1rem;
 }
 
 .detail-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -350,7 +350,7 @@
 }
 
 .message-icon {
-  color: #10b981;
+  color: var(--success);
   font-size: 1.25rem;
   flex-shrink: 0;
 }
@@ -383,7 +383,7 @@
 
 .loading-spinner {
   font-size: 3rem;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 1.5rem;
   animation: spin 1s linear infinite;
 }

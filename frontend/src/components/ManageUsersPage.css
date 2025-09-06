@@ -390,7 +390,7 @@
 .stat-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: #2563eb;
+  border-color: var(--primary);
 }
 
 .stat-item:hover::before {
@@ -401,7 +401,7 @@
   display: block;
   font-size: 2.25rem;
   font-weight: 800;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 0.5rem;
   line-height: 1;
 }
@@ -905,7 +905,7 @@
   background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
   border-radius: 12px;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--text-secondary);
   font-weight: 500;
   border: 1px solid var(--border-primary);
 }
@@ -1027,7 +1027,7 @@
 }
 
 .detail-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.1rem;
   width: 24px;
   text-align: center;
@@ -1082,7 +1082,7 @@
 }
 
 .stat-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.2rem;
   width: 32px;
   height: 32px;
@@ -1338,7 +1338,7 @@
 .pagination-button:hover:not(:disabled) {
   background: #2563eb;
   color: white;
-  border-color: #2563eb;
+  border-color: var(--primary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
 }
@@ -1410,7 +1410,7 @@
 }
 
 .error-message h3 {
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1rem;
   font-weight: 700;
   font-size: 1.5rem;
@@ -1557,7 +1557,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: #6b7280;
+  color: var(--text-tertiary);
   font-size: 1.5rem;
 }
 
@@ -1566,11 +1566,11 @@
 }
 
 .profile-picture-fallback .role-icon.admin {
-  color: #f59e0b;
+  color: var(--warning);
 }
 
 .profile-picture-fallback .role-icon.staff {
-  color: #10b981;
+  color: var(--success);
 }
 
 .profile-picture-fallback .role-icon.student {
@@ -1632,7 +1632,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: #6b7280;
+  color: var(--text-tertiary);
   font-size: 3rem;
 }
 
@@ -1654,7 +1654,7 @@
 
 .profile-email {
   font-size: 1.1rem;
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 0 0 1rem 0;
 }
 
@@ -1682,7 +1682,7 @@
 
 .role-badge-large.student {
   background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #1e40af;
+  color: var(--primary-dark);
   border: 1px solid #3b82f6;
 }
 
@@ -1707,7 +1707,7 @@
 .detail-group label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -1722,13 +1722,13 @@
 }
 
 .detail-group span.verified {
-  color: #059669;
+  color: var(--success-dark);
   background: #d1fae5;
-  border-color: #10b981;
+  border-color: var(--success);
 }
 
 .detail-group span.not-verified {
-  color: #dc2626;
+  color: var(--error-dark);
   background: #fee2e2;
   border-color: #f87171;
 }
@@ -2535,7 +2535,7 @@
 .pagination-controls .btn.pagination-button:hover:not(:disabled) {
   background: #2563eb !important;
   color: white !important;
-  border-color: #2563eb !important;
+  border-color: var(--primary) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3) !important;
 }

@@ -23,7 +23,7 @@
 
 .students-40-subtitle {
   text-align: center;
-  color: #374151;
+  color: var(--text-primary);
   margin-top: -8px;
   margin-bottom: 18px;
 }
@@ -82,7 +82,7 @@
 
 .students-40-controls input[type="text"]:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -112,21 +112,21 @@
 }
 
 .students-40-filters .form-select:focus {
-  border-color: #2563eb;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .clear-filters-btn {
   border: 1px solid #cbd5e1;
-  color: #1e293b;
+  color: var(--text-primary);
   background: #ffffff;
   padding: 6px 10px;
   border-radius: 8px;
 }
 
 .clear-filters-btn:hover {
-  color: #2563eb;
-  border-color: #2563eb;
+  color: var(--primary);
+  border-color: var(--primary);
   background: #f8fafc;
 }
 
@@ -184,17 +184,17 @@
 }
 
 .card-index {
-  color: #2563eb;
+  color: var(--primary);
   font-weight: 700;
 }
 
 .card-name {
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .card-meta {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin-bottom: 8px;
 }
@@ -208,7 +208,7 @@
 .grid-item .label {
   display: block;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 .grid-item .value {

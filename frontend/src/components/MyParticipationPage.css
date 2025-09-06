@@ -207,7 +207,7 @@
 }
 
 .progress-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
@@ -239,7 +239,7 @@
 }
 
 .current-hours {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 2rem;
 }
 
@@ -283,7 +283,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  color: #10b981;
+  color: var(--success);
   font-weight: 600;
   font-size: 1rem;
 }
@@ -404,7 +404,7 @@
 }
 
 .participation-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
@@ -427,7 +427,7 @@
 
 .empty-icon {
   font-size: 4rem;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 1.5rem;
   opacity: 0.5;
 }
@@ -524,7 +524,7 @@
 }
 
 .detail-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 0.85rem;
   width: 16px;
 }
@@ -570,7 +570,7 @@
 }
 
 .reason-icon {
-  color: #ef4444;
+  color: var(--error);
   font-size: 1rem;
   margin-top: 0.125rem;
 }
@@ -581,7 +581,7 @@
 
 .reason-label {
   font-weight: 600;
-  color: #ef4444;
+  color: var(--error);
   font-size: 0.85rem;
   margin-right: 0.5rem;
 }
@@ -615,7 +615,7 @@
 
 .loading-spinner {
   font-size: 3rem;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 1.5rem;
   animation: spin 1s linear infinite;
 }
@@ -670,7 +670,7 @@
 
 .error-icon {
   font-size: 3rem;
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1.5rem;
 }
 

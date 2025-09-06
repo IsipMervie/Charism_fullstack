@@ -173,7 +173,7 @@
 }
 
 .title-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.1rem;
 }
 
@@ -199,12 +199,12 @@
   gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .label-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 0.9rem;
 }
 
@@ -221,7 +221,7 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   transform: translateY(-1px);
 }
@@ -265,14 +265,14 @@
 
 /* URL link styling in current settings */
 .info-value a {
-  color: #2563eb;
+  color: var(--primary);
   text-decoration: none;
   word-break: break-all;
 }
 
 .info-value a:hover {
   text-decoration: underline;
-  color: #1d4ed8;
+  color: var(--primary);
 }
 
 /* File Upload */
@@ -302,14 +302,14 @@
 }
 
 .file-upload-label:hover {
-  border-color: #2563eb;
+  border-color: var(--primary);
   background: var(--bg-tertiary);
   transform: translateY(-1px);
 }
 
 .upload-icon {
   font-size: 1rem;
-  color: #2563eb;
+  color: var(--primary);
 }
 
 /* Logo Preview */
@@ -453,7 +453,7 @@
 
 .loading-spinner {
   font-size: 2rem;
-  color: #2563eb;
+  color: var(--primary);
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
@@ -474,12 +474,12 @@
 
 .error-icon {
   font-size: 3rem;
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1rem;
 }
 
 .error-message h3 {
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1rem;
   font-weight: 600;
 }

@@ -170,7 +170,7 @@
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 0.25rem;
 }
 
@@ -224,7 +224,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   transform: translateY(-1px);
 }
@@ -727,7 +727,7 @@
 }
 
 .sender-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.2rem;
   background: linear-gradient(135deg, #f8fafc, #f1f5f9);
   padding: 0.75rem;
@@ -765,7 +765,7 @@
 .message-text {
   margin: 0;
   line-height: 1.7;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 1rem;
   transition: all var(--transition-normal);
   word-wrap: break-word;
@@ -847,7 +847,7 @@
 }
 
 .meta-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 0.9rem;
 }
 
@@ -901,7 +901,7 @@
 
 .mark-read-button {
   background: white;
-  color: #10b981;
+  color: var(--success);
   border: 2px solid #10b981;
   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
 }
@@ -922,7 +922,7 @@
 .delete-button:hover {
   background: #dc2626;
   color: white;
-  border-color: #dc2626;
+  border-color: var(--error-dark);
   box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
 }
 
@@ -975,19 +975,19 @@
 .btn.action-button.view-button {
   background: #6b7280 !important;
   color: white !important;
-  border-color: #6b7280 !important;
+  border-color: var(--text-tertiary) !important;
 }
 
 .btn.action-button.mark-read-button {
   background: white !important;
-  color: #10b981 !important;
-  border-color: #10b981 !important;
+  color: var(--success) !important;
+  border-color: var(--success) !important;
 }
 
 .btn.action-button.delete-button {
   background: #ef4444 !important;
   color: white !important;
-  border-color: #ef4444 !important;
+  border-color: var(--error) !important;
 }
 
 /* Force delete button text to be white in React Bootstrap */
@@ -1013,7 +1013,7 @@
 
 .btn.action-button.mark-read-button span,
 .btn.action-button.mark-read-button .button-text {
-  color: #10b981 !important;
+  color: var(--success) !important;
 }
 
 .btn.action-button.delete-button span,
@@ -1094,7 +1094,7 @@ button .button-icon {
 
 .loading-spinner {
   font-size: 2rem;
-  color: #2563eb;
+  color: var(--primary);
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
@@ -1132,12 +1132,12 @@ button .button-icon {
 
 .error-icon {
   font-size: 3rem;
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1rem;
 }
 
 .error-message h3 {
-  color: #ef4444;
+  color: var(--error);
   margin-bottom: 1rem;
   font-weight: 600;
 }
@@ -1290,19 +1290,19 @@ button .button-icon {
   .btn.action-button.view-button {
     background: #6b7280 !important;
     color: white !important;
-    border-color: #6b7280 !important;
+    border-color: var(--text-tertiary) !important;
   }
 
   .btn.action-button.mark-read-button {
     background: white !important;
-    color: #10b981 !important;
-    border-color: #10b981 !important;
+    color: var(--success) !important;
+    border-color: var(--success) !important;
   }
 
   .btn.action-button.delete-button {
     background: #ef4444 !important;
     color: white !important;
-    border-color: #ef4444 !important;
+    border-color: var(--error) !important;
   }
 
   /* CRITICAL: Make ALL button icons blue with maximum specificity for visibility */
@@ -1371,19 +1371,19 @@ button .button-icon {
   .btn.action-button.view-button {
     background: #6b7280 !important;
     color: white !important;
-    border-color: #6b7280 !important;
+    border-color: var(--text-tertiary) !important;
   }
 
   .btn.action-button.mark-read-button {
     background: white !important;
-    color: #10b981 !important;
-    border-color: #10b981 !important;
+    color: var(--success) !important;
+    border-color: var(--success) !important;
   }
 
   .btn.action-button.delete-button {
     background: #ef4444 !important;
     color: white !important;
-    border-color: #ef4444 !important;
+    border-color: var(--error) !important;
   }
   
   /* CRITICAL: Force ALL button icons to be BLUE with maximum specificity for visibility */
@@ -1441,7 +1441,7 @@ button .button-icon {
   
   .btn.action-button.mark-read-button span,
   .btn.action-button.mark-read-button .button-text {
-    color: #10b981 !important;
+    color: var(--success) !important;
   }
   
   .btn.action-button.delete-button span,
@@ -1634,7 +1634,7 @@ button .button-icon {
 }
 
 .modal-title-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
@@ -1666,7 +1666,7 @@ button .button-icon {
 }
 
 .modal-sender-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.5rem;
   background: white;
   padding: 1rem;
@@ -1732,7 +1732,7 @@ button .button-icon {
 .modal-message-text {
   font-size: 1rem;
   line-height: 1.7;
-  color: #374151;
+  color: var(--text-primary);
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -1763,7 +1763,7 @@ button .button-icon {
 }
 
 .modal-meta-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1rem;
   flex-shrink: 0;
 }
@@ -1774,7 +1774,7 @@ button .button-icon {
 
 .modal-meta-label {
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .modal-meta-value {
@@ -1934,23 +1934,23 @@ button .button-icon {
   .action-button.view-button {
     background: #6b7280 !important;
     color: white !important;
-    border-color: #6b7280 !important;
+    border-color: var(--text-tertiary) !important;
   }
   
   /* Mark read button: White background, green text (same as desktop) */
   .btn.action-button.mark-read-button,
   .action-button.mark-read-button {
     background: white !important;
-    color: #10b981 !important;
-    border-color: #10b981 !important;
+    color: var(--success) !important;
+    border-color: var(--success) !important;
   }
   
   /* Delete button: White background, red border, WHITE text (same as desktop) */
   .btn.action-button.delete-button,
   .action-button.delete-button {
     background: white !important;
-    color: #ef4444 !important;
-    border-color: #ef4444 !important;
+    color: var(--error) !important;
+    border-color: var(--error) !important;
   }
   
   /* CRITICAL: Force delete button text to be white in mobile */
@@ -2042,7 +2042,7 @@ button .button-icon {
 .modal-response-label {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e40af;
+  color: var(--primary-dark);
   margin: 0;
   display: flex;
   align-items: center;
@@ -2129,7 +2129,7 @@ button .button-icon {
 
 .modal-update-button:disabled {
   background: #9ca3af;
-  border-color: #9ca3af;
+  border-color: var(--text-tertiary);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -2173,7 +2173,7 @@ button .button-icon {
 
 .modal-reply-button:disabled {
   background: #9ca3af;
-  border-color: #9ca3af;
+  border-color: var(--text-tertiary);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

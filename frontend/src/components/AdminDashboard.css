@@ -114,7 +114,7 @@
 .header-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -123,7 +123,7 @@
 }
 
 .header-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1.1rem;
   margin: 0;
   line-height: 1.5;
@@ -217,7 +217,7 @@
 
 .logo-icon {
   font-size: 2rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .logo-loading,
@@ -236,7 +236,7 @@
 .school-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
 }
 
@@ -248,12 +248,12 @@
 }
 
 .contact-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .contact-value {
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -262,7 +262,7 @@
   border-radius: 8px;
   border: none;
   background: #fef2f2;
-  color: #991b1b;
+  color: var(--error-dark);
   border-left: 4px solid #ef4444;
 }
 
@@ -287,17 +287,17 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .actions-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
 .actions-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 1rem;
 }
@@ -363,12 +363,12 @@
 .action-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .action-description {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
   font-size: 0.9rem;
@@ -378,7 +378,7 @@
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
   font-weight: 600;
   transition: transform 0.3s ease;
@@ -389,41 +389,41 @@
 }
 
 .completed-button:hover {
-  border-color: #10b981;
+  border-color: var(--success);
 }
 
 .completed-button:hover .button-icon {
-  color: #10b981 !important;
+  color: var(--success) !important;
   fill: #10b981 !important;
   stroke: #10b981 !important;
 }
 
 .staff-approvals-button:hover {
-  border-color: #f59e0b;
+  border-color: var(--warning);
 }
 
 .staff-approvals-button:hover .button-icon {
-  color: #f59e0b !important;
+  color: var(--warning) !important;
   fill: #f59e0b !important;
   stroke: #f59e0b !important;
 }
 
 .manage-messages-button:hover {
-  border-color: #ef4444;
+  border-color: var(--error);
 }
 
 .manage-messages-button:hover .button-icon {
-  color: #ef4444 !important;
+  color: var(--error) !important;
   fill: #ef4444 !important;
   stroke: #ef4444 !important;
 }
 
 .school-settings-button:hover {
-  border-color: #6b7280;
+  border-color: var(--text-tertiary);
 }
 
 .school-settings-button:hover .button-icon {
-  color: #6b7280 !important;
+  color: var(--text-tertiary) !important;
   fill: #6b7280 !important;
   stroke: #6b7280 !important;
 }
@@ -433,7 +433,7 @@
 }
 
 .student-documentation-button:hover .button-icon {
-  color: #8b5cf6 !important;
+  color: var(--primary) !important;
   fill: #8b5cf6 !important;
   stroke: #8b5cf6 !important;
 }
@@ -465,7 +465,7 @@
   max-height: none !important;
   position: relative !important;
   z-index: 10 !important;
-  color: #2563eb !important;
+  color: var(--primary) !important;
   fill: #2563eb !important;
   stroke: #2563eb !important;
 }

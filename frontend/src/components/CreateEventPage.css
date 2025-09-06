@@ -57,7 +57,7 @@
 }
 
 .create-event-page .form-control:focus {
-  border-color: #1e40af;
+  border-color: var(--primary-dark);
   box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
   background: white;
   transform: translateY(-2px);
@@ -70,7 +70,7 @@
 
 .create-event-page .form-label {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 8px;
   font-size: 16px;
 }
@@ -101,7 +101,7 @@
 
 .create-event-page .btn-outline-primary {
   border: 2px solid #1e40af;
-  color: #1e40af;
+  color: var(--primary-dark);
   background: transparent;
 }
 
@@ -114,16 +114,16 @@
 .create-event-page .btn-outline-primary.active {
   background: #1e40af;
   color: white;
-  border-color: #1e40af;
+  border-color: var(--primary-dark);
 }
 
 .create-event-page .form-check-input:checked {
-  background-color: #1e40af;
-  border-color: #1e40af;
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
 
 .create-event-page .form-check-input:focus {
-  border-color: #1e40af;
+  border-color: var(--primary-dark);
   box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
 }
 
@@ -224,7 +224,7 @@
   
   .create-event-page .form-control {
     background: rgba(51, 65, 85, 0.9);
-    border-color: #475569;
+    border-color: var(--text-secondary);
     color: #e2e8f0;
   }
   

@@ -111,7 +111,7 @@
 .home-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -120,7 +120,7 @@
 }
 
 .home-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1.1rem;
   margin: 0;
   line-height: 1.6;
@@ -169,13 +169,13 @@
 .feature-text h3 {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .feature-text p {
   font-size: 0.95rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -270,14 +270,14 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .contact-item:hover {
-  color: #2563eb;
+  color: var(--primary);
   transform: translateY(-1px);
 }
 

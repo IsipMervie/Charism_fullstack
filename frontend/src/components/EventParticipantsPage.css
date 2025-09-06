@@ -297,7 +297,7 @@
 }
 
 .approve-btn:hover { 
-  background-color: #059669; 
+  background-color: var(--success-dark); 
   transform: translateY(-1px); 
   box-shadow: var(--shadow-md);
 }
@@ -308,7 +308,7 @@
 }
 
 .disapprove-btn:hover { 
-  background-color: #dc2626; 
+  background-color: var(--error-dark); 
   transform: translateY(-1px); 
   box-shadow: var(--shadow-md);
 }

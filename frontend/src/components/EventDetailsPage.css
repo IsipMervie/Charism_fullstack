@@ -150,7 +150,7 @@
 }
 
 .meta-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1rem;
 }
 
@@ -183,7 +183,7 @@
 
 .download-pdf-button:disabled {
   background: #6b7280;
-  color: #d1d5db;
+  color: var(--text-tertiary);
   cursor: not-allowed;
   opacity: 0.7;
   transform: none;
@@ -334,7 +334,7 @@
 
 .status-badge.available {
   background: #dbeafe;
-  color: #1e40af;
+  color: var(--primary-dark);
 }
 
 .status-badge.unavailable {
@@ -359,7 +359,7 @@
 
 .status-badge.attended {
   background: #dbeafe;
-  color: #1e40af;
+  color: var(--primary-dark);
 }
 
 /* Participants Section */
@@ -431,12 +431,12 @@
 }
 
 .status-approved {
-  color: #059669;
+  color: var(--success-dark);
   font-weight: 600;
 }
 
 .status-disapproved {
-  color: #dc2626;
+  color: var(--error-dark);
   font-weight: 600;
 }
 
@@ -592,24 +592,24 @@
 .status-badge.pending {
   background: #fef3c7;
   color: #92400e;
-  border-color: #f59e0b;
+  border-color: var(--warning);
 }
 
 .status-badge.approved {
   background: #d1fae5;
   color: #065f46;
-  border-color: #10b981;
+  border-color: var(--success);
 }
 
 .status-badge.disapproved {
   background: #fee2e2;
   color: #991b1b;
-  border-color: #ef4444;
+  border-color: var(--error);
 }
 
 .status-badge.attended {
   background: #dbeafe;
-  color: #1e40af;
+  color: var(--primary-dark);
   border-color: #3b82f6;
 }
 
@@ -994,7 +994,7 @@
 
 .status-badge.status-active {
   background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  color: var(--success);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
@@ -1006,13 +1006,13 @@
 
 .status-badge.status-disabled {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--error);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .status-badge.status-draft {
   background: rgba(156, 163, 175, 0.1);
-  color: #6b7280;
+  color: var(--text-tertiary);
   border: 1px solid rgba(156, 163, 175, 0.3);
 }
 
@@ -1027,13 +1027,13 @@
 }
 
 .public-registration-notice h4 {
-  color: #1e40af;
+  color: var(--primary-dark);
   margin-bottom: 0.5rem;
   font-size: 1.25rem;
 }
 
 .public-registration-notice p {
-  color: #1e40af;
+  color: var(--primary-dark);
   margin-bottom: 1rem;
   font-size: 1rem;
 }
@@ -1146,7 +1146,7 @@
 
 .attendance-status {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 .attendance-actions {

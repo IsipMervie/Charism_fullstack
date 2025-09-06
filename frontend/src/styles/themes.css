@@ -10,9 +10,9 @@
   --bg-input: #ffffff;
   --bg-modal: #ffffff;
   
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-tertiary: #94a3b8;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
   --text-inverse: #ffffff;
   
   --border-primary: #e2e8f0;
@@ -65,15 +65,15 @@
   /* Navigation */
   --nav-bg: #ffffff;
   --nav-border: #e2e8f0;
-  --nav-text: #1e293b;
+  --nav-text: #0f172a;
   --nav-hover: #f8fafc;
   
   /* Form Elements */
   --input-bg: #ffffff;
   --input-border: #e2e8f0;
   --input-border-focus: #2563eb;
-  --input-text: #1e293b;
-  --input-placeholder: #94a3b8;
+  --input-text: #0f172a;
+  --input-placeholder: #64748b;
   
   /* Buttons */
   --btn-primary-bg: #2563eb;
@@ -112,9 +112,9 @@
   --bg-input: #1e293b;
   --bg-modal: #1e293b;
   
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-tertiary: #94a3b8;
+  --text-primary: #ffffff;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #cbd5e1;
   --text-inverse: #0f172a;
   
   --border-primary: #334155;
@@ -167,15 +167,15 @@
   /* Navigation */
   --nav-bg: #1e293b;
   --nav-border: #334155;
-  --nav-text: #f8fafc;
+  --nav-text: #ffffff;
   --nav-hover: #334155;
   
   /* Form Elements */
   --input-bg: #1e293b;
   --input-border: #334155;
   --input-border-focus: #3b82f6;
-  --input-text: #f8fafc;
-  --input-placeholder: #94a3b8;
+  --input-text: #ffffff;
+  --input-placeholder: #cbd5e1;
   
   /* Buttons */
   --btn-primary-bg: #3b82f6;
@@ -205,6 +205,67 @@
               border-color var(--transition-normal),
               color var(--transition-normal),
               box-shadow var(--transition-normal);
+}
+
+/* Ensure all text elements use theme colors */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+}
+
+p, span, div, label, small {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+.text-muted {
+  color: var(--text-tertiary) !important;
+}
+
+/* Form elements */
+input, textarea, select {
+  color: var(--input-text) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder) !important;
+}
+
+/* Links */
+a {
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+/* Buttons */
+button {
+  color: var(--btn-primary-text);
+}
+
+.btn-secondary {
+  color: var(--btn-secondary-text) !important;
+}
+
+/* Cards and containers */
+.card, .modal-content {
+  color: var(--text-primary);
+}
+
+.card-title, .modal-title {
+  color: var(--text-primary) !important;
+}
+
+.card-text, .modal-body {
+  color: var(--text-secondary);
 }
 
 /* Disable transitions for users who prefer reduced motion */

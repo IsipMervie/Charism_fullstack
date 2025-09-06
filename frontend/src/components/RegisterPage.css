@@ -191,7 +191,7 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--primary);
   background: var(--bg-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   transform: translateY(-1px);
@@ -282,9 +282,9 @@ input[type="submit"].register-button,
 .register-form .btn,
 .register-form button,
 .register-form input[type="submit"] {
-  background-color: #2563eb !important;
+  background-color: var(--primary) !important;
   background-image: none !important;
-  border-color: #2563eb !important;
+  border-color: var(--primary) !important;
   color: white !important;
 }
 
@@ -294,9 +294,9 @@ input[type="submit"].register-button:hover,
 .register-form .btn:hover,
 .register-form button:hover,
 .register-form input[type="submit"]:hover {
-  background-color: #1d4ed8 !important;
+  background-color: var(--primary) !important;
   background-image: none !important;
-  border-color: #1d4ed8 !important;
+  border-color: var(--primary) !important;
 }
 
 /* Responsive Design */
@@ -461,7 +461,7 @@ input[type="submit"].register-button:hover,
 }
 
 .email-verification-alert .swal2-title {
-  color: #0f172a;
+  color: var(--text-primary);
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -532,7 +532,7 @@ input[type="submit"].register-button:hover,
 
 .password-match-indicator.mismatch {
   background-color: #fef2f2;
-  color: #dc2626;
+  color: var(--error-dark);
   border: 1px solid #fecaca;
 }
 
@@ -542,6 +542,6 @@ input[type="submit"].register-button:hover,
 }
 
 .form-input.password-mismatch {
-  border-color: #ef4444 !important;
+  border-color: var(--error) !important;
   box-shadow: 0 0 0 1px #ef4444 !important;
 }

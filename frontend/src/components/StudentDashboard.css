@@ -105,7 +105,7 @@
 .header-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -115,7 +115,7 @@
 
 .header-subtitle {
   font-size: 1.1rem;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 600;
   margin: 0;
   line-height: 1.6;
@@ -142,7 +142,7 @@
 .user-name {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   text-align: right;
 }
 
@@ -240,7 +240,7 @@
 
 .logo-icon {
   font-size: 2rem;
-  color: #6b7280;
+  color: var(--text-tertiary);
 }
 
 .logo-loading {
@@ -261,7 +261,7 @@
 .school-name {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
 }
@@ -274,12 +274,12 @@
 }
 
 .contact-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .contact-value {
-  color: #0ea5e9;
+  color: var(--primary);
   font-weight: 600;
   text-decoration: none;
 }
@@ -347,14 +347,14 @@
 .stat-number {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.25rem 0;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
   margin: 0;
 }
@@ -381,17 +381,17 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .progress-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
 .progress-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 1rem;
 }
@@ -418,22 +418,22 @@
 }
 
 .current-hours {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 2rem;
 }
 
 .separator {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1.5rem;
 }
 
 .target-hours {
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 2rem;
 }
 
 .hours-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1rem;
   font-weight: 500;
   margin-left: 0.5rem;
@@ -462,13 +462,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  color: #10b981;
+  color: var(--success);
   font-weight: 600;
   font-size: 1rem;
 }
 
 .progress-message-text {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 
@@ -493,17 +493,17 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .actions-icon {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
 }
 
 .actions-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 1rem;
 }
@@ -570,19 +570,19 @@
 .action-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.25rem 0;
 }
 
 .action-description {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.4;
 }
 
 .action-arrow {
-  color: #2563eb;
+  color: var(--primary);
   font-size: 1.25rem;
   font-weight: 600;
   flex-shrink: 0;
@@ -618,7 +618,7 @@
 
 .loading-spinner {
   font-size: 3rem;
-  color: #2563eb;
+  color: var(--primary);
   margin-bottom: 1.5rem;
   animation: spin 1s linear infinite;
 }
@@ -640,12 +640,12 @@
 .loading-section h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
 }
 
 .loading-section p {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
 }
@@ -809,17 +809,17 @@
   gap: 1rem;
   font-size: 2rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .upcoming-events-icon {
-  color: #10b981;
+  color: var(--success);
   font-size: 1.75rem;
 }
 
 .upcoming-events-subtitle {
-  color: #6b7280;
+  color: var(--text-tertiary);
   font-size: 1.1rem;
   margin: 0;
 }
@@ -864,7 +864,7 @@
 .upcoming-event-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
-  border-color: #10b981;
+  border-color: var(--success);
 }
 
 .event-date {
@@ -876,13 +876,13 @@
 .event-day {
   font-size: 2rem;
   font-weight: 700;
-  color: #10b981;
+  color: var(--success);
   line-height: 1;
 }
 
 .event-month {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-tertiary);
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -896,17 +896,18 @@
 .event-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   line-height: 1.3;
 }
 
 .event-description {
-  color: #6b7280;
+  color: var(--text-tertiary);
   margin: 0 0 1rem 0;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -923,19 +924,19 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6b7280;
+  color: var(--text-tertiary);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .event-time svg,
 .event-hours svg {
-  color: #10b981;
+  color: var(--success);
   font-size: 0.875rem;
 }
 
 .event-arrow {
-  color: #10b981;
+  color: var(--success);
   font-size: 1.5rem;
   font-weight: 700;
   transition: transform 0.3s ease;
@@ -982,14 +983,14 @@
 }
 
 .no-upcoming-events h3 {
-  color: #6b7280;
+  color: var(--text-tertiary);
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
 }
 
 .no-upcoming-events p {
-  color: #9ca3af;
+  color: var(--text-tertiary);
   font-size: 1.1rem;
   margin-bottom: 2rem;
   max-width: 400px;
