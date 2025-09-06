@@ -853,8 +853,16 @@ exports.timeIn = async (req, res) => {
     // Add validation for reasonable time in (allow 5 minutes before event starts)
     const now = new Date();
     const eventDate = new Date(event.date);
-    const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
-    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    
+    // Parse startTime and endTime properly (handle timezone issues)
+    const [startHour, startMinute] = (event.startTime || '00:00').split(':').map(Number);
+    const [endHour, endMinute] = (event.endTime || '23:59').split(':').map(Number);
+    
+    const eventStartTime = new Date(eventDate);
+    eventStartTime.setHours(startHour, startMinute, 0, 0);
+    
+    const eventEndTime = new Date(eventDate);
+    eventEndTime.setHours(endHour, endMinute, 0, 0);
     
     // Allow time in 5 minutes before event starts
     const earliestTimeIn = new Date(eventStartTime.getTime() - 5 * 60 * 1000); // 5 minutes before
@@ -864,11 +872,11 @@ exports.timeIn = async (req, res) => {
       });
     }
     
-    // Check if time-in window has closed (60 minutes after event starts)
-    const latestTimeIn = new Date(eventStartTime.getTime() + 60 * 60 * 1000); // 60 minutes after
+    // Check if time-in window has closed (30 minutes after event starts)
+    const latestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
     if (now > latestTimeIn) {
       return res.status(400).json({ 
-        message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()} (60 minutes after event start).` 
+        message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).` 
       });
     }
 
@@ -946,7 +954,10 @@ exports.timeOut = async (req, res) => {
 
     // Check if event has ended (cannot time out after event ends)
     const eventDate = new Date(event.date);
-    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    const [endHour, endMinute] = (event.endTime || '23:59').split(':').map(Number);
+    const eventEndTime = new Date(eventDate);
+    eventEndTime.setHours(endHour, endMinute, 0, 0);
+    
     if (now > eventEndTime) {
       return res.status(400).json({ 
         message: `Cannot time out after event has ended. The event ended at ${eventEndTime.toLocaleString()}.` 

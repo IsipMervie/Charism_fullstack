@@ -529,6 +529,7 @@ function EventListPage() {
             <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #0c5460;">
               ${event.requiresApproval ? '<li>Wait for approval before timing in</li>' : ''}
               <li>You can time in 5 minutes before the event starts</li>
+              <li>Time in window closes 30 minutes after event starts</li>
               <li>Make sure to time out when you leave</li>
             </ul>
           </div>
@@ -580,8 +581,17 @@ function EventListPage() {
     if (!event) return;
 
     const eventDate = new Date(event.date);
-    const eventDateTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
-    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    
+    // Parse startTime and endTime properly (handle timezone issues)
+    const [startHour, startMinute] = (event.startTime || '00:00').split(':').map(Number);
+    const [endHour, endMinute] = (event.endTime || '23:59').split(':').map(Number);
+    
+    const eventDateTime = new Date(eventDate);
+    eventDateTime.setHours(startHour, startMinute, 0, 0);
+    
+    const eventEndTime = new Date(eventDate);
+    eventEndTime.setHours(endHour, endMinute, 0, 0);
+    
     const now = new Date();
 
     // Allow time in 5 minutes before event starts
@@ -596,13 +606,13 @@ function EventListPage() {
       return;
     }
 
-    // Check if time-in window has closed (60 minutes after event starts)
-    const latestTimeIn = new Date(eventDateTime.getTime() + 60 * 60 * 1000); // 60 minutes after
+    // Check if time-in window has closed (30 minutes after event starts)
+    const latestTimeIn = new Date(eventDateTime.getTime() + 30 * 60 * 1000); // 30 minutes after
     if (now > latestTimeIn) {
       Swal.fire({
         icon: 'warning',
         title: 'Time In Window Closed',
-        text: `The time in window closed at ${latestTimeIn.toLocaleString()} (60 minutes after event start).`,
+        text: `The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).`,
         confirmButtonColor: '#ffc107'
       });
       return;
@@ -694,7 +704,10 @@ function EventListPage() {
 
     // Check if event has ended (cannot time out after event ends)
     const eventDate = new Date(event.date);
-    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    const [endHour, endMinute] = (event.endTime || '23:59').split(':').map(Number);
+    const eventEndTime = new Date(eventDate);
+    eventEndTime.setHours(endHour, endMinute, 0, 0);
+    
     if (now > eventEndTime) {
       Swal.fire({
         icon: 'warning',
