@@ -851,7 +851,9 @@ exports.timeIn = async (req, res) => {
     }
 
     // Add validation for reasonable time in (allow 5 minutes before event starts)
+    // Use Philippines timezone (UTC+8) for time calculations
     const now = new Date();
+    const philippinesTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Manila"}));
     const eventDate = new Date(event.date);
     
     // Parse startTime and endTime properly (handle timezone issues)
@@ -866,7 +868,8 @@ exports.timeIn = async (req, res) => {
     
     // DEBUG: Log time calculations
     console.log('🕐 TIME-IN DEBUG:');
-    console.log('   Server Time:', now.toLocaleString());
+    console.log('   Server Time (UTC):', now.toLocaleString());
+    console.log('   Philippines Time:', philippinesTime.toLocaleString());
     console.log('   Event Date:', eventDate.toLocaleString());
     console.log('   Event Start:', eventStartTime.toLocaleString());
     console.log('   Event End:', eventEndTime.toLocaleString());
@@ -879,18 +882,21 @@ exports.timeIn = async (req, res) => {
     
     console.log('   Earliest Time In:', earliestTimeIn.toLocaleString());
     console.log('   Latest Time In:', latestTimeIn.toLocaleString());
-    console.log('   Is Too Early?', now < earliestTimeIn);
-    console.log('   Is Too Late?', now > latestTimeIn);
+    console.log('   Is Too Early? (UTC):', now < earliestTimeIn);
+    console.log('   Is Too Early? (PH):', philippinesTime < earliestTimeIn);
+    console.log('   Is Too Late? (UTC):', now > latestTimeIn);
+    console.log('   Is Too Late? (PH):', philippinesTime > latestTimeIn);
     
-    if (now < earliestTimeIn) {
-      console.log('   ❌ BLOCKING: Too early to time in');
+    // Use Philippines time for validation
+    if (philippinesTime < earliestTimeIn) {
+      console.log('   ❌ BLOCKING: Too early to time in (Philippines time)');
       return res.status(400).json({ 
         message: `Too early to time in. You can time in starting from ${earliestTimeIn.toLocaleString()} (5 minutes before event starts).` 
       });
     }
     
-    if (now > latestTimeIn) {
-      console.log('   ❌ BLOCKING: Time in window closed');
+    if (philippinesTime > latestTimeIn) {
+      console.log('   ❌ BLOCKING: Time in window closed (Philippines time)');
       return res.status(400).json({ 
         message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).` 
       });
