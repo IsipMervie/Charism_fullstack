@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getPublicSchoolSettings } from '../api/api';
+import { getImageUrl } from '../utils/imageUtils';
 import './NavigationBar.css';
 
 // Logo path - using public folder for better build compatibility
@@ -124,9 +125,14 @@ function NavigationBar() {
   // Get the logo URL with fallback
   const getLogoUrl = () => {
     if (schoolSettings.logo && schoolSettings.logo.data) {
-      // If we have MongoDB-stored logo, use the API endpoint with timestamp to prevent caching
-      const timestamp = new Date().getTime();
-      return `/api/files/school-logo?t=${timestamp}`;
+      // Use the proper backend URL from imageUtils
+      const baseUrl = getImageUrl(schoolSettings.logo, 'logo');
+      if (baseUrl) {
+        // Add timestamp to prevent caching
+        const timestamp = new Date().getTime();
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        return `${baseUrl}${separator}t=${timestamp}`;
+      }
     }
     // Fallback to static logo
     return logo;

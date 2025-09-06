@@ -11,12 +11,12 @@ const getBackendUrl = () => {
   
   // Render production - use the correct backend URL
   if (hostname === 'charism.onrender.com') {
-    return 'https://charism-server-ua-backend.vercel.app/api';
+    return 'https://charism-api.onrender.com/api';
   }
   
   // Vercel production - use backend URL, not frontend
   if (hostname === 'charism.vercel.app') {
-    return 'https://charism-server-ua-backend.vercel.app/api';
+    return 'https://charism-api.onrender.com/api';
   }
   
   // Local development

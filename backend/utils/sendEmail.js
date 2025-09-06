@@ -65,7 +65,7 @@ const sendEmail = async (to, subject, text, html, isNoReply = true) => {
       'X-Auto-Response-Suppress': 'OOF, AutoReply, DR, RN, NRN',
       'Precedence': 'bulk',
       'Auto-Submitted': 'auto-generated',
-      'X-Mailer': 'CHARISM Community Link System',
+      'X-Mailer': 'CHARISM System',
       'X-Priority': '3',
       'X-MSMail-Priority': 'Normal',
       'Importance': 'normal',
