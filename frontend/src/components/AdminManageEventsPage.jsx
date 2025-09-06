@@ -114,15 +114,15 @@ function AdminManageEventsPage() {
         return;
       }
 
-      // Add caching for better performance
+      // Simplified caching - only cache for 5 seconds to avoid stale data
       const cacheKey = `events_cache_${role}`;
       const cachedData = sessionStorage.getItem(cacheKey);
       const cacheTimestamp = sessionStorage.getItem(`${cacheKey}_timestamp`);
       
-      // Use cache if it's less than 10 seconds old
+      // Use cache if it's less than 5 seconds old
       if (cachedData && cacheTimestamp) {
         const cacheAge = Date.now() - parseInt(cacheTimestamp);
-        if (cacheAge < 10000) { // 10 seconds instead of 30
+        if (cacheAge < 5000) { // 5 seconds to ensure fresh data
           console.log('📦 Using cached events data');
           setEvents(JSON.parse(cachedData));
           setLoading(false);
@@ -133,15 +133,11 @@ function AdminManageEventsPage() {
 
       console.log('🌐 Fetching events from API...');
       
-      // Add a timeout to the API call
-      const apiTimeout = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('API timeout')), 8000); // 8 second timeout
-      });
-      
-      const dataPromise = getEvents();
-      const data = await Promise.race([dataPromise, apiTimeout]);
+      // Use the standard getEvents function with its built-in timeout
+      const data = await getEvents();
       
       console.log('✅ Events fetched successfully, count:', data?.length || 0);
+      console.log('📊 Events data sample:', data?.slice(0, 2)); // Log first 2 events for debugging
       
       // Cache the data
       sessionStorage.setItem(cacheKey, JSON.stringify(data));
@@ -192,7 +188,7 @@ function AdminManageEventsPage() {
       setLoading(false);
       setIsFetching(false);
     }
-  }, [isFetching]); // Add isFetching to dependencies
+  }, []); // Remove dependencies to prevent infinite loops
 
   useEffect(() => {
     console.log('🚀 Component mounted, calling fetchEvents...');

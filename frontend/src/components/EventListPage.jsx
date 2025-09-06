@@ -61,6 +61,12 @@ function EventListPage() {
       
       const eventsData = await getEvents();
       
+      console.log('📊 Events data received:', {
+        isArray: Array.isArray(eventsData),
+        length: eventsData?.length,
+        sample: eventsData?.slice(0, 2)
+      });
+      
       if (!eventsData || !Array.isArray(eventsData)) {
         throw new Error('Invalid events data received');
       }
