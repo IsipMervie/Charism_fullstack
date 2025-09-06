@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Badge, Spinner, Alert, Form, Modal } from 'react-bootstrap';
 import { FaFile, FaUpload, FaDownload, FaTrash, FaSearch, FaPlus, FaEye } from 'react-icons/fa';
 import { getEvents, getEventDocumentation, downloadDocumentationFile, deleteDocumentationFile, uploadEventDocumentation } from '../api/api';
-import { formatTimeRange12Hour } from '../utils/timeUtils';
+import { formatTimeRange12Hour, formatTime12Hour } from '../utils/timeUtils';
 import Swal from 'sweetalert2';
 import './StudentDocumentationPage.css';
 
@@ -30,6 +30,8 @@ const StudentDocumentationPage = () => {
       
       // Fetch events where student is registered
       const eventsData = await getEvents();
+      console.log('📊 Raw events data sample:', eventsData.slice(0, 2));
+      
       const userEvents = eventsData.filter(event => 
         event.attendance && 
         event.attendance.some(att => 
@@ -37,6 +39,14 @@ const StudentDocumentationPage = () => {
           att.registrationApproved
         )
       );
+      
+      console.log('👤 User events found:', userEvents.map(event => ({
+        title: event.title,
+        date: event.date,
+        startTime: event.startTime,
+        endTime: event.endTime
+      })));
+      
       setEvents(userEvents);
 
       // Fetch documentation for all user events
@@ -400,11 +410,35 @@ const StudentDocumentationPage = () => {
                       <span className="event-date">
                         {new Date(doc.eventDate).toLocaleDateString()}
                       </span>
-                      {doc.eventStartTime && doc.eventEndTime && (
-                        <span className="event-time">
-                          {formatTimeRange12Hour(doc.eventStartTime, doc.eventEndTime)}
-                        </span>
-                      )}
+                      <span className="event-time">
+                        {(() => {
+                          // Debug logging
+                          console.log('Event time data:', {
+                            eventTitle: doc.eventTitle,
+                            startTime: doc.eventStartTime,
+                            endTime: doc.eventEndTime,
+                            hasStartTime: !!doc.eventStartTime,
+                            hasEndTime: !!doc.eventEndTime
+                          });
+                          
+                          // If we have both start and end times, show the range
+                          if (doc.eventStartTime && doc.eventEndTime) {
+                            return formatTimeRange12Hour(doc.eventStartTime, doc.eventEndTime);
+                          }
+                          // If we only have start time, show it with a note
+                          else if (doc.eventStartTime) {
+                            return `${formatTime12Hour(doc.eventStartTime)} (start time only)`;
+                          }
+                          // If we only have end time, show it with a note
+                          else if (doc.eventEndTime) {
+                            return `${formatTime12Hour(doc.eventEndTime)} (end time only)`;
+                          }
+                          // No time information available
+                          else {
+                            return 'Time not specified';
+                          }
+                        })()}
+                      </span>
                     </div>
                     <Button
                       variant="outline-primary"
