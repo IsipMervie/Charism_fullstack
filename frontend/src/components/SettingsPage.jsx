@@ -480,7 +480,7 @@ function SettingsPage() {
                     {/* Show temporary profile picture if available, otherwise show current */}
                     {(tempProfilePicture || profilePicture) ? (
                       <img
-                        src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-server-ua-backend.vercel.app'}/uploads/profile-pictures/${tempProfilePicture || profilePicture}`}
+                        src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://charism-api.onrender.com'}/uploads/profile-pictures/${tempProfilePicture || profilePicture}`}
                         alt="Profile"
                         className="rounded-circle"
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}

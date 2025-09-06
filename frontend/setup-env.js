@@ -12,7 +12,7 @@ process.env.CI = 'false';
 process.env.GENERATE_SOURCEMAP = 'false';
 process.env.ESLINT_NO_DEV_ERRORS = 'true';
 process.env.SKIP_PREFLIGHT_CHECK = 'true';
-process.env.REACT_APP_API_URL = 'https://charism-server-ua-backend.vercel.app/api';
+process.env.REACT_APP_API_URL = 'https://charism-api.onrender.com/api';
 
 console.log('✅ Environment variables set for Vercel build:');
 console.log('   DISABLE_ESLINT_PLUGIN:', process.env.DISABLE_ESLINT_PLUGIN);
@@ -28,7 +28,7 @@ CI=false
 GENERATE_SOURCEMAP=false
 ESLINT_NO_DEV_ERRORS=true
 SKIP_PREFLIGHT_CHECK=true
-REACT_APP_API_URL=https://charism-server-ua-backend.vercel.app/api
+REACT_APP_API_URL=https://charism-api.onrender.com/api
 `;
 
 const envFiles = ['.env.local', '.env.production', '.env.build'];

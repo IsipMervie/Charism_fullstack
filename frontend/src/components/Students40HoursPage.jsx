@@ -71,7 +71,7 @@ function Students40HoursPage() {
       if (search) params.append('search', search);
       
       const token = localStorage.getItem('token');
-              const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-server-ua-backend.vercel.app/api'}/reports/students-40-hours?${params.toString()}`, {
+              const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com/api'}/reports/students-40-hours?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`

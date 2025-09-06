@@ -19,7 +19,7 @@ try {
 }
 
 // Set the backend API URL for production
-process.env.REACT_APP_API_URL = 'https://charism-server-ua-backend.vercel.app/api';
+process.env.REACT_APP_API_URL = 'https://charism-api.onrender.com/api';
 console.log('🔗 Backend API URL set to:', process.env.REACT_APP_API_URL);
 
 console.log('🔧 Environment variables set:');
