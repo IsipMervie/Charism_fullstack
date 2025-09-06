@@ -24,6 +24,12 @@ router.get(
   settingsController.getPublicSettings
 );
 
+// Get public school settings (for navbar branding, no auth required)
+router.get(
+  '/public/school',
+  settingsController.getPublicSchoolSettings
+);
+
 
 // Get user profile (all authenticated users)
 router.get(

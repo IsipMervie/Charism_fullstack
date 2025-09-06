@@ -120,6 +120,43 @@ exports.getPublicSettings = async (req, res) => {
   }
 };
 
+// Get public school settings (for navbar branding, no auth required)
+exports.getPublicSchoolSettings = async (req, res) => {
+  try {
+    console.log('=== Getting Public School Settings ===');
+    
+    // Ensure database connection
+    const { getLazyConnection } = require('../config/db');
+    const isConnected = await getLazyConnection();
+    if (!isConnected) {
+      console.error('❌ Database not connected for public school settings');
+      return res.status(503).json({ 
+        message: 'Database connection unavailable',
+        error: 'DATABASE_CONNECTION_FAILED'
+      });
+    }
+    
+    // For now, return default school settings
+    // In the future, this could be stored in a SchoolSettings model
+    const schoolSettings = {
+      schoolName: 'CHARISM School',
+      brandName: 'CHARISM',
+      logo: null
+    };
+    
+    console.log('Public school settings retrieved:', schoolSettings);
+    
+    res.json(schoolSettings);
+  } catch (err) {
+    console.error('Error in getPublicSchoolSettings:', err);
+    res.status(500).json({ 
+      message: 'Error fetching public school settings', 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+  }
+};
+
 // Get user profile (for all authenticated users)
 exports.getProfile = async (req, res) => {
   try {
