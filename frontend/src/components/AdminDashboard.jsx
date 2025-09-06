@@ -2,7 +2,7 @@
 // Simple but Creative Admin Dashboard Design
 
 import React, { useState, useEffect } from 'react';
-import { Spinner, Alert } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { getAnalytics } from '../api/api';
 import { axiosInstance } from '../api/api';
@@ -125,7 +125,7 @@ function AdminDashboard() {
             <div className="school-logo-section">
               {schoolLoading ? (
                 <div className="logo-loading">
-                  <Spinner animation="border" size="sm" />
+                  <p>Loading...</p>
                 </div>
               ) : school && school.logo ? (
                 <img
@@ -142,7 +142,7 @@ function AdminDashboard() {
             <div className="school-info-section">
               {schoolLoading ? (
                 <div className="school-loading">
-                  <Spinner animation="border" size="sm" />
+                  <p>Loading...</p>
                 </div>
               ) : school ? (
                 <>

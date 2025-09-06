@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEvents, joinEvent, timeIn, timeOut, getPublicSettings, generateReport } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaSearch, FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaSpinner, FaExclamationTriangle, FaFilter, FaEye, FaDownload } from 'react-icons/fa';
+import { FaSearch, FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaExclamationTriangle, FaFilter, FaEye, FaDownload } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import './EventAttendancePage.css';
@@ -418,7 +418,6 @@ const EventAttendancePage = memo(() => {
     return (
       <div className="event-list-container">
         <div className="loading-section">
-          <FaSpinner className="loading-spinner" />
           <h3>Loading Events...</h3>
           <p>Please wait while we fetch the latest events</p>
         </div>

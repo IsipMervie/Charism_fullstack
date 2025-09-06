@@ -48,7 +48,9 @@ app.use(cors({
       : [
           'http://localhost:3000',
           'https://charism.onrender.com',
-          'https://*.onrender.com'
+          'https://charism-api.onrender.com',
+          'https://*.onrender.com',
+          'https://*.vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
@@ -91,6 +93,26 @@ app.use(cors({
 
 // Handle preflight requests
 app.options('*', cors());
+
+// Simple health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Charism Backend API Server',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      test: '/api/test',
+      frontendTest: '/api/frontend-test',
+      auth: '/api/auth',
+      events: '/api/events',
+      users: '/api/users',
+      admin: '/api/admin'
+    },
+    note: 'This is the backend API server. Use specific endpoints for functionality.'
+  });
+});
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

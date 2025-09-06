@@ -17,6 +17,19 @@
   text-align: center;
 }
 
+.event-image-section {
+  margin-bottom: 30px;
+}
+
+.event-image {
+  width: 100%;
+  max-width: 600px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
 .event-header h1 {
   color: #1e293b;
   font-size: 2.5rem;
@@ -211,33 +224,17 @@
   word-break: break-all;
 }
 
-.loading-spinner {
+.loading-message {
   text-align: center;
   color: white;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 15px;
 }
 
-.spinner {
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Ensure text inside loading spinner never spins */
-.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
-.loading-spinner h3,
-.loading-spinner p,
-.loading-spinner span {
-  animation: none !important;
-  transform: none !important;
+.loading-message p {
+  font-size: 1.2rem;
+  margin: 0;
 }
 
 .error-message {

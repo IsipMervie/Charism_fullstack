@@ -74,23 +74,10 @@
 .loading-spinner {
   font-size: 3rem;
   color: #38bdf8;
-  animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
 
-/* Ensure text inside loading spinner never spins */
-.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
-.loading-spinner h3,
-.loading-spinner p,
-.loading-spinner span {
-  animation: none !important;
-  transform: none !important;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+/* Spin animation removed */
 
 .loading-content h3 {
   color: #1e293b;

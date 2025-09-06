@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   FaCalendarAlt, FaUser, FaCog, FaGraduationCap, 
-  FaClock, FaTrophy, FaSpinner, FaCheckCircle, 
+  FaClock, FaTrophy, FaCheckCircle, 
   FaUserGraduate, FaCalendar, FaChartLine
 } from 'react-icons/fa';
 import { getEvents, getUserProfile } from '../api/api';
@@ -148,7 +148,6 @@ function StudentDashboard() {
       <div className="student-dashboard">
         <div className="loading-section">
           <div className="loading-content">
-            <FaSpinner className="loading-spinner" />
             <h3>Loading Dashboard</h3>
             <p>Please wait while we fetch your information...</p>
           </div>
@@ -194,7 +193,7 @@ function StudentDashboard() {
             <div className="school-logo-section">
               {schoolLoading ? (
                 <div className="logo-loading">
-                  <FaSpinner className="loading-spinner" />
+                  <p>Loading...</p>
                 </div>
               ) : school && school.logo ? (
                 <img
@@ -217,7 +216,7 @@ function StudentDashboard() {
             <div className="school-details">
               {schoolLoading ? (
                 <div className="logo-loading">
-                  <FaSpinner className="loading-spinner" />
+                  <p>Loading...</p>
                 </div>
               ) : school ? (
                 <>

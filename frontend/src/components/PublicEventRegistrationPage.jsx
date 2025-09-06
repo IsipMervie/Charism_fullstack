@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEventByRegistrationToken, registerForEventWithToken } from '../api/api';
+import { getEventImageUrl } from '../utils/imageUtils';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaSignInAlt, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
@@ -135,8 +136,7 @@ function PublicEventRegistrationPage() {
   if (loading) {
     return (
       <div className="public-registration-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
+        <div className="loading-message">
           <p>Loading event details...</p>
         </div>
       </div>
@@ -183,6 +183,21 @@ function PublicEventRegistrationPage() {
   return (
     <div className="public-registration-container">
       <div className="event-card">
+        {/* Event Image */}
+        {event.image && (
+          <div className="event-image-section">
+            <img
+              src={getEventImageUrl(event.image, event._id)}
+              alt={event.title}
+              className="event-image"
+              onError={(e) => {
+                console.error('Event image failed to load:', e.target.src);
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+        
         <div className="event-header">
           <h1>{event.title}</h1>
           <p className="event-description">{event.description}</p>

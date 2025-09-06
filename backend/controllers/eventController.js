@@ -2125,12 +2125,24 @@ exports.deleteDocumentationFile = async (req, res) => {
 exports.getEventByRegistrationToken = async (req, res) => {
   try {
     const { token } = req.params;
+    console.log('🔍 Getting event by registration token:', token);
     
     const event = await Event.findOne({ 
       publicRegistrationToken: token,
       isPublicRegistrationEnabled: true,
       status: { $ne: 'Disabled' }
     }).populate('createdBy', 'name');
+    
+    console.log('📊 Event found:', event ? 'Yes' : 'No');
+    if (event) {
+      console.log('📋 Event details:', {
+        id: event._id,
+        title: event.title,
+        token: event.publicRegistrationToken,
+        enabled: event.isPublicRegistrationEnabled,
+        status: event.status
+      });
+    }
     
     if (!event) {
       return res.status(404).json({ 
@@ -2154,6 +2166,8 @@ exports.getEventByRegistrationToken = async (req, res) => {
       title: event.title,
       description: event.description,
       date: event.date,
+      startTime: event.startTime,
+      endTime: event.endTime,
       time: event.time,
       location: event.location,
       hours: event.hours,
@@ -2161,7 +2175,8 @@ exports.getEventByRegistrationToken = async (req, res) => {
       currentParticipants: event.attendance.length,
       createdBy: event.createdBy,
       requiresApproval: event.requiresApproval,
-      isPublicRegistrationEnabled: event.isPublicRegistrationEnabled
+      isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,
+      image: event.image // Include image data for frontend
     });
     
   } catch (err) {

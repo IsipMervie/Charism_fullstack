@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaSpinner, FaEyeSlash, FaShare } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaEyeSlash, FaShare } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import { safeFilter, safeMap, safeLength } from '../utils/arrayUtils';

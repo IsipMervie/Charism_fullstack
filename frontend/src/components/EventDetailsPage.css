@@ -680,23 +680,7 @@
   border: 3px solid #e2e8f0;
   border-top: 3px solid #2563eb;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Ensure text inside loading spinner never spins */
-.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
-.loading-spinner h3,
-.loading-spinner p,
-.loading-spinner span {
-  animation: none !important;
-  transform: none !important;
 }
 
 .loading-section h3 {
@@ -905,7 +889,7 @@
   }
   
   .loading-spinner {
-    animation: none;
+    /* No animation */
   }
 }
 

@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FaUser, FaEnvelope, FaUserTie, FaIdCard, FaGraduationCap, 
   FaBuilding, FaCalendar, FaCrown, FaUserGraduate,
-  FaSpinner, FaCheckCircle, FaUsers
+  FaCheckCircle, FaUsers
 } from 'react-icons/fa';
 import { axiosInstance } from '../api/api';
 import { getProfilePictureUrl } from '../utils/imageUtils';
@@ -288,7 +288,6 @@ function ProfilePage() {
       <div className="profile-page">
         <div className="loading-section">
           <div className="loading-content">
-            <FaSpinner className="loading-spinner" />
             <h3>Loading Profile</h3>
             <p>Please wait while we fetch your profile information...</p>
           </div>
@@ -343,9 +342,9 @@ function ProfilePage() {
                 disabled={refreshing}
               >
                 {refreshing ? (
-                  <FaSpinner className="refresh-icon spinning" />
+                  <span>Refreshing...</span>
                 ) : (
-                  <FaSpinner className="refresh-icon" />
+                  <span>Refresh</span>
                 )}
               </button>
             </div>

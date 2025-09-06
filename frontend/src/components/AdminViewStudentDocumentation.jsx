@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Badge, Modal, Table, Button } from 'react-bootstrap';
-import { FaFile, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaSpinner, FaList, FaBuilding, FaDownload } from 'react-icons/fa';
+import { FaFile, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaList, FaBuilding, FaDownload } from 'react-icons/fa';
 import { getEvents, getEventsWithUserData, downloadDocumentationFile } from '../api/api';
 import Swal from 'sweetalert2';
 import './AdminViewStudentDocumentation.css';
@@ -214,7 +214,6 @@ const AdminViewStudentDocumentation = () => {
       <div className="documentation-page">
         <div className="loading-section">
           <div className="loading-content">
-            <FaSpinner className="loading-spinner" />
             <h3>Loading Student Documentation</h3>
             <p>Please wait while we fetch the documentation information...</p>
           </div>

@@ -392,7 +392,6 @@ function AnalyticsPage() {
     return (
       <div className="analytics-container">
         <div className="loading-section">
-          <div className="loading-spinner" />
           <h3>Preparing insights…</h3>
           <p>Fetching analytics data</p>
         </div>

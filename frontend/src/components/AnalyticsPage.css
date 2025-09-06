@@ -253,22 +253,7 @@
   border: 4px solid #e2e8f0;
   border-top: 4px solid #2563eb;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
   margin-bottom: 24px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Ensure text inside loading spinner never spins */
-.loading-spinner *:not(.spinner-ring):not(.spinner-dot),
-.loading-spinner h3,
-.loading-spinner p,
-.loading-spinner span {
-  animation: none !important;
-  transform: none !important;
 }
 
 .loading-section h3 {

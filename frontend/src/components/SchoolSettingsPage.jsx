@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getPublicSchoolSettings, updateSchoolSettings } from '../api/api';
 import { getLogoUrl } from '../utils/imageUtils';
 import Swal from 'sweetalert2';
-import { FaBuilding, FaEnvelope, FaTag, FaImage, FaSave, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaBuilding, FaEnvelope, FaTag, FaImage, FaSave, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import './SchoolSettingsPage.css';
 
 function SchoolSettingsPage() {
@@ -116,7 +116,6 @@ function SchoolSettingsPage() {
     return (
       <div className="school-settings-page">
         <div className="loading-section">
-          <FaSpinner className="loading-spinner" />
           <h3>Loading School Settings...</h3>
           <p>Please wait while we fetch the settings data</p>
         </div>
@@ -267,7 +266,6 @@ function SchoolSettingsPage() {
                 >
                   {saving ? (
                     <>
-                      <FaSpinner className="button-icon spinning" />
                       <span>Saving...</span>
                     </>
                   ) : (
