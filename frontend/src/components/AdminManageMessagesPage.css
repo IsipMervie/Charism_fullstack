@@ -282,20 +282,343 @@
   max-width: 100%;
 }
 
-/* Responsive grid for larger screens */
-@media (min-width: 1200px) {
+/* Mobile responsive improvements */
+@media (max-width: 767px) {
+  .manage-messages-page {
+    padding: 1rem 0.5rem;
+    margin-top: 65px;
+  }
+  
+  .manage-messages-container {
+    max-width: 100%;
+  }
+  
+  .header-section {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .header-content {
+    gap: 1rem;
+  }
+  
+  .header-title {
+    font-size: 1.8rem;
+  }
+  
+  .header-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .message-stats {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .stat-item {
+    min-width: 100px;
+    text-align: center;
+  }
+  
+  .search-section {
+    padding: 1rem;
+  }
+  
+  .search-input {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+  
   .messages-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
+    gap: 1rem;
+  }
+  
+  /* Mobile message card improvements */
+  .message-card {
+    min-height: 180px;
+    border-radius: 12px;
+  }
+  
+  .message-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .message-content {
+    padding: 1rem;
+  }
+  
+  .message-sender {
+    margin-bottom: 0.75rem;
+  }
+  
+  .sender-name {
+    font-size: 1rem;
+  }
+  
+  .sender-email {
+    font-size: 0.85rem;
+  }
+  
+  .message-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .message-meta {
+    margin-top: 0.75rem;
+  }
+  
+  .message-actions {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .action-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    justify-content: center;
+  }
+  
+  .action-button .button-icon {
+    font-size: 1rem;
+  }
+  
+  /* Mobile modal improvements */
+  .message-view-modal .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+  
+  .modal-header {
+    padding: 1rem;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-sender-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .modal-sender-header {
+    text-align: center;
+  }
+  
+  .modal-message-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .modal-reply-section {
+    padding: 1rem;
+  }
+  
+  .reply-textarea {
+    min-height: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .modal-footer {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+    padding: 0.75rem;
   }
 }
 
+/* Tablet responsive improvements */
 @media (min-width: 768px) and (max-width: 1199px) {
   .messages-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1.5rem;
+  }
+}
+
+/* Desktop responsive improvements */
+@media (min-width: 1200px) {
+  .manage-messages-page {
+    padding: 2.5rem 2rem;
+  }
+  
+  .manage-messages-container {
+    max-width: 1400px;
+  }
+  
+  .header-section {
+    padding: 3rem 3rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .header-content {
+    gap: 2.5rem;
+  }
+  
+  .header-title {
+    font-size: 2.5rem;
+  }
+  
+  .header-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .message-stats {
+    gap: 2rem;
+  }
+  
+  .stat-item {
+    min-width: 140px;
+    padding: 1.5rem 1.25rem;
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+  }
+  
+  .stat-label {
+    font-size: 1rem;
+  }
+  
+  .search-section {
+    padding: 2rem 2.5rem;
+  }
+  
+  .search-input {
+    font-size: 1.1rem;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .messages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2rem;
+  }
+  
+  /* Desktop message card improvements */
+  .message-card {
+    min-height: 240px;
+    border-radius: 18px;
+  }
+  
+  .message-header {
+    padding: 1.5rem 2rem;
+  }
+  
+  .message-content {
+    padding: 1.5rem 2rem;
+  }
+  
+  .sender-name {
+    font-size: 1.2rem;
+  }
+  
+  .sender-email {
+    font-size: 1rem;
+  }
+  
+  .message-text {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .message-actions {
+    padding: 1.5rem 2rem;
+    gap: 1rem;
+  }
+  
+  .action-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+    min-width: 120px;
+  }
+  
+  /* Enhanced desktop shadows */
+  .header-section {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+  }
+  
+  .search-section {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  }
+  
+  .message-card {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .message-card:hover {
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+    transform: translateY(-6px) scale(1.01);
+  }
+  
+  /* Desktop modal improvements */
+  .message-view-modal .modal-dialog {
+    max-width: 800px;
+  }
+  
+  .modal-header {
+    padding: 2rem 2rem 1rem;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+  }
+  
+  .modal-body {
+    padding: 2rem;
+  }
+  
+  .modal-sender-section {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .modal-sender-name {
+    font-size: 1.3rem;
+  }
+  
+  .modal-sender-email {
+    font-size: 1.1rem;
+  }
+  
+  .modal-message-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  
+  .modal-reply-section {
+    padding: 2rem;
+  }
+  
+  .reply-textarea {
+    min-height: 150px;
+    font-size: 1rem;
+    padding: 1.25rem;
+  }
+  
+  .modal-footer {
+    padding: 1.5rem 2rem 2rem;
+    gap: 1rem;
+  }
+  
+  .modal-footer .btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
   }
 }
 
