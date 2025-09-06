@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Badge, Spinner, Alert, Form, Modal } from 'react-bootstrap';
 import { FaFile, FaUpload, FaDownload, FaTrash, FaSearch, FaPlus, FaEye } from 'react-icons/fa';
 import { getEvents, getEventDocumentation, downloadDocumentationFile, deleteDocumentationFile, uploadEventDocumentation } from '../api/api';
+import { formatTimeRange12Hour } from '../utils/timeUtils';
 import Swal from 'sweetalert2';
 import './StudentDocumentationPage.css';
 
@@ -53,6 +54,8 @@ const StudentDocumentationPage = () => {
                 eventId: event._id,
                 eventTitle: event.title,
                 eventDate: event.date,
+                eventStartTime: event.startTime,
+                eventEndTime: event.endTime,
                 documentation: userDocs
               });
             }
@@ -393,9 +396,16 @@ const StudentDocumentationPage = () => {
                 <div className="event-info">
                   <h5 className="event-name">{doc.eventTitle}</h5>
                   <div className="event-details">
-                    <span className="event-date">
-                      {new Date(doc.eventDate).toLocaleDateString()}
-                    </span>
+                    <div className="event-date-time">
+                      <span className="event-date">
+                        {new Date(doc.eventDate).toLocaleDateString()}
+                      </span>
+                      {doc.eventStartTime && doc.eventEndTime && (
+                        <span className="event-time">
+                          {formatTimeRange12Hour(doc.eventStartTime, doc.eventEndTime)}
+                        </span>
+                      )}
+                    </div>
                     <Button
                       variant="outline-primary"
                       size="sm"

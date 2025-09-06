@@ -234,9 +234,21 @@
   flex-wrap: wrap;
 }
 
+.event-date-time {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .event-date {
   color: #64748b;
   font-size: 0.875rem;
+}
+
+.event-time {
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .upload-more-btn {
