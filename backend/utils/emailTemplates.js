@@ -14,7 +14,7 @@ const getNoReplyFooter = () => `
   </div>
   
   <p style="margin: 0 0 10px 0;">
-    <strong>CHARISM Community Link System</strong><br>
+    <strong>CHARISM Communit</strong><br>
     This email was sent from an automated system and cannot receive replies.
   </p>
   
@@ -24,7 +24,7 @@ const getNoReplyFooter = () => `
   
   <p style="margin: 0; font-size: 10px; color: #999;">
     This email was sent from: ${NO_REPLY_EMAIL}<br>
-    Sent by: CHARISM Community Link System
+    Sent by: CHARISM 
   </p>
 </div>
 `;
@@ -37,18 +37,18 @@ const getEmailVerificationTemplate = (verificationLink, userName) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Your Email - CHARISM Community Link</title>
+  <title>Verify Your Email - CHARISM </title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2c3e50; margin: 0;">CHARISM Community Link</h1>
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM </h1>
       <p style="color: #7f8c8d; margin: 10px 0 0 0;">Email Verification Required</p>
     </div>
     
     <div style="margin-bottom: 25px;">
       <p>Hello ${userName || 'there'},</p>
-      <p>Thank you for registering with CHARISM Community Link. To complete your registration, please verify your email address by clicking the button below:</p>
+      <p>Thank you for registering with CHARISM. To complete your registration, please verify your email address by clicking the button below:</p>
     </div>
     
     <div style="text-align: center; margin: 30px 0;">
@@ -87,18 +87,18 @@ const getPasswordResetTemplate = (resetLink, userName) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Password Reset - CHARISM Community Link</title>
+  <title>Password Reset - CHARISM </title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2c3e50; margin: 0;">CHARISM Community Link</h1>
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM/h1>
       <p style="color: #7f8c8d; margin: 10px 0 0 0;">Password Reset Request</p>
     </div>
     
     <div style="margin-bottom: 25px;">
       <p>Hello ${userName || 'there'},</p>
-      <p>We received a request to reset your password for your CHARISM Community Link account. Click the button below to create a new password:</p>
+      <p>We received a request to reset your password for your CHARISM Link account. Click the button below to create a new password:</p>
     </div>
     
     <div style="text-align: center; margin: 30px 0;">
@@ -143,12 +143,12 @@ const getStaffApprovalTemplate = (userName, isApproved) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Application ${status} - CHARISM Community Link</title>
+  <title>Staff Application ${status} - CHARISM </title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2c3e50; margin: 0;">CHARISM Community Link</h1>
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM </h1>
       <p style="color: #7f8c8d; margin: 10px 0 0 0;">Staff Application ${status}</p>
     </div>
     
@@ -167,7 +167,7 @@ const getStaffApprovalTemplate = (userName, isApproved) => {
     <div style="margin-top: 20px;">
       <p style="margin: 0; font-size: 14px;">
         You can now access the system at: 
-        <a href="https://charism.vercel.app" style="color: #3498db;">https://charism.vercel.app</a>
+        <a href="https://charism.onrender.com" style="color: #3498db;">https://charism.onrender.com</a>
       </p>
     </div>
     ` : ''}
