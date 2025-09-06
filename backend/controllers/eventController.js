@@ -864,22 +864,39 @@ exports.timeIn = async (req, res) => {
     const eventEndTime = new Date(eventDate);
     eventEndTime.setHours(endHour, endMinute, 0, 0);
     
+    // DEBUG: Log time calculations
+    console.log('🕐 TIME-IN DEBUG:');
+    console.log('   Server Time:', now.toLocaleString());
+    console.log('   Event Date:', eventDate.toLocaleString());
+    console.log('   Event Start:', eventStartTime.toLocaleString());
+    console.log('   Event End:', eventEndTime.toLocaleString());
+    console.log('   Start Time String:', event.startTime);
+    console.log('   End Time String:', event.endTime);
+    
     // Allow time in 5 minutes before event starts
     const earliestTimeIn = new Date(eventStartTime.getTime() - 5 * 60 * 1000); // 5 minutes before
+    const latestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
+    
+    console.log('   Earliest Time In:', earliestTimeIn.toLocaleString());
+    console.log('   Latest Time In:', latestTimeIn.toLocaleString());
+    console.log('   Is Too Early?', now < earliestTimeIn);
+    console.log('   Is Too Late?', now > latestTimeIn);
+    
     if (now < earliestTimeIn) {
+      console.log('   ❌ BLOCKING: Too early to time in');
       return res.status(400).json({ 
         message: `Too early to time in. You can time in starting from ${earliestTimeIn.toLocaleString()} (5 minutes before event starts).` 
       });
     }
     
-    // Check if time-in window has closed (30 minutes after event starts)
-    const latestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
     if (now > latestTimeIn) {
+      console.log('   ❌ BLOCKING: Time in window closed');
       return res.status(400).json({ 
         message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).` 
       });
     }
 
+    console.log('   ✅ ALLOWING: Time in successful');
     attendance.timeIn = now;
     await event.save();
 
