@@ -14,7 +14,7 @@ const getNoReplyFooter = () => `
   </div>
   
   <p style="margin: 0 0 10px 0;">
-    <strong>CHARISM Communit</strong><br>
+    <strong>CHARISM</strong><br>
     This email was sent from an automated system and cannot receive replies.
   </p>
   

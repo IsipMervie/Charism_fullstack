@@ -30,9 +30,6 @@ function StaffDashboard() {
     totalParticipants: 0,
     pendingApprovals: 0
   });
-  const [school, setSchool] = useState(null);
-  const [schoolLoading, setSchoolLoading] = useState(true);
-  const [schoolError, setSchoolError] = useState('');
 
 
 
@@ -97,23 +94,7 @@ function StaffDashboard() {
       }
     };
 
-    const fetchSchool = async () => {
-      setSchoolLoading(true);
-      try {
-        // Use public endpoint that doesn't require authentication
-        const res = await axiosInstance.get('/settings/public/school');
-        console.log('School data received:', res.data);
-        setSchool(res.data);
-        setSchoolError('');
-      } catch (error) {
-        console.error('Error fetching school info:', error);
-        setSchoolError('Failed to fetch school info.');
-      }
-      setSchoolLoading(false);
-    };
-
     fetchDashboardData();
-    fetchSchool();
   }, []);
 
 

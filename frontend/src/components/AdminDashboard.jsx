@@ -16,9 +16,6 @@ function AdminDashboard() {
   const navigate = useNavigate();
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [school, setSchool] = useState(null);
-  const [schoolLoading, setSchoolLoading] = useState(true);
-  const [schoolError, setSchoolError] = useState('');
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -69,23 +66,6 @@ function AdminDashboard() {
     fetchAnalytics();
   }, []);
 
-  useEffect(() => {
-    const fetchSchool = async () => {
-      setSchoolLoading(true);
-      try {
-        // Use public endpoint that doesn't require admin auth
-        const res = await axiosInstance.get('/settings/public/school');
-        setSchool(res.data);
-        setSchoolError('');
-      } catch (err) {
-        console.error('Error fetching school settings:', err);
-        setSchoolError('Failed to fetch school info.');
-      }
-      setSchoolLoading(false);
-    };
-
-    fetchSchool();
-  }, []);
 
 
 
