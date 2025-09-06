@@ -1,7 +1,7 @@
 // frontend/src/components/EventListPage.jsx
 // Simple but Creative Event List Page Design
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo, memo } from 'react';
 import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -47,6 +47,27 @@ function EventListPage() {
     // Prevent multiple simultaneous calls using ref
     if (isLoadingRef.current && retryCount === 0) {
       return;
+    }
+    
+    // Check cache first (valid for 30 seconds)
+    const cacheKey = 'events-cache';
+    const cachedData = sessionStorage.getItem(cacheKey);
+    const cacheTimestamp = sessionStorage.getItem(`${cacheKey}-timestamp`);
+    
+    if (cachedData && cacheTimestamp && retryCount === 0) {
+      const cacheAge = Date.now() - parseInt(cacheTimestamp);
+      if (cacheAge < 30000) { // 30 seconds cache
+        console.log('📦 Using cached events data');
+        try {
+          const parsedData = JSON.parse(cachedData);
+          setEvents(parsedData);
+          hasLoadedRef.current = true;
+          setLoading(false);
+          return;
+        } catch (error) {
+          console.log('❌ Cache data corrupted, fetching fresh data');
+        }
+      }
     }
     
     // If we've already loaded successfully, don't reload unless explicitly requested
@@ -106,6 +127,15 @@ function EventListPage() {
       
       setEvents(eventsData);
       hasLoadedRef.current = true;
+      
+      // Cache the events data
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(eventsData));
+        sessionStorage.setItem(`${cacheKey}-timestamp`, Date.now().toString());
+        console.log('💾 Events data cached');
+      } catch (error) {
+        console.log('⚠️ Failed to cache events data:', error);
+      }
       
       // Extract unique departments from events for filter options
       const uniqueDepartments = [...safeSet(
@@ -1315,6 +1345,24 @@ function EventListPage() {
 
                 return (
                   <div key={event._id} className="event-card">
+                    {/* Event Image */}
+                    {event.image && event.image.data && (
+                      <div className="event-image">
+                        <img 
+                          src={getEventImageUrl(event.image, event._id)} 
+                          alt={event.title}
+                          className="event-image-img"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.log('Image failed to load for event:', event.title);
+                            e.target.style.display = 'none';
+                          }}
+                          onLoad={() => {
+                            console.log('Image loaded successfully for event:', event.title);
+                          }}
+                        />
+                      </div>
+                    )}
                    
                     {/* Event Content */}
                     <div className="event-content">

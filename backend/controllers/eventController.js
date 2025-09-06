@@ -198,7 +198,7 @@ exports.getAllEvents = async (req, res) => {
     try {
       // Single ultra-optimized query - include attendance field for frontend
       const queryPromise = Event.find(query)
-        .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt attendance')
+        .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt attendance image')
         .sort({ createdAt: -1 }) // Single field sort for speed
         .lean()
         .limit(15) // Reasonable limit
