@@ -14,7 +14,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 60000, // Increased to 60 seconds for slow server
+  timeout: 30000, // Reduced to 30 seconds for better UX
 });
 
 // Simple request interceptor to add token
@@ -79,11 +79,18 @@ function getUserId() {
   throw new Error('No userId found in localStorage. Please log in.');
 }
 
-// Test API connection
+// Test API connection with shorter timeout for health checks
 export const testApiConnection = async () => {
   try {
     console.log('🔍 Testing API connection to:', axiosInstance.defaults.baseURL);
-    const response = await axiosInstance.get('/health');
+    
+    // Use a shorter timeout for health checks
+    const healthCheckInstance = axios.create({
+      baseURL: API_URL,
+      timeout: 10000, // 10 seconds for health check
+    });
+    
+    const response = await healthCheckInstance.get('/health');
     console.log('✅ API connection successful:', response.status);
     return { success: true, data: response.data };
   } catch (error) {
@@ -93,13 +100,50 @@ export const testApiConnection = async () => {
       status: error.response?.status,
       url: axiosInstance.defaults.baseURL + '/health'
     });
+    
+    // Provide more helpful error messages
+    let errorMessage = 'Server is not responding';
+    if (error.code === 'ECONNABORTED') {
+      errorMessage = 'Server timeout - server may be overloaded or down';
+    } else if (error.code === 'ERR_NETWORK') {
+      errorMessage = 'Network error - server may be offline';
+    } else if (error.response?.status === 0) {
+      errorMessage = 'Server unreachable - check if backend is running';
+    }
+    
     return { 
       success: false, 
-      error: error.message,
+      error: errorMessage,
       code: error.code,
       status: error.response?.status,
       url: axiosInstance.defaults.baseURL + '/health'
     };
+  }
+};
+
+// Retry mechanism for critical API calls
+export const retryApiCall = async (apiCall, maxRetries = 3, delay = 2000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 API call attempt ${attempt}/${maxRetries}`);
+      const result = await apiCall();
+      console.log(`✅ API call successful on attempt ${attempt}`);
+      return result;
+    } catch (error) {
+      console.error(`❌ API call failed on attempt ${attempt}:`, error.message);
+      
+      if (attempt === maxRetries) {
+        console.error(`💥 All ${maxRetries} attempts failed`);
+        throw error;
+      }
+      
+      // Wait before retrying
+      console.log(`⏳ Waiting ${delay}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      
+      // Increase delay for next retry
+      delay *= 1.5;
+    }
   }
 };
 
@@ -1091,7 +1135,9 @@ export const getSettings = async () => {
 export const getPublicSettings = async () => {
   try {
     console.log('🔄 Fetching public settings from API...');
-    const response = await axiosInstance.get('/settings/public');
+    
+    // Use retry mechanism for critical settings
+    const response = await retryApiCall(() => axiosInstance.get('/settings/public'));
     console.log('✅ Public settings API response received');
     
     const data = response.data;
@@ -1130,10 +1176,20 @@ export const getPublicSettings = async () => {
 // Get public school settings (for navbar)
 export const getPublicSchoolSettings = async () => {
   try {
-    const response = await axiosInstance.get('/settings/public/school');
+    console.log('🔄 Fetching public school settings...');
+    const response = await retryApiCall(() => axiosInstance.get('/settings/public/school'));
+    console.log('✅ Public school settings received');
     return response.data;
   } catch (error) {
-    console.error('Error fetching public school settings:', error);
+    console.error('❌ Error fetching public school settings:', error);
+    
+    // Provide more specific error handling
+    if (error.code === 'ECONNABORTED') {
+      console.warn('⚠️ School settings timeout - server may be overloaded');
+    } else if (error.code === 'ERR_NETWORK') {
+      console.error('🚨 School settings network error - server may be down');
+    }
+    
     // Return default values if API fails
     return {
       schoolName: 'CHARISM School',

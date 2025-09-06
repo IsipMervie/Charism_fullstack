@@ -28,11 +28,28 @@ function LoginPage() {
       const connectionTest = await testApiConnection();
       if (!connectionTest.success) {
         console.error('API connection test failed:', connectionTest);
+        
+        // Provide more specific error messages
+        let errorTitle = 'Connection Issue';
+        let errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+        
+        if (connectionTest.code === 'ECONNABORTED') {
+          errorTitle = 'Server Timeout';
+          errorMessage = 'The server is taking too long to respond. This may indicate the server is overloaded or experiencing issues. Please try again in a few minutes.';
+        } else if (connectionTest.code === 'ERR_NETWORK') {
+          errorTitle = 'Network Error';
+          errorMessage = 'Cannot reach the server. The backend may be down or there may be network connectivity issues.';
+        } else if (connectionTest.status === 0) {
+          errorTitle = 'Server Unreachable';
+          errorMessage = 'The backend server appears to be offline or unreachable. Please contact support if this issue persists.';
+        }
+        
         Swal.fire({
           icon: 'warning',
-          title: 'Connection Issue',
-          text: 'Unable to connect to the server. Please check your internet connection and try again.',
-          confirmButtonColor: '#f59e0b'
+          title: errorTitle,
+          text: errorMessage,
+          confirmButtonColor: '#f59e0b',
+          footer: '<small>If this issue persists, the backend server may need to be restarted.</small>'
         });
         setLoading(false);
         return;
