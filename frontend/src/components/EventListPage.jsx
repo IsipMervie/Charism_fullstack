@@ -584,13 +584,13 @@ function EventListPage() {
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     const now = new Date();
 
-    // Check if event has started (allow 30 minutes before for flexibility)
-    const earliestTimeIn = new Date(eventDateTime.getTime() - 30 * 60 * 1000);
+    // Check if event has started (allow time in 30 minutes after event starts)
+    const earliestTimeIn = new Date(eventDateTime.getTime() + 30 * 60 * 1000);
     if (now < earliestTimeIn) {
       Swal.fire({
         icon: 'warning',
         title: 'Too Early to Time In',
-        text: `This event hasn't started yet. You can time in starting from ${earliestTimeIn.toLocaleString()}.`,
+        text: `You can time in starting from ${earliestTimeIn.toLocaleString()} (30 minutes after event starts).`,
         confirmButtonColor: '#ffc107'
       });
       return;

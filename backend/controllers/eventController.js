@@ -856,8 +856,8 @@ exports.timeIn = async (req, res) => {
     const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     
-    // Allow time in up to 1 hour before event starts and up to 1 hour after event ends
-    const earliestTimeIn = new Date(eventStartTime.getTime() - 60 * 60 * 1000); // 1 hour before
+    // Allow time in 30 minutes after event starts and up to 1 hour after event ends
+    const earliestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
     const latestTimeIn = new Date(eventEndTime.getTime() + 60 * 60 * 1000); // 1 hour after
     
     if (now < earliestTimeIn) {
