@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Badge, Spinner, Alert, Form, Modal } from 'react-bootstrap';
-import { FaFile, FaUpload, FaDownload, FaTrash, FaSearch, FaPlus, FaEye } from 'react-icons/fa';
+import { FaFile, FaUpload, FaDownload, FaTrash, FaPlus, FaEye } from 'react-icons/fa';
 import { getEvents, getEventDocumentation, downloadDocumentationFile, deleteDocumentationFile, uploadEventDocumentation } from '../api/api';
 import { formatTimeRange12Hour, formatTime12Hour } from '../utils/timeUtils';
 import Swal from 'sweetalert2';
@@ -334,7 +334,6 @@ const StudentDocumentationPage = () => {
             <div className="search-section">
               <div className="search-box">
                 <div className="search-input-wrapper">
-                  <FaSearch className="search-icon" />
                   <input
                     type="text"
                     placeholder="Search by event name, filename, or description..."
