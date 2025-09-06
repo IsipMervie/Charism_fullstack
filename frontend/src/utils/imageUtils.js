@@ -103,7 +103,13 @@ export const getEventImageUrl = (imageData, eventId = null) => {
 };
 
 export const getLogoUrl = (imageData) => {
-  return getImageUrl(imageData, 'logo');
+  const baseUrl = getImageUrl(imageData, 'logo');
+  if (!baseUrl) return null;
+  
+  // Add timestamp to prevent caching issues when logo is updated
+  const timestamp = new Date().getTime();
+  const separator = baseUrl.includes('?') ? '&' : '?';
+  return `${baseUrl}${separator}t=${timestamp}`;
 };
 
 export const getDocumentationUrl = (imageData) => {

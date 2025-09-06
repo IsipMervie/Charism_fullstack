@@ -124,8 +124,9 @@ function NavigationBar() {
   // Get the logo URL with fallback
   const getLogoUrl = () => {
     if (schoolSettings.logo && schoolSettings.logo.data) {
-      // If we have MongoDB-stored logo, use the API endpoint
-      return '/api/files/school-logo';
+      // If we have MongoDB-stored logo, use the API endpoint with timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      return `/api/files/school-logo?t=${timestamp}`;
     }
     // Fallback to static logo
     return logo;
