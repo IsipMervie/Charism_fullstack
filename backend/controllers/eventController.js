@@ -98,8 +98,13 @@ exports.getAllEvents = async (req, res) => {
     console.log('User:', req.user ? 'Authenticated' : 'Not authenticated');
     console.log('User role:', req.user?.role || 'Unknown');
     
+    // Flag to prevent multiple responses
+    let responseSent = false;
+    
     // Immediate timeout protection for the entire function
     const functionTimeout = setTimeout(() => {
+      if (responseSent) return;
+      responseSent = true;
       console.error('❌ Function timeout - returning empty response');
       res.json({ 
         events: [],
@@ -112,6 +117,8 @@ exports.getAllEvents = async (req, res) => {
     // Check if Event model is available
     if (!Event) {
       clearTimeout(functionTimeout);
+      if (responseSent) return;
+      responseSent = true;
       console.error('Event model not available');
       return res.status(500).json({ 
         message: 'Event model not available',
@@ -140,6 +147,8 @@ exports.getAllEvents = async (req, res) => {
     
     if (!isConnected) {
       clearTimeout(functionTimeout);
+      if (responseSent) return;
+      responseSent = true;
       console.error('Database not connected, returning empty events list');
       return res.json({ 
         events: [],
@@ -257,6 +266,8 @@ exports.getAllEvents = async (req, res) => {
       } catch (emergencyError) {
         console.error('❌ Emergency fallback failed:', emergencyError.message);
         clearTimeout(functionTimeout);
+        if (responseSent) return;
+        responseSent = true;
         return res.json({ 
           events: [],
           message: 'Server overloaded - please try again later',
@@ -280,14 +291,17 @@ exports.getAllEvents = async (req, res) => {
         eventObj.publicRegistrationUrl = generateEventRegistrationLink(event.publicRegistrationToken);
       }
       
-      // Skip image processing for speed
-      eventObj.imageUrl = null;
+      // Generate imageUrl if image exists
+      eventObj.imageUrl = (typeof event.image === 'string' || !event.image || !event.image.data) ? null : `/api/files/event-image/${event._id}`;
       
       return eventObj;
     });
     
     // Clear the function timeout since we're about to respond
     clearTimeout(functionTimeout);
+    
+    if (responseSent) return;
+    responseSent = true;
     
     console.log(`✅ Returning ${eventsWithUrls.length} events successfully`);
     res.json(eventsWithUrls);
@@ -301,6 +315,8 @@ exports.getAllEvents = async (req, res) => {
     
     // Handle specific error types with fast responses
     if (err.name === 'MongoTimeoutError' || err.message.includes('timeout')) {
+      if (responseSent) return;
+      responseSent = true;
       console.error('⏰ Database timeout error');
       return res.status(504).json({ 
         events: [],
@@ -311,6 +327,8 @@ exports.getAllEvents = async (req, res) => {
     }
     
     if (err.name === 'MongoNetworkError' || err.message.includes('network')) {
+      if (responseSent) return;
+      responseSent = true;
       console.error('🌐 Database network error');
       return res.status(503).json({ 
         events: [],
@@ -321,6 +339,8 @@ exports.getAllEvents = async (req, res) => {
     }
     
     // Generic error handling - return empty events instead of error
+    if (responseSent) return;
+    responseSent = true;
     res.json({ 
       events: [],
       message: 'Temporary service issue - please try again',
@@ -427,8 +447,8 @@ exports.getEventDetails = async (req, res) => {
         publicRegistrationToken: event.publicRegistrationToken,
         publicRegistrationUrl: event.publicRegistrationToken ? generateEventRegistrationLink(event.publicRegistrationToken) : null,
         status: event.status,
-        image: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : event.image,
-        imageUrl: (typeof event.image === 'string' || !event.image || !event.image.data || event.image.data.length === 0) ? null : `/api/files/event-image/${event._id}`,
+        image: (typeof event.image === 'string' || !event.image || !event.image.data) ? null : event.image,
+        imageUrl: (typeof event.image === 'string' || !event.image || !event.image.data) ? null : `/api/files/event-image/${event._id}`,
         // Don't include attendance data for public users
         attendanceCount: event.attendance?.length || 0
       };
