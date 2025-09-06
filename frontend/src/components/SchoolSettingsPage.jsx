@@ -34,7 +34,7 @@ function SchoolSettingsPage() {
         schoolName: data.schoolName || '',
         contactEmail: data.contactEmail || '',
         logo: null,
-        logoPreview: data.logo ? getLogoUrl(data.logo) : null
+        logoPreview: data.logoUrl || (data.logo ? getLogoUrl(data.logo) : null)
       });
       setError('');
     } catch (err) {

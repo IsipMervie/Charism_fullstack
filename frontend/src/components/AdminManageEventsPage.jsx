@@ -684,22 +684,6 @@ function AdminManageEventsPage() {
 
                   return (
                     <div key={event._id} className="event-card">
-                      {/* Event Image */}
-                      {event.image && (
-                        <div className="event-image-wrapper">
-                          <img
-                            src={getEventImageUrl(event.image, event._id)}
-                            alt={event.title}
-                            className="event-image"
-                          />
-                          <div className="event-status">
-                            <span className={`status-badge ${getStatusColor(status)}`}>
-                              {status.charAt(0).toUpperCase() + status.slice(1)}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-
                       {/* Event Content */}
                       <div className="event-content">
                         <h3 className="event-title">{event.title}</h3>

@@ -139,6 +139,14 @@ function NavigationBar() {
 
   // Get the logo URL with fallback
   const getLogoUrl = () => {
+    // First try the logoUrl field from the API
+    if (schoolSettings.logoUrl) {
+      const timestamp = new Date().getTime();
+      const separator = schoolSettings.logoUrl.includes('?') ? '&' : '?';
+      return `${schoolSettings.logoUrl}${separator}t=${timestamp}`;
+    }
+    
+    // Then try the logo object
     if (schoolSettings.logo && schoolSettings.logo.data) {
       // Use the proper backend URL from imageUtils
       const baseUrl = getImageUrl(schoolSettings.logo, 'logo');
