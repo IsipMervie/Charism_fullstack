@@ -850,24 +850,25 @@ exports.timeIn = async (req, res) => {
       return res.status(400).json({ message: 'Already timed in.' });
     }
 
-    // Add validation for reasonable time in (not too early or too late)
+    // Add validation for reasonable time in (allow 5 minutes before event starts)
     const now = new Date();
     const eventDate = new Date(event.date);
     const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     
-    // Check if event has started (can time in when event starts)
-    if (now < eventStartTime) {
+    // Allow time in 5 minutes before event starts
+    const earliestTimeIn = new Date(eventStartTime.getTime() - 5 * 60 * 1000); // 5 minutes before
+    if (now < earliestTimeIn) {
       return res.status(400).json({ 
-        message: `Too early to time in. You can time in starting from ${eventStartTime.toLocaleString()}.` 
+        message: `Too early to time in. You can time in starting from ${earliestTimeIn.toLocaleString()} (5 minutes before event starts).` 
       });
     }
     
-    // Check if time-in window has closed (30 minutes after event starts)
-    const latestTimeIn = new Date(eventStartTime.getTime() + 30 * 60 * 1000); // 30 minutes after
+    // Check if time-in window has closed (60 minutes after event starts)
+    const latestTimeIn = new Date(eventStartTime.getTime() + 60 * 60 * 1000); // 60 minutes after
     if (now > latestTimeIn) {
       return res.status(400).json({ 
-        message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()}.` 
+        message: `Time in window closed. The time in window closed at ${latestTimeIn.toLocaleString()} (60 minutes after event start).` 
       });
     }
 
@@ -940,6 +941,15 @@ exports.timeOut = async (req, res) => {
     if (now.getTime() - timeInDate.getTime() > maxDuration) {
       return res.status(400).json({ 
         message: 'Time out cannot be more than 24 hours after time in.' 
+      });
+    }
+
+    // Check if event has ended (cannot time out after event ends)
+    const eventDate = new Date(event.date);
+    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    if (now > eventEndTime) {
+      return res.status(400).json({ 
+        message: `Cannot time out after event has ended. The event ended at ${eventEndTime.toLocaleString()}.` 
       });
     }
 

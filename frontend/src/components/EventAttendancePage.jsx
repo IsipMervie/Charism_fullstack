@@ -161,7 +161,7 @@ const EventAttendancePage = memo(() => {
           <div style="background-color: #fff3cd; padding: 10px; border-radius: 5px; border-left: 4px solid #ffc107;">
             <p style="margin: 0; color: #856404;"><strong>Important Reminders:</strong></p>
             <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #856404;">
-              <li>Don't time in if the event hasn't started yet</li>
+              <li>You can time in 5 minutes before the event starts</li>
               <li>Make sure to time out when you leave</li>
             </ul>
           </div>
@@ -204,24 +204,25 @@ const EventAttendancePage = memo(() => {
     const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
     const now = new Date();
 
-    // Check if event has started (can time in when event starts)
-    if (now < eventDateTime) {
+    // Allow time in 5 minutes before event starts
+    const earliestTimeIn = new Date(eventDateTime.getTime() - 5 * 60 * 1000); // 5 minutes before
+    if (now < earliestTimeIn) {
       Swal.fire({
         icon: 'warning',
         title: 'Too Early to Time In',
-        text: `You can time in starting from ${eventDateTime.toLocaleString()} (when event starts).`,
+        text: `You can time in starting from ${earliestTimeIn.toLocaleString()} (5 minutes before event starts).`,
         confirmButtonColor: '#ffc107'
       });
       return;
     }
 
-    // Check if time-in window has closed (30 minutes after event starts)
-    const latestTimeIn = new Date(eventDateTime.getTime() + 30 * 60 * 1000);
+    // Check if time-in window has closed (60 minutes after event starts)
+    const latestTimeIn = new Date(eventDateTime.getTime() + 60 * 60 * 1000); // 60 minutes after
     if (now > latestTimeIn) {
       Swal.fire({
         icon: 'warning',
         title: 'Time In Window Closed',
-        text: `The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).`,
+        text: `The time in window closed at ${latestTimeIn.toLocaleString()} (60 minutes after event start).`,
         confirmButtonColor: '#ffc107'
       });
       return;
@@ -303,6 +304,19 @@ const EventAttendancePage = memo(() => {
         icon: 'warning',
         title: 'Too Soon to Time Out',
         text: `You must wait at least 5 minutes after time in. Please wait ${remainingTime} more minute(s).`,
+        confirmButtonColor: '#ffc107'
+      });
+      return;
+    }
+
+    // Check if event has ended (cannot time out after event ends)
+    const eventDate = new Date(event.date);
+    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    if (now > eventEndTime) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Event Has Ended',
+        text: `Cannot time out after event has ended. The event ended at ${eventEndTime.toLocaleString()}.`,
         confirmButtonColor: '#ffc107'
       });
       return;
