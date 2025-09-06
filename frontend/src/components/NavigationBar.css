@@ -1,21 +1,21 @@
-/* Enhanced Navigation Bar - Responsive Design with Consistent Styling */
+/* Enhanced Navigation Bar - Responsive Design with Theme Support */
 
 .navbar-custom {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--nav-bg);
+  box-shadow: var(--shadow-md);
   padding: 0.75rem 0;
   height: 70px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1030;
   margin-bottom: 0;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  border-bottom: 1px solid var(--nav-border);
   backdrop-filter: blur(10px);
 }
 
@@ -767,5 +767,44 @@ body {
   .navbar-nav-mobile .dropdown.show .dropdown-menu {
     max-height: 500px;
     opacity: 1;
+  }
+}
+
+/* Theme Toggle in Navigation */
+.navbar-theme-toggle {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.navbar-theme-toggle .theme-toggle {
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 1px solid var(--border-primary);
+}
+
+.navbar-theme-toggle .theme-toggle:hover {
+  background: var(--btn-secondary-hover);
+  border-color: var(--border-focus);
+}
+
+/* Mobile theme toggle */
+@media (max-width: 991px) {
+  .navbar-theme-toggle {
+    margin-right: 0.5rem;
+  }
+  
+  .navbar-theme-toggle .theme-toggle {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .navbar-theme-toggle .theme-toggle-text {
+    display: none;
+  }
+  
+  .navbar-theme-toggle .theme-toggle-icon {
+    font-size: 1rem;
   }
 }

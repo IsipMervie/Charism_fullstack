@@ -1,8 +1,11 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Fresh Modern Staff Dashboard Design */
 
 .staff-dashboard {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   position: relative;
   overflow-x: hidden;
 }
@@ -90,7 +93,7 @@
   justify-content: center;
   font-size: 2.5rem;
   box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .icon-symbol:hover {
@@ -105,7 +108,7 @@
 .header-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -115,7 +118,7 @@
 
 .header-subtitle {
   font-size: 1.1rem;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 600;
   margin: 0;
   line-height: 1.6;
@@ -162,7 +165,7 @@
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .school-info-card:hover {
@@ -215,7 +218,7 @@
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   display: flex;
@@ -249,7 +252,7 @@
   border-radius: 16px;
   object-fit: cover;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .school-logo:hover {
@@ -291,7 +294,7 @@
 .school-name {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
 }
@@ -304,7 +307,7 @@
 }
 
 .contact-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -345,13 +348,13 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .stat-card:hover {
@@ -379,14 +382,14 @@
 .stat-number {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.25rem 0;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
   margin: 0;
 }
@@ -396,7 +399,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -412,7 +415,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
@@ -422,7 +425,7 @@
 }
 
 .actions-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 1rem;
 }
@@ -440,7 +443,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   padding: 2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
 }
@@ -486,12 +489,12 @@
 .action-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .action-description {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
   font-size: 0.9rem;
@@ -516,7 +519,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
 }
@@ -531,7 +534,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -551,7 +554,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .staff-item:hover {
@@ -562,7 +565,7 @@
 
 .staff-label {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 500;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
@@ -572,7 +575,7 @@
 .staff-value {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -581,7 +584,7 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 3rem 2rem;
   text-align: center;
@@ -621,12 +624,12 @@
 .loading-section h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
 }
 
 .loading-section p {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
 }

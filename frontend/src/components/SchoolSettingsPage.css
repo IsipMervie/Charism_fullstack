@@ -1,8 +1,11 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Simple but Creative School Settings Page Design */
 
 .school-settings-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   padding: 2rem 1rem;
   margin-top: 70px;
   position: relative;
@@ -63,10 +66,10 @@
   gap: 1.5rem;
   margin-bottom: 3rem;
   padding: 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
   position: relative;
 }
 
@@ -115,7 +118,7 @@
 .header-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -124,7 +127,7 @@
 }
 
 .header-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1.1rem;
   margin: 0;
   line-height: 1.5;
@@ -140,12 +143,12 @@
 
 /* Settings Card */
 .settings-card {
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .settings-card:hover {
@@ -155,14 +158,14 @@
 
 .card-header {
   padding: 1.5rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-bottom: 1px solid #e2e8f0;
 }
 
 .card-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -175,7 +178,7 @@
 }
 
 .card-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0;
   line-height: 1.4;
@@ -210,10 +213,10 @@
   padding: 0.875rem 1rem;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--bg-primary);
   font-size: 0.9rem;
-  transition: all 0.3s ease;
-  color: #1e293b;
+  transition: all var(--transition-normal);
+  color: var(--text-primary);
 }
 
 .form-input:focus {
@@ -224,12 +227,12 @@
 }
 
 .form-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 .form-hint {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0.5rem 0 0 0;
   line-height: 1.4;
 }
@@ -242,14 +245,14 @@
 }
 
 .form-section-header h4 {
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
 }
 
 .form-section-header p {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -291,16 +294,16 @@
   padding: 0.875rem 1rem;
   border: 2px dashed #cbd5e1;
   border-radius: 8px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .file-upload-label:hover {
   border-color: #2563eb;
-  background: #f1f5f9;
+  background: var(--bg-tertiary);
   transform: translateY(-1px);
 }
 
@@ -313,9 +316,9 @@
 .logo-preview {
   margin-top: 1rem;
   padding: 1rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .preview-image {
@@ -345,7 +348,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
   width: 100%;
   justify-content: center;
@@ -378,12 +381,12 @@
 
 /* Current Settings Card */
 .current-settings-card {
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   height: fit-content;
 }
 
@@ -414,14 +417,14 @@
 .info-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .info-value {
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -442,10 +445,10 @@
 .error-section {
   text-align: center;
   padding: 4rem 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
 }
 
 .loading-spinner {
@@ -482,7 +485,7 @@
 }
 
 .error-message p {
-  color: #64748b;
+  color: var(--text-secondary);
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
@@ -496,7 +499,7 @@
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .retry-button:hover {

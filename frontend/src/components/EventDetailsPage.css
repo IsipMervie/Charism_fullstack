@@ -1,8 +1,11 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Simple but Creative Event Details Page Design */
 
 .event-details-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   padding: 2rem 1rem;
   margin-top: 70px;
   position: relative;
@@ -124,7 +127,7 @@
 .event-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   -webkit-background-clip: text;
@@ -143,7 +146,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .meta-icon {
@@ -167,7 +170,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
   white-space: nowrap;
 }
@@ -236,7 +239,7 @@
 .section-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 1rem 0;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #e2e8f0;
@@ -254,7 +257,7 @@
 }
 
 .description-text {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1rem;
   line-height: 1.6;
   margin: 0;
@@ -290,7 +293,7 @@
 .card-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin: 0 0 1.5rem 0;
 }
 
@@ -309,13 +312,13 @@
 }
 
 .info-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
 }
 
 .info-value {
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -361,11 +364,11 @@
 
 /* Participants Section */
 .participants-section {
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
   margin-bottom: 3rem;
 }
 
@@ -376,13 +379,13 @@
 .participants-table-container {
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .participants-table {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 .participants-table th,
@@ -399,16 +402,16 @@
 }
 
 .participants-table th {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 .participants-table tr:hover {
-  background: #f8fafc;
+  background: var(--bg-secondary);
 }
 
 .participants-table tr:last-child td {
@@ -418,7 +421,7 @@
 .reason-text {
   margin-top: 0.5rem;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-style: italic;
 }
 
@@ -450,7 +453,7 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -509,7 +512,7 @@
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .download-reflection-button:hover {
@@ -518,7 +521,7 @@
 }
 
 .no-attachment {
-  color: #94a3b8;
+  color: var(--text-tertiary);
   font-size: 0.8rem;
 }
 
@@ -562,7 +565,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: #1e293b;
+  border-top-color: var(--text-primary);
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s ease;
@@ -614,7 +617,7 @@
 .no-participants {
   text-align: center;
   padding: 3rem 2rem;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .no-participants-icon {
@@ -625,7 +628,7 @@
 .no-participants h4 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
@@ -652,7 +655,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
@@ -684,13 +687,13 @@
 }
 
 .loading-section h3 {
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
 .loading-section p {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -798,14 +801,14 @@
 }
 
 .documentation-section .section-title {
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   font-size: 1.5rem;
   font-weight: 700;
 }
 
 .documentation-section .section-description {
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
@@ -827,7 +830,7 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -910,7 +913,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   text-decoration: none;
 }
 
@@ -940,7 +943,7 @@
 }
 
 .event-description h3 {
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-size: 1.5rem;
 }
@@ -963,12 +966,12 @@
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .detail-card h4 {
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   font-size: 1.1rem;
   font-weight: 600;
@@ -1043,7 +1046,7 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .public-register-button:hover {
@@ -1055,13 +1058,13 @@
 .admin-actions {
   margin: 2rem 0;
   padding: 1.5rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .admin-actions h3 {
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-size: 1.25rem;
 }
@@ -1078,7 +1081,7 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .edit-button {
@@ -1107,7 +1110,7 @@
 }
 
 .attendance-section h3 {
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 1rem;
   font-size: 1.25rem;
 }
@@ -1122,7 +1125,7 @@
   background: white;
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1138,7 +1141,7 @@
 
 .student-name {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .attendance-status {
@@ -1160,7 +1163,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   font-size: 0.875rem;
 }
 

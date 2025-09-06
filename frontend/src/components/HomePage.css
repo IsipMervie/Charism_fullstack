@@ -2,7 +2,7 @@
 
 .home-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,10 +61,10 @@
 
 /* Home Card */
 .home-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 3rem 2.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-xl);
   border: 1px solid #f1f5f9;
   position: relative;
 }
@@ -139,9 +139,9 @@
   align-items: flex-start;
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 16px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .feature-item:hover {

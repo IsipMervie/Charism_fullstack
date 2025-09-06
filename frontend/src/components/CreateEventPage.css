@@ -3,7 +3,7 @@
 .create-event-page {
   min-height: 100vh;
   padding: 2rem 0;
-  background: #ffffff;
+  background: var(--bg-primary);
   position: relative;
   overflow-x: hidden;
 }
@@ -15,20 +15,20 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #ffffff;
+  background: var(--bg-primary);
   pointer-events: none;
   z-index: 1;
 }
 
 .create-event-page h1 {
-  color: #1e40af;
+  color: var(--primary);
   text-shadow: none;
   position: relative;
   z-index: 2;
 }
 
 .create-event-page .lead {
-  color: #475569;
+  color: var(--text-secondary);
   text-shadow: none;
   position: relative;
   z-index: 2;
@@ -36,9 +36,9 @@
 
 .create-event-page .card {
   border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.1);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
   position: relative;
   z-index: 2;
 }

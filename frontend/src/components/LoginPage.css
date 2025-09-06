@@ -2,7 +2,7 @@
 
 .login-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,11 +61,11 @@
 
 /* Login Card */
 .login-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 3rem 2.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-primary);
   position: relative;
 }
 

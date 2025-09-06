@@ -3,6 +3,7 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getPublicSchoolSettings } from '../api/api';
 import { getImageUrl } from '../utils/imageUtils';
+import ThemeToggle from './ThemeToggle';
 import './NavigationBar.css';
 
 // Logo path - using public folder for better build compatibility
@@ -452,6 +453,11 @@ function NavigationBar() {
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
             )}
+
+            {/* Theme Toggle - Always visible */}
+            <div className="navbar-theme-toggle">
+              <ThemeToggle className="compact" />
+            </div>
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -1,3 +1,6 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* VerifyEmailPage.css */
 
 .verify-container {

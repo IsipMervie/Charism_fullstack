@@ -1,16 +1,19 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* StaffApprovalPage.css */
 
 /* Page */
 .staff-approval-page {
   padding: 20px 0;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 /* Header */
 .header-section {
   position: relative;
-  background: #ffffff;
-  border: 1px solid #f1f5f9;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   padding: 16px 18px;
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
@@ -36,7 +39,7 @@
 }
 
 .header-subtitle {
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -51,12 +54,12 @@
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-primary);
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
 }
 
 .staff-approval-table thead th {
-  background-color: #f8fafc;
+  background-color: var(--bg-secondary);
   border-bottom: 2px solid #e2e8f0;
   font-weight: 700;
   color: #334155;

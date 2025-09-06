@@ -2,7 +2,7 @@
 
 .event-list-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   padding: 2rem 1rem;
   margin-top: 70px;
   position: relative;
@@ -431,18 +431,18 @@
 
 /* Event Card */
 .event-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-primary);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   position: relative;
 }
 
 .event-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-lg);
 }
 
 .event-image-wrapper {

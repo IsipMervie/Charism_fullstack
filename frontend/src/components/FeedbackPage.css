@@ -1,3 +1,6 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Feedback Page Styles */
 
 .feedback-page {
@@ -5,7 +8,7 @@
   margin: 0 auto;
   padding: 2rem 1rem;
   margin-top: 70px;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 /* Header Section */
@@ -53,9 +56,9 @@
 .feedback-form-card {
   border: none;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 .feedback-form-card .card-header {
@@ -74,7 +77,7 @@
 
 .feedback-form-card .card-body {
   padding: 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 .form-label {
@@ -89,8 +92,8 @@
   border-radius: 8px;
   padding: 0.75rem;
   font-size: 1rem;
-  transition: all 0.3s ease;
-  background: #ffffff;
+  transition: all var(--transition-normal);
+  background: var(--bg-primary);
 }
 
 .form-control:focus,
@@ -117,7 +120,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
@@ -137,20 +140,20 @@
 .feedback-history-card {
   border: none;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 .feedback-history-card .card-header {
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-bottom: 1px solid #e2e8f0;
   padding: 1.5rem;
 }
 
 .history-title {
   margin: 0;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -158,12 +161,12 @@
 
 .feedback-history-card .card-body {
   padding: 2rem;
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 .no-feedback-icon {
   font-size: 3rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
   margin-bottom: 1rem;
 }
 
@@ -182,11 +185,11 @@
 }
 
 .feedback-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .feedback-item:hover {
@@ -248,13 +251,13 @@
 }
 
 .feedback-content {
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .feedback-subject {
   font-weight: 600;
   margin-bottom: 0.75rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .feedback-message {
@@ -293,7 +296,7 @@
 .info-card {
   border: none;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
@@ -302,7 +305,7 @@
 }
 
 .info-title {
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 600;
   margin-bottom: 1.5rem;
   display: flex;
@@ -321,7 +324,7 @@
 }
 
 .info-item strong {
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 /* Badge Styles */

@@ -8,6 +8,9 @@ import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import PerformanceOptimizer from './components/PerformanceOptimizer';
 
+// Contexts
+import { ThemeProvider } from './contexts/ThemeContext';
+
 // Utilities
 import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
 import { setupNetworkMonitoring, showNetworkStatus } from './utils/networkUtils';
@@ -84,10 +87,11 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <PerformanceOptimizer>
-        <Router>
-          <NavigationBar />
-          <Suspense fallback={<LoadingSpinner />}>
+      <ThemeProvider>
+        <PerformanceOptimizer>
+          <Router>
+            <NavigationBar />
+            <Suspense fallback={<LoadingSpinner />}>
             <Routes>
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
@@ -344,7 +348,8 @@ function App() {
         
         
         </Router>
-      </PerformanceOptimizer>
+        </PerformanceOptimizer>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

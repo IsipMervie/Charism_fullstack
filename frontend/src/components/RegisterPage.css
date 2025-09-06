@@ -1,8 +1,11 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* Simple but Creative Register Page Design */
 
 .register-page {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,11 +64,11 @@
 
 /* Register Card */
 .register-card {
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 20px;
   padding: 3rem 2.5rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-primary);
   position: relative;
 }
 
@@ -111,7 +114,7 @@
 .register-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -120,7 +123,7 @@
 }
 
 .register-subtitle {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0;
 }
@@ -144,7 +147,7 @@
 .section-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #e2e8f0;
@@ -181,21 +184,21 @@
   font-size: 1rem;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
-  background: #ffffff;
-  transition: all 0.3s ease;
-  color: #1e293b;
+  background: var(--bg-primary);
+  transition: all var(--transition-normal);
+  color: var(--text-primary);
 }
 
 .form-input:focus {
   outline: none;
   border-color: #2563eb;
-  background: #ffffff;
+  background: var(--bg-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   transform: translateY(-1px);
 }
 
 .form-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 .input-focus-line {
@@ -205,7 +208,7 @@
   width: 0;
   height: 2px;
   background: linear-gradient(90deg, #38bdf8, #2563eb);
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   transform: translateX(-50%);
 }
 
@@ -215,7 +218,7 @@
 
 .form-hint {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin-top: 0.5rem;
   padding-left: 0.5rem;
   border-left: 2px solid #e2e8f0;
@@ -232,7 +235,7 @@
   border-radius: 12px;
   color: white;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
 }
@@ -485,7 +488,7 @@ input[type="submit"].register-button:hover,
   padding: 12px 32px !important;
   font-weight: 600 !important;
   font-size: 1rem !important;
-  transition: all 0.3s ease !important;
+  transition: all var(--transition-normal) !important;
   box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
 }
 
@@ -518,7 +521,7 @@ input[type="submit"].register-button:hover,
   font-size: 0.9rem;
   font-weight: 500;
   margin-top: 8px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .password-match-indicator.match {

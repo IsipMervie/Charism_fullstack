@@ -1,3 +1,6 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
 /* NotFoundPage.css - Modern 404 Page Design */
 
 .not-found-page {
@@ -110,7 +113,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   text-align: center;
 }
 
@@ -141,7 +144,7 @@
   border-radius: 12px;
   font-weight: 600;
   padding: 12px 24px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   border: none;
   position: relative;
   overflow: hidden;

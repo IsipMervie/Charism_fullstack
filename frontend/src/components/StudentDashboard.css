@@ -2,7 +2,7 @@
 
 .student-dashboard {
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--bg-primary);
   position: relative;
   overflow-x: hidden;
 }
@@ -832,8 +832,8 @@
 }
 
 .upcoming-event-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   padding: 1.5rem;
   display: flex;
