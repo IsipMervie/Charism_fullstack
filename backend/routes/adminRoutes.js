@@ -8,7 +8,7 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 
 // Special route for Staff access to events with user data (must come BEFORE general admin middleware)
-router.get('/events-with-user-data', authMiddleware, roleMiddleware(['Admin', 'Staff']), adminController.getEventsWithUserData);
+router.get('/events-with-user-data', authMiddleware, roleMiddleware('Admin', 'Staff'), adminController.getEventsWithUserData);
 
 // All other routes here are protected: only Admins can access
 router.use(authMiddleware, roleMiddleware('Admin'));
