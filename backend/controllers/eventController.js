@@ -149,18 +149,40 @@ exports.getAllEvents = async (req, res) => {
       });
     }
     
-    // Quick user role check
-    const userRole = req.user?.role || req.userInfo?.role;
+    // Quick user role check - handle both authenticated and public requests
+    const userRole = req.user?.role || req.userInfo?.role || 'Public';
     const userId = req.user?.userId || req.user?.id || req.user?._id;
+    
+    console.log('👤 User details:', {
+      userRole,
+      userId,
+      hasUser: !!req.user,
+      userInfo: req.userInfo
+    });
     
     // Build minimal query
     let query = {};
     if (userRole === 'Student') {
       query.isVisibleToStudents = true;
       query.status = { $ne: 'Disabled' };
+      console.log('🎓 Student query filters applied');
+    } else if (userRole === 'Public') {
+      // For public requests, show only visible events
+      query.status = { $ne: 'Disabled' };
+      console.log('🌐 Public query filters applied');
+    } else {
+      console.log('👨‍💼 Admin/Staff - no filters applied, showing all events');
     }
     
-    console.log('🔍 Query for role:', userRole);
+    console.log('🔍 Final query:', JSON.stringify(query, null, 2));
+    
+    // Test: Try a simple query first to see if Event model works
+    try {
+      const testCount = await Event.countDocuments({});
+      console.log(`🧪 Test query - Total events in collection: ${testCount}`);
+    } catch (testError) {
+      console.error('❌ Test query failed:', testError.message);
+    }
     
     // Ultra-fast query with maximum timeout protection
     let events = [];
@@ -180,6 +202,39 @@ exports.getAllEvents = async (req, res) => {
       
       events = await Promise.race([queryPromise, timeoutPromise]);
       console.log(`✅ Found ${events.length} events`);
+      
+      // Debug: Log first few events to see what we got
+      if (events.length > 0) {
+        console.log('📊 Sample events:', events.slice(0, 2).map(e => ({
+          id: e._id,
+          title: e.title,
+          status: e.status,
+          isVisibleToStudents: e.isVisibleToStudents,
+          date: e.date
+        })));
+      } else {
+        console.log('❌ No events found - checking if this is expected...');
+        
+        // Try a simple count query to see if there are any events at all
+        try {
+          const totalCount = await Event.countDocuments({});
+          console.log(`📊 Total events in database: ${totalCount}`);
+          
+          if (totalCount > 0) {
+            console.log('⚠️ Events exist in DB but query returned none - checking query conditions...');
+            
+            // Check if events match the query conditions
+            const allEvents = await Event.find({}).select('title status isVisibleToStudents').limit(5);
+            console.log('📋 Sample events from DB:', allEvents.map(e => ({
+              title: e.title,
+              status: e.status,
+              isVisibleToStudents: e.isVisibleToStudents
+            })));
+          }
+        } catch (countError) {
+          console.error('❌ Count query failed:', countError.message);
+        }
+      }
       
     } catch (queryError) {
       console.error('❌ Query failed:', queryError.message);
