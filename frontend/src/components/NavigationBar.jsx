@@ -395,14 +395,6 @@ function NavigationBar() {
                 </NavDropdown.Item>
                 <NavDropdown.Item 
                   as={Link} 
-                  to="/admin/school-settings" 
-                  active={location.pathname === '/admin/school-settings'}
-                  onClick={handleDropdownItemClick}
-                >
-                  School Settings
-                </NavDropdown.Item>
-                <NavDropdown.Item 
-                  as={Link} 
                   to="/admin/registration-management" 
                   active={location.pathname === '/admin/registration-management'}
                   onClick={handleDropdownItemClick}

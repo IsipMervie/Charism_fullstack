@@ -9,22 +9,6 @@ const settingsController = require('../controllers/settingsController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 
-// Get public school settings (no auth required, for navbar)
-router.get(
-  '/public/school',
-  settingsController.getPublicSchoolSettings
-);
-
-// Multer setup for logo uploads using MongoDB storage
-const { uploadLogo } = require('../utils/mongoFileStorage');
-
-// Get school settings (Admin only)
-router.get(
-  '/school',
-  authMiddleware,
-  roleMiddleware('Admin'),
-  settingsController.getSchoolSettings
-);
 
 // Get all registration settings (Admin only)
 router.get(
@@ -40,14 +24,6 @@ router.get(
   settingsController.getPublicSettings
 );
 
-// Update school settings (Admin only, with logo upload)
-router.post(
-  '/school',
-  authMiddleware,
-  roleMiddleware('Admin'),
-  uploadLogo,
-  settingsController.updateSchoolSettings
-);
 
 // Get user profile (all authenticated users)
 router.get(

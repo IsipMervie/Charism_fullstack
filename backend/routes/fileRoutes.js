@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Event = require('../models/Event');
-const SchoolSettings = require('../models/SchoolSettings');
 const { hasFile } = require('../utils/mongoFileStorage');
 const { isValidObjectId } = require('mongoose');
 const { ensureDBConnection } = require('../middleware/dbMiddleware');
@@ -137,57 +136,6 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
   }
 });
 
-// Serve school logo
-router.get('/school-logo', ensureDBConnection, async (req, res) => {
-  try {
-    const settings = await SchoolSettings.findOne();
-    
-    if (!settings) {
-      console.log('❌ No SchoolSettings found');
-      return res.status(404).json({ message: 'School settings not found' });
-    }
-    
-    // Defensive check for malformed logo data
-    if (!settings.logo) {
-      console.log('❌ No logo field in SchoolSettings');
-      return res.status(404).json({ message: 'School logo not found' });
-    }
-    
-    if (typeof settings.logo === 'string') {
-      console.log('⚠️  Logo field contains string, cannot serve');
-      return res.status(404).json({ message: 'School logo not properly configured' });
-    }
-    
-    if (!hasFile(settings.logo)) {
-      console.log('❌ Logo field does not contain valid file data');
-      return res.status(404).json({ message: 'School logo not found' });
-    }
-
-    const { data, contentType } = settings.logo;
-    
-    if (!data || !contentType) {
-      console.log('❌ Logo missing data or contentType');
-      return res.status(404).json({ message: 'School logo data incomplete' });
-    }
-    
-    console.log('✅ Serving school logo:', {
-      contentType,
-      dataLength: data.length,
-      filename: settings.logo.filename
-    });
-    
-    res.set({
-      'Content-Type': contentType,
-      'Content-Length': data.length,
-      'Cache-Control': 'public, max-age=31536000' // Cache for 1 year
-    });
-    
-    res.send(data);
-  } catch (error) {
-    console.error('Error serving school logo:', error);
-    res.status(500).json({ message: 'Error serving school logo' });
-  }
-});
 
 // Serve event document
 router.get('/event-document/:eventId/:documentIndex', ensureDBConnection, async (req, res) => {

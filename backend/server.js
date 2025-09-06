@@ -13,7 +13,6 @@ require('./models/YearLevel');
 require('./models/Department');
 require('./models/AcademicYear');
 require('./models/User');
-require('./models/SchoolSettings');
 require('./models/Event');
 require('./models/Message');
 require('./models/Feedback');
@@ -663,8 +662,7 @@ app.get('/api/file-status', (req, res) => {
         connection: mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected',
         models: {
           User: !!mongoose.models.User,
-          Event: !!mongoose.models.Event,
-          SchoolSettings: !!mongoose.models.SchoolSettings
+          Event: !!mongoose.models.Event
         }
       },
       environment: {

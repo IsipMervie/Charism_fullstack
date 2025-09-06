@@ -119,47 +119,6 @@ function AdminDashboard() {
 
 
 
-        {/* School Info Card */}
-        <div className="school-info-card">
-          <div className="school-info-content">
-            <div className="school-logo-section">
-              {schoolLoading ? (
-                <div className="logo-loading">
-                  <p>Loading...</p>
-                </div>
-              ) : school && school.logo ? (
-                <img
-                  src={`${getLogoUrl(school.logo)}`}
-                  alt="School Logo"
-                  className="school-logo"
-                />
-              ) : (
-                <div className="logo-placeholder">
-                  <FaBuilding className="logo-icon" />
-                </div>
-              )}
-            </div>
-            <div className="school-info-section">
-              {schoolLoading ? (
-                <div className="school-loading">
-                  <p>Loading...</p>
-                </div>
-              ) : school ? (
-                <>
-                  <h3 className="school-name">{school.schoolName}</h3>
-                  <div className="school-contact">
-                    <span className="contact-label">Contact Email:</span>
-                    <span className="contact-value">{school.contactEmail}</span>
-                  </div>
-                </>
-              ) : (
-                <Alert variant="danger" className="school-error">
-                  {schoolError || 'No school info found.'}
-                </Alert>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Actions Section */}
         <div className="actions-section">
@@ -256,19 +215,6 @@ function AdminDashboard() {
               <div className="action-arrow">→</div>
             </div>
 
-            <div 
-              className="action-card"
-              onClick={() => navigate('/admin/school-settings')}
-            >
-              <div className="action-icon">
-                <FaCog />
-              </div>
-              <div className="action-content">
-                <div className="action-title">School Settings</div>
-                <div className="action-description">Configure school information and system settings</div>
-              </div>
-              <div className="action-arrow">→</div>
-            </div>
 
             <div 
               className="action-card"

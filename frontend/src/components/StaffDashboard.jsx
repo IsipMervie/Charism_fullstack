@@ -158,57 +158,6 @@ function StaffDashboard() {
           </div>
         </div>
 
-        {/* School Info Section */}
-        <div className="school-info-section">
-          <div className="school-info-card">
-            <div className="school-logo-section">
-              {schoolLoading ? (
-                <div className="logo-loading">
-                  <p>Loading...</p>
-                </div>
-              ) : school && school.logo ? (
-                <img
-                  src={getLogoUrl(school.logo)}
-                  alt="School Logo"
-                  className="school-logo"
-                  onError={(e) => {
-                    console.error('Logo failed to load:', e.target.src);
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
-                  }}
-                />
-              ) : (
-                <div className="logo-placeholder">
-                  <FaBuilding className="logo-icon" />
-                </div>
-              )}
-
-            </div>
-            <div className="school-details">
-              {schoolLoading ? (
-                <div className="logo-loading">
-                  <p>Loading...</p>
-                </div>
-              ) : school ? (
-                <>
-                  <h3 className="school-name">{school.schoolName || 'University of the Assumption'}</h3>
-                  <div className="school-contact">
-                    <span className="contact-label">Contact Email:</span>
-                    <span className="contact-value">{school.contactEmail || 'ceo@ua.edu.ph'}</span>
-                  </div>
-                </>
-              ) : (
-                <div className="school-fallback">
-                  <h3 className="school-name">University of the Assumption</h3>
-                  <div className="school-contact">
-                    <span className="contact-label">Contact Email:</span>
-                    <span className="contact-value">ceo@ua.edu.ph</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Stats Section */}
         <div className="stats-section">

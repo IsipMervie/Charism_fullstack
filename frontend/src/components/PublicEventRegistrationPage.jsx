@@ -224,9 +224,6 @@ function PublicEventRegistrationPage() {
               <FaCheckCircle className="success-icon" />
               <h3>You're Already Registered!</h3>
               <p>You have successfully registered for this event.</p>
-              <button onClick={() => navigate('/dashboard')} className="btn-secondary">
-                Go to Dashboard
-              </button>
             </div>
           ) : (
             <div className="registration-actions">
