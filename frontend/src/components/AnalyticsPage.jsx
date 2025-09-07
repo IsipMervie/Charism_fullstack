@@ -162,7 +162,7 @@ function AnalyticsPage() {
   };
 
   // User Role Distribution Pie Chart
-  const userRoleData = {
+  const userRoleData = useMemo(() => ({
     labels: ['Students', 'Staff', 'Admin'],
     datasets: [
       {
@@ -180,10 +180,10 @@ function AnalyticsPage() {
         borderWidth: 2,
       },
     ],
-  };
+  }), [data, isDarkMode]);
 
   // Event Status Distribution Doughnut Chart
-  const eventStatusData = {
+  const eventStatusData = useMemo(() => ({
     labels: ['Active Events', 'Completed Events'],
     datasets: [
       {
@@ -199,10 +199,10 @@ function AnalyticsPage() {
         borderWidth: 2,
       },
     ],
-  };
+  }), [data, isDarkMode]);
 
   // Attendance vs Approved Attendance Bar Chart
-  const attendanceData = {
+  const attendanceData = useMemo(() => ({
     labels: ['Total Attendance', 'Approved Attendance'],
     datasets: [
       {
@@ -219,7 +219,7 @@ function AnalyticsPage() {
         borderWidth: 2,
       },
     ],
-  };
+  }), [data, isDarkMode]);
 
   // Recent Activity Line Chart (real data from backend)
   const recentActivityData = useMemo(() => {
@@ -299,7 +299,11 @@ function AnalyticsPage() {
       legend: {
         position: 'bottom',
         labels: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 12, weight: '500' },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'circle'
         }
       },
       title: {
@@ -318,7 +322,11 @@ function AnalyticsPage() {
       legend: {
         position: 'bottom',
         labels: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 12, weight: '500' },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'circle'
         }
       },
       title: {
@@ -335,7 +343,15 @@ function AnalyticsPage() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
+        display: true,
+        position: 'top',
+        labels: {
+          color: themeColors.text,
+          font: { size: 12, weight: '500' },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'rect'
+        }
       },
       title: {
         display: true,
@@ -348,15 +364,23 @@ function AnalyticsPage() {
       y: {
         beginAtZero: true,
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Count',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       },
       x: {
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
@@ -372,7 +396,11 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 12, weight: '500' },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'line'
         }
       },
       title: {
@@ -386,18 +414,32 @@ function AnalyticsPage() {
       y: {
         beginAtZero: true,
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Count',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       },
       x: {
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Days',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       }
     },
@@ -410,7 +452,11 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 12, weight: '500' },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'rect'
         }
       },
       title: {
@@ -424,18 +470,32 @@ function AnalyticsPage() {
       y: {
         beginAtZero: true,
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Count',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       },
       x: {
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Department',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       }
     },
@@ -448,7 +508,11 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 12, weight: '500' },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'rect'
         }
       },
       title: {
@@ -462,18 +526,32 @@ function AnalyticsPage() {
       y: {
         beginAtZero: true,
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Count',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       },
       x: {
         ticks: {
-          color: themeColors.text
+          color: themeColors.text,
+          font: { size: 11 }
         },
         grid: {
           color: themeColors.grid
+        },
+        title: {
+          display: true,
+          text: 'Academic Year',
+          color: themeColors.text,
+          font: { size: 12, weight: '500' }
         }
       }
     },
