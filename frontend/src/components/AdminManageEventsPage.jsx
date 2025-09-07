@@ -5,6 +5,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache } from '../api/api';
 import Swal from 'sweetalert2';
+import { showConfirm, showError, showSuccess, showWarning } from '../utils/sweetAlertUtils';
 import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaEyeSlash, FaShare } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
@@ -64,10 +65,7 @@ function AdminManageEventsPage() {
   // Handle authentication errors
   const handleAuthError = () => {
     console.log('🔐 Authentication error detected - redirecting to login');
-    Swal.fire({
-      title: 'Session Expired',
-      text: 'Your session has expired. Please log in again.',
-      icon: 'warning',
+    showWarning('Session Expired', 'Your session has expired. Please log in again.', {
       confirmButtonText: 'Log In',
       showCancelButton: false
     }).then(() => {
@@ -239,14 +237,16 @@ function AdminManageEventsPage() {
   };
 
   const handleDelete = async (eventId) => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'This will permanently delete the event.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel'
-    });
+    const result = await showConfirm(
+      'Are you sure?',
+      'This will permanently delete the event.',
+      {
+        icon: 'warning',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#dc3545'
+      }
+    );
     if (!result.isConfirmed) return;
 
     try {
@@ -254,30 +254,32 @@ function AdminManageEventsPage() {
       // Clear cache to ensure fresh data
       clearCache('events_cache_Admin');
       clearCache('events_cache_Staff');
-      Swal.fire({ icon: 'success', title: 'Deleted', text: 'Event deleted.' });
+      showSuccess('Deleted', 'Event deleted.');
       fetchEvents();
     } catch (err) {
       console.error('Error deleting event:', err);
       if (err.response?.status === 401) {
         handleAuthError();
       } else if (err.response?.status === 403) {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Access denied. This action requires Admin or Staff role.' });
+        showError('Error', 'Access denied. This action requires Admin or Staff role.');
       } else {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to delete event.' });
+        showError('Error', 'Failed to delete event.');
       }
     }
   };
 
   const handleToggleVisibility = async (eventId, currentVisibility) => {
     const action = currentVisibility ? 'disable' : 'enable';
-    const result = await Swal.fire({
-      title: `Are you sure?`,
-      text: `This will ${action} the event for students. ${currentVisibility ? 'Students will no longer see the "Register" button for this event.' : 'Students will be able to register for this event.'}`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: currentVisibility ? 'Disable' : 'Enable',
-      cancelButtonText: 'Cancel'
-    });
+    const result = await showConfirm(
+      `Are you sure?`,
+      `This will ${action} the event for students. ${currentVisibility ? 'Students will no longer see the "Register" button for this event.' : 'Students will be able to register for this event.'}`,
+      {
+        icon: 'warning',
+        confirmButtonText: currentVisibility ? 'Disable' : 'Enable',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: currentVisibility ? '#dc3545' : '#28a745'
+      }
+    );
     
     if (!result.isConfirmed) return;
 
@@ -286,142 +288,97 @@ function AdminManageEventsPage() {
       // Clear cache to ensure fresh data
       clearCache('events_cache_Admin');
       clearCache('events_cache_Staff');
-      Swal.fire({ 
-        icon: 'success', 
-        title: 'Success', 
-        text: `Event ${action}d successfully.` 
-      });
+      showSuccess('Success', `Event ${action}d successfully.`);
       fetchEvents();
     } catch (err) {
       console.error('Error toggling event visibility:', err);
       if (err.response?.status === 401) {
         handleAuthError();
       } else {
-        Swal.fire({ 
-          icon: 'error', 
-          title: 'Error', 
-          text: err.message || 'Failed to update event visibility.' 
-        });
+        showError('Error', err.message || 'Failed to update event visibility.');
       }
     }
   };
 
   // Handle marking event as completed
   const handleMarkAsCompleted = async (eventId) => {
-    const result = await Swal.fire({
-      title: 'Mark Event as Completed?',
-      html: `
-        <div style="text-align: left;">
-          <p>This will mark the event as completed and:</p>
-          <ul style="margin: 10px 0; padding-left: 20px;">
-            <li>✅ Move it to the completed filter</li>
-            <li>📖 Make it read-only (no more editing)</li>
-            <li>👥 Hide it from students</li>
-            <li>⚠️ Events are NOT automatically completed by time</li>
-            <li>⚠️ This action cannot be undone automatically</li>
-          </ul>
-          <p className="confirmation-text-danger">Are you sure you want to continue?</p>
-        </div>
-      `,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Mark as Completed',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#28a745'
-    });
+    const result = await showConfirm(
+      'Mark Event as Completed?',
+      'This will mark the event as completed and move it to the completed filter, make it read-only, and hide it from students. This action cannot be undone automatically.',
+      {
+        icon: 'question',
+        confirmButtonText: 'Mark as Completed',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#28a745',
+        html: `
+          <div style="text-align: left;">
+            <p>This will mark the event as completed and:</p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>✅ Move it to the completed filter</li>
+              <li>📖 Make it read-only (no more editing)</li>
+              <li>👥 Hide it from students</li>
+              <li>⚠️ Events are NOT automatically completed by time</li>
+              <li>⚠️ This action cannot be undone automatically</li>
+            </ul>
+            <p className="confirmation-text-danger">Are you sure you want to continue?</p>
+          </div>
+        `
+      }
+    );
     
     if (!result.isConfirmed) return;
 
     try {
       await markEventAsCompleted(eventId);
-      Swal.fire({ 
-        icon: 'success', 
-        title: 'Event Completed!', 
-        html: `
-          <div style="text-align: left;">
-            <p>✅ The event has been marked as completed!</p>
-            <ul style="margin: 10px 0; padding-left: 20px;">
-              <li>📊 Now appears in the completed filter</li>
-              <li>📖 Event is now read-only (no editing)</li>
-              <li>👥 Hidden from student view</li>
-            </ul>
-          </div>
-        `,
-        confirmButtonColor: '#28a745'
-      });
+      showSuccess('Event Completed!', 'The event has been marked as completed and is now read-only.');
       fetchEvents();
     } catch (err) {
       console.error('Error marking event as completed:', err);
-      Swal.fire({ 
-        icon: 'error', 
-        title: 'Error', 
-        text: err.message || 'Failed to mark event as completed.' 
-      });
+      showError('Error', err.message || 'Failed to mark event as completed.');
     }
   };
 
   // Handle marking event as NOT completed (revert to editable)
   const handleMarkAsNotCompleted = async (eventId) => {
-    const result = await Swal.fire({
-      title: 'Mark Event as NOT Completed?',
-      html: `
-        <div style="text-align: left;">
-          <p>This will revert the event to editable status and:</p>
-          <ul style="margin: 10px 0; padding-left: 20px;">
-            <li>🔄 Move it back to upcoming/past filter</li>
-            <li>✏️ Make it editable again</li>
-            <li>👥 Show it to students (they can register)</li>
-            <li>⚠️ This will allow students to join again</li>
-          </ul>
-          <p className="confirmation-text-primary">Are you sure you want to continue?</p>
-        </div>
-      `,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Mark as NOT Completed',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#2563eb'
-    });
+    const result = await showConfirm(
+      'Mark Event as NOT Completed?',
+      'This will revert the event to editable status and allow students to register again.',
+      {
+        icon: 'question',
+        confirmButtonText: 'Mark as NOT Completed',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#2563eb',
+        html: `
+          <div style="text-align: left;">
+            <p>This will revert the event to editable status and:</p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>🔄 Move it back to upcoming/past filter</li>
+              <li>✏️ Make it editable again</li>
+              <li>👥 Show it to students (they can register)</li>
+              <li>⚠️ This will allow students to join again</li>
+            </ul>
+            <p className="confirmation-text-primary">Are you sure you want to continue?</p>
+          </div>
+        `
+      }
+    );
     
     if (!result.isConfirmed) return;
 
     try {
       await markEventAsNotCompleted(eventId);
-      Swal.fire({ 
-        icon: 'success', 
-        title: 'Event Reverted!', 
-        html: `
-          <div style="text-align: left;">
-            <p>🔄 The event has been marked as NOT completed!</p>
-            <ul style="margin: 10px 0; padding-left: 20px;">
-              <li>📊 Now appears in upcoming/past filter</li>
-              <li>✏️ Event is now editable again</li>
-              <li>👥 Visible to students (can register)</li>
-            </ul>
-          </div>
-        `,
-        confirmButtonColor: '#2563eb'
-      });
+      showSuccess('Event Reverted!', 'The event has been marked as NOT completed and is now editable again.');
       fetchEvents();
     } catch (err) {
       console.error('Error marking event as NOT completed:', err);
-      Swal.fire({ 
-        icon: 'error', 
-        title: 'Error', 
-        text: err.message || 'Failed to mark event as NOT completed.' 
-      });
+      showError('Error', err.message || 'Failed to mark event as NOT completed.');
     }
   };
 
   const handleShareEvent = (event) => {
     // Check if event has public registration enabled
     if (!event.isPublicRegistrationEnabled || !event.publicRegistrationToken) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Public Registration Not Enabled',
-        text: 'Please enable public registration for this event first to generate a shareable link.',
-        confirmButtonText: 'OK'
-      });
+      showWarning('Public Registration Not Enabled', 'Please enable public registration for this event first to generate a shareable link.');
       return;
     }
 
@@ -464,13 +421,7 @@ function AdminManageEventsPage() {
       if (result.isConfirmed) {
         // Copy registration link to clipboard
         navigator.clipboard.writeText(registrationUrl);
-        Swal.fire({
-          icon: 'success',
-          title: 'Registration Link Copied!',
-          text: 'Registration link copied to clipboard',
-          timer: 2000,
-          showConfirmButton: false
-        });
+        showSuccess('Registration Link Copied!', 'Registration link copied to clipboard');
       }
     });
   };

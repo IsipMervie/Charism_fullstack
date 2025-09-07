@@ -183,6 +183,16 @@ exports.getAllEvents = async (req, res) => {
       console.log('👨‍💼 Admin/Staff - no filters applied, showing all events');
     }
     
+    // Check if this is an admin/staff request by looking at the Authorization header
+    const authHeader = req.headers.authorization;
+    const isAuthenticatedRequest = authHeader && authHeader.startsWith('Bearer ');
+    
+    if (isAuthenticatedRequest && (userRole === 'Admin' || userRole === 'Staff')) {
+      // For authenticated admin/staff requests, show ALL events including disabled ones
+      query = {};
+      console.log('🔐 Authenticated Admin/Staff request - showing ALL events including disabled');
+    }
+    
     console.log('🔍 Final query:', JSON.stringify(query, null, 2));
     
     // Test: Try a simple query first to see if Event model works

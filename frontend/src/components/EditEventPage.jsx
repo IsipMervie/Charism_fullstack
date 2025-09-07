@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getEventDetails, updateEvent } from '../api/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { showConfirm, showError, showSuccess } from '../utils/sweetAlertUtils';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaSave, FaTimes, FaImage } from 'react-icons/fa';
 
 import { getEventImageUrl } from '../utils/imageUtils';
@@ -77,17 +78,17 @@ function EditEventPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (Number(form.maxParticipants) <= 0) {
-      Swal.fire({ icon: 'error', title: 'Invalid Slots', text: 'Available slots must be greater than 0.' });
+      showError('Invalid Slots', 'Available slots must be greater than 0.');
       return;
     }
     if (Number(form.hours) <= 0) {
-      Swal.fire({ icon: 'error', title: 'Invalid Hours', text: 'Event hours must be greater than 0.' });
+      showError('Invalid Hours', 'Event hours must be greater than 0.');
       return;
     }
     
     // Validate time
     if (form.startTime && form.endTime && form.startTime >= form.endTime) {
-      Swal.fire({ icon: 'error', title: 'Invalid Time', text: 'End time must be after start time.' });
+      showError('Invalid Time', 'End time must be after start time.');
       return;
     }
     setSaving(true);
@@ -106,26 +107,26 @@ function EditEventPage() {
       if (form.image) formData.append('image', form.image);
 
       await updateEvent(eventId, formData);
-      Swal.fire({ icon: 'success', title: 'Event Updated!', text: 'The event has been successfully updated.' });
+      showSuccess('Event Updated!', 'The event has been successfully updated.');
       navigate('/admin/manage-events');
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'Update Failed', text: err?.response?.data?.message || 'Failed to update event. Please try again.' });
+      showError('Update Failed', err?.response?.data?.message || 'Failed to update event. Please try again.');
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    Swal.fire({
-      title: 'Discard Changes?',
-      text: 'Are you sure you want to discard your changes?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Discard',
-      cancelButtonText: 'Keep Editing',
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d'
-    }).then((result) => {
+    showConfirm(
+      'Discard Changes?',
+      'Are you sure you want to discard your changes?',
+      {
+        icon: 'warning',
+        confirmButtonText: 'Yes, Discard',
+        cancelButtonText: 'Keep Editing',
+        confirmButtonColor: '#dc3545'
+      }
+    ).then((result) => {
       if (result.isConfirmed) navigate('/admin/manage-events');
     });
   };
