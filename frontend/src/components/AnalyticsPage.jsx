@@ -46,6 +46,17 @@ function AnalyticsPage() {
   const [departmentDetail, setDepartmentDetail] = useState(null);
   const [yearDetail, setYearDetail] = useState(null);
 
+  // Function to get theme-appropriate colors
+  const getThemeColors = () => {
+    const isDarkMode = document.documentElement.classList.contains('dark') || 
+                      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    return {
+      text: isDarkMode ? '#ffffff' : '#1f2937',
+      grid: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+    };
+  };
+
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
@@ -252,14 +263,14 @@ function AnalyticsPage() {
       legend: {
         position: 'bottom',
         labels: {
-          color: '#ffffff'
+          color: getThemeColors().text
         }
       },
       title: {
         display: true,
         text: 'User Distribution',
         font: { size: 16, weight: 'bold' },
-        color: '#ffffff'
+        color: getThemeColors().text
       },
     },
   };
@@ -271,14 +282,14 @@ function AnalyticsPage() {
       legend: {
         position: 'bottom',
         labels: {
-          color: '#ffffff'
+          color: getThemeColors().text
         }
       },
       title: {
         display: true,
         text: 'Event Status Distribution',
         font: { size: 16, weight: 'bold' },
-        color: '#ffffff'
+        color: getThemeColors().text
       },
     },
   };
@@ -294,25 +305,25 @@ function AnalyticsPage() {
         display: true,
         text: 'Attendance Overview',
         font: { size: 16, weight: 'bold' },
-        color: '#ffffff'
+        color: getThemeColors().text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       },
       x: {
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       }
     },
@@ -325,32 +336,32 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: '#ffffff'
+          color: getThemeColors().text
         }
       },
       title: {
         display: true,
         text: 'Recent Activity (Last 7 Days)',
         font: { size: 16, weight: 'bold' },
-        color: '#ffffff'
+        color: getThemeColors().text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       },
       x: {
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       }
     },
@@ -363,32 +374,32 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: '#ffffff'
+          color: getThemeColors().text
         }
       },
       title: {
         display: true,
         text: 'Department Statistics',
         font: { size: 16, weight: 'bold' },
-        color: '#ffffff'
+        color: getThemeColors().text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       },
       x: {
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       }
     },
@@ -401,32 +412,32 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: '#ffffff'
+          color: getThemeColors().text
         }
       },
       title: {
         display: true,
         text: 'Academic Year Statistics',
         font: { size: 16, weight: 'bold' },
-        color: '#ffffff'
+        color: getThemeColors().text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       },
       x: {
         ticks: {
-          color: '#ffffff'
+          color: getThemeColors().text
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: getThemeColors().grid
         }
       }
     },
