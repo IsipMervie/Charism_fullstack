@@ -899,6 +899,10 @@
   gap: 0.5rem;
 }
 
+.user-meta .approval-status-badge {
+  margin-top: 0.5rem;
+}
+
 .user-id-badge {
   display: flex;
   align-items: center;
@@ -984,13 +988,31 @@
   box-shadow: 0 4px 15px var(--success-shadow);
 }
 
+.user-meta .approval-status-badge.approved {
+  background: linear-gradient(135deg, var(--success), var(--success-hover));
+  color: white;
+  box-shadow: 0 4px 15px var(--success-shadow);
+}
+
 .approval-status-badge.rejected {
   background: linear-gradient(135deg, var(--error), var(--error-hover));
   color: white;
   box-shadow: 0 4px 15px var(--error-shadow);
 }
 
+.user-meta .approval-status-badge.rejected {
+  background: linear-gradient(135deg, var(--error), var(--error-hover));
+  color: white;
+  box-shadow: 0 4px 15px var(--error-shadow);
+}
+
 .approval-status-badge.pending {
+  background: linear-gradient(135deg, var(--warning), var(--warning-hover));
+  color: white;
+  box-shadow: 0 4px 15px var(--warning-shadow);
+}
+
+.user-meta .approval-status-badge.pending {
   background: linear-gradient(135deg, var(--warning), var(--warning-hover));
   color: white;
   box-shadow: 0 4px 15px var(--warning-shadow);

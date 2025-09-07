@@ -401,6 +401,12 @@ function ManageUsersPage() {
                             <FaCalendar className="meta-icon" />
                             Member since {new Date(user.createdAt).toLocaleDateString()}
                           </span>
+                          {user.role === 'Staff' && (
+                            <span className={`approval-status-badge ${user.approvalStatus}`}>
+                              {user.approvalStatus === 'approved' ? '✓ Approved' : 
+                               user.approvalStatus === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -409,12 +415,6 @@ function ManageUsersPage() {
                         {getRoleIcon(user.role)}
                         {user.role}
                       </span>
-                      {user.role === 'Staff' && (
-                        <span className={`approval-status-badge ${user.approvalStatus}`}>
-                          {user.approvalStatus === 'approved' ? '✓ Approved' : 
-                           user.approvalStatus === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
-                        </span>
-                      )}
                     </div>
                   </div>
 
