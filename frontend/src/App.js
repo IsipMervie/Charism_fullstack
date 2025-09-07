@@ -6,6 +6,7 @@ import './styles/sweetAlert.css';
 // Components
 import NavigationBar from './components/NavigationBar';
 import PrivateRoute from './components/PrivateRoute';
+import PublicOnlyRoute from './components/PublicOnlyRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import PerformanceOptimizer from './components/PerformanceOptimizer';
 
@@ -132,7 +133,7 @@ function App() {
           <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/contact" element={<ContactUsPage />} />
-          <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/feedback" element={<PublicOnlyRoute><FeedbackPage /></PublicOnlyRoute>} />
           <Route path="/simple-events" element={<SimpleEventList />} />
 
           {/* Admin routes */}

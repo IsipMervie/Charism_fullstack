@@ -198,14 +198,6 @@ function NavigationBar() {
                 >
                   My Participation
                 </Nav.Link>
-                <Nav.Link 
-                  as={Link} 
-                  to="/feedback" 
-                  className={location.pathname === '/feedback' ? 'active' : ''}
-                  onClick={handleNavLinkClick}
-                >
-                  Feedback
-                </Nav.Link>
               </>
             )}
 
@@ -251,14 +243,6 @@ function NavigationBar() {
                   onClick={handleNavLinkClick}
                 >
                   Event Registered Approval
-                </Nav.Link>
-                <Nav.Link 
-                  as={Link} 
-                  to="/feedback" 
-                  className={location.pathname === '/feedback' ? 'active' : ''}
-                  onClick={handleNavLinkClick}
-                >
-                  Feedback
                 </Nav.Link>
               </>
             )}
