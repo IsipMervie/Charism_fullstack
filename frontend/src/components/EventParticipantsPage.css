@@ -378,6 +378,16 @@
   color: var(--error-dark);
 }
 
+.status-badge.completed {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.status-badge.approved-for-registered {
+  background-color: var(--success-light);
+  color: var(--success-dark);
+}
+
 /* Reason text */
 .reason-text { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--text-secondary); font-style: italic; }
 
@@ -595,6 +605,18 @@
   font-weight: 700;
 }
 
+[data-theme="dark"] .status-badge.completed {
+  background: #1d4ed8;
+  color: #dbeafe;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.approved-for-registered {
+  background: #047857;
+  color: #d1fae5;
+  font-weight: 700;
+}
+
 [data-theme="dark"] .action-button.approve {
   background: linear-gradient(135deg, #34d399, #10b981);
   color: #0f172a;
@@ -672,14 +694,36 @@
   color: #e2e8f0;
 }
 
-/* Force dark mode for all card elements */
-[data-theme="dark"] .mobile-cards .participant-card,
-[data-theme="dark"] .mobile-cards .card-header,
-[data-theme="dark"] .mobile-cards .card-content,
-[data-theme="dark"] .mobile-cards .card-actions {
+/* Force dark mode for all card elements - HIGHER SPECIFICITY */
+[data-theme="dark"] .event-participants-card .mobile-cards .participant-card,
+[data-theme="dark"] .event-participants-card .mobile-cards .card-header,
+[data-theme="dark"] .event-participants-card .mobile-cards .card-content,
+[data-theme="dark"] .event-participants-card .mobile-cards .card-actions {
   background: #334155 !important;
   color: #e2e8f0 !important;
   border-color: #475569 !important;
+}
+
+/* Override all participant card backgrounds */
+[data-theme="dark"] .participant-card {
+  background: #334155 !important;
+  border: 1px solid #475569 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .card-header {
+  background: #334155 !important;
+  border-bottom: 1px solid #475569 !important;
+}
+
+[data-theme="dark"] .card-content {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .card-actions {
+  background: #334155 !important;
+  border-top: 1px solid #475569 !important;
 }
 
 [data-theme="dark"] .mobile-cards .participant-card * {
@@ -715,11 +759,43 @@
   color: #e2e8f0 !important;
 }
 
+/* Ensure all text in participant cards is readable */
+[data-theme="dark"] .participant-card .participant-name {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .participant-card .participant-email {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .participant-card .info-row .label {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .participant-card .info-row .value {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .participant-card .approval-date small {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .participant-card .time-status strong {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .participant-card .time-status .time-in,
+[data-theme="dark"] .participant-card .time-status .time-out {
+  color: #e2e8f0 !important;
+}
+
 /* Dark mode for status-specific cards */
 [data-theme="dark"] .participant-card.status-attended,
 [data-theme="dark"] .participant-card.status-pending,
 [data-theme="dark"] .participant-card.status-approved,
-[data-theme="dark"] .participant-card.status-disapproved {
+[data-theme="dark"] .participant-card.status-disapproved,
+[data-theme="dark"] .participant-card.status-completed,
+[data-theme="dark"] .participant-card.status-approved-for-registered {
   background: #334155 !important;
   border: 1px solid #475569 !important;
   color: #e2e8f0 !important;
@@ -728,7 +804,9 @@
 [data-theme="dark"] .participant-card.status-attended:hover,
 [data-theme="dark"] .participant-card.status-pending:hover,
 [data-theme="dark"] .participant-card.status-approved:hover,
-[data-theme="dark"] .participant-card.status-disapproved:hover {
+[data-theme="dark"] .participant-card.status-disapproved:hover,
+[data-theme="dark"] .participant-card.status-completed:hover,
+[data-theme="dark"] .participant-card.status-approved-for-registered:hover {
   border-color: #3b82f6 !important;
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2) !important;
 }

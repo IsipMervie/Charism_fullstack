@@ -14,6 +14,38 @@ function EventParticipantsPage() {
   const [actionLoading, setActionLoading] = useState({});
   const [pdfLoading, setPdfLoading] = useState(false);
 
+  // Helper function to determine status text
+  const getStatusText = (participant) => {
+    // If registration is not approved, show pending
+    if (!participant.registrationApproved) {
+      return 'Pending';
+    }
+    
+    // If registration is approved but no time in/out, show "Approved for Registered"
+    if (participant.registrationApproved && (!participant.timeIn || !participant.timeOut)) {
+      return 'Approved for Registered';
+    }
+    
+    // If has time in/out but not approved by admin, show "Pending"
+    if (participant.timeIn && participant.timeOut && participant.status !== 'Approved') {
+      return 'Pending';
+    }
+    
+    // If has time in/out and approved by admin, show "Completed"
+    if (participant.timeIn && participant.timeOut && participant.status === 'Approved') {
+      return 'Completed';
+    }
+    
+    // Default fallback
+    return participant.status || 'Pending';
+  };
+
+  // Helper function to determine status CSS class
+  const getStatusClass = (participant) => {
+    const statusText = getStatusText(participant);
+    return statusText.toLowerCase().replace(/\s+/g, '-');
+  };
+
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
@@ -276,7 +308,7 @@ function EventParticipantsPage() {
                   <td>{participant.userId.department}</td>
                   <td>
                     <span className={`status-badge ${participant.registrationApproved ? 'approved' : 'pending'}`}>
-                      {participant.registrationApproved ? 'Approved for Registered' : 'Pending'}
+                      {participant.registrationApproved ? 'Approved' : 'Pending'}
                     </span>
                     {participant.registrationApprovedAt && (
                       <div className="approval-date">
@@ -295,8 +327,8 @@ function EventParticipantsPage() {
                     </div>
                   </td>
                   <td>
-                    <span className={`status-badge ${participant.status?.toLowerCase()}`}>
-                      {participant.status || 'Pending'}
+                    <span className={`status-badge ${getStatusClass(participant)}`}>
+                      {getStatusText(participant)}
                     </span>
                     {participant.reason && (
                       <div className="reason-text">
@@ -369,8 +401,8 @@ function EventParticipantsPage() {
                   <p className="participant-department">{participant.userId.department}</p>
                 </div>
                 <div className="status-indicator">
-                  <span className={`status-badge ${participant.status?.toLowerCase()}`}>
-                    {participant.status || 'Pending'}
+                  <span className={`status-badge ${getStatusClass(participant)}`}>
+                    {getStatusText(participant)}
                   </span>
                 </div>
               </div>
@@ -379,7 +411,7 @@ function EventParticipantsPage() {
                 <div className="info-row">
                   <span className="label">Registration:</span>
                   <span className={`status-badge ${participant.registrationApproved ? 'approved' : 'pending'}`}>
-                    {participant.registrationApproved ? 'Approved for Registered' : 'Pending'}
+                    {participant.registrationApproved ? 'Approved' : 'Pending'}
                   </span>
                   {participant.registrationApprovedAt && (
                     <div className="approval-date">
