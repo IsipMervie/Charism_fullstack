@@ -158,15 +158,34 @@ exports.getAllEvents = async (req, res) => {
       });
     }
     
-    // Quick user role check - handle both authenticated and public requests
-    const userRole = req.user?.role || req.userInfo?.role || 'Public';
-    const userId = req.user?.userId || req.user?.id || req.user?._id;
+    // Check if this is an authenticated request by looking at the Authorization header
+    const authHeader = req.headers.authorization;
+    const isAuthenticatedRequest = authHeader && authHeader.startsWith('Bearer ');
+    
+    let userRole = 'Public';
+    let userId = null;
+    
+    // If authenticated, try to decode the token to get user role
+    if (isAuthenticatedRequest) {
+      try {
+        const jwt = require('jsonwebtoken');
+        const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        userRole = decoded.role || 'Public';
+        userId = decoded.userId || decoded.id || decoded._id;
+        console.log('🔐 Authenticated request detected:', { userRole, userId });
+      } catch (error) {
+        console.log('⚠️ Invalid token, treating as public request');
+        userRole = 'Public';
+      }
+    }
     
     console.log('👤 User details:', {
       userRole,
       userId,
-      hasUser: !!req.user,
-      userInfo: req.userInfo
+      isAuthenticated: isAuthenticatedRequest,
+      hasAuthHeader: !!authHeader
     });
     
     // Build minimal query
@@ -179,18 +198,10 @@ exports.getAllEvents = async (req, res) => {
       // For public requests, show only visible events
       query.status = { $ne: 'Disabled' };
       console.log('🌐 Public query filters applied');
-    } else {
-      console.log('👨‍💼 Admin/Staff - no filters applied, showing all events');
-    }
-    
-    // Check if this is an admin/staff request by looking at the Authorization header
-    const authHeader = req.headers.authorization;
-    const isAuthenticatedRequest = authHeader && authHeader.startsWith('Bearer ');
-    
-    if (isAuthenticatedRequest && (userRole === 'Admin' || userRole === 'Staff')) {
-      // For authenticated admin/staff requests, show ALL events including disabled ones
+    } else if (userRole === 'Admin' || userRole === 'Staff') {
+      // For admin/staff requests, show ALL events including disabled ones
       query = {};
-      console.log('🔐 Authenticated Admin/Staff request - showing ALL events including disabled');
+      console.log('👨‍💼 Admin/Staff - showing ALL events including disabled');
     }
     
     console.log('🔍 Final query:', JSON.stringify(query, null, 2));
