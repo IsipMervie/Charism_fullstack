@@ -250,11 +250,15 @@ function AnalyticsPage() {
     plugins: {
       legend: {
         position: 'bottom',
+        labels: {
+          color: 'var(--text-primary)'
+        }
       },
       title: {
         display: true,
         text: 'User Distribution',
-        font: { size: 16, weight: 'bold' }
+        font: { size: 16, weight: 'bold' },
+        color: 'var(--text-primary)'
       },
     },
   };
@@ -264,11 +268,15 @@ function AnalyticsPage() {
     plugins: {
       legend: {
         position: 'bottom',
+        labels: {
+          color: 'var(--text-primary)'
+        }
       },
       title: {
         display: true,
         text: 'Event Status Distribution',
-        font: { size: 16, weight: 'bold' }
+        font: { size: 16, weight: 'bold' },
+        color: 'var(--text-primary)'
       },
     },
   };
@@ -282,13 +290,28 @@ function AnalyticsPage() {
       title: {
         display: true,
         text: 'Attendance Overview',
-        font: { size: 16, weight: 'bold' }
+        font: { size: 16, weight: 'bold' },
+        color: 'var(--text-primary)'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
       },
+      x: {
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
+      }
     },
   };
 
@@ -297,17 +320,35 @@ function AnalyticsPage() {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: 'var(--text-primary)'
+        }
       },
       title: {
         display: true,
         text: 'Recent Activity (Last 7 Days)',
-        font: { size: 16, weight: 'bold' }
+        font: { size: 16, weight: 'bold' },
+        color: 'var(--text-primary)'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
       },
+      x: {
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
+      }
     },
   };
 
@@ -316,17 +357,35 @@ function AnalyticsPage() {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: 'var(--text-primary)'
+        }
       },
       title: {
         display: true,
         text: 'Department Statistics',
-        font: { size: 16, weight: 'bold' }
+        font: { size: 16, weight: 'bold' },
+        color: 'var(--text-primary)'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
       },
+      x: {
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
+      }
     },
   };
 
@@ -335,17 +394,35 @@ function AnalyticsPage() {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: 'var(--text-primary)'
+        }
       },
       title: {
         display: true,
         text: 'Academic Year Statistics',
-        font: { size: 16, weight: 'bold' }
+        font: { size: 16, weight: 'bold' },
+        color: 'var(--text-primary)'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
       },
+      x: {
+        ticks: {
+          color: 'var(--text-primary)'
+        },
+        grid: {
+          color: 'var(--border-primary)'
+        }
+      }
     },
   };
 
@@ -524,15 +601,16 @@ function AnalyticsPage() {
 
         {activeTab === 'department' && (
           <>
-            <Card className="shadow-sm border-0 mb-3">
+            <Card className="shadow-sm mb-3 analytics-card">
               <Card.Body>
                 <Form>
                   <Row className="align-items-end">
                     <Col md={6} className="mb-3">
-                      <Form.Label>Select Department</Form.Label>
+                      <Form.Label className="analytics-label">Select Department</Form.Label>
                       <Form.Select
                         value={selectedDepartment}
                         onChange={(e) => setSelectedDepartment(e.target.value)}
+                        className="analytics-select"
                       >
                         <option value="">-- Choose department --</option>
                         {(data.departmentStats || [])
@@ -552,15 +630,15 @@ function AnalyticsPage() {
                          {selectedDepartment && (
                <Row>
                  <Col md={6} className="mb-3">
-                   <Card className="shadow-sm border-0 h-100"><Card.Body>
-                     <div className="text-muted">Students</div>
-                     <div className="h3 mb-0">{departmentDetail?.studentCount ?? '—'}</div>
+                   <Card className="shadow-sm h-100 analytics-card"><Card.Body>
+                     <div className="analytics-stat-label">Students</div>
+                     <div className="analytics-stat-value">{departmentDetail?.studentCount ?? '—'}</div>
                    </Card.Body></Card>
                  </Col>
                  <Col md={6} className="mb-3">
-                   <Card className="shadow-sm border-0 h-100"><Card.Body>
-                     <div className="text-muted">Events</div>
-                     <div className="h3 mb-0">{departmentDetail?.eventCount ?? '—'}</div>
+                   <Card className="shadow-sm h-100 analytics-card"><Card.Body>
+                     <div className="analytics-stat-label">Events</div>
+                     <div className="analytics-stat-value">{departmentDetail?.eventCount ?? '—'}</div>
                    </Card.Body></Card>
                  </Col>
                </Row>
@@ -570,15 +648,16 @@ function AnalyticsPage() {
 
         {activeTab === 'year' && (
           <>
-            <Card className="shadow-sm border-0 mb-3">
+            <Card className="shadow-sm mb-3 analytics-card">
               <Card.Body>
                 <Form>
                   <Row className="align-items-end">
                     <Col md={6} className="mb-3">
-                      <Form.Label>Select Academic Year</Form.Label>
+                      <Form.Label className="analytics-label">Select Academic Year</Form.Label>
                       <Form.Select
                         value={selectedYear}
                         onChange={(e) => setSelectedYear(e.target.value)}
+                        className="analytics-select"
                       >
                         <option value="">-- Choose year --</option>
                         {(data.yearStats || [])
@@ -598,15 +677,15 @@ function AnalyticsPage() {
                          {selectedYear && (
                <Row>
                  <Col md={6} className="mb-3">
-                   <Card className="shadow-sm border-0 h-100"><Card.Body>
-                     <div className="text-muted">Students</div>
-                     <div className="h3 mb-0">{yearDetail?.studentCount ?? '—'}</div>
+                   <Card className="shadow-sm h-100 analytics-card"><Card.Body>
+                     <div className="analytics-stat-label">Students</div>
+                     <div className="analytics-stat-value">{yearDetail?.studentCount ?? '—'}</div>
                    </Card.Body></Card>
                  </Col>
                  <Col md={6} className="mb-3">
-                   <Card className="shadow-sm border-0 h-100"><Card.Body>
-                     <div className="text-muted">Events</div>
-                     <div className="h3 mb-0">{yearDetail?.eventCount ?? '—'}</div>
+                   <Card className="shadow-sm h-100 analytics-card"><Card.Body>
+                     <div className="analytics-stat-label">Events</div>
+                     <div className="analytics-stat-value">{yearDetail?.eventCount ?? '—'}</div>
                    </Card.Body></Card>
                  </Col>
                </Row>
