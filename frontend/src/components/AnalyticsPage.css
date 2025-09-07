@@ -374,6 +374,26 @@ canvas[style*="background"] {
   background: transparent !important;
 }
 
+/* Ensure all chart text elements are themed */
+.chart-card h3,
+.chart-card p,
+.chart-card .chart-header h3,
+.chart-card .chart-header p {
+  color: var(--text-primary) !important;
+}
+
+/* Ensure metric card text is properly themed */
+.metric-card h3,
+.metric-card p {
+  color: var(--text-primary) !important;
+}
+
+/* Ensure stat card text is properly themed */
+.stat-card h4,
+.stat-card p {
+  color: var(--text-primary) !important;
+}
+
 /* Focus states for accessibility */
 .metric-card:focus,
 .chart-card:focus,
@@ -386,6 +406,10 @@ canvas[style*="background"] {
 .analytics-card {
   background: var(--bg-card) !important;
   border: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.analytics-card * {
   color: var(--text-primary) !important;
 }
 

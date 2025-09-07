@@ -121,14 +121,14 @@ function AnalyticsPage() {
       {
         data: [getValue('studentsCount'), getValue('staffCount'), getValue('adminCount')],
         backgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56'
+          'var(--error)',
+          'var(--info)',
+          'var(--warning)'
         ],
         borderColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56'
+          'var(--error)',
+          'var(--info)',
+          'var(--warning)'
         ],
         borderWidth: 2,
       },
@@ -142,12 +142,12 @@ function AnalyticsPage() {
       {
         data: [getValue('activeEvents'), getValue('completedEvents')],
         backgroundColor: [
-          '#4BC0C0',
-          '#FF9F40'
+          'var(--success)',
+          'var(--warning)'
         ],
         borderColor: [
-          '#4BC0C0',
-          '#FF9F40'
+          'var(--success)',
+          'var(--warning)'
         ],
         borderWidth: 2,
       },
@@ -162,12 +162,12 @@ function AnalyticsPage() {
         label: 'Attendance Count',
         data: [getValue('totalAttendance'), getValue('approvedAttendance')],
         backgroundColor: [
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(75, 192, 192, 0.6)'
+          'var(--info)',
+          'var(--success)'
         ],
         borderColor: [
-          'rgba(54, 162, 235, 1)',
-          'rgba(75, 192, 192, 1)'
+          'var(--info)',
+          'var(--success)'
         ],
         borderWidth: 2,
       },
@@ -185,16 +185,16 @@ function AnalyticsPage() {
         {
           label: 'New Events',
           data: events,
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgba(255, 99, 132, 0.1)',
+          borderColor: 'var(--error)',
+          backgroundColor: 'var(--error-light)',
           tension: 0.4,
           fill: true,
         },
         {
           label: 'New Users',
           data: users,
-          borderColor: 'rgb(54, 162, 235)',
-          backgroundColor: 'rgba(54, 162, 235, 0.1)',
+          borderColor: 'var(--info)',
+          backgroundColor: 'var(--info-light)',
           tension: 0.4,
           fill: true,
         },
@@ -209,15 +209,15 @@ function AnalyticsPage() {
       {
         label: 'Students',
         data: (data.departmentStats || []).map(dept => dept.students || 0),
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'var(--info)',
+        borderColor: 'var(--info)',
         borderWidth: 2,
       },
       {
         label: 'Events',
         data: (data.departmentStats || []).map(dept => dept.events || 0),
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'var(--error)',
+        borderColor: 'var(--error)',
         borderWidth: 2,
       },
     ],
@@ -230,15 +230,15 @@ function AnalyticsPage() {
       {
         label: 'Students',
         data: (data.yearStats || []).map(year => year.students || 0),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'var(--success)',
+        borderColor: 'var(--success)',
         borderWidth: 2,
       },
       {
         label: 'Events',
         data: (data.yearStats || []).map(year => year.events || 0),
-        backgroundColor: 'rgba(255, 159, 64, 0.6)',
-        borderColor: 'rgba(255, 159, 64, 1)',
+        backgroundColor: 'var(--warning)',
+        borderColor: 'var(--warning)',
         borderWidth: 2,
       },
     ],
@@ -436,38 +436,32 @@ function AnalyticsPage() {
     { 
       key: 'totalUsers', 
       label: 'Total Users', 
-      icon: <FaUsers size={24} />,
-      color: '#007bff'
+      icon: <FaUsers size={24} />
     },
     { 
       key: 'totalEvents', 
       label: 'Total Events', 
-      icon: <FaCalendarAlt size={24} />,
-      color: '#28a745'
+      icon: <FaCalendarAlt size={24} />
     },
     { 
       key: 'totalAttendance', 
       label: 'Total Attendance', 
-      icon: <FaCheckCircle size={24} />,
-      color: '#ffc107'
+      icon: <FaCheckCircle size={24} />
     },
     { 
       key: 'totalMessages', 
       label: 'Total Messages', 
-      icon: <FaComments size={24} />,
-      color: '#dc3545'
+      icon: <FaComments size={24} />
     },
     { 
       key: 'totalHours', 
       label: 'Total Hours', 
-      icon: <FaClock size={24} />,
-      color: '#17a2b8'
+      icon: <FaClock size={24} />
     },
     { 
       key: 'approvedAttendance', 
       label: 'Approved Attendance', 
-      icon: <FaGraduationCap size={24} />,
-      color: '#6f42c1'
+      icon: <FaGraduationCap size={24} />
     },
   ];
 
