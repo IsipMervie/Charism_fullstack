@@ -1173,31 +1173,6 @@ export const getPublicSettings = async () => {
   }
 };
 
-// Get public school settings (for navbar)
-export const getPublicSchoolSettings = async () => {
-  try {
-    console.log('🔄 Fetching public school settings...');
-    const response = await retryApiCall(() => axiosInstance.get('/settings/public/school'));
-    console.log('✅ Public school settings received');
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error fetching public school settings:', error);
-    
-    // Provide more specific error handling
-    if (error.code === 'ECONNABORTED') {
-      console.warn('⚠️ School settings timeout - server may be overloaded');
-    } else if (error.code === 'ERR_NETWORK') {
-      console.error('🚨 School settings network error - server may be down');
-    }
-    
-    // Return default values if API fails
-    return {
-      schoolName: 'CHARISM School',
-      brandName: 'CHARISM',
-      logo: null
-    };
-  }
-};
 
 export const updateSettings = async (settingsData) => {
   try {
@@ -1220,20 +1195,6 @@ export const getSchoolSettings = async () => {
   }
 };
 
-// Update school settings (Admin only)
-export const updateSchoolSettings = async (formData) => {
-  try {
-    const response = await axiosInstance.post('/settings/school', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error updating school settings:', error);
-    throw new Error(error.response?.data?.message || 'Failed to update school settings. Please try again.');
-  }
-};
 
 // Reports
 export const generateReport = async (reportType, params = {}) => {

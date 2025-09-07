@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Section = require('../models/Section');
 const YearLevel = require('../models/YearLevel');
 const Department = require('../models/Department');
+const SchoolSettings = require('../models/SchoolSettings');
 const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 
 

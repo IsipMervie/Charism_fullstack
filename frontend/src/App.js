@@ -36,7 +36,6 @@ const AdminManageEventsPage = React.lazy(() => import('./components/AdminManageE
 const AdminManageMessagesPage = React.lazy(() => import('./components/AdminManageMessagesPage'));
 const AnalyticsPage = React.lazy(() => import('./components/AnalyticsPage'));
 const SettingsPage = React.lazy(() => import('./components/SettingsPage'));
-const SchoolSettingsPage = React.lazy(() => import('./components/SchoolSettingsPage'));
 const ContactUsPage = React.lazy(() => import('./components/ContactUsPage'));
 const ForgotPasswordPage = React.lazy(() => import('./components/ForgotPasswordPage'));
 const ResetPasswordPage = React.lazy(() => import('./components/ResetPasswordPage'));
@@ -182,14 +181,6 @@ function App() {
             element={
               <PrivateRoute requiredRoles={['Admin']}>
                 <ManageUsersPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/school-settings"
-            element={
-              <PrivateRoute requiredRoles={['Admin']}>
-                <SchoolSettingsPage />
               </PrivateRoute>
             }
           />

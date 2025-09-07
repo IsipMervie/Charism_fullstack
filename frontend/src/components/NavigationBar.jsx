@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { getPublicSchoolSettings } from '../api/api';
-import { getImageUrl } from '../utils/imageUtils';
 import ThemeToggle from './ThemeToggle';
 import './NavigationBar.css';
 
@@ -20,30 +18,10 @@ function NavigationBar() {
 
   const [user, setUser] = useState(getUserFromStorage());
   const [role, setRole] = useState(getUserFromStorage()?.role || localStorage.getItem('role'));
-  const [schoolSettings, setSchoolSettings] = useState({
-    brandName: 'CHARISM',
-    logo: null
-  });
-  const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch school settings function (shared)
-  const fetchSchoolSettings = async () => {
-    setIsLoading(true);
-    try {
-      const settings = await getPublicSchoolSettings();
-      setSchoolSettings(settings);
-      console.log('School settings refreshed in navbar:', settings);
-    } catch (error) {
-      console.error('Failed to fetch school settings:', error);
-      // Keep default values and don't show error to user
-      // The navbar will still work with default branding
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     const syncUser = () => {
@@ -52,19 +30,12 @@ function NavigationBar() {
       setRole(parsedUser?.role || localStorage.getItem('role'));
     };
     
-    const refreshSchoolSettings = () => {
-      console.log('School settings changed event received, refreshing...');
-      fetchSchoolSettings();
-    };
-    
     window.addEventListener('storage', syncUser);
     window.addEventListener('userChanged', syncUser);
-    window.addEventListener('schoolSettingsChanged', refreshSchoolSettings);
     
     return () => {
       window.removeEventListener('storage', syncUser);
       window.removeEventListener('userChanged', syncUser);
-      window.removeEventListener('schoolSettingsChanged', refreshSchoolSettings);
     };
   }, []);
 
@@ -73,10 +44,6 @@ function NavigationBar() {
     setIsExpanded(false);
   }, [location.pathname]);
 
-  // Initial fetch of school settings
-  useEffect(() => {
-    fetchSchoolSettings();
-  }, []); // Remove isLoading dependency to prevent infinite loop
 
   const handleLogout = () => {
     localStorage.clear();
@@ -132,29 +99,6 @@ function NavigationBar() {
     };
   }, [isExpanded]);
 
-  // Get the logo URL with fallback
-  const getLogoUrl = () => {
-    // First try the logoUrl field from the API
-    if (schoolSettings.logoUrl) {
-      const timestamp = new Date().getTime();
-      const separator = schoolSettings.logoUrl.includes('?') ? '&' : '?';
-      return `${schoolSettings.logoUrl}${separator}t=${timestamp}`;
-    }
-    
-    // Then try the logo object
-    if (schoolSettings.logo && schoolSettings.logo.data) {
-      // Use the proper backend URL from imageUtils
-      const baseUrl = getImageUrl(schoolSettings.logo, 'logo');
-      if (baseUrl) {
-        // Add timestamp to prevent caching
-        const timestamp = new Date().getTime();
-        const separator = baseUrl.includes('?') ? '&' : '?';
-        return `${baseUrl}${separator}t=${timestamp}`;
-      }
-    }
-    // Fallback to static logo
-    return logo;
-  };
 
   return (
     <Navbar 
@@ -168,16 +112,12 @@ function NavigationBar() {
         <div className="d-flex align-items-center">
           <Navbar.Brand as={Link} to="/" className="navbar-brand" onClick={handleNavLinkClick}>
             <img 
-              src={getLogoUrl()} 
+              src={logo} 
               alt="CHARISM Logo" 
               className="navbar-logo"
-              onError={(e) => {
-                console.warn('Logo failed to load, using fallback');
-                e.target.src = logo; // Fallback to static logo
-              }}
             />
             <span className="navbar-title">
-              {schoolSettings.brandName || 'CHARISM'}
+              CHARISM
             </span>
           </Navbar.Brand>
           <Navbar.Toggle 
