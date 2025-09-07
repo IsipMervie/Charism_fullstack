@@ -412,17 +412,41 @@ const eventAttendancePDF = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
+    // Helper function to determine status text (same logic as frontend)
+    const getStatusText = (attendance) => {
+      // If registration is not approved, show pending
+      if (!attendance.registrationApproved) {
+        return 'Pending';
+      }
+      
+      // If registration is approved but no time in/out, show "Approved for Registered"
+      if (attendance.registrationApproved && (!attendance.timeIn || !attendance.timeOut)) {
+        return 'Approved for Registered';
+      }
+      
+      // If has time in/out but not approved by admin, show "Pending"
+      if (attendance.timeIn && attendance.timeOut && attendance.status !== 'Approved') {
+        return 'Pending';
+      }
+      
+      // If has time in/out and approved by admin, show "Completed"
+      if (attendance.timeIn && attendance.timeOut && attendance.status === 'Approved') {
+        return 'Completed';
+      }
+      
+      // Default fallback
+      return attendance.status || 'Pending';
+    };
+
     // Filter attendance based on query parameters
     let attendedParticipants = event.attendance;
 
-    // Filter by status
+    // Filter by status using new logic
     if (status) {
-      attendedParticipants = attendedParticipants.filter(a => a.status === status);
+      attendedParticipants = attendedParticipants.filter(a => getStatusText(a) === status);
     } else {
-      // Default: only approved/attended
-      attendedParticipants = attendedParticipants.filter(a => 
-        a.status === 'Approved' || a.status === 'Attended'
-      );
+      // Default: only completed participants
+      attendedParticipants = attendedParticipants.filter(a => getStatusText(a) === 'Completed');
     }
 
     // Filter by user attributes
@@ -511,7 +535,7 @@ const eventAttendancePDF = async (req, res) => {
         attendance.userId?.department || 'N/A',
         attendance.userId?.year || 'N/A',
         attendance.userId?.section || 'N/A',
-        attendance.status || 'Attended'
+        getStatusText(attendance)
       ]);
 
       createSimpleTable(doc, tableHeaders, tableData, doc.y);

@@ -530,18 +530,24 @@
 }
 
 [data-theme="dark"] .event-participants-card {
-  background-color: #1e293b;
-  border: 1px solid #334155;
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .event-participants-card h2 {
+  color: #ffffff !important;
 }
 
 [data-theme="dark"] .participants-summary {
-  background: linear-gradient(135deg, #334155, #1e293b);
-  border: 1px solid #475569;
+  background: linear-gradient(135deg, #334155, #1e293b) !important;
+  border: 1px solid #475569 !important;
 }
 
 [data-theme="dark"] .stat-item {
-  background: #334155;
-  border: 1px solid #475569;
+  background: #334155 !important;
+  border: 1px solid #475569 !important;
+  color: #e2e8f0 !important;
 }
 
 [data-theme="dark"] .stat-number {
@@ -553,19 +559,74 @@
 }
 
 [data-theme="dark"] .participants-table {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
 }
 
 [data-theme="dark"] .table-header {
-  background: #334155;
-  border-bottom: 1px solid #475569;
+  background: #334155 !important;
+  border-bottom: 1px solid #475569 !important;
 }
 
 [data-theme="dark"] .table-header th {
-  color: #ffffff;
-  border-bottom: 1px solid #475569;
+  color: #ffffff !important;
+  border-bottom: 1px solid #475569 !important;
 }
+
+[data-theme="dark"] .table-row {
+  background: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+[data-theme="dark"] .table-row:hover {
+  background: #334155 !important;
+}
+
+[data-theme="dark"] .table-row td {
+  color: #e2e8f0 !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+/* Light Mode Specific Styles */
+[data-theme="light"] .event-participants-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .event-participants-card h2 {
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .participants-summary {
+  background: linear-gradient(135deg, #f9fafb, #ffffff) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+[data-theme="light"] .stat-item {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .stat-number {
+  color: #2563eb !important;
+}
+
+[data-theme="light"] .stat-label {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .download-pdf-btn {
+  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+[data-theme="light"] .download-pdf-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0891b2, #0e7490) !important;
+}
+
 
 [data-theme="dark"] .table-row {
   background: #1e293b;

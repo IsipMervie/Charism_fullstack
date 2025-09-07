@@ -177,7 +177,7 @@ function EventParticipantsPage() {
           <div style="margin: 10px 0;">
             <label>
               <input type="checkbox" id="status-filter" style="margin-right: 8px;">
-              Include only approved participants
+              Include only completed participants
             </label>
           </div>
           <div style="margin: 10px 0;">
@@ -208,7 +208,7 @@ function EventParticipantsPage() {
       
       // Add filters based on user selection
       if (filters.statusFilter) {
-        params.status = 'Approved';
+        params.status = 'Completed';
       }
       if (filters.timedOutFilter) {
         params.timedOut = 'true';
@@ -266,13 +266,13 @@ function EventParticipantsPage() {
               </div>
               <div className="stat-item">
                 <span className="stat-number">
-                  {participants.filter(p => p.status === 'Approved').length}
+                  {participants.filter(p => getStatusText(p) === 'Completed').length}
                 </span>
-                <span className="stat-label">Approved</span>
+                <span className="stat-label">Completed</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">
-                  {participants.filter(p => p.status === 'Pending').length}
+                  {participants.filter(p => getStatusText(p) === 'Pending').length}
                 </span>
                 <span className="stat-label">Pending</span>
               </div>
