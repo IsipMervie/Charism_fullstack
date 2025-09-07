@@ -40,12 +40,12 @@ const FeedbackPage = () => {
       setFormData(prev => ({
         ...prev,
         userEmail: user.email || '',
-        userName: `${user.firstName || ''} ${user.lastName || ''}`.trim()
+        userName: user.name || ''
       }));
     } else {
       setLoadingHistory(false);
     }
-  }, [user._id, user.email, user.firstName, user.lastName, fetchUserFeedback]);
+  }, [user._id, user.email, user.name, fetchUserFeedback]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
