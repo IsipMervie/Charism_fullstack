@@ -19,11 +19,11 @@
 .page-header {
   text-align: center;
   margin-bottom: 3rem;
-  background: white;
+  background: var(--bg-card);
   padding: 2.5rem;
   border-radius: 20px;
   box-shadow: 0 8px 30px var(--primary-focus);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .page-title {
@@ -48,10 +48,10 @@
 
 /* Events View */
 .events-view {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: 0 4px 20px var(--primary-focus);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-primary);
   overflow: hidden;
 }
 
@@ -87,7 +87,7 @@
   font-size: 1rem;
   border: none;
   border-radius: 12px;
-  background: white;
+  background: var(--bg-primary);
   transition: all 0.3s ease;
   color: var(--text-primary);
   box-shadow: 0 4px 15px var(--shadow-md);
@@ -152,7 +152,7 @@
 .search-results-info {
   padding: 1rem 2rem;
   background: var(--bg-tertiary);
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -164,10 +164,10 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
-  background: white;
+  background: var(--bg-primary);
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .clear-search-button {
@@ -201,7 +201,7 @@
 /* Event Card */
 .event-card {
   background: var(--bg-secondary);
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   border-radius: 16px;
   padding: 1.5rem;
   cursor: pointer;
@@ -359,10 +359,10 @@
 
 /* Registrations View */
 .registrations-view {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: 0 4px 20px var(--primary-focus);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-primary);
   overflow: hidden;
 }
 
@@ -413,7 +413,7 @@
 .event-info-card {
   padding: 1.5rem 2rem;
   background: var(--bg-secondary);
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .event-info-grid {
@@ -427,9 +427,9 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .info-icon {
@@ -465,7 +465,7 @@
 .search-filter-section {
   padding: 1.5rem 2rem;
   background: var(--bg-secondary);
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -483,9 +483,9 @@
   width: 100%;
   padding: 0.875rem 1.25rem;
   font-size: 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   border-radius: 8px;
-  background: white;
+  background: var(--bg-primary);
   transition: all 0.3s ease;
   color: var(--text-primary);
   cursor: pointer;
@@ -515,7 +515,7 @@
   font-weight: 600;
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-primary);
 }
 
 .group-title.pending {
@@ -546,7 +546,7 @@
 /* Registration Card */
 .registration-card {
   background: var(--bg-secondary);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -600,12 +600,12 @@
 }
 
 .registration-card .detail-item {
-  background: white;
+  background: var(--bg-primary);
   color: var(--text-secondary);
   font-size: 0.85rem;
   padding: 0.5rem 0.75rem;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   display: flex !important;
   align-items: center;
   gap: 0.5rem;
@@ -660,9 +660,9 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .meta-item {
