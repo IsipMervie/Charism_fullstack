@@ -213,7 +213,6 @@ function RegistrationApprovalPage() {
           <div className="loading-spinner">
             <div className="spinner">⏳</div>
             <h3>Loading Events...</h3>
-            <p>Please wait while we fetch the latest data</p>
           </div>
         </div>
       </div>

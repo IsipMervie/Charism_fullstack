@@ -275,15 +275,26 @@ function AdminManageFeedbackPage() {
             <div className="header-text">
               <h1 className="header-title">Manage Feedback</h1>
               <p className="header-subtitle">Review and respond to user feedback efficiently</p>
-                </div>
-              </div>
+            </div>
+          </div>
           
           <div className="feedback-stats">
             <div className="stat-item">
-              <span className="stat-number">{stats.overall?.total || 0}</span>
+              <span className="stat-number">{stats.total || 0}</span>
               <span className="stat-label">Total Feedback</span>
-                </div>
-              </div>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{stats.pending || 0}</span>
+              <span className="stat-label">Pending</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{stats.inProgress || 0}</span>
+              <span className="stat-label">In Progress</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">{stats.resolved || 0}</span>
+              <span className="stat-label">Resolved</span>
+            </div>
           </div>
           
         {/* Search Section */}
@@ -530,7 +541,7 @@ function AdminManageFeedbackPage() {
           </Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleResponseSubmit}>
-        <Modal.Body>
+          <Modal.Body>
             {selectedFeedback && (
               <div>
                 <div className="modal-sender-section">
@@ -583,17 +594,18 @@ function AdminManageFeedbackPage() {
             </Form.Group>
               </div>
             )}
-        </Modal.Body>
-        <Modal.Footer>
+          </Modal.Body>
+          <Modal.Footer>
             <button type="button" className="modal-close-button" onClick={() => setShowResponseModal(false)}>
             Cancel
             </button>
             <button type="submit" className="modal-respond-button">
               Send Response
             </button>
-        </Modal.Footer>
+          </Modal.Footer>
         </Form>
       </Modal>
+      </div>
     </div>
   );
 }

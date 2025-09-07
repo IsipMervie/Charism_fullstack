@@ -77,25 +77,22 @@ const getFeedbackStats = async (req, res) => {
         total: 0,
         pending: 0,
         inProgress: 0,
-        resolved: 0,
-        closed: 0
+        resolved: 0
       });
     }
 
-    const [total, pending, inProgress, resolved, closed] = await Promise.all([
+    const [total, pending, inProgress, resolved] = await Promise.all([
       Feedback.countDocuments(),
-      Feedback.countDocuments({ status: 'Pending' }),
-      Feedback.countDocuments({ status: 'In Progress' }),
-      Feedback.countDocuments({ status: 'Resolved' }),
-      Feedback.countDocuments({ status: 'Closed' })
+      Feedback.countDocuments({ status: 'pending' }),
+      Feedback.countDocuments({ status: 'working-on-it' }),
+      Feedback.countDocuments({ status: 'resolve' })
     ]);
 
     res.json({
       total,
       pending,
       inProgress,
-      resolved,
-      closed
+      resolved
     });
   } catch (error) {
     console.error('Error fetching feedback stats:', error);
