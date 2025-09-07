@@ -189,6 +189,58 @@
   color: var(--text-primary) !important;
 }
 
+/* Force visibility for the specific header text */
+.students-40-results-card .card-header h5.mb-0 {
+  color: var(--text-primary) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Additional specificity for Bootstrap overrides */
+.card-header h5.mb-0 {
+  color: var(--text-primary) !important;
+}
+
+/* Global override for any hidden text */
+.students-40-results-card .card-header {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Most specific override for the header text */
+.students-40-results-card .students-40-results-header h5.mb-0 {
+  color: var(--text-primary) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  font-weight: 600 !important;
+}
+
+/* Force all text in the results header to be visible */
+.students-40-results-header * {
+  color: var(--text-primary) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Debug: Force visibility with high contrast colors */
+[data-theme="dark"] .students-40-results-card .card-header h5 {
+  color: #ffffff !important;
+  background-color: transparent !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+[data-theme="light"] .students-40-results-card .card-header h5 {
+  color: #000000 !important;
+  background-color: transparent !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
 .students-40-results-card .card-body {
   background-color: var(--bg-card) !important;
   color: var(--text-primary) !important;
