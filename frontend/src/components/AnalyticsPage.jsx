@@ -45,17 +45,49 @@ function AnalyticsPage() {
   const [selectedYear, setSelectedYear] = useState('');
   const [departmentDetail, setDepartmentDetail] = useState(null);
   const [yearDetail, setYearDetail] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Function to detect theme more reliably
+  const detectTheme = () => {
+    // Check multiple ways to detect dark mode
+    const hasDarkClass = document.documentElement.classList.contains('dark');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const bodyBg = getComputedStyle(document.body).backgroundColor;
+    const isDarkBg = bodyBg.includes('rgb(31, 41, 55)') || bodyBg.includes('rgb(17, 24, 39)') || 
+                     bodyBg.includes('rgb(15, 23, 42)') || bodyBg.includes('rgb(12, 19, 33)');
+    
+    return hasDarkClass || prefersDark || isDarkBg;
+  };
 
   // Function to get theme-appropriate colors
   const getThemeColors = () => {
-    const isDarkMode = document.documentElement.classList.contains('dark') || 
-                      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = detectTheme();
+    setIsDarkMode(isDark);
     
     return {
-      text: isDarkMode ? '#ffffff' : '#1f2937',
-      grid: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+      text: isDark ? '#ffffff' : '#1f2937',
+      grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
     };
   };
+
+  // Monitor theme changes
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const isDark = detectTheme();
+      setIsDarkMode(isDark);
+    };
+
+    // Listen for theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleThemeChange);
+
+    // Initial theme detection
+    handleThemeChange();
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -536,7 +568,7 @@ function AnalyticsPage() {
                   <p>Proportion of users by role</p>
                 </div>
                 <div className="chart-container">
-                  <Pie data={userRoleData} options={pieOptions} />
+                  <Pie key={`pie-${isDarkMode}`} data={userRoleData} options={pieOptions} />
                 </div>
               </div>
 
@@ -546,7 +578,7 @@ function AnalyticsPage() {
                   <p>Active vs Completed events</p>
                 </div>
                 <div className="chart-container">
-                  <Doughnut data={eventStatusData} options={doughnutOptions} />
+                  <Doughnut key={`doughnut-${isDarkMode}`} data={eventStatusData} options={doughnutOptions} />
                 </div>
               </div>
 
@@ -556,7 +588,7 @@ function AnalyticsPage() {
                   <p>Total vs approved attendance</p>
                 </div>
                 <div className="chart-container">
-                  <Bar data={attendanceData} options={barOptions} />
+                  <Bar key={`bar-${isDarkMode}`} data={attendanceData} options={barOptions} />
                 </div>
               </div>
 
@@ -566,7 +598,7 @@ function AnalyticsPage() {
                   <p>Daily new events and users</p>
                 </div>
                 <div className="chart-container">
-                  <Line data={recentActivityData} options={lineOptions} />
+                  <Line key={`line-${isDarkMode}`} data={recentActivityData} options={lineOptions} />
                 </div>
               </div>
 
@@ -576,7 +608,7 @@ function AnalyticsPage() {
                   <p>Students and events per department</p>
                 </div>
                 <div className="chart-container">
-                  <Bar data={departmentData} options={departmentBarOptions} />
+                  <Bar key={`dept-bar-${isDarkMode}`} data={departmentData} options={departmentBarOptions} />
                 </div>
               </div>
 
@@ -586,7 +618,7 @@ function AnalyticsPage() {
                   <p>Students and events by academic year</p>
                 </div>
                 <div className="chart-container">
-                  <Bar data={yearData} options={yearBarOptions} />
+                  <Bar key={`year-bar-${isDarkMode}`} data={yearData} options={yearBarOptions} />
                 </div>
               </div>
             </div>
