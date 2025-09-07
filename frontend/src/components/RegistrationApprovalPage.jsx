@@ -103,8 +103,8 @@ function RegistrationApprovalPage() {
       await loadEventRegistrations(eventId);
       Swal.fire({
         icon: 'success',
-        title: 'Registration Approved',
-        text: `${studentName}'s registration has been approved successfully.`,
+        title: 'Registration Approved for Events',
+        text: `${studentName}'s registration has been approved for events successfully.`,
         timer: 2000,
         showConfirmButton: false
       });
@@ -212,7 +212,6 @@ function RegistrationApprovalPage() {
         <div className="loading-container">
           <div className="loading-spinner">
             <div className="spinner">⏳</div>
-            <h3>Loading Events...</h3>
           </div>
         </div>
       </div>
@@ -373,8 +372,8 @@ function EventCard({ event, onSelect }) {
 
       <div className="event-actions">
         <button className="view-registrations-btn">
-          <FaEye className="btn-icon" />
-          View Registrations
+          {pendingCount > 0 ? <FaCheck className="btn-icon" /> : <FaEye className="btn-icon" />}
+          {pendingCount > 0 ? 'Approve for Events' : 'View Registrations'}
         </button>
       </div>
     </div>
@@ -488,7 +487,6 @@ function RegistrationsView({
         <div className="loading-container">
           <div className="loading-spinner">
             <div className="spinner">⏳</div>
-            <h3>Loading Registrations...</h3>
           </div>
         </div>
       ) : (
@@ -611,14 +609,14 @@ function RegistrationCard({ registration, event, onApprove, onDisapprove, type }
         <div className="meta-item">
           <span className="meta-label">Registered:</span>
           <span className="meta-value">
-            {new Date(registration.registeredAt).toLocaleDateString()}
+            {new Date(registration.registeredAt).toLocaleString()}
           </span>
         </div>
         {type === 'approved' && (
           <div className="meta-item">
             <span className="meta-label">Approved:</span>
             <span className="meta-value">
-              {new Date(registration.registrationApprovedAt).toLocaleDateString()}
+              {new Date(registration.registrationApprovedAt).toLocaleString()}
             </span>
           </div>
         )}
@@ -637,7 +635,7 @@ function RegistrationCard({ registration, event, onApprove, onDisapprove, type }
               onClick={() => onApprove(event._id, userId._id, userId.name)}
               className="action-button approve"
             >
-              Approve
+              Approve for Events
             </button>
             <button
               onClick={() => onDisapprove(event._id, userId._id, userId.name, false)}
@@ -662,7 +660,7 @@ function RegistrationCard({ registration, event, onApprove, onDisapprove, type }
             onClick={() => onApprove(event._id, userId._id, userId.name)}
             className="action-button approve"
           >
-            Approve
+            Approve for Events
           </button>
         )}
       </div>
