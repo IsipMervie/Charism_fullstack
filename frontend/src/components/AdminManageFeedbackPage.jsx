@@ -278,7 +278,8 @@ function AdminManageFeedbackPage() {
             </div>
           </div>
           
-          <div className="feedback-stats">
+          <div className="stats-section">
+            <div className="feedback-stats">
             <div className="stat-item">
               <span className="stat-number">{stats.total || 0}</span>
               <span className="stat-label">Total Feedback</span>
@@ -294,6 +295,7 @@ function AdminManageFeedbackPage() {
             <div className="stat-item">
               <span className="stat-number">{stats.resolved || 0}</span>
               <span className="stat-label">Resolved</span>
+            </div>
             </div>
           </div>
           
