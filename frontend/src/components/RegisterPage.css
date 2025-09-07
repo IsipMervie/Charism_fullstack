@@ -444,14 +444,14 @@ input[type="submit"].register-button:hover,
 }
 
 .reminder-text {
-  color: var(--primary-dark);
+  color: var(--text-primary);
   font-size: 0.9rem;
   line-height: 1.5;
   margin: 0;
 }
 
 .reminder-text strong {
-  color: var(--primary-dark);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
