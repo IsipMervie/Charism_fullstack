@@ -92,7 +92,7 @@ const getPasswordResetTemplate = (resetLink, userName) => {
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
     <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2c3e50; margin: 0;">CHARISM/h1>
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
       <p style="color: #7f8c8d; margin: 10px 0 0 0;">Password Reset Request</p>
     </div>
     

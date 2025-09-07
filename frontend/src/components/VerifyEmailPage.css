@@ -13,10 +13,11 @@
 }
 
 .verify-box {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-card);
   padding: 36px 28px;
   border-radius: 10px;
   box-shadow: 0 4px 14px var(--shadow-md);
+  border: 1px solid var(--border-primary);
   max-width: 450px;
   width: 100%;
   text-align: center;

@@ -313,10 +313,42 @@ td, th {
 /* Form elements */
 input, textarea, select {
   color: var(--input-text) !important;
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
 }
 
 input::placeholder, textarea::placeholder {
   color: var(--input-placeholder) !important;
+}
+
+/* Force all form elements to use theme colors */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="url"], 
+textarea, 
+select {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border) !important;
+}
+
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="password"]:focus, 
+input[type="number"]:focus, 
+input[type="search"]:focus, 
+input[type="tel"]:focus, 
+input[type="url"]:focus, 
+textarea:focus, 
+select:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
 }
 
 /* Links */
@@ -348,6 +380,24 @@ button {
 
 .card-text, .modal-body {
   color: var(--text-secondary);
+}
+
+/* Bootstrap form overrides */
+.form-control, .form-select {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border) !important;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+.form-control::placeholder {
+  color: var(--input-placeholder) !important;
 }
 
 /* Additional UI element overrides */
