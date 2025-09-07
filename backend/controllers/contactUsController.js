@@ -20,7 +20,7 @@ exports.sendContactMessage = async (req, res) => {
       const userEmailSubject = `Thank you for contacting us - CHARISM`;
       const userEmailContent = getContactSubmissionTemplate(name, email, message, newMessage._id);
 
-      await sendEmail(email, userEmailSubject, userEmailContent);
+      await sendEmail(email, userEmailSubject, undefined, userEmailContent);
       console.log(`✅ Confirmation email sent to ${email} for contact submission`);
     } catch (emailError) {
       console.error('❌ Failed to send confirmation email to user:', emailError);
@@ -34,7 +34,7 @@ exports.sendContactMessage = async (req, res) => {
         const adminEmailSubject = `New Contact Message from ${name} - CHARISM`;
         const adminEmailContent = getContactAdminNotificationTemplate(name, email, message, newMessage._id);
 
-        await sendEmail(adminEmail, adminEmailSubject, adminEmailContent);
+        await sendEmail(adminEmail, adminEmailSubject, undefined, adminEmailContent);
         console.log(`✅ Admin notification email sent to ${adminEmail} for new contact message`);
       }
     } catch (adminEmailError) {
@@ -123,7 +123,7 @@ exports.replyToMessage = async (req, res) => {
       const emailSubject = `Response to your message - CHARISM`;
       const emailContent = getContactResponseTemplate(message.name, message.email, message.message, adminResponse, adminName);
 
-      await sendEmail(message.email, emailSubject, emailContent);
+      await sendEmail(message.email, emailSubject, undefined, emailContent);
       console.log(`✅ Response email sent to ${message.email} for contact message`);
     } catch (emailError) {
       console.error('Failed to send email notification:', emailError);
@@ -171,7 +171,7 @@ exports.updateReply = async (req, res) => {
       const emailSubject = `Updated response to your message - CHARISM`;
       const emailContent = getContactResponseTemplate(message.name, message.email, message.message, adminResponse, adminName);
 
-      await sendEmail(message.email, emailSubject, emailContent);
+      await sendEmail(message.email, emailSubject, undefined, emailContent);
       console.log(`✅ Updated response email sent to ${message.email} for contact message`);
     } catch (emailError) {
       console.error('Failed to send updated email notification:', emailError);
