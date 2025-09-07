@@ -1,5 +1,52 @@
 // Utility functions for time formatting
 
+// Philippines time zone constant
+export const PHILIPPINES_TIMEZONE = 'Asia/Manila';
+
+// Format date and time for Philippines timezone
+export const formatDateTimePhilippines = (dateString, options = {}) => {
+  if (!dateString) return 'N/A';
+  
+  try {
+    const date = new Date(dateString);
+    const defaultOptions = {
+      timeZone: PHILIPPINES_TIMEZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+    
+    return date.toLocaleString('en-US', { ...defaultOptions, ...options });
+  } catch (error) {
+    console.error('Error formatting date for Philippines timezone:', error);
+    return 'Invalid Date';
+  }
+};
+
+// Format date only for Philippines timezone
+export const formatDatePhilippines = (dateString, options = {}) => {
+  if (!dateString) return 'N/A';
+  
+  try {
+    const date = new Date(dateString);
+    const defaultOptions = {
+      timeZone: PHILIPPINES_TIMEZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    };
+    
+    return date.toLocaleDateString('en-US', { ...defaultOptions, ...options });
+  } catch (error) {
+    console.error('Error formatting date for Philippines timezone:', error);
+    return 'Invalid Date';
+  }
+};
+
 // Convert 24-hour time string to 12-hour format
 export const formatTime12Hour = (timeString) => {
   if (!timeString) return 'TBD';

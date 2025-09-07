@@ -4,6 +4,7 @@ import { getEventParticipants, approveAttendance, disapproveAttendance, generate
 import Swal from 'sweetalert2';
 import { FaCheck, FaTimes, FaDownload } from 'react-icons/fa';
 import LoadingSpinner from './LoadingSpinner';
+import { formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import './EventParticipantsPage.css';
 
 function EventParticipantsPage() {
@@ -279,17 +280,17 @@ function EventParticipantsPage() {
                     </span>
                     {participant.registrationApprovedAt && (
                       <div className="approval-date">
-                        <small>Approved: {new Date(participant.registrationApprovedAt).toLocaleDateString()}</small>
+                        <small>Approved: {formatDatePhilippines(participant.registrationApprovedAt)}</small>
                       </div>
                     )}
                   </td>
                   <td>
                     <div className="time-status">
                       <div className="time-in">
-                        <strong>Time In:</strong> {participant.timeIn ? new Date(participant.timeIn).toLocaleString() : 'Not timed in'}
+                        <strong>Time In:</strong> {participant.timeIn ? formatDateTimePhilippines(participant.timeIn) : 'Not timed in'}
                       </div>
                       <div className="time-out">
-                        <strong>Time Out:</strong> {participant.timeOut ? new Date(participant.timeOut).toLocaleString() : 'Not timed out'}
+                        <strong>Time Out:</strong> {participant.timeOut ? formatDateTimePhilippines(participant.timeOut) : 'Not timed out'}
                       </div>
                     </div>
                   </td>
@@ -382,7 +383,7 @@ function EventParticipantsPage() {
                   </span>
                   {participant.registrationApprovedAt && (
                     <div className="approval-date">
-                      <small>Approved: {new Date(participant.registrationApprovedAt).toLocaleDateString()}</small>
+                      <small>Approved: {formatDatePhilippines(participant.registrationApprovedAt)}</small>
                     </div>
                   )}
                 </div>
@@ -390,14 +391,14 @@ function EventParticipantsPage() {
                 <div className="info-row">
                   <span className="label">Time In:</span>
                   <span className="value">
-                    {participant.timeIn ? new Date(participant.timeIn).toLocaleString() : 'Not timed in'}
+                    {participant.timeIn ? formatDateTimePhilippines(participant.timeIn) : 'Not timed in'}
                   </span>
                 </div>
                 
                 <div className="info-row">
                   <span className="label">Time Out:</span>
                   <span className="value">
-                    {participant.timeOut ? new Date(participant.timeOut).toLocaleString() : 'Not timed out'}
+                    {participant.timeOut ? formatDateTimePhilippines(participant.timeOut) : 'Not timed out'}
                   </span>
                 </div>
                 

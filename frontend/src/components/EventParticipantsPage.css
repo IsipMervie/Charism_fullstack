@@ -514,7 +514,149 @@
   }
 }
 
-/* Dark mode */
+/* Dark Mode Specific Improvements */
+[data-theme="dark"] .event-participants-container {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme="dark"] .event-participants-card {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+[data-theme="dark"] .participants-summary {
+  background: linear-gradient(135deg, #334155, #1e293b);
+  border: 1px solid #475569;
+}
+
+[data-theme="dark"] .stat-item {
+  background: #334155;
+  border: 1px solid #475569;
+}
+
+[data-theme="dark"] .stat-number {
+  color: #3b82f6;
+}
+
+[data-theme="dark"] .stat-label {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .participants-table {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+[data-theme="dark"] .table-header {
+  background: #334155;
+  border-bottom: 1px solid #475569;
+}
+
+[data-theme="dark"] .table-header th {
+  color: #ffffff;
+  border-bottom: 1px solid #475569;
+}
+
+[data-theme="dark"] .table-row {
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+[data-theme="dark"] .table-row:hover {
+  background: #334155;
+}
+
+[data-theme="dark"] .table-row td {
+  color: #e2e8f0;
+  border-bottom: 1px solid #334155;
+}
+
+[data-theme="dark"] .status-badge.approved {
+  background: #047857;
+  color: #d1fae5;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.pending {
+  background: #b45309;
+  color: #fef3c7;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.attended {
+  background: #1d4ed8;
+  color: #dbeafe;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.disapproved {
+  background: #b91c1c;
+  color: #fee2e2;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .action-button.approve {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  color: #0f172a;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .action-button.disapprove {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  color: white;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .download-pdf-btn {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4);
+  color: #0f172a;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .download-pdf-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+[data-theme="dark"] .participant-card {
+  background: #334155;
+  border: 1px solid #475569;
+}
+
+[data-theme="dark"] .participant-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .participant-name {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .participant-email {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .info-row .label {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .info-row .value {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .approval-date small {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .time-status strong {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .time-status .time-in,
+[data-theme="dark"] .time-status .time-out {
+  color: #e2e8f0;
+}
+
+/* Dark mode fallback */
 @media (prefers-color-scheme: dark) {
   .event-participants-container { background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%); }
   .event-participants-card { background: var(--gray-800); border-color: var(--gray-700); }

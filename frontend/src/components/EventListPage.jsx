@@ -6,7 +6,7 @@ import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSetting
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload } from 'react-icons/fa';
-import { formatTimeRange12Hour } from '../utils/timeUtils';
+import { formatTimeRange12Hour, formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../utils/arrayUtils';
 import './EventListPage.css';
@@ -542,7 +542,7 @@ function EventListPage() {
       html: `
         <div style="text-align: left;">
           <p><strong>Event:</strong> ${event.title}</p>
-          <p><strong>Date:</strong> ${eventDate.toLocaleDateString()}</p>
+          <p><strong>Date:</strong> ${formatDatePhilippines(eventDate)}</p>
           <p><strong>Time:</strong> ${formatTimeRange12Hour(event.startTime, event.endTime)}</p>
           <p><strong>Location:</strong> ${event.location || 'TBD'}</p>
           <p><strong>Service Hours:</strong> ${event.hours} hours</p>
@@ -630,7 +630,7 @@ function EventListPage() {
       Swal.fire({
         icon: 'warning',
         title: 'Too Early to Time In',
-        text: `You can time in starting from ${earliestTimeIn.toLocaleString()} (5 minutes before event starts).`,
+        text: `You can time in starting from ${formatDateTimePhilippines(earliestTimeIn)} (5 minutes before event starts).`,
         confirmButtonColor: '#ffc107'
       });
       return;
@@ -642,7 +642,7 @@ function EventListPage() {
       Swal.fire({
         icon: 'warning',
         title: 'Time In Window Closed',
-        text: `The time in window closed at ${latestTimeIn.toLocaleString()} (30 minutes after event start).`,
+        text: `The time in window closed at ${formatDateTimePhilippines(latestTimeIn)} (30 minutes after event start).`,
         confirmButtonColor: '#ffc107'
       });
       return;
@@ -742,7 +742,7 @@ function EventListPage() {
       Swal.fire({
         icon: 'warning',
         title: 'Event Has Ended',
-        text: `Cannot time out after event has ended. The event ended at ${eventEndTime.toLocaleString()}.`,
+        text: `Cannot time out after event has ended. The event ended at ${formatDateTimePhilippines(eventEndTime)}.`,
         confirmButtonColor: '#ffc107'
       });
       return;
@@ -1371,7 +1371,7 @@ function EventListPage() {
                       <div className="event-meta">
                         <div className="meta-item">
                           <FaCalendar className="meta-icon" />
-                          <span>{new Date(event.date).toLocaleDateString()}</span>
+                          <span>{formatDatePhilippines(event.date)}</span>
                         </div>
                         <div className="meta-item">
                           <FaClock className="meta-icon" />
@@ -1504,7 +1504,7 @@ function EventListPage() {
                                   <div className="time-item">
                                     <span className="time-label">Time In:</span>
                                     <span className="time-value">
-                                      {new Date(att.timeIn).toLocaleString()}
+                                      {formatDateTimePhilippines(att.timeIn)}
                                     </span>
                                   </div>
                                 )}
@@ -1512,7 +1512,7 @@ function EventListPage() {
                                   <div className="time-item">
                                     <span className="time-label">Time Out:</span>
                                     <span className="time-value">
-                                      {new Date(att.timeOut).toLocaleString()}
+                                      {formatDateTimePhilippines(att.timeOut)}
                                     </span>
                                   </div>
                                 )}

@@ -106,7 +106,7 @@
 .refresh-button {
   padding: 1rem 1.5rem;
   background: rgba(255, 255, 255, 0.2);
-  color: black;
+  color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
   font-size: 0.95rem;
@@ -804,6 +804,125 @@
 .no-events p {
   color: var(--text-tertiary);
   margin: 0;
+}
+
+/* Dark Mode Specific Improvements */
+[data-theme="dark"] .registration-approval-page {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme="dark"] .page-header {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+[data-theme="dark"] .events-view,
+[data-theme="dark"] .registrations-view {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+[data-theme="dark"] .event-card {
+  background: #334155;
+  border: 2px solid #475569;
+}
+
+[data-theme="dark"] .event-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .registration-card {
+  background: #334155;
+  border: 1px solid #475569;
+}
+
+[data-theme="dark"] .registration-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .event-info-card {
+  background: #334155;
+  border-bottom: 1px solid #475569;
+}
+
+[data-theme="dark"] .info-item {
+  background: #1e293b;
+  border: 1px solid #475569;
+}
+
+[data-theme="dark"] .registration-meta {
+  background: #1e293b;
+  border: 1px solid #475569;
+}
+
+[data-theme="dark"] .detail-item {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .detail-item:hover {
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .search-filter-section {
+  background: #334155;
+  border-bottom: 1px solid #475569;
+}
+
+[data-theme="dark"] .search-results-info {
+  background: #334155;
+  border-bottom: 1px solid #475569;
+}
+
+[data-theme="dark"] .results-count {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .clear-search-button {
+  background: #dc2626;
+  color: white;
+  border: 1px solid #ef4444;
+}
+
+[data-theme="dark"] .clear-search-button:hover {
+  background: #ef4444;
+}
+
+/* Improve button contrast in dark mode */
+[data-theme="dark"] .action-button.approve {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  color: #0f172a;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .action-button.disapprove {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  color: white;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.approved {
+  background: #047857;
+  color: #d1fae5;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.pending {
+  background: #b45309;
+  color: #fef3c7;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .status-badge.disapproved {
+  background: #b91c1c;
+  color: #fee2e2;
+  font-weight: 700;
 }
 
 /* Responsive Design */

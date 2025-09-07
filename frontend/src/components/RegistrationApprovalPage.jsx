@@ -5,6 +5,7 @@ import { getEvents, getAllEventRegistrations, approveRegistration, disapproveReg
 import Swal from 'sweetalert2';
 import { FaSpinner, FaSearch, FaEye, FaCheck, FaTimes, FaArrowLeft, FaFilter, FaMapMarkerAlt, FaUsers, FaClock, FaBuilding, FaUserGraduate } from 'react-icons/fa';
 import { safeFilter, safeLength } from '../utils/arrayUtils';
+import { formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import './RegistrationApprovalPage.css';
 
 function RegistrationApprovalPage() {
@@ -103,8 +104,8 @@ function RegistrationApprovalPage() {
       await loadEventRegistrations(eventId);
       Swal.fire({
         icon: 'success',
-        title: 'Registration Approved for Events',
-        text: `${studentName}'s registration has been approved for events successfully.`,
+        title: 'Registration Approved for Registered',
+        text: `${studentName}'s registration has been approved for registered successfully.`,
         timer: 2000,
         showConfirmButton: false
       });
@@ -340,7 +341,7 @@ function EventCard({ event, onSelect }) {
       <div className="event-card-header">
         <h3 className="event-title">{event.title}</h3>
         <div className="event-date-badge">
-          {new Date(event.date).toLocaleDateString()}
+          {formatDatePhilippines(event.date)}
         </div>
       </div>
       
@@ -373,7 +374,7 @@ function EventCard({ event, onSelect }) {
       <div className="event-actions">
         <button className="view-registrations-btn">
           {pendingCount > 0 ? <FaCheck className="btn-icon" /> : <FaEye className="btn-icon" />}
-          {pendingCount > 0 ? 'Approve for Events' : 'View Registrations'}
+          {pendingCount > 0 ? 'Approve for Registered' : 'View Registrations'}
         </button>
       </div>
     </div>
@@ -421,7 +422,7 @@ function RegistrationsView({
           <div className="info-item">
             <div className="info-content">
               <span className="info-label">Event Date</span>
-              <span className="info-value">{new Date(event.date).toLocaleDateString()}</span>
+              <span className="info-value">{formatDatePhilippines(event.date)}</span>
             </div>
           </div>
           <div className="info-item">
@@ -609,14 +610,14 @@ function RegistrationCard({ registration, event, onApprove, onDisapprove, type }
         <div className="meta-item">
           <span className="meta-label">Registered:</span>
           <span className="meta-value">
-            {new Date(registration.registeredAt).toLocaleString()}
+            {formatDateTimePhilippines(registration.registeredAt)}
           </span>
         </div>
         {type === 'approved' && (
           <div className="meta-item">
             <span className="meta-label">Approved:</span>
             <span className="meta-value">
-              {new Date(registration.registrationApprovedAt).toLocaleString()}
+              {formatDateTimePhilippines(registration.registrationApprovedAt)}
             </span>
           </div>
         )}
@@ -635,7 +636,7 @@ function RegistrationCard({ registration, event, onApprove, onDisapprove, type }
               onClick={() => onApprove(event._id, userId._id, userId.name)}
               className="action-button approve"
             >
-              Approve for Events
+              Approve for Registered
             </button>
             <button
               onClick={() => onDisapprove(event._id, userId._id, userId.name, false)}
@@ -660,7 +661,7 @@ function RegistrationCard({ registration, event, onApprove, onDisapprove, type }
             onClick={() => onApprove(event._id, userId._id, userId.name)}
             className="action-button approve"
           >
-            Approve for Events
+            Approve for Registered
           </button>
         )}
       </div>
