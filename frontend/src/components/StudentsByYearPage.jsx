@@ -95,7 +95,7 @@ function StudentsByYearPage() {
           icon: 'error',
           title: errorTitle,
           text: errorMessage,
-          confirmButtonColor: '#ef4444',
+          confirmButtonColor: 'var(--error)',
           confirmButtonText: 'OK'
         });
         return;
@@ -128,7 +128,7 @@ function StudentsByYearPage() {
             icon: 'warning',
             title: 'Invalid Hours Range',
             text: 'Minimum hours cannot be greater than maximum hours.',
-            confirmButtonColor: '#f59e0b',
+            confirmButtonColor: 'var(--warning)',
             confirmButtonText: 'OK'
           });
           return;
@@ -139,7 +139,7 @@ function StudentsByYearPage() {
             icon: 'warning',
             title: 'Invalid Hours Value',
             text: 'Minimum hours cannot be negative.',
-            confirmButtonColor: '#f59e0b',
+            confirmButtonColor: 'var(--warning)',
             confirmButtonText: 'OK'
           });
           return;
@@ -151,7 +151,7 @@ function StudentsByYearPage() {
             icon: 'warning',
             title: 'Invalid Hours Range',
             text: 'Maximum hours cannot be less than minimum hours.',
-            confirmButtonColor: '#f59e0b',
+            confirmButtonColor: 'var(--warning)',
             confirmButtonText: 'OK'
           });
           return;
@@ -162,7 +162,7 @@ function StudentsByYearPage() {
             icon: 'warning',
             title: 'Invalid Hours Value',
             text: 'Maximum hours cannot be negative.',
-            confirmButtonColor: '#f59e0b',
+            confirmButtonColor: 'var(--warning)',
             confirmButtonText: 'OK'
           });
           return;
@@ -189,8 +189,8 @@ function StudentsByYearPage() {
       title: 'Clear All Filters?',
       text: 'Are you sure you want to clear all search and filter criteria? This will reset the current view.',
       showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
+      confirmButtonColor: 'var(--error)',
+      cancelButtonColor: 'var(--text-secondary)',
       confirmButtonText: 'Yes, Clear All',
       cancelButtonText: 'Cancel'
     }).then((result) => {
@@ -208,7 +208,7 @@ function StudentsByYearPage() {
           icon: 'success',
           title: 'Filters Cleared!',
           text: 'All search and filter criteria have been cleared successfully.',
-          confirmButtonColor: '#10b981',
+          confirmButtonColor: 'var(--success)',
           confirmButtonText: 'OK',
           timer: 2000,
           timerProgressBar: true
@@ -223,8 +223,8 @@ function StudentsByYearPage() {
       title: 'Clear PDF Filters?',
       text: 'Are you sure you want to clear all PDF filters? This action cannot be undone.',
       showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
+      confirmButtonColor: 'var(--error)',
+      cancelButtonColor: 'var(--text-secondary)',
       confirmButtonText: 'Yes, Clear All',
       cancelButtonText: 'Cancel'
     }).then((result) => {
@@ -241,7 +241,7 @@ function StudentsByYearPage() {
           icon: 'success',
           title: 'Filters Cleared!',
           text: 'All PDF filters have been cleared successfully.',
-          confirmButtonColor: '#10b981',
+          confirmButtonColor: 'var(--success)',
           confirmButtonText: 'OK',
           timer: 2000,
           timerProgressBar: true
@@ -256,8 +256,8 @@ function StudentsByYearPage() {
       title: 'Clear Filter?',
       text: `Are you sure you want to clear the ${filterType} filter?`,
       showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6b7280',
+      confirmButtonColor: 'var(--error)',
+      cancelButtonColor: 'var(--text-secondary)',
       confirmButtonText: 'Yes, Clear',
       cancelButtonText: 'Cancel'
     }).then((result) => {
@@ -271,7 +271,7 @@ function StudentsByYearPage() {
           icon: 'success',
           title: 'Filter Cleared!',
           text: `The ${filterType} filter has been cleared.`,
-          confirmButtonColor: '#10b981',
+          confirmButtonColor: 'var(--success)',
           confirmButtonText: 'OK',
           timer: 2000,
           timerProgressBar: true
@@ -286,7 +286,7 @@ function StudentsByYearPage() {
         icon: 'warning',
         title: 'No Academic Year Selected',
         text: 'Please select an academic year first before generating a PDF report.',
-        confirmButtonColor: '#667eea',
+        confirmButtonColor: 'var(--info)',
         confirmButtonText: 'OK'
       });
       return;
@@ -299,7 +299,7 @@ function StudentsByYearPage() {
         icon: 'warning',
         title: 'No Students Available',
         text: `No students found for ${selectedYear}. Please check if there are students in this academic year.`,
-        confirmButtonColor: '#f59e0b',
+        confirmButtonColor: 'var(--warning)',
         confirmButtonText: 'OK'
       });
       return;
@@ -313,7 +313,7 @@ function StudentsByYearPage() {
         title: 'No Students Match Current Filters',
         text: 'The current search and filter criteria result in no students being displayed. You can still generate a PDF with the PDF filters above, or adjust your current filters.',
         showCancelButton: true,
-        confirmButtonColor: '#667eea',
+        confirmButtonColor: 'var(--info)',
         cancelButtonColor: '#6b7280',
         confirmButtonText: 'Continue with PDF',
         cancelButtonText: 'Adjust Filters'
@@ -869,7 +869,7 @@ function StudentsByYearPage() {
                           icon: 'success',
                           title: 'Hours Filter Cleared!',
                           text: 'The hours range filter has been cleared.',
-                          confirmButtonColor: '#10b981',
+                          confirmButtonColor: 'var(--success)',
                           confirmButtonText: 'OK',
                           timer: 2000,
                           timerProgressBar: true

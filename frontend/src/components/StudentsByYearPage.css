@@ -58,11 +58,11 @@
 
 /* Header Section */
 .header-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 2.5rem;
   margin-bottom: 2rem;
   position: relative;
@@ -140,9 +140,9 @@
 }
 
 .stat-item {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--bg-secondary);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-primary);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 8px 25px var(--shadow-md);
@@ -155,7 +155,7 @@
 .stat-item:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px var(--shadow-lg);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-tertiary);
 }
 
 .stat-icon {
@@ -192,11 +192,11 @@
 
 /* Controls Section */
 .controls-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 2rem;
   margin-bottom: 2rem;
   display: flex;
@@ -235,7 +235,7 @@
   padding: 0.875rem 1rem;
   border: 2px solid var(--border-primary);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   font-size: 0.95rem;
   color: var(--text-primary);
   transition: all var(--transition-normal);
@@ -280,7 +280,7 @@
   padding: 0.875rem 1.25rem 0.875rem 3rem;
   border: 2px solid var(--border-primary);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   font-size: 0.95rem;
   color: var(--text-primary);
   transition: all var(--transition-normal);
@@ -310,7 +310,7 @@
   padding: 0.875rem 1.25rem;
   border: 2px solid var(--border-primary);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 600;
@@ -322,7 +322,7 @@
 .filter-toggle:hover {
   border-color: var(--primary);
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-secondary);
 }
 
 .filter-toggle.active {
@@ -388,11 +388,11 @@
 
 /* Frontend Filters Section */
 .frontend-filters-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 2rem;
   margin-bottom: 2rem;
   animation: slideDown 0.3s ease;
@@ -438,7 +438,7 @@
   padding: 0.5rem 1rem;
   border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
@@ -484,7 +484,7 @@
   padding: 0.875rem 1rem;
   border: 2px solid var(--border-primary);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   font-size: 0.9rem;
   color: var(--text-primary);
   transition: all var(--transition-normal);
@@ -542,7 +542,7 @@
   padding: 0.875rem 0.75rem;
   border: 2px solid var(--border-primary);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   font-size: 0.9rem;
   color: var(--text-primary);
   transition: all var(--transition-normal);
@@ -581,7 +581,7 @@
   padding: 0.875rem 0.75rem;
   border: 2px solid var(--border-primary);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   font-size: 0.9rem;
   color: var(--text-primary);
   transition: all var(--transition-normal);
@@ -722,11 +722,11 @@
 
 /* PDF Options Section */
 .pdf-options-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 2rem;
   margin-bottom: 2rem;
 }
@@ -790,7 +790,7 @@
   padding: 0.875rem 1rem;
   border: 2px solid var(--border-primary);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   font-size: 0.9rem;
   color: var(--text-primary);
   transition: all var(--transition-normal);
@@ -880,11 +880,11 @@
 
 /* Results Section */
 .results-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   overflow: hidden;
 }
 
@@ -929,7 +929,7 @@
 /* Enhanced List View - Optimized for all screen sizes */
 .students-list {
   padding: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-primary);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 25px var(--shadow-md);
@@ -1090,11 +1090,11 @@
 
 /* Empty State */
 .empty-state {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 3rem 2rem;
   text-align: center;
 }
@@ -1144,11 +1144,11 @@
 /* Loading & Error Sections */
 .loading-section,
 .error-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 3rem 2rem;
   text-align: center;
 }

@@ -121,14 +121,14 @@ function AnalyticsPage() {
       {
         data: [getValue('studentsCount'), getValue('staffCount'), getValue('adminCount')],
         backgroundColor: [
-          'var(--error)',
-          'var(--info)',
-          'var(--warning)'
+          '#ef4444', // Red for Students
+          '#3b82f6', // Blue for Staff  
+          '#f59e0b'  // Yellow for Admin
         ],
         borderColor: [
-          'var(--error)',
-          'var(--info)',
-          'var(--warning)'
+          '#ef4444',
+          '#3b82f6',
+          '#f59e0b'
         ],
         borderWidth: 2,
       },
@@ -142,12 +142,12 @@ function AnalyticsPage() {
       {
         data: [getValue('activeEvents'), getValue('completedEvents')],
         backgroundColor: [
-          'var(--success)',
-          'var(--warning)'
+          '#10b981', // Green for Active Events
+          '#f59e0b'  // Yellow for Completed Events
         ],
         borderColor: [
-          'var(--success)',
-          'var(--warning)'
+          '#10b981',
+          '#f59e0b'
         ],
         borderWidth: 2,
       },
@@ -162,12 +162,12 @@ function AnalyticsPage() {
         label: 'Attendance Count',
         data: [getValue('totalAttendance'), getValue('approvedAttendance')],
         backgroundColor: [
-          'var(--info)',
-          'var(--success)'
+          '#3b82f6', // Blue for Total Attendance
+          '#10b981'  // Green for Approved Attendance
         ],
         borderColor: [
-          'var(--info)',
-          'var(--success)'
+          '#3b82f6',
+          '#10b981'
         ],
         borderWidth: 2,
       },
@@ -185,16 +185,16 @@ function AnalyticsPage() {
         {
           label: 'New Events',
           data: events,
-          borderColor: 'var(--error)',
-          backgroundColor: 'var(--error-light)',
+          borderColor: '#ef4444', // Red for New Events
+          backgroundColor: 'rgba(239, 68, 68, 0.1)', // Light red background
           tension: 0.4,
           fill: true,
         },
         {
           label: 'New Users',
           data: users,
-          borderColor: 'var(--info)',
-          backgroundColor: 'var(--info-light)',
+          borderColor: '#3b82f6', // Blue for New Users
+          backgroundColor: 'rgba(59, 130, 246, 0.1)', // Light blue background
           tension: 0.4,
           fill: true,
         },
@@ -209,15 +209,15 @@ function AnalyticsPage() {
       {
         label: 'Students',
         data: (data.departmentStats || []).map(dept => dept.students || 0),
-        backgroundColor: 'var(--info)',
-        borderColor: 'var(--info)',
+        backgroundColor: '#3b82f6', // Blue for Students
+        borderColor: '#3b82f6',
         borderWidth: 2,
       },
       {
         label: 'Events',
         data: (data.departmentStats || []).map(dept => dept.events || 0),
-        backgroundColor: 'var(--error)',
-        borderColor: 'var(--error)',
+        backgroundColor: '#ef4444', // Red for Events
+        borderColor: '#ef4444',
         borderWidth: 2,
       },
     ],
@@ -230,15 +230,15 @@ function AnalyticsPage() {
       {
         label: 'Students',
         data: (data.yearStats || []).map(year => year.students || 0),
-        backgroundColor: 'var(--success)',
-        borderColor: 'var(--success)',
+        backgroundColor: '#10b981', // Green for Students
+        borderColor: '#10b981',
         borderWidth: 2,
       },
       {
         label: 'Events',
         data: (data.yearStats || []).map(year => year.events || 0),
-        backgroundColor: 'var(--warning)',
-        borderColor: 'var(--warning)',
+        backgroundColor: '#f59e0b', // Yellow for Events
+        borderColor: '#f59e0b',
         borderWidth: 2,
       },
     ],
