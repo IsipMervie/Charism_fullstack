@@ -8,6 +8,7 @@ import {
   FaAward, FaCalendar, FaMapMarkerAlt, FaExclamationTriangle, FaDownload, FaChartLine
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { showSuccess, showError } from '../utils/sweetAlertUtils';
 import './MyParticipationPage.css';
 
 function MyParticipationPage() {
@@ -72,24 +73,12 @@ function MyParticipationPage() {
       await generateCertificate(user._id);
       
       // Show success message with SweetAlert
-      Swal.fire({
-        icon: 'success',
-        title: 'Certificate Downloaded!',
-        text: 'Your certificate has been downloaded successfully.',
-        confirmButtonColor: '#10b981',
-        timer: 3000,
-        timerProgressBar: true
-      });
+      showSuccess('Certificate Downloaded!', 'Your certificate has been downloaded successfully.');
     } catch (error) {
       console.error('Failed to download certificate:', error);
       
       // Show error message with SweetAlert
-      Swal.fire({
-        icon: 'error',
-        title: 'Download Failed',
-        text: 'Failed to download certificate. Please try again.',
-        confirmButtonColor: '#ef4444'
-      });
+      showError('Download Failed', 'Failed to download certificate. Please try again.');
     }
   };
 

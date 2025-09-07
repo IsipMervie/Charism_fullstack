@@ -47,11 +47,11 @@
 
 /* Participation Header */
 .participation-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
   position: relative;
@@ -104,7 +104,7 @@
 .header-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -114,7 +114,7 @@
 
 .header-subtitle {
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 600;
   margin: 0;
   line-height: 1.6;
@@ -132,11 +132,11 @@
 }
 
 .analytics-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -169,25 +169,25 @@
 .analytics-number {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.25rem 0;
   line-height: 1;
 }
 
 .analytics-label {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-weight: 500;
   margin: 0;
 }
 
 /* Progress Section */
 .progress-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
 }
@@ -202,7 +202,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
 }
 
@@ -212,14 +212,14 @@
 }
 
 .progress-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   font-size: 1rem;
 }
 
 .progress-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 8px 25px var(--shadow-sm);
@@ -239,22 +239,22 @@
 }
 
 .current-hours {
-  color: var(--primary);
+  color: var(--primary) !important;
   font-size: 2rem;
 }
 
 .separator {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 1.5rem;
 }
 
 .target-hours {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-size: 2rem;
 }
 
 .hours-label {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 1rem;
   font-weight: 500;
   margin-left: 0.5rem;
@@ -289,7 +289,7 @@
 }
 
 .progress-message-text {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 1rem;
 }
 
@@ -299,11 +299,11 @@
 }
 
 .certificate-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   display: flex;
   align-items: center;
@@ -344,12 +344,12 @@
 .certificate-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
 }
 
 .certificate-description {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0 0 1.5rem 0;
   line-height: 1.6;
 }
@@ -381,11 +381,11 @@
 
 /* Participation Section */
 .participation-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
 }
 
@@ -399,7 +399,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
 }
 
@@ -409,7 +409,7 @@
 }
 
 .participation-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   font-size: 1rem;
 }
@@ -435,12 +435,12 @@
 .empty-section h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 1rem 0;
 }
 
 .empty-section p {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   line-height: 1.6;
 }
@@ -453,8 +453,8 @@
 }
 
 .participation-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 16px;
   box-shadow: 0 8px 25px var(--shadow-sm);
   transition: all var(--transition-normal);
@@ -464,7 +464,7 @@
 .participation-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px var(--shadow-md);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
 }
 
 .card-header {
@@ -472,14 +472,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(37, 99, 235, 0.1);
-  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid var(--border-primary) !important;
+  background: var(--bg-tertiary) !important;
 }
 
 .event-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0;
 }
 
@@ -503,7 +503,7 @@
 }
 
 .event-description {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0 0 1.5rem 0;
   line-height: 1.6;
 }
@@ -519,7 +519,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 0.9rem;
 }
 
@@ -549,12 +549,12 @@
 
 .time-label {
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 0.85rem;
 }
 
 .time-value {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -587,18 +587,18 @@
 }
 
 .reason-text {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 0.85rem;
   line-height: 1.4;
 }
 
 /* Loading Section */
 .loading-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 3rem 2rem;
   text-align: center;
   position: absolute;
@@ -637,23 +637,23 @@
 .loading-section h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 1rem 0;
 }
 
 .loading-section p {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   line-height: 1.6;
 }
 
 /* Error Section */
 .error-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 3rem 2rem;
   text-align: center;
   position: absolute;
@@ -677,12 +677,12 @@
 .error-section h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 1rem 0;
 }
 
 .error-section p {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   line-height: 1.6;
 }

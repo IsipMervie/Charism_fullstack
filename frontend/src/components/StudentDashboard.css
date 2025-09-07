@@ -46,12 +46,12 @@
 
 /* Dashboard Header */
 .dashboard-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
   position: relative;
@@ -107,7 +107,7 @@
 .header-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   -webkit-background-clip: text;
@@ -117,7 +117,7 @@
 
 .header-subtitle {
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 600;
   margin: 0;
   line-height: 1.6;
@@ -144,7 +144,7 @@
 .user-name {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   text-align: right;
 }
 
@@ -183,12 +183,12 @@
 }
 
 .school-info-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -232,7 +232,7 @@
 .logo-placeholder {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  background: var(--bg-secondary) !important;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -263,7 +263,7 @@
 .school-name {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0;
   line-height: 1.2;
 }
@@ -276,7 +276,7 @@
 }
 
 .contact-label {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-weight: 600;
 }
 
@@ -311,12 +311,12 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -349,26 +349,26 @@
 .stat-number {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.25rem 0;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-weight: 500;
   margin: 0;
 }
 
 /* Progress Section */
 .progress-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
 }
@@ -383,7 +383,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
 }
 
@@ -393,14 +393,14 @@
 }
 
 .progress-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   font-size: 1rem;
 }
 
 .progress-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 8px 25px var(--shadow-sm);
@@ -420,22 +420,22 @@
 }
 
 .current-hours {
-  color: var(--primary);
+  color: var(--primary) !important;
   font-size: 2rem;
 }
 
 .separator {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 1.5rem;
 }
 
 .target-hours {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-size: 2rem;
 }
 
 .hours-label {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 1rem;
   font-weight: 500;
   margin-left: 0.5rem;
@@ -476,11 +476,11 @@
 
 /* Actions Section */
 .actions-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
 }
@@ -495,7 +495,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
 }
 
@@ -505,7 +505,7 @@
 }
 
 .actions-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   font-size: 1rem;
 }
@@ -517,8 +517,8 @@
 }
 
 .action-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 8px 25px var(--shadow-sm);
@@ -534,7 +534,7 @@
 .action-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px var(--shadow-md);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
 }
 
 .action-card::before {
@@ -572,13 +572,13 @@
 .action-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.25rem 0;
 }
 
 .action-description {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   line-height: 1.4;
 }
@@ -599,11 +599,11 @@
 
 /* Loading Section */
 .loading-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 3rem 2rem;
   text-align: center;
   position: absolute;
@@ -776,12 +776,12 @@
 
 /* Upcoming Events Section */
 .upcoming-events-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
   position: relative;
