@@ -2,7 +2,7 @@
 // Fresh Simple but Creative Manage Users Page Design
 
 import React, { useEffect, useState } from 'react';
-import Swal from 'sweetalert2';
+import { showAlert, showSuccess, showError, showWarning, showQuestion, showConfirm } from '../utils/sweetAlertUtils';
 import { 
   FaGraduationCap, FaDownload, FaUsers, FaSpinner, 
   FaExclamationTriangle, FaFilter, FaCheckCircle, FaTimesCircle,
@@ -91,13 +91,7 @@ function StudentsByYearPage() {
         setError(errorMessage);
         
         // Show SweetAlert for the error
-        Swal.fire({
-          icon: 'error',
-          title: errorTitle,
-          text: errorMessage,
-          confirmButtonColor: 'var(--error)',
-          confirmButtonText: 'OK'
-        });
+        showError(errorTitle, errorMessage);
         return;
       } finally {
         setLoading(false);
@@ -124,47 +118,23 @@ function StudentsByYearPage() {
       if (filterType === 'hoursMin') {
         // Ensure min hours isn't greater than max hours if both are set
         if (pdfFilters.hoursMax && numValue !== '' && numValue > parseInt(pdfFilters.hoursMax)) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Invalid Hours Range',
-            text: 'Minimum hours cannot be greater than maximum hours.',
-            confirmButtonColor: 'var(--warning)',
-            confirmButtonText: 'OK'
-          });
+          showWarning('Invalid Hours Range', 'Minimum hours cannot be greater than maximum hours.');
           return;
         }
         // Ensure min hours is not negative
         if (numValue !== '' && numValue < 0) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Invalid Hours Value',
-            text: 'Minimum hours cannot be negative.',
-            confirmButtonColor: 'var(--warning)',
-            confirmButtonText: 'OK'
-          });
+          showWarning('Invalid Hours Value', 'Minimum hours cannot be negative.');
           return;
         }
       } else if (filterType === 'hoursMax') {
         // Ensure max hours isn't less than min hours if both are set
         if (pdfFilters.hoursMin && numValue !== '' && numValue < parseInt(pdfFilters.hoursMin)) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Invalid Hours Range',
-            text: 'Maximum hours cannot be less than minimum hours.',
-            confirmButtonColor: 'var(--warning)',
-            confirmButtonText: 'OK'
-          });
+          showWarning('Invalid Hours Range', 'Maximum hours cannot be less than minimum hours.');
           return;
         }
         // Ensure max hours is not negative
         if (numValue !== '' && numValue < 0) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Invalid Hours Value',
-            text: 'Maximum hours cannot be negative.',
-            confirmButtonColor: 'var(--warning)',
-            confirmButtonText: 'OK'
-          });
+          showWarning('Invalid Hours Value', 'Maximum hours cannot be negative.');
           return;
         }
       }
@@ -184,13 +154,7 @@ function StudentsByYearPage() {
   };
 
   const clearAllFilters = () => {
-    Swal.fire({
-      icon: 'question',
-      title: 'Clear All Filters?',
-      text: 'Are you sure you want to clear all search and filter criteria? This will reset the current view.',
-      showCancelButton: true,
-      confirmButtonColor: 'var(--error)',
-      cancelButtonColor: 'var(--text-secondary)',
+    showQuestion('Clear All Filters?', 'Are you sure you want to clear all search and filter criteria? This will reset the current view.', {
       confirmButtonText: 'Yes, Clear All',
       cancelButtonText: 'Cancel'
     }).then((result) => {
@@ -204,12 +168,7 @@ function StudentsByYearPage() {
         });
         setSearch('');
         
-        Swal.fire({
-          icon: 'success',
-          title: 'Filters Cleared!',
-          text: 'All search and filter criteria have been cleared successfully.',
-          confirmButtonColor: 'var(--success)',
-          confirmButtonText: 'OK',
+        showSuccess('Filters Cleared!', 'All search and filter criteria have been cleared successfully.', {
           timer: 2000,
           timerProgressBar: true
         });
@@ -218,13 +177,7 @@ function StudentsByYearPage() {
   };
 
   const clearPdfFilters = () => {
-    Swal.fire({
-      icon: 'question',
-      title: 'Clear PDF Filters?',
-      text: 'Are you sure you want to clear all PDF filters? This action cannot be undone.',
-      showCancelButton: true,
-      confirmButtonColor: 'var(--error)',
-      cancelButtonColor: 'var(--text-secondary)',
+    showQuestion('Clear PDF Filters?', 'Are you sure you want to clear all PDF filters? This action cannot be undone.', {
       confirmButtonText: 'Yes, Clear All',
       cancelButtonText: 'Cancel'
     }).then((result) => {
@@ -237,12 +190,7 @@ function StudentsByYearPage() {
           hoursMax: ''
         });
         
-        Swal.fire({
-          icon: 'success',
-          title: 'Filters Cleared!',
-          text: 'All PDF filters have been cleared successfully.',
-          confirmButtonColor: 'var(--success)',
-          confirmButtonText: 'OK',
+        showSuccess('Filters Cleared!', 'All PDF filters have been cleared successfully.', {
           timer: 2000,
           timerProgressBar: true
         });
@@ -251,13 +199,7 @@ function StudentsByYearPage() {
   };
 
   const clearFilter = (filterType) => {
-    Swal.fire({
-      icon: 'question',
-      title: 'Clear Filter?',
-      text: `Are you sure you want to clear the ${filterType} filter?`,
-      showCancelButton: true,
-      confirmButtonColor: 'var(--error)',
-      cancelButtonColor: 'var(--text-secondary)',
+    showQuestion('Clear Filter?', `Are you sure you want to clear the ${filterType} filter?`, {
       confirmButtonText: 'Yes, Clear',
       cancelButtonText: 'Cancel'
     }).then((result) => {
@@ -267,12 +209,7 @@ function StudentsByYearPage() {
           [filterType]: ''
         }));
         
-        Swal.fire({
-          icon: 'success',
-          title: 'Filter Cleared!',
-          text: `The ${filterType} filter has been cleared.`,
-          confirmButtonColor: 'var(--success)',
-          confirmButtonText: 'OK',
+        showSuccess('Filter Cleared!', `The ${filterType} filter has been cleared.`, {
           timer: 2000,
           timerProgressBar: true
         });
@@ -282,39 +219,21 @@ function StudentsByYearPage() {
 
   const handleDownloadPDF = async () => {
     if (!selectedYear) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'No Academic Year Selected',
-        text: 'Please select an academic year first before generating a PDF report.',
-        confirmButtonColor: 'var(--info)',
-        confirmButtonText: 'OK'
-      });
+      showWarning('No Academic Year Selected', 'Please select an academic year first before generating a PDF report.');
       return;
     }
 
     // Check if there are students in the current view
     const currentStudents = studentsByYear[selectedYear];
     if (!currentStudents || currentStudents.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'No Students Available',
-        text: `No students found for ${selectedYear}. Please check if there are students in this academic year.`,
-        confirmButtonColor: 'var(--warning)',
-        confirmButtonText: 'OK'
-      });
+      showWarning('No Students Available', `No students found for ${selectedYear}. Please check if there are students in this academic year.`);
       return;
     }
 
     // Check if current filters result in no students displayed
     const filteredStudents = filterStudents(currentStudents);
     if (filteredStudents.length === 0 && hasActiveFilters) {
-      Swal.fire({
-        icon: 'info',
-        title: 'No Students Match Current Filters',
-        text: 'The current search and filter criteria result in no students being displayed. You can still generate a PDF with the PDF filters above, or adjust your current filters.',
-        showCancelButton: true,
-        confirmButtonColor: 'var(--info)',
-        cancelButtonColor: '#6b7280',
+      showQuestion('No Students Match Current Filters', 'The current search and filter criteria result in no students being displayed. You can still generate a PDF with the PDF filters above, or adjust your current filters.', {
         confirmButtonText: 'Continue with PDF',
         cancelButtonText: 'Adjust Filters'
       }).then((result) => {
@@ -338,13 +257,7 @@ function StudentsByYearPage() {
         const min = parseInt(pdfFilters.hoursMin);
         const max = parseInt(pdfFilters.hoursMax);
         if (min > max) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Invalid Hours Range',
-            text: 'Minimum hours cannot be greater than maximum hours.',
-            confirmButtonColor: '#ef4444',
-            confirmButtonText: 'OK'
-          });
+          showError('Invalid Hours Range', 'Minimum hours cannot be greater than maximum hours.');
           setDownloading(false);
           return;
         }
@@ -384,22 +297,12 @@ function StudentsByYearPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      Swal.fire({
-        icon: 'success',
-        title: 'PDF Generated Successfully!',
-        text: `Students by Year report for ${selectedYear} has been downloaded.`,
-        confirmButtonColor: '#10b981',
+      showSuccess('PDF Generated Successfully!', `Students by Year report for ${selectedYear} has been downloaded.`, {
         confirmButtonText: 'Great!'
       });
     } catch (err) {
       console.error('Error generating PDF:', err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Download Failed',
-        text: `Could not download PDF: ${err.message}. Please try again.`,
-        confirmButtonColor: '#ef4444',
-        confirmButtonText: 'OK'
-      });
+      showError('Download Failed', `Could not download PDF: ${err.message}. Please try again.`);
     } finally {
       setDownloading(false);
     }
@@ -852,25 +755,14 @@ function StudentsByYearPage() {
                 <button 
                   className="clear-hours-filter"
                   onClick={() => {
-                    Swal.fire({
-                      icon: 'question',
-                      title: 'Clear Hours Filter?',
-                      text: 'Are you sure you want to clear the hours range filter?',
-                      showCancelButton: true,
-                      confirmButtonColor: '#ef4444',
-                      cancelButtonColor: '#6b7280',
+                    showQuestion('Clear Hours Filter?', 'Are you sure you want to clear the hours range filter?', {
                       confirmButtonText: 'Yes, Clear',
                       cancelButtonText: 'Cancel'
                     }).then((result) => {
                       if (result.isConfirmed) {
                         setPdfFilters(prev => ({ ...prev, hoursMin: '', hoursMax: '' }));
                         
-                        Swal.fire({
-                          icon: 'success',
-                          title: 'Hours Filter Cleared!',
-                          text: 'The hours range filter has been cleared.',
-                          confirmButtonColor: 'var(--success)',
-                          confirmButtonText: 'OK',
+                        showSuccess('Hours Filter Cleared!', 'The hours range filter has been cleared.', {
                           timer: 2000,
                           timerProgressBar: true
                         });

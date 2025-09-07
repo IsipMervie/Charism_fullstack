@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { axiosInstance } from '../api/api';
-import Swal from 'sweetalert2';
+import { showWarning, showSuccess, showError } from '../utils/sweetAlertUtils';
 import './ContactUsPage.css';
 
 function ContactUsPage() {
@@ -21,31 +21,20 @@ function ContactUsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !email || !message) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'All fields are required',
-        text: 'Please fill out your name, email, and message.',
-      });
+      showWarning('All fields are required', 'Please fill out your name, email, and message.');
       return;
     }
     setLoading(true);
     try {
       await axiosInstance.post('/contact-us', { name, email, message });
-      Swal.fire({
-        icon: 'success',
-        title: 'Message Sent Successfully!',
-        text: 'Thank you for contacting us!',
+      showSuccess('Message Sent Successfully!', 'Thank you for contacting us!', {
         confirmButtonText: 'Great!'
       });
       setName('');
       setEmail('');
       setMessage('');
     } catch (err) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'There was an error sending your message. Please try again later.',
-      });
+      showError('Error', 'There was an error sending your message. Please try again later.');
     }
     setLoading(false);
   };

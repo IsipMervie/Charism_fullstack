@@ -1,6 +1,19 @@
 /* Import theme variables */
 @import '../styles/themes.css';
 
+/* Chart error state */
+.chart-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--text-secondary);
+  font-style: italic;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+}
+
 /* AnalyticsPage.css */
 
 .analytics-container {

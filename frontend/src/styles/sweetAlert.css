@@ -1,0 +1,421 @@
+/* SweetAlert Theme Support */
+
+/* Import theme variables */
+@import './themes.css';
+
+/* SweetAlert popup theming - Global overrides for all SweetAlert instances */
+.swal2-popup {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px var(--shadow-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Custom theme classes for enhanced theming */
+.swal-theme-popup {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px var(--shadow-lg) !important;
+}
+
+/* Global title and content theming */
+.swal2-title {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.swal2-content {
+  color: var(--text-secondary) !important;
+}
+
+/* Custom theme classes for enhanced theming */
+.swal-theme-title {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.swal-theme-content {
+  color: var(--text-secondary) !important;
+}
+
+/* Global button theming */
+.swal2-confirm {
+  background: var(--primary) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal2-cancel {
+  background: var(--text-secondary) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+/* Custom theme classes for enhanced theming */
+.swal-theme-confirm {
+  background: var(--primary) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+/* Global button hover effects */
+.swal2-confirm:hover {
+  background: var(--primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px var(--primary-shadow-lg) !important;
+}
+
+.swal2-cancel:hover {
+  background: var(--text-tertiary) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px var(--shadow-md) !important;
+}
+
+/* Custom theme classes hover effects */
+.swal-theme-confirm:hover {
+  background: var(--primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px var(--primary-shadow-lg) !important;
+}
+
+.swal-theme-cancel {
+  background: var(--text-secondary) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 1.5rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal-theme-cancel:hover {
+  background: var(--text-tertiary) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px var(--shadow-md) !important;
+}
+
+/* Toast theming */
+.swal2-toast {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px var(--shadow-lg) !important;
+}
+
+.swal2-toast .swal2-title {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.swal2-toast .swal2-content {
+  color: var(--text-secondary) !important;
+}
+
+/* Loading spinner theming */
+.swal2-loader {
+  border-color: var(--border-primary) !important;
+  border-top-color: var(--primary) !important;
+}
+
+/* Icon theming */
+.swal2-icon.swal2-success {
+  border-color: var(--success) !important;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: var(--success) !important;
+}
+
+.swal2-icon.swal2-success [class^=swal2-success-line] {
+  background-color: var(--success) !important;
+}
+
+.swal2-icon.swal2-error {
+  border-color: var(--error) !important;
+}
+
+.swal2-icon.swal2-error [class^=swal2-x-mark-line] {
+  background-color: var(--error) !important;
+}
+
+.swal2-icon.swal2-warning {
+  border-color: var(--warning) !important;
+  color: var(--warning) !important;
+}
+
+.swal2-icon.swal2-info {
+  border-color: var(--info) !important;
+  color: var(--info) !important;
+}
+
+.swal2-icon.swal2-question {
+  border-color: var(--info) !important;
+  color: var(--info) !important;
+}
+
+/* Input field theming */
+.swal2-input {
+  background: var(--bg-primary) !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal2-input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+  outline: none !important;
+}
+
+.swal2-input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* Select field theming */
+.swal2-select {
+  background: var(--bg-primary) !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal2-select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+  outline: none !important;
+}
+
+/* Textarea theming */
+.swal2-textarea {
+  background: var(--bg-primary) !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1rem !important;
+  transition: all var(--transition-normal) !important;
+  resize: vertical !important;
+}
+
+.swal2-textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+  outline: none !important;
+}
+
+.swal2-textarea::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+/* File input theming */
+.swal2-file {
+  background: var(--bg-primary) !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem 1rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal2-file:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+  outline: none !important;
+}
+
+/* Range input theming */
+.swal2-range {
+  background: var(--bg-primary) !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal2-range:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+  outline: none !important;
+}
+
+/* Progress bar theming */
+.swal2-progress-bar {
+  background: var(--primary) !important;
+}
+
+.swal2-progress-steps .swal2-progress-step {
+  background: var(--primary) !important;
+}
+
+.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step {
+  background: var(--primary-hover) !important;
+}
+
+/* Timer progress bar theming */
+.swal2-timer-progress-bar {
+  background: var(--primary) !important;
+}
+
+/* Footer theming */
+.swal2-footer {
+  color: var(--text-secondary) !important;
+  border-top: 1px solid var(--border-primary) !important;
+}
+
+/* Actions theming */
+.swal2-actions {
+  gap: 0.75rem !important;
+}
+
+/* Close button theming */
+.swal2-close {
+  color: var(--text-secondary) !important;
+  font-size: 1.5rem !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.swal2-close:hover {
+  color: var(--text-primary) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Validation message theming */
+.swal2-validation-message {
+  background: var(--error-light) !important;
+  color: var(--error) !important;
+  border: 1px solid var(--error) !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1rem !important;
+}
+
+/* Dark mode specific adjustments */
+.dark .swal2-popup {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark .swal2-title {
+  color: var(--text-primary) !important;
+}
+
+.dark .swal2-content {
+  color: var(--text-secondary) !important;
+}
+
+.dark .swal2-input,
+.dark .swal2-select,
+.dark .swal2-textarea,
+.dark .swal2-file,
+.dark .swal2-range {
+  background: var(--bg-primary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark .swal2-input:focus,
+.dark .swal2-select:focus,
+.dark .swal2-textarea:focus,
+.dark .swal2-file:focus,
+.dark .swal2-range:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+/* Light mode specific adjustments */
+.light .swal2-popup {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.light .swal2-title {
+  color: var(--text-primary) !important;
+}
+
+.light .swal2-content {
+  color: var(--text-secondary) !important;
+}
+
+.light .swal2-input,
+.light .swal2-select,
+.light .swal2-textarea,
+.light .swal2-file,
+.light .swal2-range {
+  background: var(--bg-primary) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.light .swal2-input:focus,
+.light .swal2-select:focus,
+.light .swal2-textarea:focus,
+.light .swal2-file:focus,
+.light .swal2-range:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .swal2-popup {
+    margin: 1rem !important;
+    width: calc(100% - 2rem) !important;
+  }
+  
+  .swal2-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .swal2-content {
+    font-size: 0.9rem !important;
+  }
+  
+  .swal2-confirm,
+  .swal2-cancel {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .swal2-popup {
+    margin: 0.5rem !important;
+    width: calc(100% - 1rem) !important;
+  }
+  
+  .swal2-title {
+    font-size: 1.1rem !important;
+  }
+  
+  .swal2-content {
+    font-size: 0.85rem !important;
+  }
+  
+  .swal2-confirm,
+  .swal2-cancel {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.85rem !important;
+  }
+}

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
 import { loginUser, testApiConnection } from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { showWarning, showError, showSuccess, showInfo, showAlert } from '../utils/sweetAlertUtils';
 import './LoginPage.css';
 
 function LoginPage() {
@@ -44,11 +44,7 @@ function LoginPage() {
           errorMessage = 'The backend server appears to be offline or unreachable. Please contact support if this issue persists.';
         }
         
-        Swal.fire({
-          icon: 'warning',
-          title: errorTitle,
-          text: errorMessage,
-          confirmButtonColor: '#f59e0b',
+        showWarning(errorTitle, errorMessage, {
           footer: '<small>If this issue persists, the backend server may need to be restarted.</small>'
         });
         setLoading(false);
@@ -56,12 +52,7 @@ function LoginPage() {
       }
     } catch (connectionError) {
       console.error('Connection test error:', connectionError);
-      Swal.fire({
-        icon: 'warning',
-        title: 'Connection Issue',
-        text: 'Unable to reach the server. Please check your internet connection and try again.',
-        confirmButtonColor: '#f59e0b'
-      });
+      showWarning('Connection Issue', 'Unable to reach the server. Please check your internet connection and try again.');
       setLoading(false);
       return;
     }
@@ -72,10 +63,7 @@ function LoginPage() {
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('role', user.role);
       window.dispatchEvent(new Event('userChanged'));
-      await Swal.fire({
-        icon: 'success',
-        title: 'Login Successful',
-        text: `Welcome, ${user.name || user.email}!`,
+      await showSuccess('Login Successful', `Welcome, ${user.name || user.email}!`, {
         timer: 1500,
         showConfirmButton: false,
       });
@@ -160,13 +148,15 @@ function LoginPage() {
         }
       }
       
-      Swal.fire({
-        icon: icon,
-        title: title,
-        text: text,
-        confirmButtonColor: icon === 'error' ? '#ef4444' : '#3b82f6',
-        confirmButtonText: 'OK'
-      });
+      if (icon === 'error') {
+        showError(title, text, { confirmButtonText: 'OK' });
+      } else if (icon === 'warning') {
+        showWarning(title, text, { confirmButtonText: 'OK' });
+      } else if (icon === 'info') {
+        showInfo(title, text, { confirmButtonText: 'OK' });
+      } else {
+        showAlert({ icon, title, text, confirmButtonText: 'OK' });
+      }
     }
     setLoading(false);
   };

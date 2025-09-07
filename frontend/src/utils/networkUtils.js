@@ -1,4 +1,5 @@
 // Network utilities for handling connectivity issues
+import { showSuccessToast, showWarningToast } from './sweetAlertUtils';
 
 // Check if the device is online
 export const isOnline = () => {
@@ -60,30 +61,16 @@ export const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => 
 
 // Show network status notification
 export const showNetworkStatus = (isOnline) => {
-  if (typeof window !== 'undefined' && window.Swal) {
-    const Swal = window.Swal;
-    
-    if (isOnline) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Connection Restored',
-        text: 'You are back online!',
-        timer: 2000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-      });
-    } else {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Connection Lost',
-        text: 'Please check your internet connection.',
-        timer: 3000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end'
-      });
-    }
+  if (isOnline) {
+    showSuccessToast('Connection Restored', {
+      timer: 2000,
+      position: 'top-end'
+    });
+  } else {
+    showWarningToast('Connection Lost', {
+      timer: 3000,
+      position: 'top-end'
+    });
   }
 };
 

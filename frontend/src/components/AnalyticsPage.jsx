@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   getAnalytics,
   getDepartmentStatistics,
@@ -48,7 +48,7 @@ function AnalyticsPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Function to detect theme more reliably
-  const detectTheme = () => {
+  const detectTheme = useCallback(() => {
     // Check multiple ways to detect dark mode
     const hasDarkClass = document.documentElement.classList.contains('dark');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -57,18 +57,17 @@ function AnalyticsPage() {
                      bodyBg.includes('rgb(15, 23, 42)') || bodyBg.includes('rgb(12, 19, 33)');
     
     return hasDarkClass || prefersDark || isDarkBg;
-  };
+  }, []);
 
-  // Function to get theme-appropriate colors
-  const getThemeColors = () => {
+  // Memoized theme colors to prevent infinite re-renders
+  const themeColors = useMemo(() => {
     const isDark = detectTheme();
-    setIsDarkMode(isDark);
     
     return {
       text: isDark ? '#ffffff' : '#1f2937',
       grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
     };
-  };
+  }, [detectTheme, isDarkMode]);
 
   // Monitor theme changes
   useEffect(() => {
@@ -153,8 +152,13 @@ function AnalyticsPage() {
   }, [activeTab, selectedDepartment, selectedYear]);
 
   const getValue = (key) => {
-    if (error) return <span style={{ color: 'red' }}>Error</span>;
-    return typeof data[key] === 'number' ? data[key] : 0;
+    if (error) return 0;
+    try {
+      return typeof data[key] === 'number' ? data[key] : 0;
+    } catch (err) {
+      console.error('Error getting value for key:', key, err);
+      return 0;
+    }
   };
 
   // User Role Distribution Pie Chart
@@ -288,45 +292,45 @@ function AnalyticsPage() {
   };
 
   // Chart options
-  const pieOptions = {
+  const pieOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
         labels: {
-          color: getThemeColors().text
+          color: themeColors.text
         }
       },
       title: {
         display: true,
         text: 'User Distribution',
         font: { size: 16, weight: 'bold' },
-        color: getThemeColors().text
+        color: themeColors.text
       },
     },
-  };
+  }), [themeColors]);
 
-  const doughnutOptions = {
+  const doughnutOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
         labels: {
-          color: getThemeColors().text
+          color: themeColors.text
         }
       },
       title: {
         display: true,
         text: 'Event Status Distribution',
         font: { size: 16, weight: 'bold' },
-        color: getThemeColors().text
+        color: themeColors.text
       },
     },
-  };
+  }), [themeColors]);
 
-  const barOptions = {
+  const barOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -337,143 +341,143 @@ function AnalyticsPage() {
         display: true,
         text: 'Attendance Overview',
         font: { size: 16, weight: 'bold' },
-        color: getThemeColors().text
+        color: themeColors.text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       },
       x: {
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       }
     },
-  };
+  }), [themeColors]);
 
-  const lineOptions = {
+  const lineOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
         labels: {
-          color: getThemeColors().text
+          color: themeColors.text
         }
       },
       title: {
         display: true,
         text: 'Recent Activity (Last 7 Days)',
         font: { size: 16, weight: 'bold' },
-        color: getThemeColors().text
+        color: themeColors.text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       },
       x: {
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       }
     },
-  };
+  }), [themeColors]);
 
-  const departmentBarOptions = {
+  const departmentBarOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
         labels: {
-          color: getThemeColors().text
+          color: themeColors.text
         }
       },
       title: {
         display: true,
         text: 'Department Statistics',
         font: { size: 16, weight: 'bold' },
-        color: getThemeColors().text
+        color: themeColors.text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       },
       x: {
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       }
     },
-  };
+  }), [themeColors]);
 
-  const yearBarOptions = {
+  const yearBarOptions = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
         labels: {
-          color: getThemeColors().text
+          color: themeColors.text
         }
       },
       title: {
         display: true,
         text: 'Academic Year Statistics',
         font: { size: 16, weight: 'bold' },
-        color: getThemeColors().text
+        color: themeColors.text
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       },
       x: {
         ticks: {
-          color: getThemeColors().text
+          color: themeColors.text
         },
         grid: {
-          color: getThemeColors().grid
+          color: themeColors.grid
         }
       }
     },
-  };
+  }), [themeColors]);
 
   const metricCards = [
     { 
@@ -568,7 +572,11 @@ function AnalyticsPage() {
                   <p>Proportion of users by role</p>
                 </div>
                 <div className="chart-container">
-                  <Pie key={`pie-${isDarkMode}`} data={userRoleData} options={pieOptions} />
+                  {userRoleData && pieOptions ? (
+                    <Pie key={`pie-${isDarkMode}`} data={userRoleData} options={pieOptions} />
+                  ) : (
+                    <div className="chart-error">Chart data unavailable</div>
+                  )}
                 </div>
               </div>
 
@@ -578,7 +586,11 @@ function AnalyticsPage() {
                   <p>Active vs Completed events</p>
                 </div>
                 <div className="chart-container">
-                  <Doughnut key={`doughnut-${isDarkMode}`} data={eventStatusData} options={doughnutOptions} />
+                  {eventStatusData && doughnutOptions ? (
+                    <Doughnut key={`doughnut-${isDarkMode}`} data={eventStatusData} options={doughnutOptions} />
+                  ) : (
+                    <div className="chart-error">Chart data unavailable</div>
+                  )}
                 </div>
               </div>
 
@@ -588,7 +600,11 @@ function AnalyticsPage() {
                   <p>Total vs approved attendance</p>
                 </div>
                 <div className="chart-container">
-                  <Bar key={`bar-${isDarkMode}`} data={attendanceData} options={barOptions} />
+                  {attendanceData && barOptions ? (
+                    <Bar key={`bar-${isDarkMode}`} data={attendanceData} options={barOptions} />
+                  ) : (
+                    <div className="chart-error">Chart data unavailable</div>
+                  )}
                 </div>
               </div>
 
@@ -598,7 +614,11 @@ function AnalyticsPage() {
                   <p>Daily new events and users</p>
                 </div>
                 <div className="chart-container">
-                  <Line key={`line-${isDarkMode}`} data={recentActivityData} options={lineOptions} />
+                  {recentActivityData && lineOptions ? (
+                    <Line key={`line-${isDarkMode}`} data={recentActivityData} options={lineOptions} />
+                  ) : (
+                    <div className="chart-error">Chart data unavailable</div>
+                  )}
                 </div>
               </div>
 

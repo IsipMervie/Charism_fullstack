@@ -1,6 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+import './styles/sweetAlert.css';
 
 // Components
 import NavigationBar from './components/NavigationBar';
@@ -14,6 +15,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 // Utilities
 import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
 import { setupNetworkMonitoring, showNetworkStatus } from './utils/networkUtils';
+import { initSweetAlertTheme } from './utils/sweetAlertUtils';
 
 // Lazy load pages for better performance
 const HomePage = React.lazy(() => import('./components/HomePage'));
@@ -82,6 +84,12 @@ function App() {
       () => showNetworkStatus(false)  // onOffline
     );
 
+    return cleanup;
+  }, []);
+
+  // Setup SweetAlert theme
+  useEffect(() => {
+    const cleanup = initSweetAlertTheme();
     return cleanup;
   }, []);
 
