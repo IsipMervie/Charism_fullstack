@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Pagination } from 'react-bootstrap';
 import { FaComments, FaEye, FaReply, FaTrash, FaUser, FaCalendar, FaTag, FaSpinner, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { axiosInstance } from '../api/api';
-import Swal from 'sweetalert2';
+import { showQuestion, showSuccess, showError } from '../utils/sweetAlertUtils';
 import './AdminManageFeedbackPage.css';
 
 function AdminManageFeedbackPage() {
@@ -155,15 +155,12 @@ function AdminManageFeedbackPage() {
   };
 
   const handleDelete = async (feedbackId) => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#dc3545',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Yes, delete it!'
-    });
+    const result = await showQuestion(
+      'Are you sure?',
+      "You won't be able to revert this!",
+      'Yes, delete it!',
+      'Cancel'
+    );
     
     if (result.isConfirmed) {
       try {
@@ -172,28 +169,12 @@ function AdminManageFeedbackPage() {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Deleted!',
-          text: 'Feedback has been deleted.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
+        showSuccess('Deleted!', 'Feedback has been deleted.');
 
         fetchFeedback();
         fetchStats();
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: 'Failed to delete feedback.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        });
+        showError('Error!', 'Failed to delete feedback.');
       }
     }
   };
@@ -212,29 +193,13 @@ function AdminManageFeedbackPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Response sent successfully.',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-      });
+      showSuccess('Success!', 'Response sent successfully.');
 
       setShowResponseModal(false);
       fetchFeedback();
       fetchStats();
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'Failed to send response.',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-      });
+      showError('Error!', 'Failed to send response.');
     }
   };
 

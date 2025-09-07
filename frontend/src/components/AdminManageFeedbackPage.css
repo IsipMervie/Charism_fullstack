@@ -563,9 +563,9 @@
 }
 
 .delete-button {
-  background: white;
+  background: var(--bg-primary);
   color: var(--error);
-  border: 2px solid #ef4444;
+  border: 2px solid var(--error);
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
 }
 
