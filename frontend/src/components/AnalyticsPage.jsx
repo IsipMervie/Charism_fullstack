@@ -252,14 +252,14 @@ function AnalyticsPage() {
       legend: {
         position: 'bottom',
         labels: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         }
       },
       title: {
         display: true,
         text: 'User Distribution',
         font: { size: 16, weight: 'bold' },
-        color: 'var(--text-primary)'
+        color: '#ffffff'
       },
     },
   };
@@ -271,14 +271,14 @@ function AnalyticsPage() {
       legend: {
         position: 'bottom',
         labels: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         }
       },
       title: {
         display: true,
         text: 'Event Status Distribution',
         font: { size: 16, weight: 'bold' },
-        color: 'var(--text-primary)'
+        color: '#ffffff'
       },
     },
   };
@@ -294,25 +294,25 @@ function AnalyticsPage() {
         display: true,
         text: 'Attendance Overview',
         font: { size: 16, weight: 'bold' },
-        color: 'var(--text-primary)'
+        color: '#ffffff'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       },
       x: {
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       }
     },
@@ -325,32 +325,32 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         }
       },
       title: {
         display: true,
         text: 'Recent Activity (Last 7 Days)',
         font: { size: 16, weight: 'bold' },
-        color: 'var(--text-primary)'
+        color: '#ffffff'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       },
       x: {
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       }
     },
@@ -363,32 +363,32 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         }
       },
       title: {
         display: true,
         text: 'Department Statistics',
         font: { size: 16, weight: 'bold' },
-        color: 'var(--text-primary)'
+        color: '#ffffff'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       },
       x: {
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       }
     },
@@ -401,32 +401,32 @@ function AnalyticsPage() {
       legend: {
         position: 'top',
         labels: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         }
       },
       title: {
         display: true,
         text: 'Academic Year Statistics',
         font: { size: 16, weight: 'bold' },
-        color: 'var(--text-primary)'
+        color: '#ffffff'
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       },
       x: {
         ticks: {
-          color: 'var(--text-primary)'
+          color: '#ffffff'
         },
         grid: {
-          color: 'var(--border-primary)'
+          color: 'rgba(255, 255, 255, 0.1)'
         }
       }
     },
