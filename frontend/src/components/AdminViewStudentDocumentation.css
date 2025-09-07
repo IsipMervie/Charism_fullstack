@@ -853,10 +853,45 @@
 }
 
 /* Modal Styling */
+.documentation-modal {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.documentation-modal .modal-content {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
 .documentation-modal .modal-header {
-  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-  border-bottom: 1px solid var(--border-primary);
-  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.documentation-modal .modal-title {
+  color: var(--text-primary) !important;
+}
+
+.documentation-modal .modal-body {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.documentation-modal .modal-footer {
+  background-color: var(--bg-card) !important;
+  border-top: 1px solid var(--border-primary) !important;
+}
+
+.documentation-modal .btn-close {
+  filter: invert(1) !important;
+}
+
+.documentation-modal .btn-secondary {
+  background-color: var(--btn-secondary-bg) !important;
+  color: var(--btn-secondary-text) !important;
+  border-color: var(--border-primary) !important;
 }
 
 .modal-icon {
@@ -868,6 +903,11 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  color: var(--text-primary) !important;
+}
+
+.documentation-details * {
+  color: var(--text-primary) !important;
 }
 
 .detail-section h5 {
@@ -899,12 +939,12 @@
 
 .detail-label {
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 0.875rem;
 }
 
 .detail-value {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 500;
 }
 
@@ -944,19 +984,19 @@
 
 .file-name {
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
 }
 
 .file-meta {
   display: flex;
   gap: 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
 }
 
 .file-description {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-style: italic;
 }
 
