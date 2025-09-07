@@ -367,7 +367,7 @@
 .stat-item {
   text-align: center;
   padding: 1.75rem 1.25rem;
-  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  background: var(--bg-card);
   border-radius: 20px;
   border: 2px solid var(--border-primary);
   transition: all 0.4s ease;
@@ -812,6 +812,8 @@
     flex-direction: column;
     gap: 1rem;
     align-items: center;
+    justify-content: center;
+    text-align: center;
   }
   
   .stat-item {
@@ -915,12 +917,12 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: linear-gradient(135deg, var(--warning-light), var(--warning-light));
+  background: var(--bg-secondary);
   border-radius: 12px;
   font-size: 0.85rem;
-  color: var(--warning-dark);
+  color: var(--text-primary);
   font-weight: 500;
-  border: 1px solid var(--warning);
+  border: 1px solid var(--border-primary);
 }
 
 .meta-icon {
@@ -1060,7 +1062,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   padding: 1.5rem;
-  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  background: var(--bg-card);
   border-radius: 16px;
   border: 1px solid var(--border-primary);
 }
@@ -1070,7 +1072,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   border: 1px solid var(--border-primary);
   transition: all var(--transition-normal);
@@ -1966,6 +1968,8 @@
     flex-direction: column;
     text-align: center;
     gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
   }
   
   .user-stats {
