@@ -1,6 +1,7 @@
 const Feedback = require('../models/Feedback');
 const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
+const { getFeedbackResponseTemplate, getFeedbackStatusUpdateTemplate, getFeedbackSubmissionTemplate } = require('../utils/emailTemplates');
 
 const submitFeedback = async (req, res) => {
   try {
@@ -41,6 +42,33 @@ const submitFeedback = async (req, res) => {
     });
 
     await feedback.save();
+
+    // Send confirmation email to user
+    if (finalUserEmail) {
+      try {
+        const emailSubject = `Feedback Received: ${subject}`;
+        const emailContent = getFeedbackSubmissionTemplate(
+          finalUserName,
+          subject,
+          message,
+          category || 'general',
+          priority || 'medium',
+          feedback._id
+        );
+
+        await sendEmail(
+          finalUserEmail,
+          emailSubject,
+          `Feedback Received: ${subject}`,
+          emailContent
+        );
+
+        console.log(`✅ Confirmation email sent to ${finalUserEmail} for feedback submission`);
+      } catch (emailError) {
+        console.error('❌ Error sending feedback confirmation email:', emailError);
+        // Don't fail the request if email fails
+      }
+    }
 
     res.status(201).json({
       message: 'Feedback submitted successfully',
@@ -201,22 +229,12 @@ const updateFeedback = async (req, res) => {
     if (adminResponse && feedback.userEmail) {
       try {
         const emailSubject = `Response to your feedback: ${feedback.subject}`;
-        const emailContent = `
-          <h3>Hello ${feedback.userName},</h3>
-          <p>An administrator has responded to your feedback:</p>
-          <hr>
-          <p><strong>Your Feedback:</strong></p>
-          <p>${feedback.message}</p>
-          <hr>
-          <p><strong>Admin Response:</strong></p>
-          <p>${adminResponse}</p>
-          <hr>
-          <p><strong>Feedback Status:</strong> ${status || feedback.status}</p>
-          <p><strong>Response Date:</strong> ${new Date().toLocaleDateString()}</p>
-          <br>
-          <p>Thank you for your feedback!</p>
-          <p>- ${req.user.name} (Administrator)</p>
-        `;
+        const emailContent = getFeedbackResponseTemplate(
+          feedback.userName,
+          feedback.subject,
+          adminResponse,
+          req.user.name
+        );
 
         await sendEmail(
           feedback.userEmail,
@@ -236,20 +254,13 @@ const updateFeedback = async (req, res) => {
     if (status && status !== feedback.status && feedback.userEmail) {
       try {
         const emailSubject = `Feedback Status Update: ${feedback.subject}`;
-        const emailContent = `
-          <h3>Hello ${feedback.userName},</h3>
-          <p>Your feedback status has been updated:</p>
-          <hr>
-          <p><strong>Your Feedback:</strong></p>
-          <p>${feedback.message}</p>
-          <hr>
-          <p><strong>Status Changed From:</strong> ${feedback.status}</p>
-          <p><strong>Status Changed To:</strong> ${status}</p>
-          <p><strong>Update Date:</strong> ${new Date().toLocaleDateString()}</p>
-          <br>
-          <p>Thank you for your feedback!</p>
-          <p>- ${req.user.name} (Administrator)</p>
-        `;
+        const emailContent = getFeedbackStatusUpdateTemplate(
+          feedback.userName,
+          feedback.subject,
+          feedback.status,
+          status,
+          req.user.name
+        );
 
         await sendEmail(
           feedback.userEmail,

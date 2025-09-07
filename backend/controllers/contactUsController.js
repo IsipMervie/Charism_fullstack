@@ -2,6 +2,7 @@
 
 const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
+const { getContactSubmissionTemplate, getContactAdminNotificationTemplate, getContactResponseTemplate } = require('../utils/emailTemplates');
 
 // Send a contact message (public)
 exports.sendContactMessage = async (req, res) => {
@@ -16,24 +17,13 @@ exports.sendContactMessage = async (req, res) => {
     
     // Send confirmation email to the user
     try {
-      const userEmailSubject = `Thank you for contacting us - CommunityLink`;
-      const userEmailBody = `
-        Dear ${name},
+      const userEmailSubject = `Thank you for contacting us - CHARISM`;
+      const userEmailContent = getContactSubmissionTemplate(name, email, message, newMessage._id);
 
-        Thank you for reaching out to us! We have received your message and will get back to you as soon as possible.
-
-        Your message:
-        "${message}"
-
-        We typically respond within 24-48 hours. If you have any urgent concerns, please don't hesitate to contact us again.
-
-        Best regards,
-        CommunityLink Team
-      `;
-
-      await sendEmail(email, userEmailSubject, userEmailBody);
+      await sendEmail(email, userEmailSubject, userEmailContent);
+      console.log(`✅ Confirmation email sent to ${email} for contact submission`);
     } catch (emailError) {
-      console.error('Failed to send confirmation email to user:', emailError);
+      console.error('❌ Failed to send confirmation email to user:', emailError);
       // Don't fail the request if email fails, just log it
     }
 
@@ -41,22 +31,11 @@ exports.sendContactMessage = async (req, res) => {
     try {
       const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
       if (adminEmail) {
-        const adminEmailSubject = `New Contact Message from ${name} - CommunityLink`;
-        const adminEmailBody = `
-          A new contact message has been received:
+        const adminEmailSubject = `New Contact Message from ${name} - CHARISM`;
+        const adminEmailContent = getContactAdminNotificationTemplate(name, email, message, newMessage._id);
 
-          From: ${name}
-          Email: ${email}
-          Message: ${message}
-          Time: ${new Date().toLocaleString()}
-
-          Please respond to this message through the admin panel.
-
-          Best regards,
-          CommunityLink System
-        `;
-
-        await sendEmail(adminEmail, adminEmailSubject, adminEmailBody);
+        await sendEmail(adminEmail, adminEmailSubject, adminEmailContent);
+        console.log(`✅ Admin notification email sent to ${adminEmail} for new contact message`);
       }
     } catch (adminEmailError) {
       console.error('Failed to send admin notification email:', adminEmailError);
@@ -141,26 +120,11 @@ exports.replyToMessage = async (req, res) => {
 
     // Send email notification to the user
     try {
-      const emailSubject = `Response to your message - CommunityLink`;
-      const emailBody = `
-        Dear ${message.name},
+      const emailSubject = `Response to your message - CHARISM`;
+      const emailContent = getContactResponseTemplate(message.name, message.email, message.message, adminResponse, adminName);
 
-        Thank you for contacting us. Here is our response to your message:
-
-        Your original message:
-        "${message.message}"
-
-        Our response:
-        "${adminResponse}"
-
-        If you have any further questions, please don't hesitate to contact us again.
-
-        Best regards,
-        ${adminName}
-        CommunityLink Team
-      `;
-
-      await sendEmail(message.email, emailSubject, emailBody);
+      await sendEmail(message.email, emailSubject, emailContent);
+      console.log(`✅ Response email sent to ${message.email} for contact message`);
     } catch (emailError) {
       console.error('Failed to send email notification:', emailError);
       // Don't fail the request if email fails, just log it
@@ -204,29 +168,11 @@ exports.updateReply = async (req, res) => {
 
     // Send updated email notification to the user
     try {
-      const emailSubject = `Updated response to your message - CommunityLink`;
-      const emailBody = `
-        Dear ${message.name},
+      const emailSubject = `Updated response to your message - CHARISM`;
+      const emailContent = getContactResponseTemplate(message.name, message.email, message.message, adminResponse, adminName);
 
-        We have updated our response to your message. Here is the updated response:
-
-        Your original message:
-        "${message.message}"
-
-        Our updated response:
-        "${adminResponse}"
-
-        Previous response (for reference):
-        "${previousResponse}"
-
-        If you have any further questions, please don't hesitate to contact us again.
-
-        Best regards,
-        ${adminName}
-        CommunityLink Team
-      `;
-
-      await sendEmail(message.email, emailSubject, emailBody);
+      await sendEmail(message.email, emailSubject, emailContent);
+      console.log(`✅ Updated response email sent to ${message.email} for contact message`);
     } catch (emailError) {
       console.error('Failed to send updated email notification:', emailError);
       // Don't fail the request if email fails, just log it

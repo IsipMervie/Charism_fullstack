@@ -1884,6 +1884,30 @@ button .button-icon {
   .button-icon {
     font-size: 0.8rem;
   }
+  
+  /* CRITICAL: Ensure delete button text is visible on very small screens */
+  .action-button.delete-button span,
+  .action-button.delete-button .button-text {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Ensure delete button has proper contrast */
+  .action-button.delete-button {
+    background: var(--error) !important;
+    color: white !important;
+    border: 2px solid var(--error) !important;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
+  }
+  
+  .action-button.delete-button:hover {
+    background: var(--error-hover) !important;
+    color: white !important;
+    border-color: var(--error-dark) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+  }
 }
 
 /* Mobile Button Centering and Layout */
@@ -1945,11 +1969,11 @@ button .button-icon {
     border-color: var(--success) !important;
   }
   
-  /* Delete button: White background, red border, WHITE text (same as desktop) */
+  /* Delete button: Red background, white text (same as desktop) */
   .btn.action-button.delete-button,
   .action-button.delete-button {
-    background: white !important;
-    color: var(--error) !important;
+    background: var(--error) !important;
+    color: white !important;
     border-color: var(--error) !important;
   }
   
