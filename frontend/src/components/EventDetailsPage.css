@@ -1185,6 +1185,200 @@
   background: var(--error-hover);
 }
 
+/* Dark Mode Specific Styles */
+[data-theme="dark"] .event-details-page {
+  background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .event-header {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .event-title {
+  color: #e2e8f0 !important;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+[data-theme="dark"] .meta-item {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .meta-icon {
+  color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .event-description {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .event-description h3 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .event-description p {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .detail-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .detail-card h4 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .detail-card p {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .status-badge.status-active {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+
+[data-theme="dark"] .status-badge.status-completed {
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #3b82f6 !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+}
+
+[data-theme="dark"] .status-badge.status-disabled {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+}
+
+[data-theme="dark"] .status-badge.status-draft {
+  background: rgba(156, 163, 175, 0.2) !important;
+  color: #9ca3af !important;
+  border: 1px solid rgba(156, 163, 175, 0.4) !important;
+}
+
+[data-theme="dark"] .public-registration-notice {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+[data-theme="dark"] .public-registration-notice h4 {
+  color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .public-registration-notice p {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .admin-actions {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+[data-theme="dark"] .admin-actions h3 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .attendance-item {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+[data-theme="dark"] .student-name {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .attendance-status {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .loading-section,
+[data-theme="dark"] .error-section {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .loading-section h3 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .loading-section p {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .documentation-section {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+[data-theme="dark"] .documentation-section .section-title {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .documentation-section .section-description {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .info-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+[data-theme="dark"] .card-title {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .info-label {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .info-value {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .participants-section {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+[data-theme="dark"] .participants-table {
+  background: rgba(30, 41, 59, 0.95) !important;
+}
+
+[data-theme="dark"] .participants-table th {
+  background: rgba(51, 65, 85, 0.8) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .participants-table td {
+  color: #e2e8f0 !important;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3) !important;
+}
+
+[data-theme="dark"] .participants-table tr:hover {
+  background: rgba(51, 65, 85, 0.5) !important;
+}
+
+[data-theme="dark"] .no-participants {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .no-participants h4 {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .no-participants p {
+  color: #cbd5e1 !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .event-actions {

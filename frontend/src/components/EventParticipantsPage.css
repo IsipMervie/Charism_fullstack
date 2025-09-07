@@ -588,43 +588,187 @@
 }
 
 /* Light Mode Specific Styles */
+[data-theme="light"] .event-participants-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
 [data-theme="light"] .event-participants-card {
   background-color: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
-  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 }
 
 [data-theme="light"] .event-participants-card h2 {
-  color: #1f2937 !important;
+  color: #111827 !important;
 }
 
 [data-theme="light"] .participants-summary {
   background: linear-gradient(135deg, #f9fafb, #ffffff) !important;
-  border: 1px solid #e5e7eb !important;
+  border: 1px solid #d1d5db !important;
 }
 
 [data-theme="light"] .stat-item {
   background: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
-  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
 }
 
 [data-theme="light"] .stat-number {
   color: #2563eb !important;
+  font-weight: 700 !important;
 }
 
 [data-theme="light"] .stat-label {
   color: #6b7280 !important;
+  font-weight: 500 !important;
 }
 
 [data-theme="light"] .download-pdf-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
   color: #ffffff !important;
   font-weight: 700;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 }
 
 [data-theme="light"] .download-pdf-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0891b2, #0e7490) !important;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Light mode table styling */
+[data-theme="light"] .participants-table {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+}
+
+[data-theme="light"] .table-header {
+  background: #f9fafb !important;
+  border-bottom: 1px solid #d1d5db !important;
+}
+
+[data-theme="light"] .table-header th {
+  color: #374151 !important;
+  border-bottom: 1px solid #d1d5db !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .table-row {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+[data-theme="light"] .table-row:hover {
+  background: #f9fafb !important;
+}
+
+[data-theme="light"] .table-row td {
+  color: #111827 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Light mode status badges */
+[data-theme="light"] .status-badge.approved {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .status-badge.pending {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .status-badge.completed {
+  background: #dbeafe !important;
+  color: #1e40af !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .status-badge.approved-for-registered {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .status-badge.disapproved {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  font-weight: 600 !important;
+}
+
+/* Light mode action buttons */
+[data-theme="light"] .action-button.approve {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .action-button.disapprove {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* Light mode participant cards */
+[data-theme="light"] .participant-card {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #111827 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .participant-card:hover {
+  border-color: #2563eb !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .card-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #d1d5db !important;
+}
+
+[data-theme="light"] .card-content {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+[data-theme="light"] .card-actions {
+  background: #ffffff !important;
+  border-top: 1px solid #d1d5db !important;
+}
+
+[data-theme="light"] .participant-name {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .participant-email {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .info-row .label {
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="light"] .info-row .value {
+  color: #111827 !important;
+}
+
+[data-theme="light"] .approval-date small {
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .time-status strong {
+  color: #111827 !important;
+}
+
+[data-theme="light"] .time-status .time-in,
+[data-theme="light"] .time-status .time-out {
+  color: #111827 !important;
 }
 
 
