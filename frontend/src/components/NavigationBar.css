@@ -149,7 +149,7 @@
 .nav-link {
   padding: 0.75rem 1rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   text-decoration: none;
   transition: all 0.3s ease;
   border-radius: 10px;
@@ -228,7 +228,7 @@
 
 .navbar-nav .dropdown-item {
   padding: 0.75rem 1.25rem;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   transition: all 0.3s ease;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -278,7 +278,7 @@
 
 .navbar-nav .dropdown-divider {
   margin: 0.75rem 0.5rem;
-  border-color: rgba(226, 232, 240, 0.6);
+  border-color: var(--border-primary);
   border-width: 1px;
 }
 
@@ -288,7 +288,7 @@
     padding: 0.4rem 0;
     height: 60px;
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%) !important;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6) !important;
+    border-bottom: 1px solid var(--border-primary) !important;
     backdrop-filter: blur(15px);
   }
   
@@ -341,7 +341,7 @@
     max-height: calc(100vh - 60px);
     overflow-y: auto;
     z-index: 1029;
-    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    border-top: 1px solid var(--border-primary);
     animation: slideDown 0.3s ease;
     width: 100%;
     backdrop-filter: blur(20px);
@@ -375,7 +375,7 @@
   .navbar-nav-mobile .nav-link {
     padding: 0.75rem 1rem;
     border-radius: 8px;
-    border: 1px solid rgba(226, 232, 240, 0.5);
+    border: 1px solid var(--border-primary);
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-primary);
@@ -434,7 +434,7 @@
     float: none;
     width: 100%;
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    border: 1px solid rgba(226, 232, 240, 0.5);
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
     box-shadow: 0 2px 8px var(--shadow-sm);
     margin: 0.25rem 0;
@@ -456,7 +456,7 @@
 
   .navbar-nav-mobile .dropdown-item {
     padding: 0.625rem 1rem;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+    border-bottom: 1px solid var(--border-primary);
     font-size: 0.85rem;
     color: var(--text-primary);
     transition: all 0.3s ease;
@@ -504,7 +504,7 @@
 
   .navbar-nav-mobile .dropdown-divider {
     margin: 0.5rem 0.25rem;
-    border-color: rgba(226, 232, 240, 0.5);
+    border-color: var(--border-primary);
     border-width: 1px;
   }
   
@@ -523,6 +523,7 @@
     padding: 0.35rem 0; 
     height: 55px; 
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%) !important;
+    border-bottom: 1px solid var(--border-primary) !important;
     backdrop-filter: blur(15px);
   }
   .navbar-brand { 
@@ -652,7 +653,7 @@ body {
 }
 
 .navbar-custom {
-  background-color: var(--text-primary) !important;
+  background: var(--nav-bg) !important;
   border-bottom: 1px solid var(--border-primary) !important;
   box-shadow: 0 2px 20px var(--shadow-lg) !important;
 }
