@@ -20,6 +20,7 @@ import {
 } from 'chart.js';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { FaUsers, FaCalendarAlt, FaCheckCircle, FaComments, FaClock, FaGraduationCap } from 'react-icons/fa';
+import { useTheme } from '../contexts/ThemeContext';
 import './AnalyticsPage.css';
 
 // Register ChartJS components
@@ -37,6 +38,7 @@ ChartJS.register(
 );
 
 function AnalyticsPage() {
+  const { isDark } = useTheme();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -45,48 +47,20 @@ function AnalyticsPage() {
   const [selectedYear, setSelectedYear] = useState('');
   const [departmentDetail, setDepartmentDetail] = useState(null);
   const [yearDetail, setYearDetail] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // Function to detect theme more reliably
-  const detectTheme = useCallback(() => {
-    // Check multiple ways to detect dark mode
-    const hasDarkClass = document.documentElement.classList.contains('dark');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const bodyBg = getComputedStyle(document.body).backgroundColor;
-    const isDarkBg = bodyBg.includes('rgb(31, 41, 55)') || bodyBg.includes('rgb(17, 24, 39)') || 
-                     bodyBg.includes('rgb(15, 23, 42)') || bodyBg.includes('rgb(12, 19, 33)');
-    
-    return hasDarkClass || prefersDark || isDarkBg;
-  }, []);
 
   // Memoized theme colors to prevent infinite re-renders
   const themeColors = useMemo(() => {
-    const isDark = detectTheme();
+    console.log('🎨 AnalyticsPage theme detection:', {
+      isDark,
+      dataTheme: document.documentElement.getAttribute('data-theme'),
+      bodyBg: getComputedStyle(document.body).backgroundColor
+    });
     
     return {
       text: isDark ? '#ffffff' : '#1f2937',
       grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
     };
-  }, [detectTheme, isDarkMode]);
-
-  // Monitor theme changes
-  useEffect(() => {
-    const handleThemeChange = () => {
-      const isDark = detectTheme();
-      setIsDarkMode(isDark);
-    };
-
-    // Listen for theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleThemeChange);
-
-    // Initial theme detection
-    handleThemeChange();
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
+  }, [isDark]);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -180,7 +154,7 @@ function AnalyticsPage() {
         borderWidth: 2,
       },
     ],
-  }), [data, isDarkMode]);
+  }), [data, isDark]);
 
   // Event Status Distribution Doughnut Chart
   const eventStatusData = useMemo(() => ({
@@ -199,7 +173,7 @@ function AnalyticsPage() {
         borderWidth: 2,
       },
     ],
-  }), [data, isDarkMode]);
+  }), [data, isDark]);
 
   // Attendance vs Approved Attendance Bar Chart
   const attendanceData = useMemo(() => ({
@@ -219,7 +193,7 @@ function AnalyticsPage() {
         borderWidth: 2,
       },
     ],
-  }), [data, isDarkMode]);
+  }), [data, isDark]);
 
   // Recent Activity Line Chart (real data from backend)
   const recentActivityData = useMemo(() => {
@@ -651,7 +625,7 @@ function AnalyticsPage() {
                 </div>
                 <div className="chart-container">
                   {userRoleData && pieOptions ? (
-                    <Pie key={`pie-${isDarkMode}`} data={userRoleData} options={pieOptions} />
+                    <Pie key={`pie-${isDark}`} data={userRoleData} options={pieOptions} />
                   ) : (
                     <div className="chart-error">Chart data unavailable</div>
                   )}
@@ -665,7 +639,7 @@ function AnalyticsPage() {
                 </div>
                 <div className="chart-container">
                   {eventStatusData && doughnutOptions ? (
-                    <Doughnut key={`doughnut-${isDarkMode}`} data={eventStatusData} options={doughnutOptions} />
+                    <Doughnut key={`doughnut-${isDark}`} data={eventStatusData} options={doughnutOptions} />
                   ) : (
                     <div className="chart-error">Chart data unavailable</div>
                   )}
@@ -679,7 +653,7 @@ function AnalyticsPage() {
                 </div>
                 <div className="chart-container">
                   {attendanceData && barOptions ? (
-                    <Bar key={`bar-${isDarkMode}`} data={attendanceData} options={barOptions} />
+                    <Bar key={`bar-${isDark}`} data={attendanceData} options={barOptions} />
                   ) : (
                     <div className="chart-error">Chart data unavailable</div>
                   )}
@@ -693,7 +667,7 @@ function AnalyticsPage() {
                 </div>
                 <div className="chart-container">
                   {recentActivityData && lineOptions ? (
-                    <Line key={`line-${isDarkMode}`} data={recentActivityData} options={lineOptions} />
+                    <Line key={`line-${isDark}`} data={recentActivityData} options={lineOptions} />
                   ) : (
                     <div className="chart-error">Chart data unavailable</div>
                   )}
@@ -706,7 +680,7 @@ function AnalyticsPage() {
                   <p>Students and events per department</p>
                 </div>
                 <div className="chart-container">
-                  <Bar key={`dept-bar-${isDarkMode}`} data={departmentData} options={departmentBarOptions} />
+                  <Bar key={`dept-bar-${isDark}`} data={departmentData} options={departmentBarOptions} />
                 </div>
               </div>
 
@@ -716,7 +690,7 @@ function AnalyticsPage() {
                   <p>Students and events by academic year</p>
                 </div>
                 <div className="chart-container">
-                  <Bar key={`year-bar-${isDarkMode}`} data={yearData} options={yearBarOptions} />
+                  <Bar key={`year-bar-${isDark}`} data={yearData} options={yearBarOptions} />
                 </div>
               </div>
             </div>
