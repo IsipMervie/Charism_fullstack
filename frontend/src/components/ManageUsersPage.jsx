@@ -236,7 +236,6 @@ function ManageUsersPage() {
         <div className="loading-section">
           <div className="loading-spinner">
             <Spinner animation="border" role="status" className="spinner" />
-            <p>Please wait while we fetch the user data...</p>
           </div>
         </div>
       </div>
