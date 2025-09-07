@@ -407,14 +407,14 @@ function ManageUsersPage() {
                                user.approvalStatus === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
                             </span>
                           )}
+                          <span className={`role-badge ${user.role.toLowerCase()}`}>
+                            {getRoleIcon(user.role)}
+                            {user.role}
+                          </span>
                         </div>
                       </div>
                     </div>
                     <div className="user-role-section">
-                      <span className={`role-badge ${user.role.toLowerCase()}`}>
-                        {getRoleIcon(user.role)}
-                        {user.role}
-                      </span>
                     </div>
                   </div>
 

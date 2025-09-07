@@ -869,13 +869,9 @@
 .user-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0;
   line-height: 1.2;
-  background: linear-gradient(135deg, var(--bg-tertiary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .user-email {
@@ -900,6 +896,10 @@
 }
 
 .user-meta .approval-status-badge {
+  margin-top: 0.5rem;
+}
+
+.user-meta .role-badge {
   margin-top: 0.5rem;
 }
 
