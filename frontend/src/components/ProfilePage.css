@@ -58,11 +58,11 @@
 
 /* Profile Header */
 .profile-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 3rem;
   margin-bottom: 2rem;
   position: relative;
@@ -121,14 +121,14 @@
   margin: 0;
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   line-height: 1.2;
   flex: 1;
 }
 
 .refresh-button {
-  background: var(--bg-secondary);
-  border: 2px solid #e2e8f0;
+  background: var(--bg-secondary) !important;
+  border: 2px solid var(--border-primary) !important;
   border-radius: 12px;
   padding: 0.75rem;
   cursor: pointer;
@@ -141,8 +141,8 @@
 }
 
 .refresh-button:hover {
-  background: var(--border-primary);
-  border-color: var(--text-tertiary);
+  background: var(--bg-tertiary) !important;
+  border-color: var(--text-tertiary) !important;
   transform: scale(1.05);
 }
 
@@ -167,8 +167,8 @@
 }
 
 .refresh-button:disabled:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-primary);
+  background: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
   transform: none;
 }
 
@@ -183,13 +183,13 @@
 
 .profile-email {
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0.5rem 0 1.5rem 0;
   padding: 0.75rem 1.5rem;
-  background: var(--bg-secondary);
+  background: var(--bg-secondary) !important;
   border-radius: 12px;
   display: inline-block;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--border-primary) !important;
 }
 
 .profile-stats {
@@ -218,24 +218,24 @@
 
 .stat-label {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-weight: 500;
   text-align: center;
 }
 
 .stat-value {
   font-size: 0.9rem;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 600;
 }
 
 /* Profile Details Section */
 .profile-details {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 2.5rem;
   margin-bottom: 2rem;
 }
@@ -250,7 +250,7 @@
   gap: 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 0.5rem 0;
 }
 
@@ -260,7 +260,7 @@
 }
 
 .details-subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   font-size: 1rem;
 }
@@ -272,8 +272,8 @@
 }
 
 .detail-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 8px 25px var(--shadow-md);
@@ -283,7 +283,7 @@
 .detail-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px var(--shadow-lg);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
 }
 
 .detail-header {
@@ -301,14 +301,14 @@
 .detail-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .detail-value {
   font-size: 1rem;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 500;
   word-break: break-word;
 }
@@ -322,11 +322,11 @@
 
 /* Message Section */
 .message-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 1.5rem;
   margin-top: 2rem;
   animation: slideIn 0.5s ease;
@@ -356,17 +356,17 @@
 }
 
 .message-text {
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-weight: 500;
 }
 
 /* Loading Section */
 .loading-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card) !important;
   backdrop-filter: blur(20px);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary) !important;
   padding: 3rem 2rem;
   text-align: center;
   position: absolute;
@@ -400,12 +400,12 @@
 .loading-section h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 1rem 0;
 }
 
 .loading-section p {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   margin: 0;
   line-height: 1.6;
 }
