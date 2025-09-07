@@ -157,6 +157,10 @@
   transition: all var(--transition-normal);
 }
 
+.chart-card canvas {
+  background: transparent !important;
+}
+
 .chart-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px var(--shadow-lg);
@@ -347,8 +351,27 @@
 }
 
 /* Chart.js Customization */
+.chart-container {
+  background: var(--bg-primary) !important;
+}
+
 .chart-container canvas {
   border-radius: 8px;
+  background: var(--bg-primary) !important;
+}
+
+/* Ensure chart backgrounds are transparent/themed */
+.chart-card .chart-container canvas {
+  background: transparent !important;
+}
+
+.chart-card .chart-container {
+  background: var(--bg-primary) !important;
+}
+
+/* Target Chart.js canvas elements specifically */
+canvas[style*="background"] {
+  background: transparent !important;
 }
 
 /* Focus states for accessibility */

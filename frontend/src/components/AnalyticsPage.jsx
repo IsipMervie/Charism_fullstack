@@ -247,6 +247,7 @@ function AnalyticsPage() {
   // Chart options
   const pieOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
@@ -265,6 +266,7 @@ function AnalyticsPage() {
 
   const doughnutOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
@@ -283,6 +285,7 @@ function AnalyticsPage() {
 
   const barOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false,
@@ -317,6 +320,7 @@ function AnalyticsPage() {
 
   const lineOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -354,6 +358,7 @@ function AnalyticsPage() {
 
   const departmentBarOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -391,6 +396,7 @@ function AnalyticsPage() {
 
   const yearBarOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
