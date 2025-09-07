@@ -241,10 +241,10 @@
   display: block !important;
 }
 
-/* Ultra-specific overrides for maximum visibility */
+/* Ultra-specific overrides for proper dark mode styling */
 .students-40-hours-page .students-40-container .students-40-results-card .card-header h5.mb-0 {
-  color: #ffffff !important;
-  background-color: #ff0000 !important;
+  color: var(--text-primary) !important;
+  background-color: var(--bg-card) !important;
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
@@ -252,13 +252,13 @@
   font-weight: bold !important;
   padding: 10px !important;
   margin: 0 !important;
-  border: 2px solid #00ff00 !important;
+  border: none !important;
 }
 
-/* Force visibility with extreme specificity */
+/* Force visibility with proper theme colors */
 body .students-40-hours-page .students-40-container .students-40-results-card .card-header h5 {
-  color: #ffffff !important;
-  background-color: #ff0000 !important;
+  color: var(--text-primary) !important;
+  background-color: var(--bg-card) !important;
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
@@ -266,7 +266,7 @@ body .students-40-hours-page .students-40-container .students-40-results-card .c
   font-weight: bold !important;
   padding: 10px !important;
   margin: 0 !important;
-  border: 2px solid #00ff00 !important;
+  border: none !important;
 }
 
 .students-40-results-card .card-body {
