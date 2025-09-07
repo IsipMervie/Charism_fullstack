@@ -618,13 +618,29 @@
 }
 
 [data-theme="dark"] .participant-card {
-  background: #334155;
-  border: 1px solid #475569;
+  background: #334155 !important;
+  border: 1px solid #475569 !important;
+  color: #e2e8f0 !important;
 }
 
 [data-theme="dark"] .participant-card:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6 !important;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .card-header {
+  background: #334155 !important;
+  border-bottom: 1px solid #475569 !important;
+}
+
+[data-theme="dark"] .card-content {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .card-actions {
+  background: #334155 !important;
+  border-top: 1px solid #475569 !important;
 }
 
 [data-theme="dark"] .participant-name {
@@ -654,6 +670,67 @@
 [data-theme="dark"] .time-status .time-in,
 [data-theme="dark"] .time-status .time-out {
   color: #e2e8f0;
+}
+
+/* Force dark mode for all card elements */
+[data-theme="dark"] .mobile-cards .participant-card,
+[data-theme="dark"] .mobile-cards .card-header,
+[data-theme="dark"] .mobile-cards .card-content,
+[data-theme="dark"] .mobile-cards .card-actions {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+[data-theme="dark"] .mobile-cards .participant-card * {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .mobile-cards .participant-name {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .mobile-cards .participant-email {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .mobile-cards .info-row .label {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .mobile-cards .info-row .value {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .mobile-cards .approval-date small {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .mobile-cards .time-status strong {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .mobile-cards .time-status .time-in,
+[data-theme="dark"] .mobile-cards .time-status .time-out {
+  color: #e2e8f0 !important;
+}
+
+/* Dark mode for status-specific cards */
+[data-theme="dark"] .participant-card.status-attended,
+[data-theme="dark"] .participant-card.status-pending,
+[data-theme="dark"] .participant-card.status-approved,
+[data-theme="dark"] .participant-card.status-disapproved {
+  background: #334155 !important;
+  border: 1px solid #475569 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .participant-card.status-attended:hover,
+[data-theme="dark"] .participant-card.status-pending:hover,
+[data-theme="dark"] .participant-card.status-approved:hover,
+[data-theme="dark"] .participant-card.status-disapproved:hover {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2) !important;
 }
 
 /* Dark mode fallback */

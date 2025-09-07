@@ -276,7 +276,7 @@ function EventParticipantsPage() {
                   <td>{participant.userId.department}</td>
                   <td>
                     <span className={`status-badge ${participant.registrationApproved ? 'approved' : 'pending'}`}>
-                      {participant.registrationApproved ? 'Approved' : 'Pending'}
+                      {participant.registrationApproved ? 'Approved for Registered' : 'Pending'}
                     </span>
                     {participant.registrationApprovedAt && (
                       <div className="approval-date">
@@ -379,7 +379,7 @@ function EventParticipantsPage() {
                 <div className="info-row">
                   <span className="label">Registration:</span>
                   <span className={`status-badge ${participant.registrationApproved ? 'approved' : 'pending'}`}>
-                    {participant.registrationApproved ? 'Approved' : 'Pending'}
+                    {participant.registrationApproved ? 'Approved for Registered' : 'Pending'}
                   </span>
                   {participant.registrationApprovedAt && (
                     <div className="approval-date">
