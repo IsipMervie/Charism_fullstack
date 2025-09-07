@@ -108,29 +108,29 @@ function RegisterPage() {
         icon: 'success',
         title: '🎉 Registration Successful!',
         html: `
-          <div style="text-align: left; padding: 20px;">
-            <p style="margin-bottom: 15px; font-size: 16px; color: #1e293b;">
+          <div class="registration-success-content">
+            <p class="welcome-message">
               <strong>Welcome to CHARISM!</strong> Your account has been created successfully.
             </p>
             
-            <div style="background: #f0f9ff; border: 2px solid #0ea5e9; border-radius: 12px; padding: 20px; margin: 20px 0;">
-              <h4 style="color: #0c4a6e; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <div class="email-verification-box">
+              <h4 class="verification-title">
                 📧 <span>Email Verification Required</span>
               </h4>
-              <p style="color: #0c4a6e; margin-bottom: 15px; font-size: 15px;">
+              <p class="verification-important">
                 <strong>Important:</strong> You must verify your email address before you can log in.
               </p>
               
-              <div style="background: white; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin: 15px 0;">
-                <p style="color: #0c4a6e; margin: 0; font-size: 14px; font-weight: 600;">
+              <div class="email-address-box">
+                <p class="email-label">
                   📬 <strong>Check this email address:</strong>
                 </p>
-                <p style="color: #0ea5e9; margin: 5px 0 0 0; font-size: 16px; font-weight: 700; word-break: break-all;">
+                <p class="email-value">
                   ${email}
                 </p>
               </div>
               
-              <ul style="color: #0c4a6e; margin: 0; padding-left: 20px; font-size: 14px;">
+              <ul class="verification-steps">
                 <li>Check your email inbox (including spam folder)</li>
                 <li>Click the verification link in the email</li>
                 <li>Return here to log in after verification</li>
@@ -138,24 +138,24 @@ function RegisterPage() {
             </div>
             
             ${role === 'Staff' ? `
-              <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                <h4 style="color: #92400e; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+              <div class="staff-approval-box">
+                <h4 class="approval-title">
                   ⏳ <span>Admin Approval Required</span>
                 </h4>
-                <p style="color: #92400e; font-size: 14px; margin: 0;">
+                <p class="approval-note">
                   <strong>Note:</strong> Staff accounts require administrator approval. 
                   You'll receive another email once your account is approved.
                 </p>
               </div>
             ` : ''}
             
-            <p style="color: #64748b; font-size: 14px; margin-top: 20px; font-style: italic;">
+            <p class="help-text">
               <strong>Need help?</strong> Check your spam folder or contact support if you don't receive the email within 5 minutes.
             </p>
           </div>
         `,
         confirmButtonText: 'Got it!',
-        confirmButtonColor: '#0ea5e9',
+        confirmButtonColor: 'var(--info)',
         width: '600px',
         customClass: {
           popup: 'email-verification-alert',
@@ -188,7 +188,7 @@ function RegisterPage() {
         icon: icon,
         title: title,
         text: text,
-        confirmButtonColor: icon === 'error' ? '#ef4444' : '#f59e0b',
+        confirmButtonColor: icon === 'error' ? 'var(--error)' : 'var(--warning)',
         confirmButtonText: 'OK'
       });
     }

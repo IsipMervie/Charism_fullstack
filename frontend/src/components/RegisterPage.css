@@ -460,6 +460,108 @@ input[type="submit"].register-button:hover,
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Registration Success Content Styles */
+.registration-success-content {
+  text-align: left;
+  padding: 20px;
+}
+
+.welcome-message {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.email-verification-box {
+  background: var(--info-light);
+  border: 2px solid var(--info);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.verification-title {
+  color: var(--info-dark);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.verification-important {
+  color: var(--info-dark);
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+.email-address-box {
+  background: var(--bg-primary);
+  border: 1px solid var(--info);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+.email-label {
+  color: var(--info-dark);
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.email-value {
+  color: var(--info);
+  margin: 5px 0 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.verification-steps {
+  color: var(--info-dark);
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.verification-steps li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.staff-approval-box {
+  background: var(--warning-light);
+  border: 2px solid var(--warning);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.approval-title {
+  color: var(--warning-dark);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.approval-note {
+  color: var(--warning-dark);
+  font-size: 14px;
+  margin: 0;
+}
+
+.help-text {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-top: 20px;
+  font-style: italic;
+}
+
 .email-verification-alert .swal2-title {
   color: var(--text-primary);
   font-size: 1.75rem;
