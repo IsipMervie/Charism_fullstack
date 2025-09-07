@@ -161,6 +161,34 @@
   color: var(--text-primary) !important;
 }
 
+.students-40-results-header h5 {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+.students-40-results-header h5.mb-0 {
+  color: var(--text-primary) !important;
+}
+
+.students-40-results-card .card-header {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+}
+
+/* Bootstrap card header overrides */
+.students-40-results-card .card-header * {
+  color: var(--text-primary) !important;
+}
+
+.students-40-results-card .card-header h5,
+.students-40-results-card .card-header h6,
+.students-40-results-card .card-header p,
+.students-40-results-card .card-header span,
+.students-40-results-card .card-header div {
+  color: var(--text-primary) !important;
+}
+
 .students-40-results-card .card-body {
   background-color: var(--bg-card) !important;
   color: var(--text-primary) !important;
