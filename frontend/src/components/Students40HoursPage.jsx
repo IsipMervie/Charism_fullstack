@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getStudents40Hours, getPublicSettings } from '../api/api';
-import Swal from 'sweetalert2';
+import { showSuccess, showError } from '../utils/sweetAlertUtils';
 import { FaDownload } from 'react-icons/fa';
 import './Students40HoursPage.css';
 import { Button, Spinner, Alert, Table, Form, Card, Row, Col } from 'react-bootstrap';
@@ -93,18 +93,10 @@ function Students40HoursPage() {
       a.remove();
       window.URL.revokeObjectURL(url);
       
-      Swal.fire({
-        icon: 'success',
-        title: 'PDF Downloaded',
-        text: 'Students with 40+ hours report has been downloaded successfully!'
-      });
+      showSuccess('PDF Downloaded', 'Students with 40+ hours report has been downloaded successfully!');
     } catch (error) {
       console.error('Failed to download PDF:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Download Failed',
-        text: `Failed to download PDF: ${error.message}`
-      });
+      showError('Download Failed', `Failed to download PDF: ${error.message}`);
     } finally {
       setDownloading(false);
     }

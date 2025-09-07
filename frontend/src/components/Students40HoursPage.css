@@ -33,6 +33,7 @@
 
 /* Filters card styling */
 .filters-card {
+  background-color: var(--bg-card) !important;
   border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-lg);
   border-radius: 16px;
@@ -40,6 +41,8 @@
 }
 
 .filters-card .card-body {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
   position: relative;
   padding-top: 18px;
 }
@@ -108,6 +111,8 @@
 
 /* Filter selects styling */
 .students-40-filters .form-select {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
   border: 2px solid var(--border-primary);
   border-radius: 10px;
   padding: 10px 12px;
@@ -115,8 +120,16 @@
 }
 
 .students-40-filters .form-select:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--primary-focus);
+}
+
+.students-40-filters .form-label {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .clear-filters-btn {
@@ -135,15 +148,22 @@
 
 /* Results card */
 .students-40-results-card {
+  background-color: var(--bg-card) !important;
   border: 1px solid var(--border-primary);
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
   border-radius: 14px;
 }
 
 .students-40-results-header {
   position: relative;
-  background: var(--bg-primary);
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.students-40-results-card .card-body {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
 }
 
 .students-40-results-header::before {
@@ -159,11 +179,34 @@
 .hours-badge {
   display: inline-block;
   background: linear-gradient(135deg, var(--success), var(--success-hover));
-  color: var(--text-primary);
+  color: var(--text-inverse);
   border-radius: 999px;
   padding: 4px 10px;
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+/* Table styling */
+.students-40-results-card .table {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-card) !important;
+}
+
+.students-40-results-card .table thead th {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+  font-weight: 600;
+}
+
+.students-40-results-card .table tbody td {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.students-40-results-card .table tbody tr:hover td {
+  background-color: var(--bg-hover) !important;
 }
 
 /* Mobile cards */
