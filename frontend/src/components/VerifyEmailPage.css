@@ -45,6 +45,34 @@
   font-weight: bold;
 }
 
+/* Button styling */
+.verify-box .btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.verify-box .btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+.verify-box .btn-primary:hover {
+  background-color: var(--btn-primary-hover);
+}
+
+.verify-box .btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+}
+
+.verify-box .btn-secondary:hover {
+  background-color: var(--btn-secondary-hover);
+}
+
 /* Responsive adjustments */
 @media (max-width: 500px) {
   .verify-box {

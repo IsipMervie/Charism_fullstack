@@ -99,8 +99,8 @@ const VerifyEmailPage = () => {
 
   if (loading) {
     return (
-      <div className="verify-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <div className="verify-box" style={{ background: '#fff', padding: 32, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', textAlign: 'center' }}>
+      <div className="verify-container">
+        <div className="verify-box">
           <div className="spinner-border text-primary" role="status" style={{ marginBottom: '16px' }}>
             <span className="visually-hidden">Loading...</span>
           </div>
@@ -112,16 +112,10 @@ const VerifyEmailPage = () => {
   }
 
   return (
-    <div className="verify-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-      <div className="verify-box" style={{ background: '#fff', padding: 32, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', textAlign: 'center', maxWidth: '500px' }}>
-        <h2 style={{ color: '#1e40af', marginBottom: '16px' }}>CHARISM Email Verification</h2>
-        <p className={success ? 'success-message' : 'error-message'} style={{ 
-          color: success ? '#10b981' : '#ef4444', 
-          fontWeight: 'bold',
-          fontSize: '16px',
-          lineHeight: '1.5',
-          marginBottom: '24px'
-        }}>
+    <div className="verify-container">
+      <div className="verify-box">
+        <h2>CHARISM Email Verification</h2>
+        <p className={success ? 'success-message' : 'error-message'}>
           {message}
         </p>
         
@@ -129,28 +123,14 @@ const VerifyEmailPage = () => {
           <div style={{ marginTop: '20px' }}>
             <button 
               onClick={() => navigate('/login')}
-              style={{
-                background: '#1e40af',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                marginRight: '12px'
-              }}
+              className="btn btn-primary"
+              style={{ marginRight: '12px' }}
             >
               Go to Login
             </button>
             <button 
               onClick={() => navigate('/')}
-              style={{
-                background: '#6b7280',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                cursor: 'pointer'
-              }}
+              className="btn btn-secondary"
             >
               Go Home
             </button>
