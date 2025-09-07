@@ -66,12 +66,12 @@
 }
 
 .loading-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 3rem;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
 }
 
 .loading-spinner {
@@ -103,12 +103,12 @@
 }
 
 .error-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 3rem;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
 }
 
 .error-icon {
@@ -146,11 +146,11 @@
 
 /* Header Section */
 .header-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   padding: 2.5rem;
   margin-bottom: 2rem;
   position: relative;
@@ -222,9 +222,9 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--bg-secondary);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-primary);
   transition: all 0.3s ease;
 }
 
@@ -265,13 +265,13 @@
 
 /* Controls Section */
 .controls-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -303,11 +303,12 @@
 .search-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: white;
+  background: var(--input-bg);
+  color: var(--input-text);
 }
 
 .search-input:focus {
@@ -321,8 +322,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: white;
-  border: 2px solid #e2e8f0;
+  background: var(--input-bg);
+  border: 2px solid var(--border-primary);
   border-radius: 12px;
   color: var(--text-secondary);
   font-weight: 500;
@@ -385,20 +386,20 @@
 }
 
 .view-button.active {
-  background: white;
+  background: var(--bg-card);
   color: var(--primary);
   box-shadow: 0 2px 8px var(--shadow-md);
 }
 
 /* Filters Section */
 .filters-section {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
   animation: slideDown 0.3s ease;
 }
 
@@ -441,11 +442,12 @@
 
 .filter-select {
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary);
   border-radius: 8px;
   font-size: 0.875rem;
   transition: all 0.3s ease;
-  background: white;
+  background: var(--input-bg);
+  color: var(--input-text);
 }
 
 .filter-select:focus {
@@ -603,12 +605,12 @@
 
 /* Documentation Content */
 .documentation-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 2rem;
   box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-primary);
 }
 
 /* No Data Section */
@@ -648,7 +650,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--border-primary);
 }
 
 .results-header h3 {
@@ -670,9 +672,9 @@
 }
 
 .documentation-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   overflow: hidden;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px var(--shadow-sm);
@@ -690,7 +692,7 @@
   align-items: center;
   padding: 1.5rem;
   background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .student-info {
@@ -809,7 +811,7 @@
 }
 
 .upload-info {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-primary);
   padding-top: 1rem;
 }
 
@@ -834,14 +836,16 @@
   font-weight: 600;
   padding: 1rem;
   border: none;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--border-primary);
 }
 
 .documentation-table td {
   padding: 1rem;
   border: none;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-primary);
   vertical-align: middle;
+  background: var(--bg-card);
+  color: var(--text-primary);
 }
 
 .documentation-table tbody tr:hover {
@@ -851,7 +855,8 @@
 /* Modal Styling */
 .documentation-modal .modal-header {
   background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-primary);
 }
 
 .modal-icon {
@@ -873,7 +878,7 @@
   font-weight: 600;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--border-primary);
 }
 
 .section-icon {
@@ -916,7 +921,7 @@
   padding: 1rem;
   background: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .file-info {

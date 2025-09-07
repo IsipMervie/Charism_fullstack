@@ -3,7 +3,7 @@ import { Badge, Modal, Table, Button } from 'react-bootstrap';
 import { FaFile, FaSearch, FaFilter, FaEye, FaUser, FaCalendar, FaClock, FaFileAlt, FaUsers, FaCheckCircle, FaExclamationTriangle, FaTimes, FaList, FaBuilding, FaDownload } from 'react-icons/fa';
 import { getEvents, getEventsWithUserData, downloadDocumentationFile } from '../api/api';
 import { formatTimeRange12Hour, formatTime12Hour } from '../utils/timeUtils';
-import Swal from 'sweetalert2';
+import { showError } from '../utils/sweetAlertUtils';
 import './AdminViewStudentDocumentation.css';
 
 const AdminViewStudentDocumentation = () => {
@@ -204,7 +204,7 @@ const AdminViewStudentDocumentation = () => {
     try {
       await downloadDocumentationFile(eventId, filename, originalName);
     } catch (err) {
-      Swal.fire('Download Error', 'Failed to download file. Please try again.', 'error');
+      showError('Download Error', 'Failed to download file. Please try again.');
     }
   };
 
