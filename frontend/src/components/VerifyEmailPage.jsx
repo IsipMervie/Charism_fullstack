@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { verifyEmail } from '../api/api';
+import { showSuccess, showError, showWarning, showInfo } from '../utils/sweetAlertUtils';
 import Swal from 'sweetalert2';
 import './VerifyEmailPage.css';
 
@@ -31,15 +32,10 @@ const VerifyEmailPage = () => {
           setSuccess(true);
           
           // Show success SweetAlert
-          Swal.fire({
-            icon: 'success',
-            title: '🎉 Email Verified Successfully!',
-            text: 'Your email has been verified. You can now log in to your account.',
+          showSuccess('🎉 Email Verified Successfully!', 'Your email has been verified. You can now log in to your account.', {
             confirmButtonText: 'Go to Login',
-            confirmButtonColor: '#10b981',
             showCancelButton: true,
-            cancelButtonText: 'Stay Here',
-            cancelButtonColor: '#6b7280'
+            cancelButtonText: 'Stay Here'
           }).then((result) => {
             if (result.isConfirmed) {
               navigate('/login');
@@ -75,15 +71,14 @@ const VerifyEmailPage = () => {
         setSuccess(false);
         
         // Show error SweetAlert
-        Swal.fire({
-          icon: icon,
-          title: 'Email Verification Failed',
-          text: errorMessage,
+        const alertFunction = icon === 'error' ? showError : 
+                             icon === 'warning' ? showWarning : 
+                             icon === 'info' ? showInfo : showError;
+        
+        alertFunction('Email Verification Failed', errorMessage, {
           confirmButtonText: 'OK',
-          confirmButtonColor: icon === 'error' ? '#ef4444' : '#3b82f6',
           showCancelButton: true,
-          cancelButtonText: 'Go to Login',
-          cancelButtonColor: '#6b7280'
+          cancelButtonText: 'Go to Login'
         }).then((result) => {
           if (result.dismiss === Swal.DismissReason.cancel) {
             navigate('/login');
