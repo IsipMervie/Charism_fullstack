@@ -357,47 +357,6 @@
 }
 
 /* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .loading-fullscreen {
-    background: var(--bg-primary);
-  }
-  
-  .loading-overlay {
-    background: var(--bg-secondary);
-  }
-  
-  .skeleton-line,
-  .skeleton-header-cell,
-  .skeleton-cell,
-  .skeleton-title,
-  .skeleton-text-line {
-    background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
-    background-size: 200% 100%;
-  }
-  
-  .skeleton-header {
-    background: var(--bg-primary);
-    border-bottom-color: var(--border-primary);
-  }
-  
-  .skeleton-body {
-    background: var(--bg-secondary);
-  }
-  
-  .skeleton-row {
-    border-bottom-color: var(--border-primary);
-  }
-  
-  .card-skeleton {
-    background: var(--bg-secondary);
-    border-color: var(--border-primary);
-  }
-  
-  .skeleton-image {
-    background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
-    background-size: 200% 100%;
-  }
-}
 
 /* High Contrast Mode */
 @media (prefers-contrast: high) {

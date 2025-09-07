@@ -1015,10 +1015,3 @@
   border-color: #3b82f6 !important;
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2) !important;
 }
-
-/* Dark mode fallback */
-@media (prefers-color-scheme: dark) {
-  .event-participants-container { background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%); }
-  .event-participants-card { background: var(--gray-800); border-color: var(--gray-700); }
-  .event-participants-card th { color: var(--gray-300); }
-}

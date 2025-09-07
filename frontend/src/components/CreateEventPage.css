@@ -205,36 +205,6 @@
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .create-event-page {
-    background: var(--bg-primary);
-  }
-  
-  .create-event-page::before {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-  }
-  
-  .create-event-page .card {
-  background: var(--bg-card);
-  border-color: var(--border-primary);
-  }
-  
-  .create-event-page .form-label {
-    color: var(--text-secondary);
-  }
-  
-  .create-event-page .form-control {
-    background: var(--bg-secondary);
-    border-color: var(--text-secondary);
-    color: var(--text-secondary);
-  }
-  
-  .create-event-page .form-control:focus {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-  }
-}
 
 /* High contrast mode */
 @media (prefers-contrast: high) {

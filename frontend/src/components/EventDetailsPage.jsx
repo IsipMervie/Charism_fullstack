@@ -178,8 +178,8 @@ function EventDetailsPage() {
     <div className="event-details-page">
       <div className="loading-section">
         <div className="loading-spinner"></div>
-        <h3>Loading Event Details...</h3>
-        <p>Please wait while we fetch the event information</p>
+       
+        
       </div>
     </div>
   );

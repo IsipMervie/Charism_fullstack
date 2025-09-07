@@ -607,15 +607,6 @@ a:hover {
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
-    --text-primary: #ffffff;
-    --text-secondary: #cccccc;
-    --border-light: #404040;
-  }
-}
 
 /* Navigation Bar Global Fixes */
 /* Remove conflicting Bootstrap navbar styles */

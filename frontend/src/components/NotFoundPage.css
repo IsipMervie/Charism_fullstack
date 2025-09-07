@@ -270,45 +270,6 @@
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .not-found-page .card {
-    background: rgba(30, 30, 30, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .error-title {
-    color: var(--text-secondary);
-  }
-  
-  .error-description {
-    color: var(--text-tertiary);
-  }
-  
-  .suggestions-title {
-    color: var(--text-secondary);
-  }
-  
-  .suggestion-item {
-    background: rgba(45, 55, 72, 0.9);
-    border-color: var(--text-secondary);
-  }
-  
-  .suggestion-item:hover {
-    background: rgba(55, 65, 82, 0.9);
-  }
-  
-  .suggestion-item span {
-    color: var(--text-secondary);
-  }
-  
-  .additional-help {
-    border-top-color: var(--text-secondary);
-  }
-  
-  .additional-help p {
-    color: var(--text-tertiary);
-  }
-}
 
 /* High contrast mode */
 @media (prefers-contrast: high) {

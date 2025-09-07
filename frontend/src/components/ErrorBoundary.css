@@ -180,45 +180,6 @@
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .error-boundary-container {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-  }
-  
-  .error-boundary-content {
-    background: var(--bg-primary);
-    border-color: var(--border-primary);
-    color: var(--text-primary);
-  }
-  
-  .error-title {
-    color: var(--text-primary);
-  }
-  
-  .error-description {
-    color: var(--text-tertiary);
-  }
-  
-  .error-help {
-    background: var(--bg-secondary);
-    border-color: var(--border-primary);
-  }
-  
-  .error-help p {
-    color: var(--text-primary);
-  }
-  
-  .error-help li {
-    color: var(--text-tertiary);
-  }
-  
-  .error-stack {
-    background: var(--bg-secondary);
-    border-color: var(--border-primary);
-    color: var(--text-tertiary);
-  }
-}
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {

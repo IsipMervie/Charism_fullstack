@@ -120,7 +120,7 @@ function MyParticipationPage() {
           <div className="loading-content">
             <FaSpinner className="loading-spinner" />
             <h3>Loading Participation</h3>
-            <p>Please wait while we fetch your participation data...</p>
+           
           </div>
         </div>
       </div>

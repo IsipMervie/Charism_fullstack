@@ -91,10 +91,10 @@ exports.getPublicSettings = async (req, res) => {
     );
     
     const dataPromise = Promise.all([
-      Section.find().sort('name'),
-      YearLevel.find().sort('name'),
-      Department.find().sort('name'),
-      require('../models/AcademicYear').find().sort('-year')
+      Section.find({ isActive: true }).sort('name'),
+      YearLevel.find({ isActive: true }).sort('name'),
+      Department.find({ isActive: true }).sort('name'),
+      require('../models/AcademicYear').find({ isActive: true }).sort('-year')
     ]);
     
     const [sections, yearLevels, departments, academicYears] = await Promise.race([

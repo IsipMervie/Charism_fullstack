@@ -173,11 +173,9 @@
 /* Responsive */
 @media (max-width: 767px) { .form-row { grid-template-columns: 1fr; } }
 
-/* High contrast & dark mode */
-@media (prefers-contrast: high) { .edit-event-content { border: 2px solid var(--text-primary); } .save-btn, .cancel-btn { border: 2px solid var(--text-primary); } }
-@media (prefers-color-scheme: dark) {
-  .edit-event-container { background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%); }
-  .edit-event-content { background-color: var(--gray-800); border-color: var(--gray-700); }
-  .edit-event-header p { color: var(--gray-300); }
+/* High contrast mode */
+@media (prefers-contrast: high) { 
+  .edit-event-content { border: 2px solid var(--text-primary); } 
+  .save-btn, .cancel-btn { border: 2px solid var(--text-primary); } 
 }
 

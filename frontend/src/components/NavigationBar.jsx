@@ -136,6 +136,15 @@ function NavigationBar() {
             {/* Not logged in */}
             {!user && (
               <>
+               
+                <Nav.Link 
+                  as={Link} 
+                  to="/login" 
+                  className={location.pathname === '/login' ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
+                  Login/Register
+                </Nav.Link>
                 <Nav.Link 
                   as={Link} 
                   to="/contact" 
@@ -151,22 +160,6 @@ function NavigationBar() {
                   onClick={handleNavLinkClick}
                 >
                   Feedback
-                </Nav.Link>
-                <Nav.Link 
-                  as={Link} 
-                  to="/login" 
-                  className={location.pathname === '/login' ? 'active' : ''}
-                  onClick={handleNavLinkClick}
-                >
-                  Login
-                </Nav.Link>
-                <Nav.Link 
-                  as={Link} 
-                  to="/register" 
-                  className={location.pathname === '/register' ? 'active' : ''}
-                  onClick={handleNavLinkClick}
-                >
-                  Register
                 </Nav.Link>
               </>
             )}
