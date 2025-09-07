@@ -165,20 +165,32 @@ exports.getAllEvents = async (req, res) => {
     let userRole = 'Public';
     let userId = null;
     
+    console.log('🔍 DEBUG: Request headers:', {
+      authorization: authHeader ? 'Bearer [TOKEN]' : 'None',
+      userAgent: req.headers['user-agent'],
+      origin: req.headers.origin,
+      referer: req.headers.referer
+    });
+    
     // If authenticated, try to decode the token to get user role
     if (isAuthenticatedRequest) {
       try {
         const jwt = require('jsonwebtoken');
         const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
         const token = authHeader.split(' ')[1];
+        console.log('🔍 DEBUG: JWT_SECRET exists:', !!JWT_SECRET);
+        console.log('🔍 DEBUG: Token length:', token ? token.length : 'No token');
+        
         const decoded = jwt.verify(token, JWT_SECRET);
         userRole = decoded.role || 'Public';
         userId = decoded.userId || decoded.id || decoded._id;
-        console.log('🔐 Authenticated request detected:', { userRole, userId });
+        console.log('🔐 Authenticated request detected:', { userRole, userId, decoded });
       } catch (error) {
-        console.log('⚠️ Invalid token, treating as public request');
+        console.log('⚠️ Invalid token, treating as public request. Error:', error.message);
         userRole = 'Public';
       }
+    } else {
+      console.log('🌐 No authentication header found, treating as public request');
     }
     
     console.log('👤 User details:', {
@@ -193,15 +205,18 @@ exports.getAllEvents = async (req, res) => {
     if (userRole === 'Student') {
       query.isVisibleToStudents = true;
       query.status = { $ne: 'Disabled' };
-      console.log('🎓 Student query filters applied');
+      console.log('🎓 Student query filters applied:', JSON.stringify(query));
     } else if (userRole === 'Public') {
       // For public requests, show only visible events
       query.status = { $ne: 'Disabled' };
-      console.log('🌐 Public query filters applied');
+      console.log('🌐 Public query filters applied:', JSON.stringify(query));
     } else if (userRole === 'Admin' || userRole === 'Staff') {
       // For admin/staff requests, show ALL events including disabled ones
       query = {};
-      console.log('👨‍💼 Admin/Staff - showing ALL events including disabled');
+      console.log('👨‍💼 Admin/Staff - showing ALL events including disabled:', JSON.stringify(query));
+    } else {
+      console.log('❓ Unknown user role:', userRole, '- applying public filters');
+      query.status = { $ne: 'Disabled' };
     }
     
     console.log('🔍 Final query:', JSON.stringify(query, null, 2));
