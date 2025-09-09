@@ -139,9 +139,9 @@
 .collage-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   gap: 1rem;
-  height: 400px;
+  height: 500px;
 }
 
 .collage-item {
@@ -165,83 +165,62 @@
   grid-row: 1 / 3;
 }
 
-.collage-img {
+/* Saint-specific backgrounds */
+.mary-image {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.joseph-image {
+  background: linear-gradient(135deg, #4a64c1 0%, #3b82b4 100%);
+}
+
+.assumption-image {
+  background: linear-gradient(135deg, #dc2626 0%, #b15b1a 100%);
+}
+
+.tree-planting-image {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.image-content {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.collage-item:hover .collage-img {
-  transform: scale(1.1);
-}
-
-/* Image placeholders for missing images */
-.image-placeholder {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
-}
-
-.placeholder-content {
   text-align: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
+  transition: all 0.3s ease;
 }
 
-.placeholder-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.collage-item:hover .image-content {
+  transform: scale(1.05);
 }
 
-.placeholder-content h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
-  font-weight: 600;
+.saint-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
 }
 
-.placeholder-content p {
-  margin: 0;
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-/* Image overlays for main images */
-.image-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  color: white;
-  padding: 1.5rem 1rem 1rem;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-
-.collage-item:hover .image-overlay {
-  transform: translateY(0);
-}
-
-.image-overlay h3 {
-  font-size: 1.2rem;
+.image-content h3 {
+  font-size: 1.3rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
   color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.image-overlay p {
-  font-size: 0.85rem;
+.image-content p {
+  font-size: 0.9rem;
   margin: 0;
   opacity: 0.9;
   line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
 
 
 /* Contact Info */
@@ -302,8 +281,8 @@
   
   .collage-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: 2fr 1fr 1fr;
-    height: 500px;
+    grid-template-rows: 2fr 1fr 1fr 1fr;
+    height: 600px;
     gap: 0.75rem;
   }
   
@@ -334,8 +313,8 @@
   
   .collage-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: 2fr 1fr 1fr;
-    height: 400px;
+    grid-template-rows: 2fr 1fr 1fr 1fr;
+    height: 500px;
     gap: 0.5rem;
   }
   
@@ -344,28 +323,21 @@
     grid-row: 1;
   }
   
-  .image-overlay {
-    padding: 1rem 0.75rem 0.75rem;
+  .image-content {
+    padding: 1rem 0.75rem;
   }
   
-  .image-overlay h3 {
+  .saint-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .image-content h3 {
     font-size: 1rem;
   }
   
-  .image-overlay p {
+  .image-content p {
     font-size: 0.8rem;
-  }
-  
-  .placeholder-icon {
-    font-size: 1.5rem;
-  }
-  
-  .placeholder-content h4 {
-    font-size: 0.9rem;
-  }
-  
-  .placeholder-content p {
-    font-size: 0.7rem;
   }
 }
 
@@ -384,7 +356,7 @@
     transform: none;
   }
   
-  .collage-item:hover .collage-img {
+  .collage-item:hover .image-content {
     transform: none;
   }
   

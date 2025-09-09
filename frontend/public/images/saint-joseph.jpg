@@ -1,1 +1,18 @@
-data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMF8xKSIvPgo8Y2lyY2xlIGN4PSIxMDAiIGN5PSI3NSIgcj0iNDAiIGZpbGw9InVybCgjcGFpbnQxX2xpbmVhcl8wXzEpIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iODUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TdC4gSm9zZXBoPC90ZXh0Pgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzBfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMjAwIiB5Mj0iMTUwIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiM0YTY0YzEiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjM2I4MmI0Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQxX2xpbmVhcl8wXzEiIHgxPSI2MCIgeTE9IjM1IiB4Mj0iMTQwIiB5Mj0iMTE1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNmZmZmZmYiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZjBmMGYwIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { margin: 0; padding: 0; width: 200px; height: 150px; background: linear-gradient(135deg, #4a64c1 0%, #3b82b4 100%); display: flex; align-items: center; justify-content: center; color: white; font-family: Arial, sans-serif; }
+        .content { text-align: center; }
+        .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        h1 { margin: 0; font-size: 1.2rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="icon">👨‍👨‍👧</div>
+        <h1>St. Joseph</h1>
+    </div>
+</body>
+</html>

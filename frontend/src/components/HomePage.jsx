@@ -32,42 +32,38 @@ function HomePage() {
             </p>
           </div>
 
-          {/* Religious Images - Mary, Joseph, Assumption */}
+          {/* Religious Images - Mary, Joseph, Assumption, Tree Planting */}
           <div className="home-collage">
             <div className="collage-grid">
-              <div className="collage-item main-image">
-                <img 
-                  src="/images/mary-collage.jpg" 
-                  alt="Mother Mary" 
-                  className="collage-img"
-                />
-                <div className="image-overlay">
+              <div className="collage-item main-image mary-image">
+                <div className="image-content">
+                  <div className="saint-icon">🙏</div>
                   <h3>Blessed Mother Mary</h3>
                   <p>Our spiritual guide and protector</p>
                 </div>
               </div>
               
-              <div className="collage-item">
-                <img 
-                  src="/images/saint-joseph.jpg" 
-                  alt="Saint Joseph" 
-                  className="collage-img"
-                />
-                <div className="image-overlay">
+              <div className="collage-item joseph-image">
+                <div className="image-content">
+                  <div className="saint-icon">👨‍👨‍👧</div>
                   <h3>Saint Joseph</h3>
                   <p>Patron of the Universal Church</p>
                 </div>
               </div>
               
-              <div className="collage-item">
-                <img 
-                  src="/images/saint-therese.jpg" 
-                  alt="Assumption" 
-                  className="collage-img"
-                />
-                <div className="image-overlay">
+              <div className="collage-item assumption-image">
+                <div className="image-content">
+                  <div className="saint-icon">🌹</div>
                   <h3>Assumption</h3>
                   <p>Mary's Assumption into Heaven</p>
+                </div>
+              </div>
+              
+              <div className="collage-item tree-planting-image">
+                <div className="image-content">
+                  <div className="saint-icon">🌳</div>
+                  <h3>Tree Planting Activity</h3>
+                  <p>Nurturing Nature, Cultivating Futures</p>
                 </div>
               </div>
             </div>
