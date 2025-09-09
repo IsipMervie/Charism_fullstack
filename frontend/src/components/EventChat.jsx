@@ -20,19 +20,6 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const messageInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  // Validate eventId
-  if (!eventId) {
-    return (
-      <div className="event-chat-container">
-        <div className="error-message">
-          <h3>Error: No Event ID</h3>
-          <p>Unable to load chat. Please close and try again.</p>
-          <button onClick={onClose}>Close</button>
-        </div>
-      </div>
-    );
-  }
-
   // Scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -162,6 +149,19 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   };
 
   const emojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+
+  // Validate eventId after all hooks
+  if (!eventId) {
+    return (
+      <div className="event-chat-container">
+        <div className="error-message">
+          <h3>Error: No Event ID</h3>
+          <p>Unable to load chat. Please close and try again.</p>
+          <button onClick={onClose}>Close</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="event-chat-container">
