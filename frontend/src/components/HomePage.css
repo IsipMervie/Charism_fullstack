@@ -306,6 +306,21 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .collage-container {
+    height: 450px;
+    gap: 1.5rem;
+  }
+  
+  .main-image-container {
+    border-radius: 15px;
+  }
+  
+  .side-image-container {
+    border-radius: 12px;
+  }
+}
+
 @media (max-width: 768px) {
   .home-page {
     padding: 1rem;
@@ -338,19 +353,63 @@
     flex-direction: row;
     gap: 1rem;
   }
+  
+  .image-overlay h3 {
+    font-size: 1.3rem;
+  }
+  
+  .image-overlay p {
+    font-size: 0.9rem;
+  }
+  
+  .image-overlay-small h4 {
+    font-size: 1rem;
+  }
+  
+  .image-overlay-small p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .collage-container {
+    height: 550px;
+    gap: 0.75rem;
+  }
+  
+  .side-images {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .main-image-container:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  .side-image-container:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
 }
 
 @media (max-width: 480px) {
+  .home-page {
+    padding: 0.75rem;
+    margin-top: 60px;
+  }
+  
   .home-card {
     padding: 1.5rem 1rem;
+    border-radius: 12px;
   }
   
   .home-title {
     font-size: 1.75rem;
+    line-height: 1.2;
   }
   
   .home-subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
   }
   
   .icon-symbol {
@@ -363,36 +422,90 @@
     grid-template-columns: 1fr;
     grid-template-rows: 2fr 1fr 1fr;
     height: 500px;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
   
   .side-images {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
   
   .image-overlay {
-    padding: 1.5rem 1rem 1rem;
+    padding: 1.25rem 0.75rem 0.75rem;
   }
   
   .image-overlay h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   
   .image-overlay p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   .image-overlay-small {
-    padding: 1rem 0.75rem 0.75rem;
+    padding: 0.75rem 0.5rem 0.5rem;
   }
   
   .image-overlay-small h4 {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   
   .image-overlay-small p {
+    font-size: 0.75rem;
+  }
+  
+  .contact-item {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .home-card {
+    padding: 1rem 0.75rem;
+  }
+  
+  .home-title {
+    font-size: 1.5rem;
+  }
+  
+  .home-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .icon-symbol {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .collage-container {
+    height: 450px;
+    gap: 0.4rem;
+  }
+  
+  .image-overlay {
+    padding: 1rem 0.5rem 0.5rem;
+  }
+  
+  .image-overlay h3 {
+    font-size: 1rem;
+  }
+  
+  .image-overlay p {
     font-size: 0.8rem;
+  }
+  
+  .image-overlay-small {
+    padding: 0.5rem;
+  }
+  
+  .image-overlay-small h4 {
+    font-size: 0.85rem;
+  }
+  
+  .image-overlay-small p {
+    font-size: 0.7rem;
   }
 }
 

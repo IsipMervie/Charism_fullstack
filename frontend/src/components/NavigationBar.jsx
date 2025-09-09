@@ -151,7 +151,7 @@ function NavigationBar() {
                   className={location.pathname === '/contact' ? 'active' : ''}
                   onClick={handleNavLinkClick}
                 >
-                  Contact
+                  Contact Us
                 </Nav.Link>
                 <Nav.Link 
                   as={Link} 

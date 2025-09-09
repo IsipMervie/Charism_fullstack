@@ -81,7 +81,7 @@ function HomePage() {
 
           {/* Contact Info */}
           <div className="home-contact">
-            <div className="contact-item">
+            <div className="contact-item" onClick={() => navigate('/contact')}>
               <div className="contact-icon">📧</div>
               <span>Need help? Contact us</span>
             </div>
