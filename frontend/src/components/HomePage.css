@@ -141,6 +141,7 @@
 .collage-container {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
+  grid-template-rows: 1fr 1fr !important;
   gap: 2rem !important;
   height: 500px !important;
   position: relative;
@@ -159,6 +160,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  grid-row: 1 / 3;
+  grid-column: 1;
 }
 
 .main-image-container:hover {
@@ -169,7 +172,7 @@
 .main-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   transition: transform 0.4s ease;
 }
@@ -184,6 +187,8 @@
   flex-direction: column;
   gap: 1.5rem;
   height: 100%;
+  grid-row: 1 / 3;
+  grid-column: 2;
 }
 
 .side-image-container {
@@ -194,8 +199,6 @@
   transition: all 0.3s ease;
   cursor: pointer;
   flex: 1 !important;
-  min-height: 200px !important;
-  height: 50% !important;
   background: var(--bg-secondary);
   display: flex;
   align-items: center;
@@ -210,7 +213,7 @@
 .side-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   transition: transform 0.3s ease;
 }
