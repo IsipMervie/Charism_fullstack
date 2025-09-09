@@ -85,15 +85,6 @@ function HomePage() {
                   <h3>Blessed Virgin Mary</h3>
                   <p>Our Spiritual Guide and Protector</p>
                 </div>
-                {/* Button Row */}
-                <div className="image-button-row">
-                  <button className="image-btn primary" onClick={() => navigate('/about')}>
-                    Learn More
-                  </button>
-                  <button className="image-btn secondary" onClick={() => navigate('/events')}>
-                    View Events
-                  </button>
-                </div>
               </div>
               
               {/* Side Images */}

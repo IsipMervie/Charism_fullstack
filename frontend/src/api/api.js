@@ -1719,6 +1719,87 @@ export const getFeedbackStats = async () => {
   }
 };
 
+// Event Chat API functions
+export const sendEventChatMessage = async (eventId, message, replyTo = null) => {
+  try {
+    const response = await axiosInstance.post(`/event-chat/${eventId}/messages`, {
+      message,
+      replyTo
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending chat message:', error);
+    throw new Error('Failed to send message. Please try again.');
+  }
+};
+
+export const getEventChatMessages = async (eventId, page = 1, limit = 50, before = null) => {
+  try {
+    const params = new URLSearchParams({ page, limit });
+    if (before) params.append('before', before);
+    
+    const response = await axiosInstance.get(`/event-chat/${eventId}/messages?${params}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching chat messages:', error);
+    throw new Error('Failed to load messages. Please try again.');
+  }
+};
+
+export const editEventChatMessage = async (messageId, message) => {
+  try {
+    const response = await axiosInstance.put(`/event-chat/messages/${messageId}`, {
+      message
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error editing chat message:', error);
+    throw new Error('Failed to edit message. Please try again.');
+  }
+};
+
+export const deleteEventChatMessage = async (messageId) => {
+  try {
+    const response = await axiosInstance.delete(`/event-chat/messages/${messageId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting chat message:', error);
+    throw new Error('Failed to delete message. Please try again.');
+  }
+};
+
+export const addEventChatReaction = async (messageId, emoji) => {
+  try {
+    const response = await axiosInstance.post(`/event-chat/messages/${messageId}/reactions`, {
+      emoji
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding reaction:', error);
+    throw new Error('Failed to add reaction. Please try again.');
+  }
+};
+
+export const removeEventChatReaction = async (messageId) => {
+  try {
+    const response = await axiosInstance.delete(`/event-chat/messages/${messageId}/reactions`);
+    return response.data;
+  } catch (error) {
+    console.error('Error removing reaction:', error);
+    throw new Error('Failed to remove reaction. Please try again.');
+  }
+};
+
+export const getEventChatParticipants = async (eventId) => {
+  try {
+    const response = await axiosInstance.get(`/event-chat/${eventId}/participants`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching chat participants:', error);
+    throw new Error('Failed to load participants. Please try again.');
+  }
+};
+
 export const updateFeedback = async (feedbackId, updateData) => {
   try {
     const response = await axiosInstance.put(`/feedback/admin/${feedbackId}`, updateData);

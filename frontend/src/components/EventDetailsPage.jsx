@@ -5,8 +5,9 @@ import React, { useState, useEffect } from 'react';
 import { getEventDetails, getPublicEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt, FaComments } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
+import EventChat from './EventChat';
 
 import './EventDetailsPage.css';
 
@@ -16,6 +17,8 @@ function EventDetailsPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [isUserApprovedForEvent, setIsUserApprovedForEvent] = useState(false);
 
   const navigate = useNavigate();
   
@@ -135,6 +138,15 @@ function EventDetailsPage() {
           : await getPublicEventDetails(eventId);
         setEvent(eventData);
         setError('');
+        
+        // Check if user is approved for this event
+        if (isAuthenticated && eventData.attendance) {
+          const user = JSON.parse(localStorage.getItem('user') || '{}');
+          const userAttendance = eventData.attendance.find(att => 
+            (att.userId?._id || att.userId) === user.id
+          );
+          setIsUserApprovedForEvent(userAttendance?.registrationApproved || false);
+        }
       } catch (err) {
         console.error('Error fetching event:', err);
         if (err.response?.status === 404) {
@@ -241,6 +253,22 @@ function EventDetailsPage() {
             >
               <FaArrowLeft /> Back to Events
             </button>
+            
+            {isAuthenticated && isUserApprovedForEvent && (
+              <button 
+                onClick={() => setShowChat(!showChat)}
+                className={`chat-button ${showChat ? 'active' : ''}`}
+              >
+                <FaComments /> {showChat ? 'Close Chat' : 'Event Chat'}
+              </button>
+            )}
+            
+            {isAuthenticated && !isUserApprovedForEvent && (
+              <div className="chat-pending-notice">
+                <FaComments className="notice-icon" />
+                <span>Chat available after registration approval</span>
+              </div>
+            )}
             
             {!isAuthenticated && (
               <button 
@@ -356,6 +384,17 @@ function EventDetailsPage() {
             </div>
           )}
         </div>
+
+        {/* Event Chat */}
+        {showChat && isAuthenticated && (
+          <div className="event-chat-section">
+            <EventChat 
+              eventId={eventId} 
+              eventTitle={event.title}
+              onClose={() => setShowChat(false)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

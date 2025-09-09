@@ -623,6 +623,8 @@ app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
 app.use('/api/events', require('./routes/eventRoutes'));
 console.log(' Events routes loaded');
+app.use('/api/event-chat', require('./routes/eventChatRoutes'));
+console.log(' Event chat routes loaded');
 app.use('/api/users', require('./routes/userRoutes'));
 console.log(' Users routes loaded');
 app.use('/api/feedback', require('./routes/feedbackRoutes'));
