@@ -1427,23 +1427,6 @@
   box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
 
-.chat-pending-notice {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: 25px;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-style: italic;
-}
-
-.notice-icon {
-  color: var(--warning);
-  font-size: 0.9rem;
-}
 
 .event-chat-section {
   margin-top: 2rem;

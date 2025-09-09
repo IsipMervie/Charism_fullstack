@@ -263,12 +263,6 @@ function EventDetailsPage() {
               </button>
             )}
             
-            {isAuthenticated && !isUserApprovedForEvent && (
-              <div className="chat-pending-notice">
-                <FaComments className="notice-icon" />
-                <span>Chat available after registration approval</span>
-              </div>
-            )}
             
             {!isAuthenticated && (
               <button 

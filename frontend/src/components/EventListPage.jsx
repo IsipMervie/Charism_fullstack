@@ -5,10 +5,11 @@ import React, { useState, useEffect, useCallback, useRef, useMemo, memo } from '
 import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload, FaComments } from 'react-icons/fa';
 import { formatTimeRange12Hour, formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../utils/arrayUtils';
+import EventChat from './EventChat';
 import './EventListPage.css';
 
 function EventListPage() {
@@ -19,6 +20,8 @@ function EventListPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [joinedEvents, setJoinedEvents] = useState([]);
+  const [showChat, setShowChat] = useState(false);
+  const [selectedEventForChat, setSelectedEventForChat] = useState(null);
   
   // Use ref to prevent infinite loops
   const isLoadingRef = useRef(false);
@@ -27,6 +30,30 @@ function EventListPage() {
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Check if user can access chat for an event
+  const canAccessChat = (event) => {
+    // Admin and Staff can access chat for all events
+    if (role === 'Admin' || role === 'Staff') {
+      return true;
+    }
+    
+    // Students can only access chat if they are approved for the event
+    if (role === 'Student' && event.attendance) {
+      const userAttendance = event.attendance.find(att => 
+        (att.userId?._id || att.userId) === user.id
+      );
+      return userAttendance?.registrationApproved || false;
+    }
+    
+    return false;
+  };
+
+  // Open chat for specific event
+  const openEventChat = (event) => {
+    setSelectedEventForChat(event);
+    setShowChat(true);
+  };
   
   // PDF Filter options
   const [pdfFilters, setPdfFilters] = useState({
@@ -1531,6 +1558,16 @@ function EventListPage() {
                             <FaEye className="button-icon" /> View Participants
                           </button>
                         )}
+
+                        {/* Chat Button - Show for Admin/Staff (all events) or Students (approved events only) */}
+                        {canAccessChat(event) && (
+                          <button 
+                            className="event-chat-button"
+                            onClick={() => openEventChat(event)}
+                          >
+                            <FaComments className="button-icon" /> Event Chat
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1540,6 +1577,22 @@ function EventListPage() {
           )}
         </div>
       </div>
+
+      {/* Event Chat Modal */}
+      {showChat && selectedEventForChat && (
+        <div className="event-chat-modal">
+          <div className="event-chat-modal-content">
+            <EventChat 
+              eventId={selectedEventForChat._id} 
+              eventTitle={selectedEventForChat.title}
+              onClose={() => {
+                setShowChat(false);
+                setSelectedEventForChat(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Remove reflection modal - no longer needed */}
       {/* <ReflectionUploadModal
