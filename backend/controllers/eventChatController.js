@@ -3,6 +3,7 @@
 const EventChat = require('../models/EventChat');
 const Event = require('../models/Event');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // Send a message to event chat
 exports.sendMessage = async (req, res) => {
@@ -245,7 +246,7 @@ exports.getParticipants = async (req, res) => {
 
     // Get all users who have sent messages in this event chat
     const participants = await EventChat.aggregate([
-      { $match: { eventId: mongoose.Types.ObjectId(eventId), isDeleted: false } },
+      { $match: { eventId: new mongoose.Types.ObjectId(eventId), isDeleted: false } },
       { $group: { _id: '$userId' } },
       {
         $lookup: {
