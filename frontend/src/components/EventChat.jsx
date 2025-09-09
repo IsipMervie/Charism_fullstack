@@ -67,7 +67,17 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
       replyingTo: replyingTo?.id || null,
       sending,
       eventIdType: typeof eventId,
-      messageType: typeof newMessage.trim()
+      messageType: typeof newMessage.trim(),
+      eventIdLength: eventId?.length,
+      messageLength: newMessage.trim()?.length
+    });
+    
+    // Log the actual values
+    console.log('📤 Actual values:', {
+      eventId: `"${eventId}"`,
+      message: `"${newMessage.trim()}"`,
+      eventIdIsString: typeof eventId === 'string',
+      messageIsString: typeof newMessage.trim() === 'string'
     });
 
     try {

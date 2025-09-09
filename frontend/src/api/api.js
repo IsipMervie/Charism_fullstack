@@ -1745,6 +1745,12 @@ export const sendEventChatMessage = async (eventId, message, replyTo = null) => 
       data: error.response?.data,
       message: error.message
     });
+    
+    // Log the actual error response data
+    if (error.response?.data) {
+      console.error('Server error response:', JSON.stringify(error.response.data, null, 2));
+    }
+    
     throw new Error('Failed to send message. Please try again.');
   }
 };

@@ -21,7 +21,10 @@ exports.sendMessage = async (req, res) => {
       userRole: req.user.role,
       body: req.body,
       eventIdType: typeof eventId,
-      messageType: typeof message
+      messageType: typeof message,
+      eventIdLength: eventId?.length,
+      messageLength: message?.length,
+      eventIdValid: mongoose.Types.ObjectId.isValid(eventId)
     });
 
     // Validate required fields
