@@ -5,6 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
+// Import images
+import virginMaryImage from '../assets/527595417_1167021392113223_2872992497207843477_n.jpg';
+import communityServiceImage from '../assets/542758163_1192740069541355_8390690964585757521_n.jpg';
+import treePlantingImage from '../assets/Screenshot 2025-07-09 234757.png';
+
 function HomePage() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
@@ -38,7 +43,7 @@ function HomePage() {
               {/* Main Image - Virgin Mary */}
               <div className="main-image-container">
                 <img 
-                  src={require('../assets/527595417_1167021392113223_2872992497207843477_n.jpg')} 
+                  src={virginMaryImage} 
                   alt="Virgin Mary Statue" 
                   className="main-image"
                 />
@@ -52,7 +57,7 @@ function HomePage() {
               <div className="side-images">
                 <div className="side-image-container">
                   <img 
-                    src={require('../assets/542758163_1192740069541355_8390690964585757521_n.jpg')} 
+                    src={communityServiceImage} 
                     alt="Community Service" 
                     className="side-image"
                   />
@@ -64,7 +69,7 @@ function HomePage() {
                 
                 <div className="side-image-container">
                   <img 
-                    src={require('../assets/Screenshot 2025-07-09 234757.png')} 
+                    src={treePlantingImage} 
                     alt="Tree Planting Activity" 
                     className="side-image"
                   />
