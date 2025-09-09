@@ -61,6 +61,15 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
     e.preventDefault();
     if (!newMessage.trim() || sending) return;
 
+    console.log('📤 EventChat sendMessage:', {
+      eventId,
+      message: newMessage.trim(),
+      replyingTo: replyingTo?.id || null,
+      sending,
+      eventIdType: typeof eventId,
+      messageType: typeof newMessage.trim()
+    });
+
     try {
       setSending(true);
       const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);

@@ -11,8 +11,27 @@ exports.sendMessage = async (req, res) => {
     const { eventId, message, messageType = 'text', replyTo, attachment } = req.body;
     const userId = req.user.id;
 
+    console.log('🔍 sendMessage debug:', {
+      eventId,
+      message,
+      messageType,
+      replyTo,
+      attachment,
+      userId,
+      userRole: req.user.role,
+      body: req.body,
+      eventIdType: typeof eventId,
+      messageType: typeof message
+    });
+
     // Validate required fields
     if (!eventId || !message) {
+      console.log('❌ Validation failed - missing fields:', { 
+        eventId: !!eventId, 
+        message: !!message,
+        eventIdValue: eventId,
+        messageValue: message
+      });
       return res.status(400).json({ message: 'Event ID and message are required.' });
     }
 
