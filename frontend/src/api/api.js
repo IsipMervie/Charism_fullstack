@@ -1733,6 +1733,7 @@ export const sendEventChatMessage = async (eventId, message, replyTo = null) => 
   }
 };
 
+
 export const getEventChatMessages = async (eventId, page = 1, limit = 50, before = null) => {
   try {
     const params = new URLSearchParams({ page, limit });

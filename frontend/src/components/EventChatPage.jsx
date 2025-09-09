@@ -13,6 +13,8 @@ const EventChatPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showChat, setShowChat] = useState(false);
+  const [participants, setParticipants] = useState([]);
+  const [showParticipants, setShowParticipants] = useState(false);
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = localStorage.getItem('role');
@@ -38,6 +40,17 @@ const EventChatPage = () => {
     return false;
   };
 
+  // Load participants
+  const loadParticipants = async () => {
+    try {
+      const { getEventChatParticipants } = await import('../api/api');
+      const participantsData = await getEventChatParticipants(eventId);
+      setParticipants(participantsData);
+    } catch (err) {
+      console.error('Error loading participants:', err);
+    }
+  };
+
   // Load event details
   useEffect(() => {
     const loadEvent = async () => {
@@ -59,6 +72,9 @@ const EventChatPage = () => {
         
         // Auto-open chat if user has access
         setShowChat(true);
+        
+        // Load participants
+        await loadParticipants();
         
       } catch (err) {
         console.error('Error loading event:', err);
@@ -148,6 +164,12 @@ const EventChatPage = () => {
         
         <div className="event-actions">
           <button 
+            className="participants-toggle-btn"
+            onClick={() => setShowParticipants(!showParticipants)}
+          >
+            <FaUsers /> Participants ({participants.length})
+          </button>
+          <button 
             className="chat-toggle-btn"
             onClick={() => setShowChat(!showChat)}
           >
@@ -161,6 +183,54 @@ const EventChatPage = () => {
         <h3>Event Description</h3>
         <p>{event.description}</p>
       </div>
+
+      {/* Participants Section */}
+      {showParticipants && (
+        <div className="participants-section">
+          <div className="participants-header">
+            <h3><FaUsers /> Chat Participants</h3>
+            <p>People who can participate in this event's chat</p>
+          </div>
+          
+          <div className="participants-list">
+            {participants.length === 0 ? (
+              <div className="no-participants">
+                <p>No participants yet. Participants will appear here once they join the chat.</p>
+              </div>
+            ) : (
+              participants.map((participant) => (
+                <div key={participant._id} className="participant-card">
+                  <div className="participant-avatar">
+                    {participant.profilePicture ? (
+                      <img 
+                        src={participant.profilePicture} 
+                        alt={participant.name}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className="participant-avatar-placeholder" style={{ display: participant.profilePicture ? 'none' : 'flex' }}>
+                      {participant.name?.charAt(0)?.toUpperCase() || '?'}
+                    </div>
+                  </div>
+                  
+                  <div className="participant-info">
+                    <h4>{participant.name}</h4>
+                    <p className="participant-role">{participant.role}</p>
+                    <p className="participant-email">{participant.email}</p>
+                  </div>
+                  
+                  <div className="participant-status">
+                    <span className="status-badge online">Online</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Chat Section */}
       {showChat && (

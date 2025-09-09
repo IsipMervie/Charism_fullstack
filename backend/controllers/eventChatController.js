@@ -8,7 +8,8 @@ const mongoose = require('mongoose');
 // Send a message to event chat
 exports.sendMessage = async (req, res) => {
   try {
-    const { eventId, message, messageType = 'text', replyTo, attachment } = req.body;
+    const { eventId } = req.params;
+    const { message, messageType = 'text', replyTo, attachment } = req.body;
     const userId = req.user.id;
 
     // Validate required fields
