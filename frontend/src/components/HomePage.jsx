@@ -32,28 +32,43 @@ function HomePage() {
             </p>
           </div>
 
-          {/* Images Section */}
-          <div className="home-images">
-            <div className="image-container mary-collage">
-              <img 
-                src="/images/mary-collage.jpg" 
-                alt="Mother Mary Collage" 
-                className="home-image"
-              />
-              <div className="image-overlay">
-                <h3>Blessed Mother Mary</h3>
-                <p>Our spiritual guide and protector</p>
+          {/* Religious Images - Mary, Joseph, Assumption */}
+          <div className="home-collage">
+            <div className="collage-grid">
+              <div className="collage-item main-image">
+                <img 
+                  src="/images/mary-collage.jpg" 
+                  alt="Mother Mary" 
+                  className="collage-img"
+                />
+                <div className="image-overlay">
+                  <h3>Blessed Mother Mary</h3>
+                  <p>Our spiritual guide and protector</p>
+                </div>
               </div>
-            </div>
-            <div className="image-container tree-planting">
-              <img 
-                src="/images/tree-planting-activity.jpg" 
-                alt="Tree Planting Activity" 
-                className="home-image"
-              />
-              <div className="image-overlay">
-                <h3>Tree Planting Activity</h3>
-                <p>Nurturing Nature, Cultivating Futures</p>
+              
+              <div className="collage-item">
+                <img 
+                  src="/images/saint-joseph.jpg" 
+                  alt="Saint Joseph" 
+                  className="collage-img"
+                />
+                <div className="image-overlay">
+                  <h3>Saint Joseph</h3>
+                  <p>Patron of the Universal Church</p>
+                </div>
+              </div>
+              
+              <div className="collage-item">
+                <img 
+                  src="/images/saint-therese.jpg" 
+                  alt="Assumption" 
+                  className="collage-img"
+                />
+                <div className="image-overlay">
+                  <h3>Assumption</h3>
+                  <p>Mary's Assumption into Heaven</p>
+                </div>
               </div>
             </div>
           </div>

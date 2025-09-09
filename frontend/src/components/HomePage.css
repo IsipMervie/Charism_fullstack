@@ -131,39 +131,88 @@
   margin-right: auto;
 }
 
-/* Images Section */
-.home-images {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+/* Religious Images Collage */
+.home-collage {
   margin-bottom: 3rem;
 }
 
-.image-container {
+.collage-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+  height: 400px;
+}
+
+.collage-item {
   position: relative;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  height: 300px;
+  cursor: pointer;
 }
 
-.image-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+.collage-item:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
-.home-image {
+/* Main image (Mother Mary) - larger */
+.collage-item.main-image {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.collage-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.image-container:hover .home-image {
-  transform: scale(1.05);
+.collage-item:hover .collage-img {
+  transform: scale(1.1);
 }
 
+/* Image placeholders for missing images */
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.placeholder-content {
+  text-align: center;
+  padding: 1rem;
+}
+
+.placeholder-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.placeholder-content h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.placeholder-content p {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Image overlays for main images */
 .image-overlay {
   position: absolute;
   bottom: 0;
@@ -171,27 +220,27 @@
   right: 0;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
   color: white;
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 1.5rem 1rem 1rem;
   transform: translateY(100%);
   transition: transform 0.3s ease;
 }
 
-.image-container:hover .image-overlay {
+.collage-item:hover .image-overlay {
   transform: translateY(0);
 }
 
 .image-overlay h3 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
   color: white;
 }
 
 .image-overlay p {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   margin: 0;
   opacity: 0.9;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 
@@ -251,13 +300,16 @@
     font-size: 2rem;
   }
   
-  .home-images {
+  .collage-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-rows: 2fr 1fr 1fr;
+    height: 500px;
+    gap: 0.75rem;
   }
   
-  .image-container {
-    height: 250px;
+  .collage-item.main-image {
+    grid-column: 1;
+    grid-row: 1;
   }
 }
 
@@ -280,20 +332,40 @@
     font-size: 1.75rem;
   }
   
-  .image-container {
-    height: 200px;
+  .collage-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 1fr 1fr;
+    height: 400px;
+    gap: 0.5rem;
+  }
+  
+  .collage-item.main-image {
+    grid-column: 1;
+    grid-row: 1;
   }
   
   .image-overlay {
-    padding: 1.5rem 1rem 1rem;
+    padding: 1rem 0.75rem 0.75rem;
   }
   
   .image-overlay h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   
   .image-overlay p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+  }
+  
+  .placeholder-icon {
+    font-size: 1.5rem;
+  }
+  
+  .placeholder-content h4 {
+    font-size: 0.9rem;
+  }
+  
+  .placeholder-content p {
+    font-size: 0.7rem;
   }
 }
 
@@ -308,11 +380,11 @@
     transform: none;
   }
   
-  .image-container:hover {
+  .collage-item:hover {
     transform: none;
   }
   
-  .image-container:hover .home-image {
+  .collage-item:hover .collage-img {
     transform: none;
   }
   
