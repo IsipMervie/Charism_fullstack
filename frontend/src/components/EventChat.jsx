@@ -1,7 +1,7 @@
 // frontend/src/components/EventChat.jsx
 // Event Chat Component for real-time messaging
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, FaHeart, FaLaugh, FaAngry } from 'react-icons/fa';
 import { getEventChatMessages, sendEventChatMessage, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import './EventChat.css';
@@ -30,7 +30,7 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   }, [messages]);
 
   // Load messages
-  const loadMessages = async () => {
+  const loadMessages = useCallback(async () => {
     try {
       setLoading(true);
       console.log('Loading messages for event:', eventId);
@@ -44,17 +44,17 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [eventId]);
 
   // Load participants
-  const loadParticipants = async () => {
+  const loadParticipants = useCallback(async () => {
     try {
       const data = await getEventChatParticipants(eventId);
       setParticipants(data.participants || []);
     } catch (error) {
       console.error('Error loading participants:', error);
     }
-  };
+  }, [eventId]);
 
   // Send message
   const sendMessage = async (e) => {
@@ -121,11 +121,15 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
       loadMessages();
       loadParticipants();
       
-      // Set up polling for new messages
-      const interval = setInterval(loadMessages, 3000);
+      // Set up polling for new messages (less frequent)
+      const interval = setInterval(() => {
+        if (!loading) { // Only poll if not currently loading
+          loadMessages();
+        }
+      }, 10000); // Poll every 10 seconds instead of 3
       return () => clearInterval(interval);
     }
-  }, [eventId]);
+  }, [eventId, loadMessages, loadParticipants, loading]);
 
   // Focus input when replying
   useEffect(() => {
