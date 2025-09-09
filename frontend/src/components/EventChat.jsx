@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, FaHeart, FaLaugh, FaAngry } from 'react-icons/fa';
+import { getEventChatMessages, sendEventChatMessage, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage } from '../api/api';
 import './EventChat.css';
 
 const EventChat = ({ eventId, eventTitle, onClose }) => {
@@ -32,17 +33,8 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const loadMessages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/event-chat/${eventId}/messages`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data.messages || []);
-      }
+      const data = await getEventChatMessages(eventId);
+      setMessages(data.messages || []);
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
@@ -53,17 +45,8 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   // Load participants
   const loadParticipants = async () => {
     try {
-      const response = await fetch(`/api/event-chat/${eventId}/participants`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setParticipants(data.participants || []);
-      }
+      const data = await getEventChatParticipants(eventId);
+      setParticipants(data.participants || []);
     } catch (error) {
       console.error('Error loading participants:', error);
     }
@@ -76,31 +59,14 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
 
     try {
       setSending(true);
-      const response = await fetch(`/api/event-chat/${eventId}/messages`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: newMessage.trim(),
-          replyTo: replyingTo?.id || null
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(prev => [...prev, data.chatMessage]);
-        setNewMessage('');
-        setReplyingTo(null);
-        loadParticipants(); // Refresh participants
-      } else {
-        const error = await response.json();
-        alert(error.message || 'Failed to send message');
-      }
+      const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);
+      setMessages(prev => [...prev, data.chatMessage]);
+      setNewMessage('');
+      setReplyingTo(null);
+      loadParticipants(); // Refresh participants
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Failed to send message');
+      alert(error.message || 'Failed to send message');
     } finally {
       setSending(false);
     }
@@ -109,18 +75,8 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   // Add reaction
   const addReaction = async (messageId, emoji) => {
     try {
-      const response = await fetch(`/api/event-chat/messages/${messageId}/reactions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ emoji })
-      });
-
-      if (response.ok) {
-        loadMessages(); // Refresh messages to show reactions
-      }
+      await addEventChatReaction(messageId, emoji);
+      loadMessages(); // Refresh messages to show reactions
     } catch (error) {
       console.error('Error adding reaction:', error);
     }
@@ -131,16 +87,8 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
 
     try {
-      const response = await fetch(`/api/event-chat/messages/${messageId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.ok) {
-        setMessages(prev => prev.filter(msg => msg._id !== messageId));
-      }
+      await deleteEventChatMessage(messageId);
+      setMessages(prev => prev.filter(msg => msg._id !== messageId));
     } catch (error) {
       console.error('Error deleting message:', error);
     }

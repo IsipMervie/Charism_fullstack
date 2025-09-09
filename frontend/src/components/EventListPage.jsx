@@ -43,7 +43,14 @@ function EventListPage() {
       const userAttendance = event.attendance.find(att => 
         (att.userId?._id || att.userId) === user.id
       );
-      return userAttendance?.registrationApproved || false;
+      const canAccess = userAttendance?.registrationApproved || false;
+      console.log('Chat access check:', { 
+        eventTitle: event.title, 
+        userId: user.id, 
+        userAttendance, 
+        canAccess 
+      });
+      return canAccess;
     }
     
     return false;
