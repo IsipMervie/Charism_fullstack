@@ -27,28 +27,26 @@ exports.sendMessage = async (req, res) => {
       eventIdValid: mongoose.Types.ObjectId.isValid(eventId)
     });
 
-    // Validate required fields
-    if (!eventId || !message) {
-      console.log('❌ Validation failed - missing fields:', { 
-        eventId: !!eventId, 
-        message: !!message,
-        eventIdValue: eventId,
-        messageValue: message,
-        eventIdLength: eventId?.length,
-        messageLength: message?.length
-      });
-      return res.status(400).json({ message: 'Event ID and message are required.' });
+    // Validate required fields with detailed logging
+    console.log('🔍 Validation check:', {
+      eventId: eventId,
+      message: message,
+      eventIdExists: !!eventId,
+      messageExists: !!message,
+      eventIdType: typeof eventId,
+      messageType: typeof message,
+      eventIdLength: eventId?.length,
+      messageLength: message?.length
+    });
+
+    if (!eventId) {
+      console.log('❌ Missing eventId');
+      return res.status(400).json({ message: 'Event ID is required.' });
     }
 
-    // Additional validation for message content
-    if (typeof message !== 'string' || message.trim().length === 0) {
-      console.log('❌ Validation failed - invalid message:', {
-        messageType: typeof message,
-        messageValue: message,
-        messageLength: message?.length,
-        messageTrimmed: message?.trim()?.length
-      });
-      return res.status(400).json({ message: 'Message must be a non-empty string.' });
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      console.log('❌ Missing or invalid message:', { message, type: typeof message });
+      return res.status(400).json({ message: 'Message is required and must be a non-empty string.' });
     }
 
     // Validate eventId format

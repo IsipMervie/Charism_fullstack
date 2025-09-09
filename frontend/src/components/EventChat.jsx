@@ -68,30 +68,35 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   // Send message
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || sending) return;
-
-    console.log('📤 EventChat sendMessage:', {
-      eventId,
-      message: newMessage.trim(),
-      replyingTo: replyingTo?.id || null,
-      sending,
-      eventIdType: typeof eventId,
-      messageType: typeof newMessage.trim(),
-      eventIdLength: eventId?.length,
-      messageLength: newMessage.trim()?.length
-    });
     
-    // Log the actual values
-    console.log('📤 Actual values:', {
-      eventId: `"${eventId}"`,
-      message: `"${newMessage.trim()}"`,
-      eventIdIsString: typeof eventId === 'string',
-      messageIsString: typeof newMessage.trim() === 'string'
+    // Validate inputs before sending
+    if (!eventId) {
+      console.error('❌ No eventId provided');
+      alert('Error: No event ID. Please refresh and try again.');
+      return;
+    }
+    
+    if (!newMessage || !newMessage.trim()) {
+      console.error('❌ No message provided');
+      alert('Please enter a message.');
+      return;
+    }
+    
+    if (sending) return;
+
+    const messageText = newMessage.trim();
+    console.log('📤 Sending message with validated data:', {
+      eventId,
+      message: messageText,
+      eventIdType: typeof eventId,
+      messageType: typeof messageText,
+      eventIdLength: eventId?.length,
+      messageLength: messageText?.length
     });
 
     try {
       setSending(true);
-      const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);
+      const data = await sendEventChatMessage(eventId, messageText, replyingTo?.id || null);
       setMessages(prev => [...prev, data.chatMessage]);
       setNewMessage('');
       setReplyingTo(null);
@@ -313,7 +318,10 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
             ref={messageInputRef}
             type="text"
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={(e) => {
+              console.log('📝 Message input changed:', e.target.value);
+              setNewMessage(e.target.value);
+            }}
             placeholder="Type your message..."
             className="message-input"
             disabled={sending}
