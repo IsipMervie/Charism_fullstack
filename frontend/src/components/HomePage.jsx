@@ -32,38 +32,46 @@ function HomePage() {
             </p>
           </div>
 
-          {/* Religious Images - Mary, Joseph, Assumption, Tree Planting */}
+          {/* Beautiful Image Collage */}
           <div className="home-collage">
-            <div className="collage-grid">
-              <div className="collage-item main-image mary-image">
-                <div className="image-content">
-                  <div className="saint-icon">🙏</div>
-                  <h3>Blessed Mother Mary</h3>
-                  <p>Our spiritual guide and protector</p>
+            <div className="collage-container">
+              {/* Main Image - Virgin Mary */}
+              <div className="main-image-container">
+                <img 
+                  src="/src/components/assets/527595417_1167021392113223_2872992497207843477_n.jpg" 
+                  alt="Virgin Mary Statue" 
+                  className="main-image"
+                />
+                <div className="image-overlay">
+                  <h3>Blessed Virgin Mary</h3>
+                  <p>Our Spiritual Guide and Protector</p>
                 </div>
               </div>
               
-              <div className="collage-item joseph-image">
-                <div className="image-content">
-                  <div className="saint-icon">👨‍👨‍👧</div>
-                  <h3>Saint Joseph</h3>
-                  <p>Patron of the Universal Church</p>
+              {/* Side Images */}
+              <div className="side-images">
+                <div className="side-image-container">
+                  <img 
+                    src="/src/components/assets/542758163_1192740069541355_8390690964585757521_n.jpg" 
+                    alt="Community Service" 
+                    className="side-image"
+                  />
+                  <div className="image-overlay-small">
+                    <h4>Community Service</h4>
+                    <p>University of the Assumption</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="collage-item assumption-image">
-                <div className="image-content">
-                  <div className="saint-icon">🌹</div>
-                  <h3>Assumption</h3>
-                  <p>Mary's Assumption into Heaven</p>
-                </div>
-              </div>
-              
-              <div className="collage-item tree-planting-image">
-                <div className="image-content">
-                  <div className="saint-icon">🌳</div>
-                  <h3>Tree Planting Activity</h3>
-                  <p>Nurturing Nature, Cultivating Futures</p>
+                
+                <div className="side-image-container">
+                  <img 
+                    src="/src/components/assets/Screenshot 2025-07-09 234757.png" 
+                    alt="Tree Planting Activity" 
+                    className="side-image"
+                  />
+                  <div className="image-overlay-small">
+                    <h4>Tree Planting</h4>
+                    <p>Nurturing Nature, Cultivating Futures</p>
+                  </div>
                 </div>
               </div>
             </div>
