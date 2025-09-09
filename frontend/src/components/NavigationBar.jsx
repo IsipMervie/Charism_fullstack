@@ -185,6 +185,14 @@ function NavigationBar() {
                 </Nav.Link>
                 <Nav.Link 
                   as={Link} 
+                  to="/event-chat" 
+                  className={location.pathname.startsWith('/event-chat') ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
+                  Event Chats
+                </Nav.Link>
+                <Nav.Link 
+                  as={Link} 
                   to="/my-participation" 
                   className={location.pathname === '/my-participation' ? 'active' : ''}
                   onClick={handleNavLinkClick}
@@ -212,6 +220,14 @@ function NavigationBar() {
                   onClick={handleNavLinkClick}
                 >
                   Events
+                </Nav.Link>
+                <Nav.Link 
+                  as={Link} 
+                  to="/event-chat" 
+                  className={location.pathname.startsWith('/event-chat') ? 'active' : ''}
+                  onClick={handleNavLinkClick}
+                >
+                  Event Chats
                 </Nav.Link>
                 <Nav.Link 
                   as={Link} 
@@ -262,6 +278,14 @@ function NavigationBar() {
                   onClick={handleDropdownItemClick}
                 >
                   Events
+                </NavDropdown.Item>
+                <NavDropdown.Item 
+                  as={Link} 
+                  to="/event-chat" 
+                  active={location.pathname.startsWith('/event-chat')}
+                  onClick={handleDropdownItemClick}
+                >
+                  Event Chats
                 </NavDropdown.Item>
                 <NavDropdown.Item 
                   as={Link} 

@@ -48,6 +48,8 @@ const StaffApprovalPage = React.lazy(() => import('./components/StaffApprovalPag
 const StudentsByYearPage = React.lazy(() => import('./components/StudentsByYearPage'));
 const Students40HoursPage = React.lazy(() => import('./components/Students40HoursPage'));
 const SimpleEventList = React.lazy(() => import('./components/SimpleEventList'));
+const EventChatListPage = React.lazy(() => import('./components/EventChatListPage'));
+const EventChatPage = React.lazy(() => import('./components/EventChatPage'));
 const ProfilePage = React.lazy(() => import('./components/ProfilePage'));
 const StudentDocumentationPage = React.lazy(() => import('./components/StudentDocumentationPage'));
 const AdminViewStudentDocumentation = React.lazy(() => import('./components/AdminViewStudentDocumentation'));
@@ -108,6 +110,10 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/events" element={<EventListPage />} />
+          
+          {/* Event Chat routes */}
+          <Route path="/event-chat" element={<EventChatListPage />} />
+          <Route path="/event-chat/:eventId" element={<EventChatPage />} />
           
           {/* Specific event routes must come BEFORE dynamic routes */}
           <Route path="/events/register/:token" element={<PublicEventRegistrationPage />} /> {/* Public Registration */}
