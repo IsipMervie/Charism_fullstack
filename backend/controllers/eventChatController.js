@@ -30,9 +30,22 @@ exports.sendMessage = async (req, res) => {
         eventId: !!eventId, 
         message: !!message,
         eventIdValue: eventId,
-        messageValue: message
+        messageValue: message,
+        eventIdLength: eventId?.length,
+        messageLength: message?.length
       });
       return res.status(400).json({ message: 'Event ID and message are required.' });
+    }
+
+    // Additional validation for message content
+    if (typeof message !== 'string' || message.trim().length === 0) {
+      console.log('❌ Validation failed - invalid message:', {
+        messageType: typeof message,
+        messageValue: message,
+        messageLength: message?.length,
+        messageTrimmed: message?.trim()?.length
+      });
+      return res.status(400).json({ message: 'Message must be a non-empty string.' });
     }
 
     // Validate eventId format
