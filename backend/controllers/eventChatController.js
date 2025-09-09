@@ -11,41 +11,12 @@ exports.sendMessage = async (req, res) => {
     const { eventId, message, messageType = 'text', replyTo, attachment } = req.body;
     const userId = req.user.id;
 
-    console.log('🔍 sendMessage debug:', {
-      eventId,
-      message,
-      messageType,
-      replyTo,
-      attachment,
-      userId,
-      userRole: req.user.role,
-      body: req.body,
-      eventIdType: typeof eventId,
-      messageType: typeof message,
-      eventIdLength: eventId?.length,
-      messageLength: message?.length,
-      eventIdValid: mongoose.Types.ObjectId.isValid(eventId)
-    });
-
-    // Validate required fields with detailed logging
-    console.log('🔍 Validation check:', {
-      eventId: eventId,
-      message: message,
-      eventIdExists: !!eventId,
-      messageExists: !!message,
-      eventIdType: typeof eventId,
-      messageType: typeof message,
-      eventIdLength: eventId?.length,
-      messageLength: message?.length
-    });
-
+    // Validate required fields
     if (!eventId) {
-      console.log('❌ Missing eventId');
       return res.status(400).json({ message: 'Event ID is required.' });
     }
 
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
-      console.log('❌ Missing or invalid message:', { message, type: typeof message });
       return res.status(400).json({ message: 'Message is required and must be a non-empty string.' });
     }
 

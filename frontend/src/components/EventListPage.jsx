@@ -55,12 +55,6 @@ function EventListPage() {
 
   // Open chat for specific event
   const openEventChat = (event) => {
-    console.log('🔍 Opening chat for event:', {
-      event,
-      eventId: event._id,
-      eventTitle: event.title,
-      eventIdType: typeof event._id
-    });
     setSelectedEventForChat(event);
     setShowChat(true);
   };

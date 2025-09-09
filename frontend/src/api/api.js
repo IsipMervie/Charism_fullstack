@@ -1722,16 +1722,6 @@ export const getFeedbackStats = async () => {
 // Event Chat API functions
 export const sendEventChatMessage = async (eventId, message, replyTo = null) => {
   try {
-    console.log('📤 Frontend sending chat message:', {
-      eventId,
-      message,
-      replyTo,
-      eventIdType: typeof eventId,
-      messageType: typeof message,
-      url: `/event-chat/${eventId}/messages`,
-      payload: { message, replyTo }
-    });
-    
     const response = await axiosInstance.post(`/event-chat/${eventId}/messages`, {
       message,
       replyTo
@@ -1739,18 +1729,6 @@ export const sendEventChatMessage = async (eventId, message, replyTo = null) => 
     return response.data;
   } catch (error) {
     console.error('Error sending chat message:', error);
-    console.error('Error details:', {
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      message: error.message
-    });
-    
-    // Log the actual error response data
-    if (error.response?.data) {
-      console.error('Server error response:', JSON.stringify(error.response.data, null, 2));
-    }
-    
     throw new Error('Failed to send message. Please try again.');
   }
 };

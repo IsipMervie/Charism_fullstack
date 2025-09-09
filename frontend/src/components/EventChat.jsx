@@ -20,14 +20,18 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const messageInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  // Debug props
-  console.log('🔍 EventChat props:', {
-    eventId,
-    eventTitle,
-    eventIdType: typeof eventId,
-    eventIdLength: eventId?.length,
-    eventIdValid: eventId && eventId.length === 24
-  });
+  // Validate eventId
+  if (!eventId) {
+    return (
+      <div className="event-chat-container">
+        <div className="error-message">
+          <h3>Error: No Event ID</h3>
+          <p>Unable to load chat. Please close and try again.</p>
+          <button onClick={onClose}>Close</button>
+        </div>
+      </div>
+    );
+  }
 
   // Scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -69,34 +73,11 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const sendMessage = async (e) => {
     e.preventDefault();
     
-    // Validate inputs before sending
-    if (!eventId) {
-      console.error('❌ No eventId provided');
-      alert('Error: No event ID. Please refresh and try again.');
-      return;
-    }
-    
-    if (!newMessage || !newMessage.trim()) {
-      console.error('❌ No message provided');
-      alert('Please enter a message.');
-      return;
-    }
-    
-    if (sending) return;
-
-    const messageText = newMessage.trim();
-    console.log('📤 Sending message with validated data:', {
-      eventId,
-      message: messageText,
-      eventIdType: typeof eventId,
-      messageType: typeof messageText,
-      eventIdLength: eventId?.length,
-      messageLength: messageText?.length
-    });
+    if (!newMessage || !newMessage.trim() || sending) return;
 
     try {
       setSending(true);
-      const data = await sendEventChatMessage(eventId, messageText, replyingTo?.id || null);
+      const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);
       setMessages(prev => [...prev, data.chatMessage]);
       setNewMessage('');
       setReplyingTo(null);
@@ -318,10 +299,7 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
             ref={messageInputRef}
             type="text"
             value={newMessage}
-            onChange={(e) => {
-              console.log('📝 Message input changed:', e.target.value);
-              setNewMessage(e.target.value);
-            }}
+            onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..."
             className="message-input"
             disabled={sending}
