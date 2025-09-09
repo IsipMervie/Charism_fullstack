@@ -32,51 +32,30 @@ function HomePage() {
             </p>
           </div>
 
-          {/* Features */}
-          <div className="home-features">
-            <div className="feature-item">
-              <div className="feature-icon">📅</div>
-              <div className="feature-text">
-                <h3>Event Management</h3>
-                <p>Create and manage community events with ease</p>
+          {/* Images Section */}
+          <div className="home-images">
+            <div className="image-container mary-collage">
+              <img 
+                src="/images/mary-collage.jpg" 
+                alt="Mother Mary Collage" 
+                className="home-image"
+              />
+              <div className="image-overlay">
+                <h3>Blessed Mother Mary</h3>
+                <p>Our spiritual guide and protector</p>
               </div>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">👥</div>
-              <div className="feature-text">
-                <h3>Participation Tracking</h3>
-                <p>Track attendance and engagement metrics</p>
+            <div className="image-container tree-planting">
+              <img 
+                src="/images/tree-planting-activity.jpg" 
+                alt="Tree Planting Activity" 
+                className="home-image"
+              />
+              <div className="image-overlay">
+                <h3>Tree Planting Activity</h3>
+                <p>Nurturing Nature, Cultivating Futures</p>
               </div>
             </div>
-            <div className="feature-item">
-              <div className="feature-icon">🔗</div>
-              <div className="feature-text">
-                <h3>Community Connection</h3>
-                <p>Connect students, staff, and administrators</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="home-actions">
-            <button 
-              className="home-button primary-button" 
-              onClick={() => navigate('/login')}
-            >
-              <span className="button-content">
-                <span className="button-icon">🔐</span>
-                Login
-              </span>
-            </button>
-            <button 
-              className="home-button secondary-button" 
-              onClick={() => navigate('/register')}
-            >
-              <span className="button-content">
-                <span className="button-icon">✨</span>
-                Register
-              </span>
-            </button>
           </div>
 
           {/* Contact Info */}
