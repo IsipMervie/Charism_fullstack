@@ -395,3 +395,62 @@
     font-size: 0.7rem;
   }
 }
+
+/* Edit Message Form */
+.edit-message-form {
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-primary);
+}
+
+.edit-message-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.edit-message-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.edit-message-input:focus {
+  border-color: var(--primary-color);
+}
+
+.save-edit-btn,
+.cancel-edit-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-edit-btn {
+  background: var(--primary-color);
+  color: white;
+}
+
+.save-edit-btn:hover {
+  background: var(--primary-hover);
+}
+
+.cancel-edit-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+.cancel-edit-btn:hover {
+  background: var(--bg-quaternary);
+}

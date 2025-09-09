@@ -16,6 +16,11 @@ exports.sendMessage = async (req, res) => {
       return res.status(400).json({ message: 'Event ID and message are required.' });
     }
 
+    // Validate eventId format
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: 'Invalid event ID format.' });
+    }
+
     // Check if event exists and user is registered
     const event = await Event.findById(eventId);
     if (!event) {
@@ -75,6 +80,11 @@ exports.getMessages = async (req, res) => {
     const { eventId } = req.params;
     const { page = 1, limit = 50, before } = req.query;
     const userId = req.user.id;
+
+    // Validate eventId format
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: 'Invalid event ID format.' });
+    }
 
     // Check if event exists and user is registered
     const event = await Event.findById(eventId);

@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, FaHeart, FaLaugh, FaAngry } from 'react-icons/fa';
-import { getEventChatMessages, sendEventChatMessage, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage } from '../api/api';
+import { getEventChatMessages, sendEventChatMessage, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import './EventChat.css';
 
 const EventChat = ({ eventId, eventTitle, onClose }) => {
@@ -86,6 +86,22 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
     }
   };
 
+  // Edit message
+  const editMessage = async (messageId, newText) => {
+    try {
+      await editEventChatMessage(messageId, newText);
+      setMessages(prev => prev.map(msg => 
+        msg._id === messageId 
+          ? { ...msg, message: newText, isEdited: true, editedAt: new Date() }
+          : msg
+      ));
+      setEditingMessage(null);
+    } catch (error) {
+      console.error('Error editing message:', error);
+      alert('Failed to edit message. Please try again.');
+    }
+  };
+
   // Delete message
   const deleteMessage = async (messageId) => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
@@ -154,7 +170,7 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
         ) : (
           <>
             {messages.map((message) => (
-              <div key={message._id} className={`message ${message.userId === user.id ? 'own-message' : ''}`}>
+              <div key={message._id} className={`message ${message.userId === user._id ? 'own-message' : ''}`}>
                 <div className="message-content">
                   <div className="message-header">
                     <span className="sender-name">{message.user?.name || 'Unknown'}</span>
@@ -206,7 +222,7 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
                     >
                       <FaSmile />
                     </button>
-                    {message.userId === user.id && (
+                    {message.userId === user._id && (
                       <>
                         <button
                           className="action-btn"
@@ -290,6 +306,42 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
           </button>
         </div>
       </form>
+
+      {/* Edit Message Form */}
+      {editingMessage && (
+        <div className="edit-message-form">
+          <div className="edit-message-container">
+            <input
+              type="text"
+              defaultValue={editingMessage.message}
+              ref={(input) => input && input.focus()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  editMessage(editingMessage._id, e.target.value);
+                } else if (e.key === 'Escape') {
+                  setEditingMessage(null);
+                }
+              }}
+              className="edit-message-input"
+            />
+            <button
+              type="button"
+              onClick={() => editMessage(editingMessage._id, document.querySelector('.edit-message-input').value)}
+              className="save-edit-btn"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditingMessage(null)}
+              className="cancel-edit-btn"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
