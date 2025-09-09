@@ -18,6 +18,7 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   
   const messagesEndRef = useRef(null);
   const messageInputRef = useRef(null);
+  const hasLoadedRef = useRef(false);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   // Scroll to bottom when new messages arrive
@@ -33,14 +34,10 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const loadMessages = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Loading messages for event:', eventId);
       const data = await getEventChatMessages(eventId);
-      console.log('Messages loaded:', data);
       setMessages(data.messages || []);
     } catch (error) {
       console.error('Error loading messages:', error);
-      console.log('Event ID:', eventId);
-      console.log('User:', JSON.parse(localStorage.getItem('user') || '{}'));
     } finally {
       setLoading(false);
     }
@@ -117,19 +114,18 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
 
   // Load data on mount
   useEffect(() => {
-    if (eventId) {
+    if (eventId && !hasLoadedRef.current) {
+      hasLoadedRef.current = true;
       loadMessages();
       loadParticipants();
       
       // Set up polling for new messages (less frequent)
       const interval = setInterval(() => {
-        if (!loading) { // Only poll if not currently loading
-          loadMessages();
-        }
-      }, 10000); // Poll every 10 seconds instead of 3
+        loadMessages();
+      }, 15000); // Poll every 15 seconds
       return () => clearInterval(interval);
     }
-  }, [eventId, loadMessages, loadParticipants, loading]);
+  }, [eventId]);
 
   // Focus input when replying
   useEffect(() => {

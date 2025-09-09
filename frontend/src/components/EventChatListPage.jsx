@@ -38,6 +38,36 @@ const EventChatListPage = () => {
     return false;
   };
 
+  // Check if user can request to join chat
+  const canRequestChat = (event) => {
+    // Only students can request
+    if (role !== 'Student') return false;
+    
+    // Must be registered for the event
+    if (!event?.attendance) return false;
+    
+    const userAttendance = event.attendance.find(att => 
+      (att.userId?._id || att.userId) === user._id
+    );
+    
+    // Can request if registered but not approved for chat
+    return userAttendance && !userAttendance.registrationApproved && userAttendance.status !== 'Approved';
+  };
+
+  // Request to join chat
+  const requestToJoinChat = async (eventId) => {
+    try {
+      const { requestEventChatAccess } = await import('../api/api');
+      await requestEventChatAccess(eventId);
+      alert('Chat access request sent! Admin/Staff will review your request.');
+      // Refresh the events list
+      window.location.reload();
+    } catch (err) {
+      console.error('Error requesting chat access:', err);
+      alert('Failed to send request. Please try again.');
+    }
+  };
+
   // Load events
   useEffect(() => {
     const loadEvents = async () => {
@@ -174,13 +204,29 @@ const EventChatListPage = () => {
               </div>
               
               <div className="event-actions">
-                <button 
-                  className="chat-button"
-                  onClick={() => openEventChat(event._id)}
-                >
-                  <FaComments />
-                  Join Chat
-                </button>
+                {canAccessChat(event) ? (
+                  <button 
+                    className="chat-button"
+                    onClick={() => openEventChat(event._id)}
+                  >
+                    <FaComments />
+                    Join Chat
+                  </button>
+                ) : canRequestChat(event) ? (
+                  <button 
+                    className="request-button"
+                    onClick={() => requestToJoinChat(event._id)}
+                  >
+                    📝 Request Chat Access
+                  </button>
+                ) : (
+                  <button 
+                    className="disabled-button"
+                    disabled
+                  >
+                    🔒 Not Available
+                  </button>
+                )}
               </div>
             </div>
           ))}

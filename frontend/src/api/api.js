@@ -1801,6 +1801,16 @@ export const getEventChatParticipants = async (eventId) => {
   }
 };
 
+export const requestEventChatAccess = async (eventId) => {
+  try {
+    const response = await axiosInstance.post(`/event-chat/${eventId}/request-access`);
+    return response.data;
+  } catch (error) {
+    console.error('Error requesting chat access:', error);
+    throw new Error('Failed to send chat access request. Please try again.');
+  }
+};
+
 export const updateFeedback = async (feedbackId, updateData) => {
   try {
     const response = await axiosInstance.put(`/feedback/admin/${feedbackId}`, updateData);
