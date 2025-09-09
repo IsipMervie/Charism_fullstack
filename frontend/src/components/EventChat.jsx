@@ -33,10 +33,14 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const loadMessages = async () => {
     try {
       setLoading(true);
+      console.log('Loading messages for event:', eventId);
       const data = await getEventChatMessages(eventId);
+      console.log('Messages loaded:', data);
       setMessages(data.messages || []);
     } catch (error) {
       console.error('Error loading messages:', error);
+      console.log('Event ID:', eventId);
+      console.log('User:', JSON.parse(localStorage.getItem('user') || '{}'));
     } finally {
       setLoading(false);
     }

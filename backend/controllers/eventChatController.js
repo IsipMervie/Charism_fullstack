@@ -22,13 +22,23 @@ exports.sendMessage = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Check if user is registered for the event
-    const isRegistered = event.attendance.some(att => 
-      att.userId.toString() === userId && att.registrationApproved
-    );
+    // Check if user can access chat
+    const userRole = req.user.role;
+    let canAccessChat = false;
     
-    if (!isRegistered) {
-      return res.status(403).json({ message: 'You must be registered for this event to participate in chat.' });
+    // Admin and Staff can access chat for all events
+    if (userRole === 'Admin' || userRole === 'Staff') {
+      canAccessChat = true;
+    } else {
+      // Students can only access chat if they are registered and approved
+      const isRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId && att.registrationApproved
+      );
+      canAccessChat = isRegistered;
+    }
+    
+    if (!canAccessChat) {
+      return res.status(403).json({ message: 'You must be registered and approved for this event to participate in chat.' });
     }
 
     // Create new chat message
@@ -69,13 +79,23 @@ exports.getMessages = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Check if user is registered for the event
-    const isRegistered = event.attendance.some(att => 
-      att.userId.toString() === userId && att.registrationApproved
-    );
+    // Check if user can access chat
+    const userRole = req.user.role;
+    let canAccessChat = false;
     
-    if (!isRegistered) {
-      return res.status(403).json({ message: 'You must be registered for this event to view chat.' });
+    // Admin and Staff can access chat for all events
+    if (userRole === 'Admin' || userRole === 'Staff') {
+      canAccessChat = true;
+    } else {
+      // Students can only access chat if they are registered and approved
+      const isRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId && att.registrationApproved
+      );
+      canAccessChat = isRegistered;
+    }
+    
+    if (!canAccessChat) {
+      return res.status(403).json({ message: 'You must be registered and approved for this event to view chat.' });
     }
 
     // Build query
