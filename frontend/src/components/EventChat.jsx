@@ -20,6 +20,15 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const messageInputRef = useRef(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  // Debug props
+  console.log('🔍 EventChat props:', {
+    eventId,
+    eventTitle,
+    eventIdType: typeof eventId,
+    eventIdLength: eventId?.length,
+    eventIdValid: eventId && eventId.length === 24
+  });
+
   // Scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
