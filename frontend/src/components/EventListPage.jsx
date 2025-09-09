@@ -38,12 +38,14 @@ function EventListPage() {
       return true;
     }
     
-    // Students can only access chat if they are approved for the event
+    // Students can access chat if they are registered and either:
+    // 1. Registration is approved (registrationApproved: true), OR
+    // 2. Attendance is approved (status: 'Approved')
     if (role === 'Student' && event.attendance) {
       const userAttendance = event.attendance.find(att => 
         (att.userId?._id || att.userId) === user.id
       );
-      const canAccess = userAttendance?.registrationApproved || false;
+      const canAccess = userAttendance?.registrationApproved || userAttendance?.status === 'Approved';
       return canAccess;
     }
     

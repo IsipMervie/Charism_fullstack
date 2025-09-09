@@ -30,9 +30,12 @@ exports.sendMessage = async (req, res) => {
     if (userRole === 'Admin' || userRole === 'Staff') {
       canAccessChat = true;
     } else {
-      // Students can only access chat if they are registered and approved
+      // Students can access chat if they are registered and either:
+      // 1. Registration is approved (registrationApproved: true), OR
+      // 2. Attendance is approved (status: 'Approved')
       const isRegistered = event.attendance.some(att => 
-        att.userId.toString() === userId && att.registrationApproved
+        att.userId.toString() === userId && 
+        (att.registrationApproved || att.status === 'Approved')
       );
       canAccessChat = isRegistered;
     }
@@ -87,9 +90,12 @@ exports.getMessages = async (req, res) => {
     if (userRole === 'Admin' || userRole === 'Staff') {
       canAccessChat = true;
     } else {
-      // Students can only access chat if they are registered and approved
+      // Students can access chat if they are registered and either:
+      // 1. Registration is approved (registrationApproved: true), OR
+      // 2. Attendance is approved (status: 'Approved')
       const isRegistered = event.attendance.some(att => 
-        att.userId.toString() === userId && att.registrationApproved
+        att.userId.toString() === userId && 
+        (att.registrationApproved || att.status === 'Approved')
       );
       canAccessChat = isRegistered;
     }
