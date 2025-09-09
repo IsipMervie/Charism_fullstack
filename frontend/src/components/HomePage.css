@@ -135,14 +135,16 @@
 .home-collage {
   margin-bottom: 3rem;
   padding: 2rem 0;
+  width: 100%;
 }
 
 .collage-container {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
   height: 500px;
   position: relative;
+  width: 100%;
 }
 
 /* Main Image Container */
@@ -187,7 +189,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   flex: 1;
-  min-height: 0;
+  min-height: 200px;
 }
 
 .side-image-container:hover {
