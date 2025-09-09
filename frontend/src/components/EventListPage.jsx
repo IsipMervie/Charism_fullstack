@@ -30,11 +30,29 @@ function EventListPage() {
   const navigate = useNavigate();
   const role = localStorage.getItem('role');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  // Debug user data
+  console.log('👤 User data debug:', {
+    role,
+    user,
+    userId: user._id,
+    userStringified: JSON.stringify(user, null, 2)
+  });
 
   // Check if user can access chat for an event
   const canAccessChat = (event) => {
+    console.log('🔍 canAccessChat debug:', {
+      role,
+      userId: user._id,
+      eventId: event._id,
+      eventTitle: event.title,
+      attendanceCount: event.attendance?.length || 0,
+      attendance: event.attendance
+    });
+    
     // Admin and Staff can access chat for all events
     if (role === 'Admin' || role === 'Staff') {
+      console.log('✅ Admin/Staff access granted');
       return true;
     }
     
@@ -43,12 +61,23 @@ function EventListPage() {
     // 2. Attendance is approved (status: 'Approved')
     if (role === 'Student' && event.attendance) {
       const userAttendance = event.attendance.find(att => 
-        (att.userId?._id || att.userId) === user.id
+        (att.userId?._id || att.userId) === user._id
       );
+      
+      console.log('👤 Student attendance check:', {
+        userAttendance,
+        registrationApproved: userAttendance?.registrationApproved,
+        status: userAttendance?.status,
+        userId: user._id,
+        attendanceUserId: userAttendance?.userId?._id || userAttendance?.userId
+      });
+      
       const canAccess = userAttendance?.registrationApproved || userAttendance?.status === 'Approved';
+      console.log('🎯 Student can access chat:', canAccess);
       return canAccess;
     }
     
+    console.log('❌ No access - role:', role, 'attendance exists:', !!event.attendance);
     return false;
   };
 
