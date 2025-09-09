@@ -155,6 +155,10 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   transition: all 0.4s ease;
   cursor: pointer;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .main-image-container:hover {
@@ -165,7 +169,8 @@
 .main-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.4s ease;
 }
 
@@ -191,6 +196,10 @@
   flex: 1 !important;
   min-height: 200px !important;
   height: 50% !important;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .side-image-container:hover {
@@ -201,7 +210,8 @@
 .side-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.3s ease;
 }
 
