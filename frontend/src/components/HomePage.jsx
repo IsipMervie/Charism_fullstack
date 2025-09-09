@@ -38,7 +38,7 @@ function HomePage() {
               {/* Main Image - Virgin Mary */}
               <div className="main-image-container">
                 <img 
-                  src="/src/components/assets/527595417_1167021392113223_2872992497207843477_n.jpg" 
+                  src={require('../assets/527595417_1167021392113223_2872992497207843477_n.jpg')} 
                   alt="Virgin Mary Statue" 
                   className="main-image"
                 />
@@ -52,7 +52,7 @@ function HomePage() {
               <div className="side-images">
                 <div className="side-image-container">
                   <img 
-                    src="/src/components/assets/542758163_1192740069541355_8390690964585757521_n.jpg" 
+                    src={require('../assets/542758163_1192740069541355_8390690964585757521_n.jpg')} 
                     alt="Community Service" 
                     className="side-image"
                   />
@@ -64,7 +64,7 @@ function HomePage() {
                 
                 <div className="side-image-container">
                   <img 
-                    src="/src/components/assets/Screenshot 2025-07-09 234757.png" 
+                    src={require('../assets/Screenshot 2025-07-09 234757.png')} 
                     alt="Tree Planting Activity" 
                     className="side-image"
                   />
