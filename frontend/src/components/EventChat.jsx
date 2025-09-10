@@ -252,13 +252,10 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
     <div className={`event-chat-container ${isFullscreen ? 'fullscreen' : ''}`}>
       {/* Chat Header */}
       <div className="chat-header">
-        <div className="chat-title">
-          <h3>Event Chat</h3>
-          <p>{eventTitle}</p>
-        </div>
+        <h3 className="chat-title">{eventTitle}</h3>
         <div className="chat-actions">
           <span className="participant-count">{participants.length} participants</span>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={onClose} aria-label="Close chat">×</button>
         </div>
       </div>
 
@@ -285,16 +282,28 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
       {/* Messages Area */}
       <div className="messages-container">
         {loading ? (
-          <div className="loading-messages">Loading messages...</div>
+          <div className="loading">
+            <span>Loading messages...</span>
+          </div>
         ) : (
           <>
-            {filteredMessages.length === 0 && searchTerm ? (
-              <div className="no-search-results">
-                <p>No messages found matching "{searchTerm}"</p>
-              </div>
+            {filteredMessages.length === 0 ? (
+              searchTerm ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">🔍</div>
+                  <div className="empty-state-text">No messages found</div>
+                  <div className="empty-state-subtext">No messages match "{searchTerm}"</div>
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <div className="empty-state-icon">💬</div>
+                  <div className="empty-state-text">Start the conversation</div>
+                  <div className="empty-state-subtext">Be the first to send a message!</div>
+                </div>
+              )
             ) : (
               filteredMessages.map((message) => (
-              <div key={message._id} className={`message ${message.userId === user._id ? 'own-message' : ''}`}>
+              <div key={message._id} className={`message ${message.userId === user._id ? 'sent' : 'received'}`}>
                 <div className="message-content">
                   <div className="message-header">
                     <span 
