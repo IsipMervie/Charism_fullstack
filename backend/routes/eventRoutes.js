@@ -166,6 +166,13 @@ router.get(
   eventController.getEventParticipants
 );
 
+// Get event attendance (Admin/Staff/Student - for chat access)
+router.get(
+  '/:eventId/attendance',
+  authMiddleware,
+  eventController.getEventAttendance
+);
+
 // Approve/reject registration (Admin/Staff)
 router.patch(
   '/:eventId/attendance/:userId/approve-registration',

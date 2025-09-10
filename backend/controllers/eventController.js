@@ -1050,6 +1050,25 @@ exports.getEventParticipants = async (req, res) => {
   }
 };
 
+// Get Event Attendance
+exports.getEventAttendance = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email role department year section profilePicture');
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Return the attendance array with populated user data
+    res.json(event.attendance || []);
+  } catch (err) {
+    console.error('Error in getEventAttendance:', err);
+    res.status(500).json({ message: 'Error fetching event attendance.', error: err.message });
+  }
+};
+
 // Approve Attendance
 exports.approveAttendance = async (req, res) => {
   try {
