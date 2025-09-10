@@ -161,9 +161,10 @@ const EventChatPage = () => {
     try {
       const { getEventChatParticipants } = await import('../api/api');
       const participantsData = await getEventChatParticipants(eventId);
-      setParticipants(participantsData);
+      setParticipants(Array.isArray(participantsData) ? participantsData : []);
     } catch (err) {
       console.error('Error loading participants:', err);
+      setParticipants([]);
     }
   };
 
@@ -465,8 +466,21 @@ const EventChatPage = () => {
         <div className="background-pattern"></div>
       </div>
 
-      {/* Header Section */}
-      <div className="event-chat-header">
+      {/* Main Container */}
+      <div className="event-chat-container visible">
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="hero-content">
+            <div className="hero-icon">
+              <div className="icon-symbol">💬</div>
+            </div>
+            <h1 className="hero-title">Event Chat</h1>
+            <p className="hero-subtitle">Connect and collaborate with event participants in real-time</p>
+          </div>
+        </div>
+
+        {/* Header Section */}
+        <div className="event-chat-header">
         <div className="header-content">
           <button 
             className="back-button"
@@ -663,6 +677,7 @@ const EventChatPage = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
