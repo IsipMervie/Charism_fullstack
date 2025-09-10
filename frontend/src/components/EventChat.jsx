@@ -253,30 +253,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
       {/* Chat Header */}
       <div className="chat-header">
         <h3 className="chat-title">{eventTitle}</h3>
-        <div className="chat-actions">
-          <span className="participant-count">{participants.length} participants</span>
-          <button className="close-btn" onClick={onClose} aria-label="Close chat">×</button>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="chat-search-container">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search messages..."
-          className="chat-search-input"
-        />
-        {searchTerm && (
-          <button 
-            className="clear-search-btn"
-            onClick={() => setSearchTerm('')}
-            title="Clear search"
-          >
-            ×
-          </button>
-        )}
+        <button className="close-btn" onClick={onClose} aria-label="Close chat">×</button>
       </div>
 
       {/* Messages Area */}
@@ -519,49 +496,55 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
       )}
 
       {/* Message Input */}
-      <form className="message-input-form" onSubmit={sendMessage}>
-        <div className="message-input-container">
-          <input
-            ref={messageInputRef}
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            className="message-input"
-            disabled={sending}
-          />
-          <input
-            type="file"
-            id="file-upload"
-            multiple
-            onChange={handleFileSelect}
-            style={{ display: 'none' }}
-            accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
-          />
-          <button
-            type="button"
-            className="file-btn"
-            onClick={() => document.getElementById('file-upload').click()}
-            title="Upload files"
-          >
-            <FaFile />
-          </button>
-          <button
-            type="button"
-            className="emoji-btn"
-            onClick={() => setShowEmojis(!showEmojis)}
-          >
-            <FaSmile />
-          </button>
-          <button
-            type="submit"
-            className="send-btn"
-            disabled={(!newMessage.trim() && selectedFiles.length === 0) || sending}
-          >
-            <FaPaperPlane />
-          </button>
-        </div>
-      </form>
+      <div className="message-input-container">
+        <form className="message-input-form" onSubmit={sendMessage}>
+          <div className="message-input-wrapper">
+            <input
+              ref={messageInputRef}
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="message-input"
+              disabled={sending}
+            />
+            <div className="action-buttons">
+              <input
+                type="file"
+                id="file-upload"
+                multiple
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+                accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+              />
+              <button
+                type="button"
+                className="file-btn"
+                onClick={() => document.getElementById('file-upload').click()}
+                title="Upload files"
+              >
+                <FaFile />
+              </button>
+              <button
+                type="button"
+                className="emoji-btn"
+                onClick={() => setShowEmojis(!showEmojis)}
+                title="Add emoji"
+              >
+                <FaSmile />
+              </button>
+              <button
+                type="submit"
+                className="send-btn"
+                disabled={(!newMessage.trim() && selectedFiles.length === 0) || sending}
+                title="Send message"
+              >
+                <FaPaperPlane />
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
 
       {/* Edit Message Form */}
       {editingMessage && (
