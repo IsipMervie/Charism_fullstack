@@ -6,7 +6,7 @@ import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, F
 import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import './EventChat.css';
 
-const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
+const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = false }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -230,7 +230,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
   // Validate eventId after all hooks
   if (!eventId) {
     return (
-      <div className="event-chat-container">
+      <div className={`event-chat-container ${isFullscreen ? 'fullscreen' : ''}`}>
         <div className="error-message">
           <h3>Error: No Event ID</h3>
           <p>Unable to load chat. Please close and try again.</p>
@@ -241,7 +241,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
   }
 
   return (
-    <div className="event-chat-container">
+    <div className={`event-chat-container ${isFullscreen ? 'fullscreen' : ''}`}>
       {/* Chat Header */}
       <div className="chat-header">
         <div className="chat-title">

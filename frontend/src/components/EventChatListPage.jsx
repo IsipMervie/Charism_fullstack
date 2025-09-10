@@ -93,6 +93,7 @@ const EventChatListPage = () => {
         
         const eventsData = await getEvents();
         
+        
         // Filter events that user can access chat for
         const accessibleEvents = eventsData.filter(canAccessChat);
         
@@ -213,11 +214,20 @@ const EventChatListPage = () => {
               <div className="event-image">
                 {event.image ? (
                   <img 
-                    src={getEventImageUrl(event._id)} 
+                    src={getEventImageUrl(event.image, event._id)} 
                     alt={event.title}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'flex';
+                    }}
+                    onLoad={(e) => {
+                      e.target.style.opacity = '1';
+                    }}
+                    style={{ 
+                      opacity: 0, 
+                      transition: 'opacity 0.3s ease-in-out' 
                     }}
                   />
                 ) : null}

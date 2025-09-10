@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaComments, FaUsers } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import EventChat from './EventChat';
+import { getProfilePictureUrl } from '../utils/imageUtils';
 import './EventChatPage.css';
 
 const EventChatPage = () => {
@@ -523,7 +524,7 @@ const EventChatPage = () => {
                   >
                     {participant.profilePicture ? (
                       <img 
-                        src={participant.profilePicture} 
+                        src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
                         alt={participant.name}
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -689,7 +690,7 @@ const EventChatPage = () => {
               <div className="profile-avatar-large">
                 {selectedProfile.profilePicture ? (
                   <img 
-                    src={selectedProfile.profilePicture} 
+                    src={getProfilePictureUrl(selectedProfile.profilePicture, selectedProfile._id)} 
                     alt={selectedProfile.name}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -730,7 +731,7 @@ const EventChatPage = () => {
                 
                 <div className="profile-info">
                   <h4>Member Since</h4>
-                  <p>{new Date(selectedProfile.createdAt).toLocaleDateString()}</p>
+                  <p>{selectedProfile.createdAt ? new Date(selectedProfile.createdAt).toLocaleDateString() : 'Unknown'}</p>
                 </div>
               </div>
             </div>

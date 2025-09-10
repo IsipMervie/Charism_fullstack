@@ -11,6 +11,30 @@
   overflow: hidden;
 }
 
+/* Fullscreen mode - use full height */
+.event-chat-container.fullscreen {
+  height: 100vh;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+
+/* Fullscreen messages container - use more space */
+.event-chat-container.fullscreen .messages-container {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Fullscreen message input - larger */
+.event-chat-container.fullscreen .message-input-container {
+  padding: 1.5rem;
+}
+
+.event-chat-container.fullscreen .message-input {
+  font-size: 1rem;
+  padding: 1rem 1.5rem;
+}
+
 /* Chat Header */
 .chat-header {
   display: flex;
