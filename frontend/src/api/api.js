@@ -1733,6 +1733,26 @@ export const sendEventChatMessage = async (eventId, message, replyTo = null) => 
   }
 };
 
+export const sendEventChatMessageWithFiles = async (eventId, formData) => {
+  try {
+    const response = await axiosInstance.post(`/event-chat/${eventId}/messages/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 60000, // 60 second timeout for file uploads
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending chat message with files:', error);
+    if (error.response?.status === 413) {
+      throw new Error('File is too large. Maximum size is 10MB.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Invalid file type or no files uploaded.');
+    }
+    throw new Error('Failed to send message with files. Please try again.');
+  }
+};
+
 
 export const getEventChatMessages = async (eventId, page = 1, limit = 50, before = null) => {
   try {

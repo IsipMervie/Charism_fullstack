@@ -2,8 +2,8 @@
 // Event Chat Component for real-time messaging
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, FaHeart, FaLaugh, FaAngry } from 'react-icons/fa';
-import { getEventChatMessages, sendEventChatMessage, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
+import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, FaHeart, FaLaugh, FaAngry, FaFile, FaDownload, FaTimes } from 'react-icons/fa';
+import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import './EventChat.css';
 
 const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
@@ -16,6 +16,8 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
   const [editingMessage, setEditingMessage] = useState(null);
   const [showEmojis, setShowEmojis] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showFilePreview, setShowFilePreview] = useState(false);
   
   const messagesEndRef = useRef(null);
   const messageInputRef = useRef(null);
@@ -54,18 +56,82 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
     }
   }, [eventId]);
 
+  // Handle file selection
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter(file => {
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+        return false;
+      }
+      return true;
+    });
+    
+    setSelectedFiles(prev => [...prev, ...validFiles]);
+    setShowFilePreview(true);
+  };
+
+  // Remove selected file
+  const removeFile = (index) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    if (selectedFiles.length === 1) {
+      setShowFilePreview(false);
+    }
+  };
+
+  // Format file size
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Get file icon based on type
+  const getFileIcon = (file) => {
+    if (file.type.startsWith('image/')) {
+      return <FaImage className="file-icon image" />;
+    }
+    return <FaFile className="file-icon" />;
+  };
+
   // Send message
   const sendMessage = async (e) => {
     e.preventDefault();
     
-    if (!newMessage || !newMessage.trim() || sending) return;
+    if ((!newMessage || !newMessage.trim()) && selectedFiles.length === 0 || sending) return;
 
     try {
       setSending(true);
-      const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);
-      setMessages(prev => [...prev, data.chatMessage]);
+      
+      // If there are files, send them with the message
+      if (selectedFiles.length > 0) {
+        const formData = new FormData();
+        formData.append('message', newMessage.trim() || '');
+        formData.append('messageType', 'file');
+        if (replyingTo?.id) {
+          formData.append('replyTo', replyingTo.id);
+        }
+        
+        // Add files to form data
+        selectedFiles.forEach((file, index) => {
+          formData.append(`files`, file);
+        });
+
+        const data = await sendEventChatMessageWithFiles(eventId, formData);
+        setMessages(prev => [...prev, data.chatMessage]);
+      } else {
+        // Send text message only
+        const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);
+        setMessages(prev => [...prev, data.chatMessage]);
+      }
+      
       setNewMessage('');
       setReplyingTo(null);
+      setSelectedFiles([]);
+      setShowFilePreview(false);
       loadParticipants(); // Refresh participants
     } catch (error) {
       console.error('Error sending message:', error);
@@ -243,6 +309,39 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
                   
                   <div className="message-text">{message.message}</div>
                   
+                  {/* File Attachments */}
+                  {message.attachment && (
+                    <div className="message-attachment">
+                      {message.messageType === 'image' ? (
+                        <div className="image-attachment">
+                          <img 
+                            src={message.attachment.url} 
+                            alt={message.attachment.originalName}
+                            className="attachment-image"
+                            onClick={() => window.open(message.attachment.url, '_blank')}
+                          />
+                        </div>
+                      ) : (
+                        <div className="file-attachment">
+                          <div className="file-info">
+                            {getFileIcon({ type: message.attachment.contentType })}
+                            <div className="file-details">
+                              <span className="file-name">{message.attachment.originalName}</span>
+                              <span className="file-size">{formatFileSize(message.attachment.fileSize)}</span>
+                            </div>
+                          </div>
+                          <button 
+                            className="download-btn"
+                            onClick={() => window.open(message.attachment.url, '_blank')}
+                            title="Download file"
+                          >
+                            <FaDownload />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
                   {/* Reactions */}
                   {message.reactions && message.reactions.length > 0 && (
                     <div className="message-reactions">
@@ -336,6 +435,42 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
         </div>
       )}
 
+      {/* File Preview */}
+      {showFilePreview && selectedFiles.length > 0 && (
+        <div className="file-preview-container">
+          <div className="file-preview-header">
+            <span>Files to upload ({selectedFiles.length})</span>
+            <button 
+              className="close-preview-btn"
+              onClick={() => {
+                setShowFilePreview(false);
+                setSelectedFiles([]);
+              }}
+            >
+              <FaTimes />
+            </button>
+          </div>
+          <div className="file-preview-list">
+            {selectedFiles.map((file, index) => (
+              <div key={index} className="file-preview-item">
+                {getFileIcon(file)}
+                <div className="file-preview-info">
+                  <span className="file-preview-name">{file.name}</span>
+                  <span className="file-preview-size">{formatFileSize(file.size)}</span>
+                </div>
+                <button 
+                  className="remove-file-btn"
+                  onClick={() => removeFile(index)}
+                  title="Remove file"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Message Input */}
       <form className="message-input-form" onSubmit={sendMessage}>
         <div className="message-input-container">
@@ -348,6 +483,22 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
             className="message-input"
             disabled={sending}
           />
+          <input
+            type="file"
+            id="file-upload"
+            multiple
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+            accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+          />
+          <button
+            type="button"
+            className="file-btn"
+            onClick={() => document.getElementById('file-upload').click()}
+            title="Upload files"
+          >
+            <FaFile />
+          </button>
           <button
             type="button"
             className="emoji-btn"
@@ -358,7 +509,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
           <button
             type="submit"
             className="send-btn"
-            disabled={!newMessage.trim() || sending}
+            disabled={(!newMessage.trim() && selectedFiles.length === 0) || sending}
           >
             <FaPaperPlane />
           </button>

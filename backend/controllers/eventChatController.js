@@ -5,6 +5,100 @@ const Event = require('../models/Event');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 
+// Send a message with file attachments to event chat
+exports.sendMessageWithFiles = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { message, messageType = 'file', replyTo } = req.body;
+    const userId = req.user.id;
+    const files = req.files;
+
+    // Validate required fields
+    if (!eventId) {
+      return res.status(400).json({ message: 'Event ID is required.' });
+    }
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ message: 'At least one file is required.' });
+    }
+
+    // Validate eventId format
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: 'Invalid event ID format.' });
+    }
+
+    // Check if event exists and user is registered
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Check if user can access chat
+    const userRole = req.user.role;
+    let canAccessChat = false;
+    
+    // Admin and Staff can access chat for all events
+    if (userRole === 'Admin' || userRole === 'Staff') {
+      canAccessChat = true;
+    } else {
+      // Students can access chat if they are registered and either:
+      // 1. Registration is approved (registrationApproved: true), OR
+      // 2. Attendance is approved (status: 'Approved')
+      const isRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId && 
+        (att.registrationApproved || att.status === 'Approved')
+      );
+      canAccessChat = isRegistered;
+    }
+    
+    if (!canAccessChat) {
+      return res.status(403).json({ message: 'You must be registered and approved for this event to participate in chat.' });
+    }
+
+    // Process files and create messages
+    const messages = [];
+    
+    for (const file of files) {
+      // Determine message type based on file type
+      const isImage = file.mimetype.startsWith('image/');
+      const finalMessageType = isImage ? 'image' : 'file';
+      
+      // Create attachment object
+      const attachment = {
+        filename: file.filename,
+        originalName: file.originalname,
+        fileSize: file.size,
+        contentType: file.mimetype,
+        url: `/uploads/chat-files/${file.filename}`
+      };
+
+      // Create new chat message
+      const chatMessage = new EventChat({
+        eventId,
+        userId,
+        message: message || (isImage ? '📷 Image' : '📎 File'),
+        messageType: finalMessageType,
+        replyTo,
+        attachment
+      });
+
+      await chatMessage.save();
+      await chatMessage.populate('user', 'name email profilePicture department');
+      
+      messages.push(chatMessage);
+    }
+
+    res.status(201).json({
+      message: 'Message with files sent successfully.',
+      chatMessage: messages[0], // Return first message for frontend compatibility
+      allMessages: messages
+    });
+  } catch (err) {
+    console.error('Error sending chat message with files:', err);
+    res.status(500).json({ message: 'Error sending message with files.', error: err.message });
+  }
+};
+
 // Send a message to event chat
 exports.sendMessage = async (req, res) => {
   try {
