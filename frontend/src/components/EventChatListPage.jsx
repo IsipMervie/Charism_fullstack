@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaComments, FaCalendar, FaClock, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
+import { FaComments, FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaSearch } from 'react-icons/fa';
 import { getEvents } from '../api/api';
 import { formatTimeRange12Hour, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
@@ -10,8 +10,10 @@ import './EventChatListPage.css';
 
 const EventChatListPage = () => {
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -67,6 +69,20 @@ const EventChatListPage = () => {
       alert('Failed to send request. Please try again.');
     }
   };
+
+  // Filter events based on search term
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredEvents(events);
+    } else {
+      const filtered = events.filter(event => 
+        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (event.location && event.location.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredEvents(filtered);
+    }
+  }, [events, searchTerm]);
 
   // Load events
   useEffect(() => {
@@ -133,6 +149,34 @@ const EventChatListPage = () => {
         <p>Join discussions for events you're approved for</p>
       </div>
 
+      {/* Search Bar */}
+      <div className="search-container">
+        <div className="search-input-wrapper">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search events by title, description, or location..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+          {searchTerm && (
+            <button 
+              className="clear-search-btn"
+              onClick={() => setSearchTerm('')}
+              title="Clear search"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        {searchTerm && (
+          <div className="search-results-info">
+            {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''} found
+          </div>
+        )}
+      </div>
+
       {events.length === 0 ? (
         <div className="no-events-container">
           <div className="no-events-icon">💬</div>
@@ -150,9 +194,21 @@ const EventChatListPage = () => {
             Browse Events
           </button>
         </div>
+      ) : filteredEvents.length === 0 && searchTerm ? (
+        <div className="no-search-results">
+          <div className="no-results-icon">🔍</div>
+          <h2>No Events Found</h2>
+          <p>No events match your search for "{searchTerm}"</p>
+          <button 
+            className="clear-search-button"
+            onClick={() => setSearchTerm('')}
+          >
+            Clear Search
+          </button>
+        </div>
       ) : (
         <div className="events-grid">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <div key={event._id} className="event-card">
               <div className="event-image">
                 {event.image ? (

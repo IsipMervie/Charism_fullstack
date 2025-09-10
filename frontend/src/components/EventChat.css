@@ -175,6 +175,19 @@
   color: var(--text-primary);
 }
 
+.sender-name.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.sender-name.clickable:hover {
+  background-color: var(--bg-secondary);
+  color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
 .message.own-message .sender-name {
   color: white;
 }

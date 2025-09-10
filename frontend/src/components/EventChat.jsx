@@ -6,7 +6,7 @@ import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, F
 import { getEventChatMessages, sendEventChatMessage, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import './EventChat.css';
 
-const EventChat = ({ eventId, eventTitle, onClose }) => {
+const EventChat = ({ eventId, eventTitle, onClose, viewProfile }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -223,7 +223,14 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
               <div key={message._id} className={`message ${message.userId === user._id ? 'own-message' : ''}`}>
                 <div className="message-content">
                   <div className="message-header">
-                    <span className="sender-name">{message.user?.name || 'Unknown'}</span>
+                    <span 
+                      className="sender-name clickable"
+                      onClick={() => viewProfile && message.user && viewProfile(message.user)}
+                      title="Click to view profile"
+                      style={{ cursor: viewProfile ? 'pointer' : 'default' }}
+                    >
+                      {message.user?.name || 'Unknown'}
+                    </span>
                     <span className="message-time">{formatTime(message.createdAt)}</span>
                     {message.isEdited && <span className="edited-indicator">(edited)</span>}
                   </div>

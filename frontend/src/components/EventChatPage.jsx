@@ -635,6 +635,7 @@ const EventChatPage = () => {
             eventId={event._id} 
             eventTitle={event.title}
             onClose={() => setShowChat(false)}
+            viewProfile={viewProfile}
           />
         </div>
       )}
@@ -663,6 +664,7 @@ const EventChatPage = () => {
                 eventTitle={event.title}
                 onClose={() => setShowFullscreenChat(false)}
                 isFullscreen={true}
+                viewProfile={viewProfile}
               />
             </div>
           </div>
