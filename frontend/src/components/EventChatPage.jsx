@@ -36,19 +36,39 @@ const EventChatPage = () => {
     
     // Students can access chat if they are registered and approved for chat
     if (role === 'Student' && event?.attendance) {
-      const userAttendance = event.attendance.find(att => 
+      // First try to find by user ID
+      let userAttendance = event.attendance.find(att => 
         (att.userId?._id || att.userId) === user._id
       );
+      
+      // If not found by ID, try to find by email (fallback)
+      if (!userAttendance && user.email) {
+        userAttendance = event.attendance.find(att => 
+          att.userId?.email === user.email
+        );
+        console.log('🔄 Fallback email search:', {
+          userEmail: user.email,
+          foundByEmail: !!userAttendance
+        });
+      }
       
       console.log('🎓 Student access check:', {
         userId: user._id,
         userName: user.name,
+        userEmail: user.email,
         hasAttendance: !!userAttendance,
         attendanceData: userAttendance ? {
           registrationApproved: userAttendance.registrationApproved,
           status: userAttendance.status,
           fullAttendance: userAttendance
-        } : null
+        } : null,
+        allAttendanceRecords: event.attendance.map(att => ({
+          userId: att.userId?._id || att.userId,
+          userName: att.userId?.name || 'Unknown',
+          userEmail: att.userId?.email || 'Unknown',
+          registrationApproved: att.registrationApproved,
+          status: att.status
+        }))
       });
       
       // Allow access if student is registered and approved for chat
@@ -75,9 +95,17 @@ const EventChatPage = () => {
   const canRequestChatAccess = (event) => {
     if (role !== 'Student' || !event?.attendance) return false;
     
-    const userAttendance = event.attendance.find(att => 
+    // First try to find by user ID
+    let userAttendance = event.attendance.find(att => 
       (att.userId?._id || att.userId) === user._id
     );
+    
+    // If not found by ID, try to find by email (fallback)
+    if (!userAttendance && user.email) {
+      userAttendance = event.attendance.find(att => 
+        att.userId?.email === user.email
+      );
+    }
     
     // Can request if registered but not approved for chat
     const isApproved = userAttendance?.registrationApproved || 
