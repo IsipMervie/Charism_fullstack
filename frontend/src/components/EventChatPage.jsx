@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaComments, FaUsers } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 import EventChat from './EventChat';
 import './EventChatPage.css';
 
@@ -19,6 +20,7 @@ const EventChatPage = () => {
   const [showApprovals, setShowApprovals] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showFullscreenChat, setShowFullscreenChat] = useState(false);
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = localStorage.getItem('role');
@@ -27,20 +29,32 @@ const EventChatPage = () => {
   const canAccessChat = (event) => {
     // Admin and Staff can access chat for all events
     if (role === 'Admin' || role === 'Staff') {
+      console.log('✅ Admin/Staff access granted');
       return true;
     }
     
-    // Students can access chat if they are registered and either:
-    // 1. Registration is approved (registrationApproved: true), OR
-    // 2. Attendance is approved (status: 'Approved')
+    // Students can access chat if they are registered for the event
+    // The approval system is for chat participation, not initial access
     if (role === 'Student' && event?.attendance) {
       const userAttendance = event.attendance.find(att => 
         (att.userId?._id || att.userId) === user._id
       );
       
-      return userAttendance?.registrationApproved || userAttendance?.status === 'Approved';
+      console.log('🎓 Student access check:', {
+        userId: user._id,
+        userName: user.name,
+        hasAttendance: !!userAttendance,
+        attendanceData: userAttendance ? {
+          registrationApproved: userAttendance.registrationApproved,
+          status: userAttendance.status
+        } : null
+      });
+      
+      // Allow access if student is registered (has attendance record)
+      return !!userAttendance;
     }
     
+    console.log('❌ Access denied:', { role, hasEvent: !!event, hasAttendance: !!event?.attendance });
     return false;
   };
 
@@ -70,6 +84,17 @@ const EventChatPage = () => {
           att.status !== 'Approved'
         ) || [];
         
+        console.log('📋 Pending approvals loaded:', {
+          totalAttendance: eventData.attendance?.length || 0,
+          pendingCount: pendingStudents.length,
+          pendingStudents: pendingStudents.map(p => ({
+            name: p.userId?.name,
+            email: p.userId?.email,
+            registrationApproved: p.registrationApproved,
+            status: p.status
+          }))
+        });
+        
         setPendingApprovals(pendingStudents);
       }
     } catch (err) {
@@ -80,8 +105,8 @@ const EventChatPage = () => {
   // Approve student for chat
   const approveStudentForChat = async (userId) => {
     try {
-      const { approveEventRegistration } = await import('../api/api');
-      await approveEventRegistration(eventId, userId);
+      const { approveRegistration } = await import('../api/api');
+      await approveRegistration(eventId, userId);
       
       // Refresh data
       await loadParticipants();
@@ -96,18 +121,103 @@ const EventChatPage = () => {
 
   // Reject student for chat
   const rejectStudentForChat = async (userId) => {
-    try {
-      const { disapproveEventRegistration } = await import('../api/api');
-      await disapproveEventRegistration(eventId, userId);
-      
-      // Refresh data
-      await loadParticipants();
-      await loadPendingApprovals();
-      
-      alert('Student rejected for chat access.');
-    } catch (err) {
-      console.error('Error rejecting student:', err);
-      alert('Failed to reject student. Please try again.');
+    // Predefined disapproval reasons
+    const disapprovalReasons = [
+      'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
+      'Late Arrival (Arrived late and wasn\'t present during the call time)',
+      'Left Early (Left in the middle of the duration of commserv)',
+      'Did not sign the Community Service Form',
+      'Did not sign attendance sheet (if any)',
+      'Absent (Student was absent and didn\'t attend the commserv)',
+      'Not wearing the required uniform',
+      'Full slot',
+      'Other'
+    ];
+    
+    const { value: formData } = await Swal.fire({
+      title: 'Reason for Disapproval',
+      html: `
+        <div style="text-align: left;">
+          <p style="margin-bottom: 15px; font-weight: 500;">Reasons why this student is disapproved (Attendance and During Duration of commserv):</p>
+          <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+            <option value="">Select a reason...</option>
+            ${disapprovalReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('')}
+          </select>
+          <div id="other-reason-container" style="display: none; margin-top: 10px;">
+            <label for="other-reason" style="display: block; margin-bottom: 5px; font-weight: 500;">Please specify other reason:</label>
+            <textarea id="other-reason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 80px;" placeholder="Enter your specific reason here..."></textarea>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6c757d',
+      preConfirm: () => {
+        const selectedReason = document.getElementById('disapproval-reason').value;
+        const otherReason = document.getElementById('other-reason').value;
+        
+        if (!selectedReason) {
+          Swal.showValidationMessage('Please select a reason for disapproval');
+          return false;
+        }
+        
+        if (selectedReason === 'Other' && !otherReason.trim()) {
+          Swal.showValidationMessage('Please specify the other reason');
+          return false;
+        }
+        
+        return {
+          reason: selectedReason === 'Other' ? otherReason.trim() : selectedReason,
+          selectedReason: selectedReason
+        };
+      },
+      didOpen: () => {
+        const reasonSelect = document.getElementById('disapproval-reason');
+        const otherContainer = document.getElementById('other-reason-container');
+        
+        reasonSelect.addEventListener('change', (e) => {
+          if (e.target.value === 'Other') {
+            otherContainer.style.display = 'block';
+          } else {
+            otherContainer.style.display = 'none';
+          }
+        });
+      }
+    });
+
+    if (formData) {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to disapprove this student's registration?\n\nReason: ${formData.reason}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, disapprove it!',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        try {
+          const { disapproveRegistration } = await import('../api/api');
+          await disapproveRegistration(eventId, userId, formData.reason);
+          
+          // Refresh data
+          await loadParticipants();
+          await loadPendingApprovals();
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'Registration Disapproved!',
+            text: 'The student\'s registration has been disapproved with the provided reason.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        } catch (err) {
+          console.error('Error rejecting student:', err);
+          Swal.fire('Error', 'Failed to reject student. Please try again.', 'error');
+        }
+      }
     }
   };
 
@@ -236,7 +346,7 @@ const EventChatPage = () => {
           >
             <FaUsers /> Participants ({participants.length})
           </button>
-          {(role === 'Admin' || role === 'Staff') && pendingApprovals.length > 0 && (
+          {(role === 'Admin' || role === 'Staff') && (
             <button 
               className="approvals-toggle-btn"
               onClick={() => setShowApprovals(!showApprovals)}
@@ -381,6 +491,13 @@ const EventChatPage = () => {
           <div className="chat-header-info">
             <h3><FaComments /> Event Chat</h3>
             <p>Discuss this event with other participants</p>
+            <button 
+              className="fullscreen-chat-btn"
+              onClick={() => setShowFullscreenChat(true)}
+              title="View chat in full screen"
+            >
+              🔍 View Full Screen
+            </button>
           </div>
           
           <EventChat 
@@ -388,6 +505,36 @@ const EventChatPage = () => {
             eventTitle={event.title}
             onClose={() => setShowChat(false)}
           />
+        </div>
+      )}
+
+      {/* Full-screen Chat Modal */}
+      {showFullscreenChat && (
+        <div className="fullscreen-chat-overlay">
+          <div className="fullscreen-chat-container">
+            <div className="fullscreen-chat-header">
+              <div className="fullscreen-chat-title">
+                <h2><FaComments /> {event.title} - Event Chat</h2>
+                <p>Discuss this event with other participants</p>
+              </div>
+              <button 
+                className="exit-fullscreen-btn"
+                onClick={() => setShowFullscreenChat(false)}
+                title="Exit full screen"
+              >
+                ✕ Exit Full Screen
+              </button>
+            </div>
+            
+            <div className="fullscreen-chat-content">
+              <EventChat 
+                eventId={event._id} 
+                eventTitle={event.title}
+                onClose={() => setShowFullscreenChat(false)}
+                isFullscreen={true}
+              />
+            </div>
+          </div>
         </div>
       )}
 

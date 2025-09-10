@@ -120,22 +120,76 @@ function EventParticipantsPage() {
       return;
     }
     
-    const { value: reason } = await Swal.fire({
+    // Predefined disapproval reasons
+    const disapprovalReasons = [
+      'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
+      'Late Arrival (Arrived late and wasn\'t present during the call time)',
+      'Left Early (Left in the middle of the duration of commserv)',
+      'Did not sign the Community Service Form',
+      'Did not sign attendance sheet (if any)',
+      'Absent (Student was absent and didn\'t attend the commserv)',
+      'Not wearing the required uniform',
+      'Full slot',
+      'Other'
+    ];
+    
+    const { value: formData } = await Swal.fire({
       title: 'Reason for Disapproval',
-      input: 'textarea',
-      inputLabel: 'Please provide a reason for disapproval',
-      inputPlaceholder: 'Enter your reason here...',
-      inputAttributes: {
-        'aria-label': 'Enter your reason'
-      },
+      html: `
+        <div style="text-align: left;">
+          <p style="margin-bottom: 15px; font-weight: 500;">Reasons why this student is disapproved (Attendance and During Duration of commserv):</p>
+          <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+            <option value="">Select a reason...</option>
+            ${disapprovalReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('')}
+          </select>
+          <div id="other-reason-container" style="display: none; margin-top: 10px;">
+            <label for="other-reason" style="display: block; margin-bottom: 5px; font-weight: 500;">Please specify other reason:</label>
+            <textarea id="other-reason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 80px;" placeholder="Enter your specific reason here..."></textarea>
+          </div>
+        </div>
+      `,
       showCancelButton: true,
-      confirmButtonText: 'Submit'
+      confirmButtonText: 'Submit',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6c757d',
+      preConfirm: () => {
+        const selectedReason = document.getElementById('disapproval-reason').value;
+        const otherReason = document.getElementById('other-reason').value;
+        
+        if (!selectedReason) {
+          Swal.showValidationMessage('Please select a reason for disapproval');
+          return false;
+        }
+        
+        if (selectedReason === 'Other' && !otherReason.trim()) {
+          Swal.showValidationMessage('Please specify the other reason');
+          return false;
+        }
+        
+        return {
+          reason: selectedReason === 'Other' ? otherReason.trim() : selectedReason,
+          selectedReason: selectedReason
+        };
+      },
+      didOpen: () => {
+        const reasonSelect = document.getElementById('disapproval-reason');
+        const otherContainer = document.getElementById('other-reason-container');
+        
+        reasonSelect.addEventListener('change', (e) => {
+          if (e.target.value === 'Other') {
+            otherContainer.style.display = 'block';
+          } else {
+            otherContainer.style.display = 'none';
+          }
+        });
+      }
     });
 
-    if (reason) {
+    if (formData) {
       const result = await Swal.fire({
         title: 'Are you sure?',
-        text: 'Do you want to disapprove this attendance?',
+        text: `Do you want to disapprove this attendance?\n\nReason: ${formData.reason}`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, disapprove it!',
@@ -145,7 +199,7 @@ function EventParticipantsPage() {
       if (result.isConfirmed) {
         setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: true }));
         try {
-          await disapproveAttendance(eventId, userId, reason);
+          await disapproveAttendance(eventId, userId, formData.reason);
           Swal.fire({
             icon: 'success',
             title: 'Attendance Disapproved!',

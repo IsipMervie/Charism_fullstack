@@ -634,6 +634,133 @@
   margin: 0;
 }
 
+/* Full-screen Chat Button */
+.fullscreen-chat-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.75rem;
+}
+
+.fullscreen-chat-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+/* Full-screen Chat Modal */
+.fullscreen-chat-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 0;
+}
+
+.fullscreen-chat-container {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.fullscreen-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.fullscreen-chat-title h2 {
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fullscreen-chat-title p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.exit-fullscreen-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.exit-fullscreen-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.fullscreen-chat-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* Ensure the EventChat component takes full height in fullscreen */
+.fullscreen-chat-content .event-chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive adjustments for fullscreen */
+@media (max-width: 768px) {
+  .fullscreen-chat-header {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .fullscreen-chat-title h2 {
+    font-size: 1.25rem;
+  }
+  
+  .exit-fullscreen-btn {
+    align-self: flex-end;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .event-chat-page {
