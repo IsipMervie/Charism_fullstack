@@ -46,12 +46,25 @@ const EventChatPage = () => {
         hasAttendance: !!userAttendance,
         attendanceData: userAttendance ? {
           registrationApproved: userAttendance.registrationApproved,
-          status: userAttendance.status
+          status: userAttendance.status,
+          fullAttendance: userAttendance
         } : null
       });
       
       // Allow access if student is registered and approved for chat
-      return userAttendance?.registrationApproved || userAttendance?.status === 'Approved';
+      // Check multiple approval indicators
+      const isApproved = userAttendance?.registrationApproved || 
+                        userAttendance?.status === 'Approved' ||
+                        userAttendance?.status === 'Attended' ||
+                        userAttendance?.status === 'Completed';
+      
+      console.log('🎓 Approval check result:', {
+        registrationApproved: userAttendance?.registrationApproved,
+        status: userAttendance?.status,
+        isApproved: isApproved
+      });
+      
+      return isApproved;
     }
     
     console.log('❌ Access denied:', { role, hasEvent: !!event, hasAttendance: !!event?.attendance });
@@ -67,7 +80,12 @@ const EventChatPage = () => {
     );
     
     // Can request if registered but not approved for chat
-    return userAttendance && !userAttendance.registrationApproved && userAttendance.status !== 'Approved';
+    const isApproved = userAttendance?.registrationApproved || 
+                      userAttendance?.status === 'Approved' ||
+                      userAttendance?.status === 'Attended' ||
+                      userAttendance?.status === 'Completed';
+    
+    return userAttendance && !isApproved;
   };
 
   // Request chat access
