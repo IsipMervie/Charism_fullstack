@@ -146,8 +146,8 @@ const EventChatListPage = () => {
   return (
     <div className="event-chat-list-page">
       <div className="page-header">
-        <h1><FaComments /> Event Chats</h1>
-        <p>Join discussions for events you're approved for</p>
+        <h1 className="page-title">Event Chats</h1>
+        <p className="page-subtitle">Join discussions for events you're approved for</p>
       </div>
 
       {/* Search Bar */}
@@ -179,30 +179,32 @@ const EventChatListPage = () => {
       </div>
 
       {events.length === 0 ? (
-        <div className="no-events-container">
-          <div className="no-events-icon">💬</div>
-          <h2>No Chat Access</h2>
-          <p>
+        <div className="empty-state">
+          <div className="empty-state-icon">💬</div>
+          <div className="empty-state-text">No Chat Access</div>
+          <div className="empty-state-subtext">
             {role === 'Student' 
               ? "You don't have access to any event chats yet. You need to be registered and approved for events to participate in their discussions."
               : "No events are available for chat at the moment."
             }
-          </p>
+          </div>
           <button 
-            className="browse-events-button"
+            className="chat-button"
             onClick={() => navigate('/events')}
+            style={{ marginTop: '1rem' }}
           >
             Browse Events
           </button>
         </div>
       ) : filteredEvents.length === 0 && searchTerm ? (
-        <div className="no-search-results">
-          <div className="no-results-icon">🔍</div>
-          <h2>No Events Found</h2>
-          <p>No events match your search for "{searchTerm}"</p>
+        <div className="empty-state">
+          <div className="empty-state-icon">🔍</div>
+          <div className="empty-state-text">No Events Found</div>
+          <div className="empty-state-subtext">No events match your search for "{searchTerm}"</div>
           <button 
-            className="clear-search-button"
+            className="chat-button"
             onClick={() => setSearchTerm('')}
+            style={{ marginTop: '1rem' }}
           >
             Clear Search
           </button>
@@ -239,32 +241,22 @@ const EventChatListPage = () => {
               <div className="event-content">
                 <h3 className="event-title">{event.title}</h3>
                 
-                <div className="event-meta">
-                  <div className="event-date">
-                    <FaCalendar />
-                    <span>{formatDatePhilippines(event.date)}</span>
+                <div className="event-details">
+                  <div className="event-detail-item">
+                    <FaCalendar className="event-detail-icon" />
+                    <span className="event-detail-text">{formatDatePhilippines(event.date)}</span>
                   </div>
-                  <div className="event-time">
-                    <FaClock />
-                    <span>{formatTimeRange12Hour(event.startTime, event.endTime)}</span>
+                  <div className="event-detail-item">
+                    <FaClock className="event-detail-icon" />
+                    <span className="event-detail-text">{formatTimeRange12Hour(event.startTime, event.endTime)}</span>
                   </div>
-                  <div className="event-location">
-                    <FaMapMarkerAlt />
-                    <span>{event.location}</span>
+                  <div className="event-detail-item">
+                    <FaMapMarkerAlt className="event-detail-icon" />
+                    <span className="event-detail-text">{event.location}</span>
                   </div>
-                </div>
-                
-                <p className="event-description">
-                  {event.description.length > 150 
-                    ? `${event.description.substring(0, 150)}...` 
-                    : event.description
-                  }
-                </p>
-                
-                <div className="event-stats">
-                  <div className="participants-count">
-                    <FaUsers />
-                    <span>{event.attendance?.length || 0} participants</span>
+                  <div className="event-detail-item">
+                    <FaUsers className="event-detail-icon" />
+                    <span className="event-detail-text">{event.attendance?.length || 0} participants</span>
                   </div>
                 </div>
               </div>
@@ -275,8 +267,8 @@ const EventChatListPage = () => {
                     className="chat-button"
                     onClick={() => openEventChat(event._id)}
                   >
-                    <FaComments />
-                    Join Chat
+                    <FaComments className="chat-button-icon" />
+                    <span className="chat-button-text">Join Chat</span>
                   </button>
                 ) : canRequestChat(event) ? (
                   <button 

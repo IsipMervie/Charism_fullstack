@@ -460,227 +460,120 @@ const EventChatPage = () => {
 
   return (
     <div className="event-chat-page">
-      {/* Event Header */}
-      <div className="event-header">
-        <button 
-          className="back-button"
-          onClick={() => navigate('/events')}
-        >
-          <FaArrowLeft /> Back to Events
-        </button>
-        
-        <div className="event-info">
-          <h1>{event.title}</h1>
-          <div className="event-meta">
-            <span className="event-date">
-              📅 {new Date(event.date).toLocaleDateString()}
-            </span>
-            <span className="event-time">
-              🕐 {event.startTime} - {event.endTime}
-            </span>
-            <span className="event-location">
-              📍 {event.location}
-            </span>
-          </div>
-        </div>
-        
-        <div className="event-actions">
+      {/* Header Section */}
+      <div className="event-chat-header">
+        <div className="header-content">
           <button 
-            className="participants-toggle-btn"
-            onClick={() => setShowParticipants(!showParticipants)}
+            className="back-button"
+            onClick={() => navigate('/events')}
           >
-            <FaUsers /> Participants ({participants.length})
+            <FaArrowLeft className="back-button-icon" />
+            Back to Events
           </button>
-          {(role === 'Admin' || role === 'Staff') && (
-            <button 
-              className="approvals-toggle-btn"
-              onClick={() => setShowApprovals(!showApprovals)}
-            >
-              ⏳ Approvals ({pendingApprovals.length})
-            </button>
-          )}
+          
+          <div className="event-title-header">
+            <h1 className="event-title-main">{event.title}</h1>
+            <div className="event-meta-header">
+              <div className="event-meta-item">
+                <span className="event-meta-icon">📅</span>
+                <span>{new Date(event.date).toLocaleDateString()}</span>
+              </div>
+              <div className="event-meta-item">
+                <span className="event-meta-icon">🕐</span>
+                <span>{event.startTime} - {event.endTime}</span>
+              </div>
+              <div className="event-meta-item">
+                <span className="event-meta-icon">📍</span>
+                <span>{event.location}</span>
+              </div>
+            </div>
+          </div>
+          
           <button 
-            className="chat-toggle-btn"
-            onClick={() => setShowChat(!showChat)}
+            className="fullscreen-toggle"
+            onClick={() => setShowFullscreenChat(true)}
           >
-            <FaComments /> {showChat ? 'Hide Chat' : 'Show Chat'}
+            <span className="fullscreen-toggle-icon">🔍</span>
+            View Full Screen
           </button>
         </div>
       </div>
 
-      {/* Event Description */}
-      <div className="event-description">
-        <h3>Event Description</h3>
-        <p>{event.description}</p>
-      </div>
-
-      {/* Participants Section */}
-      {showParticipants && (
-        <div className="participants-section">
-          <div className="participants-header">
-            <h3><FaUsers /> Chat Participants</h3>
-            <p>People who can participate in this event's chat</p>
-          </div>
-          
-          <div className="participants-list">
-            {participants.length === 0 ? (
-              <div className="no-participants">
-                <p>No participants yet. Participants will appear here once they join the chat.</p>
-              </div>
-            ) : (
-              participants.map((participant) => (
-                <div key={participant._id} className="participant-card">
-                  <div 
-                    className="participant-avatar clickable"
-                    onClick={() => viewProfile(participant)}
-                    title="Click to view profile"
-                  >
-                    {participant.profilePicture ? (
-                      <img 
-                        src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
-                        alt={participant.name}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
-                    <div className="participant-avatar-placeholder" style={{ display: participant.profilePicture ? 'none' : 'flex' }}>
-                      {participant.name?.charAt(0)?.toUpperCase() || '?'}
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className="participant-info clickable"
-                    onClick={() => viewProfile(participant)}
-                    title="Click to view profile"
-                  >
-                    <h4>{participant.name}</h4>
-                    <p className="participant-role">{participant.role}</p>
-                    <p className="participant-email">{participant.email}</p>
-                  </div>
-                  
-                  <div className="participant-status">
-                    <span className="status-badge online">Online</span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Pending Approvals Section */}
-      {showApprovals && (role === 'Admin' || role === 'Staff') && (
-        <div className="approvals-section">
-          <div className="approvals-header">
-            <h3>⏳ Pending Chat Approvals</h3>
-            <p>Students waiting for chat access approval</p>
-          </div>
-          
-          <div className="approvals-list">
-            {pendingApprovals.length === 0 ? (
-              <div className="no-approvals">
-                <p>No pending approvals. All registered students have been processed.</p>
-              </div>
-            ) : (
-              pendingApprovals.map((approval) => (
-                <div key={approval._id} className="approval-card">
-                  <div className="approval-avatar">
-                    {approval.userId?.profilePicture ? (
-                      <img 
-                        src={approval.userId.profilePicture} 
-                        alt={approval.userId.name}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
-                    <div className="approval-avatar-placeholder" style={{ display: approval.userId?.profilePicture ? 'none' : 'flex' }}>
-                      {approval.userId?.name?.charAt(0)?.toUpperCase() || '?'}
-                    </div>
-                  </div>
-                  
-                  <div className="approval-info">
-                    <h4>{approval.userId?.name || 'Unknown Student'}</h4>
-                    <p className="approval-email">{approval.userId?.email || 'No email'}</p>
-                    <p className="approval-status">Status: {approval.status || 'Pending'}</p>
-                    <p className="approval-date">Registered: {new Date(approval.registeredAt).toLocaleDateString()}</p>
-                  </div>
-                  
-                  <div className="approval-actions">
-                    <button 
-                      className="approve-btn"
-                      onClick={() => approveStudentForChat(approval.userId._id)}
-                    >
-                      ✅ Approve
-                    </button>
-                    <button 
-                      className="reject-btn"
-                      onClick={() => rejectStudentForChat(approval.userId._id)}
-                    >
-                      ❌ Reject
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Chat Section */}
-      {showChat && (
+      {/* Main Content */}
+      <div className="event-chat-main">
+        {/* Chat Section */}
         <div className="chat-section">
-          <div className="chat-header-info">
-            <h3><FaComments /> Event Chat</h3>
-            <p>Discuss this event with other participants</p>
-            <button 
-              className="fullscreen-chat-btn"
-              onClick={() => setShowFullscreenChat(true)}
-              title="View chat in full screen"
-            >
-              🔍 View Full Screen
-            </button>
+          <div className="chat-container">
+            <EventChat 
+              eventId={eventId}
+              eventTitle={event.title}
+              onClose={() => navigate('/events')}
+              viewProfile={viewProfile}
+            />
           </div>
-          
-          <EventChat 
-            eventId={event._id} 
-            eventTitle={event.title}
-            onClose={() => setShowChat(false)}
-            viewProfile={viewProfile}
-          />
         </div>
-      )}
 
-      {/* Full-screen Chat Modal */}
+        {/* Event Info Sidebar */}
+        <div className="event-info-sidebar">
+          {/* Event Description */}
+          <div className="sidebar-section">
+            <h3 className="section-title description">Event Description</h3>
+            <p className="event-description">{event.description}</p>
+          </div>
+
+          {/* Participants */}
+          <div className="sidebar-section">
+            <h3 className="section-title participants">Participants ({participants.length})</h3>
+            <div className="participants-list">
+              {participants.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-state-icon">👥</div>
+                  <div className="empty-state-text">No participants yet</div>
+                  <div className="empty-state-subtext">Participants will appear here once they join the chat</div>
+                </div>
+              ) : (
+                participants.map((participant) => (
+                  <div key={participant._id} className="participant-item">
+                    <img 
+                      className="participant-avatar"
+                      src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
+                      alt={participant.name}
+                      onClick={() => viewProfile(participant)}
+                    />
+                    <div className="participant-info">
+                      <div className="participant-name">{participant.name}</div>
+                      <div className="participant-role">{participant.role || 'Unknown'}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      {/* Fullscreen Chat Modal */}
       {showFullscreenChat && (
         <div className="fullscreen-chat-overlay">
-          <div className="fullscreen-chat-container">
-            <div className="fullscreen-chat-header">
-              <div className="fullscreen-chat-title">
-                <h2><FaComments /> {event.title} - Event Chat</h2>
-                <p>Discuss this event with other participants</p>
-              </div>
-              <button 
-                className="exit-fullscreen-btn"
-                onClick={() => setShowFullscreenChat(false)}
-                title="Exit full screen"
-              >
-                ✕ Exit Full Screen
-              </button>
-            </div>
-            
-            <div className="fullscreen-chat-content">
-              <EventChat 
-                eventId={event._id} 
-                eventTitle={event.title}
-                onClose={() => setShowFullscreenChat(false)}
-                isFullscreen={true}
-                viewProfile={viewProfile}
-              />
-            </div>
+          <div className="fullscreen-chat-header">
+            <h3 className="fullscreen-chat-title">{event.title}</h3>
+            <button 
+              className="exit-fullscreen-btn"
+              onClick={() => setShowFullscreenChat(false)}
+            >
+              Exit Full Screen
+            </button>
+          </div>
+          
+          <div className="fullscreen-chat-content">
+            <EventChat 
+              eventId={eventId}
+              eventTitle={event.title}
+              onClose={() => setShowFullscreenChat(false)}
+              viewProfile={viewProfile}
+              isFullscreen={true}
+            />
           </div>
         </div>
       )}
