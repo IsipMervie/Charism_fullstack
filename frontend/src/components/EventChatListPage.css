@@ -411,6 +411,7 @@
     height: 400px;
     display: flex;
     flex-direction: column;
+    overflow: visible;
   }
   
   .event-image {
@@ -432,25 +433,31 @@
     visibility: visible !important;
     opacity: 1 !important;
     z-index: 10;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-primary);
   }
   
   .chat-button {
-    width: 100%;
-    display: flex;
+    width: 100% !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     padding: 0.875rem 1rem;
     font-size: 0.95rem;
     font-weight: 600;
-    background: var(--primary-color);
-    color: white;
+    background: var(--primary-color) !important;
+    color: white !important;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
     min-height: 44px;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 20;
   }
   
   .chat-button:hover {
@@ -487,22 +494,26 @@
   }
   
   .chat-button {
-    width: 100%;
-    display: flex;
+    width: 100% !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 0.875rem;
     font-size: 0.9rem;
     font-weight: 600;
-    background: var(--primary-color);
-    color: white;
+    background: var(--primary-color) !important;
+    color: white !important;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
     min-height: 40px;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 20;
   }
   
   .chat-button:hover {
