@@ -1,13 +1,15 @@
-/* EventChat.css - Modern, User-Friendly Design */
+@import '../styles/themes.css';
+
+/* EventChat.css - Consistent with App Design */
 
 .event-chat-container {
   display: flex;
   flex-direction: column;
   height: 500px;
   background: var(--bg-card);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-primary);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -27,23 +29,23 @@
 
 /* Chat Header */
 .chat-header {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: white;
-  padding: 1rem 1.5rem;
+  background: var(--primary);
+  color: var(--text-inverse);
+  padding: var(--space-4);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-primary);
   min-height: 60px;
 }
 
 .chat-title {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .chat-title::before {
@@ -54,7 +56,7 @@
 .close-btn {
   background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: white;
+  color: var(--text-inverse);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -62,7 +64,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   font-size: 1.1rem;
 }
 
@@ -75,7 +77,7 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: var(--space-4);
   background: var(--bg-primary);
   scroll-behavior: smooth;
 }
@@ -99,7 +101,7 @@
 
 /* Message Styles */
 .message {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
   display: flex;
   flex-direction: column;
   animation: messageSlideIn 0.3s ease-out;
@@ -118,18 +120,18 @@
 
 .message-content {
   max-width: 75%;
-  padding: 0.75rem 1rem;
-  border-radius: 18px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
   word-wrap: break-word;
   position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .message.sent .message-content {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: white;
+  background: var(--primary);
+  color: var(--text-inverse);
   margin-left: auto;
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: var(--space-2);
 }
 
 .message.received .message-content {
@@ -137,28 +139,28 @@
   color: var(--text-primary);
   border: 1px solid var(--border-primary);
   margin-right: auto;
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: var(--space-2);
 }
 
 .message-text {
   margin: 0;
-  line-height: 1.4;
-  font-size: 0.95rem;
+  line-height: var(--leading-normal);
+  font-size: var(--text-sm);
 }
 
 .message-meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
   font-size: 0.8rem;
   opacity: 0.8;
 }
 
 .sender-name {
-  font-weight: 600;
+  font-weight: var(--font-medium);
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .sender-name:hover {
@@ -172,10 +174,10 @@
 /* Message Actions */
 .message-actions {
   display: flex;
-  gap: 0.25rem;
-  margin-top: 0.5rem;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .message:hover .message-actions {
@@ -183,31 +185,31 @@
 }
 
 .action-btn {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--bg-hover);
   border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-size: 0.75rem;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   color: var(--text-secondary);
 }
 
 .action-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--bg-tertiary);
   transform: scale(1.05);
 }
 
 /* File Attachments */
 .message-attachment {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 
 .image-attachment {
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   max-width: 300px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .attachment-image {
@@ -215,7 +217,7 @@
   height: auto;
   display: block;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .attachment-image:hover {
@@ -225,10 +227,10 @@
 .file-attachment {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 12px;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-hover);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-primary);
 }
 
@@ -236,12 +238,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
 
 .file-name {
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
   color: var(--text-primary);
 }
 
@@ -251,31 +253,31 @@
 }
 
 .download-btn {
-  background: var(--primary-color);
-  color: white;
+  background: var(--primary);
+  color: var(--text-inverse);
   border: none;
-  padding: 0.5rem;
-  border-radius: 8px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .download-btn:hover {
-  background: var(--primary-dark);
+  background: var(--primary-hover);
   transform: scale(1.05);
 }
 
 /* Message Input */
 .message-input-container {
-  padding: 1rem 1.5rem;
+  padding: var(--space-4);
   background: var(--bg-card);
   border-top: 1px solid var(--border-primary);
   display: flex;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .message-input-wrapper {
@@ -283,38 +285,38 @@
   position: relative;
   display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .message-input {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: var(--space-3) var(--space-4);
   border: 2px solid var(--border-primary);
-  border-radius: 24px;
-  font-size: 0.95rem;
-  background: var(--bg-primary);
+  border-radius: var(--radius-2xl);
+  font-size: var(--text-sm);
+  background: var(--bg-input);
   color: var(--text-primary);
   resize: none;
   min-height: 44px;
   max-height: 120px;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   font-family: inherit;
 }
 
 .message-input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-focus);
 }
 
 .message-input::placeholder {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 /* Action Buttons */
 .action-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
 }
 
@@ -327,38 +329,38 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   font-size: 1.1rem;
   position: relative;
 }
 
 .file-btn {
-  background: var(--success-color);
-  color: white;
+  background: var(--success);
+  color: var(--text-inverse);
 }
 
 .file-btn:hover {
-  background: var(--success-dark);
+  background: var(--success-hover);
   transform: scale(1.05);
 }
 
 .emoji-btn {
-  background: var(--warning-color);
-  color: white;
+  background: var(--warning);
+  color: var(--text-inverse);
 }
 
 .emoji-btn:hover {
-  background: var(--warning-dark);
+  background: var(--warning-hover);
   transform: scale(1.05);
 }
 
 .send-btn {
-  background: var(--primary-color);
-  color: white;
+  background: var(--primary);
+  color: var(--text-inverse);
 }
 
 .send-btn:hover:not(:disabled) {
-  background: var(--primary-dark);
+  background: var(--primary-hover);
   transform: scale(1.05);
 }
 
@@ -370,21 +372,21 @@
 
 /* File Preview */
 .file-preview-container {
-  margin-bottom: 0.75rem;
-  padding: 0.75rem;
-  background: rgba(var(--primary-rgb), 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(var(--primary-rgb), 0.2);
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background: var(--primary-light);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary);
 }
 
 .file-preview-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: white;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
 }
 
 .file-preview-item:last-child {
@@ -393,13 +395,13 @@
 
 .file-preview-name {
   flex: 1;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--text-primary);
 }
 
 .remove-file-btn {
-  background: var(--danger-color);
-  color: white;
+  background: var(--error);
+  color: var(--text-inverse);
   border: none;
   width: 24px;
   height: 24px;
@@ -409,11 +411,11 @@
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .remove-file-btn:hover {
-  background: var(--danger-dark);
+  background: var(--error-hover);
   transform: scale(1.1);
 }
 
@@ -422,7 +424,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: var(--space-8);
   color: var(--text-secondary);
 }
 
@@ -431,10 +433,10 @@
   width: 20px;
   height: 20px;
   border: 2px solid var(--border-primary);
-  border-top: 2px solid var(--primary-color);
+  border-top: 2px solid var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-left: 0.5rem;
+  margin-left: var(--space-2);
 }
 
 @keyframes spin {
@@ -448,56 +450,40 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 2rem;
+  padding: var(--space-10) var(--space-8);
   text-align: center;
   color: var(--text-secondary);
 }
 
 .empty-state-icon {
   font-size: 3rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
   opacity: 0.5;
 }
 
 .empty-state-text {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: var(--text-base);
+  margin-bottom: var(--space-2);
 }
 
 .empty-state-subtext {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   opacity: 0.7;
 }
 
 /* Fullscreen Styles */
-.event-chat-container.fullscreen {
-  height: 100vh !important;
-  border-radius: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-  background: var(--bg-primary);
-}
-
 .event-chat-container.fullscreen .messages-container {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  overflow-y: auto;
-  min-height: 0;
-  background: var(--bg-primary);
+  padding: var(--space-6);
 }
 
 .event-chat-container.fullscreen .message-input-container {
-  flex-shrink: 0;
-  padding: 1rem 1.5rem;
+  padding: var(--space-6);
   background: var(--bg-card);
-  border-top: 1px solid var(--border-primary);
 }
 
 .event-chat-container.fullscreen .message-input {
-  font-size: 1rem;
-  padding: 0.875rem 1.25rem;
-  border-radius: 25px;
-  min-height: 50px;
+  font-size: var(--text-base);
+  padding: var(--space-4) var(--space-6);
 }
 
 .event-chat-container.fullscreen .file-btn,
@@ -508,63 +494,41 @@
   font-size: 1.2rem;
 }
 
-.event-chat-container.fullscreen .message-content {
-  max-width: 80%;
-  padding: 1rem 1.25rem;
-  border-radius: 20px;
-  font-size: 1rem;
-}
-
-.event-chat-container.fullscreen .message.sent .message-content {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: white;
-  margin-left: auto;
-  border-bottom-right-radius: 8px;
-}
-
-.event-chat-container.fullscreen .message.received .message-content {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-primary);
-  margin-right: auto;
-  border-bottom-left-radius: 8px;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .event-chat-container {
     height: 400px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
   }
   
   .chat-header {
-    padding: 0.75rem 1rem;
+    padding: var(--space-3) var(--space-4);
     min-height: 50px;
   }
   
   .chat-title {
-    font-size: 1rem;
+    font-size: var(--text-sm);
   }
   
   .messages-container {
-    padding: 0.75rem;
+    padding: var(--space-3);
   }
   
   .message-content {
     max-width: 85%;
-    padding: 0.625rem 0.875rem;
-    border-radius: 16px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
   }
   
   .message-input-container {
-    padding: 0.75rem;
-    gap: 0.5rem;
+    padding: var(--space-3);
+    gap: var(--space-2);
   }
   
   .message-input {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.9rem;
-    border-radius: 20px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    border-radius: var(--radius-lg);
     min-height: 40px;
   }
   
@@ -589,21 +553,21 @@
   }
   
   .event-chat-container.fullscreen .messages-container {
-    padding: 0.75rem;
+    padding: var(--space-3);
     flex: 1;
     overflow-y: auto;
   }
   
   .event-chat-container.fullscreen .message-input-container {
-    padding: 0.75rem;
+    padding: var(--space-3);
     background: var(--bg-card);
     border-top: 1px solid var(--border-primary);
   }
   
   .event-chat-container.fullscreen .message-input {
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    border-radius: 22px;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    border-radius: var(--radius-lg);
     min-height: 44px;
   }
   
@@ -617,25 +581,25 @@
   
   .event-chat-container.fullscreen .message-content {
     max-width: 85%;
-    padding: 0.75rem 1rem;
-    border-radius: 18px;
-    font-size: 0.95rem;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
   }
 }
 
 @media (max-width: 480px) {
   .event-chat-container {
     height: 350px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
   }
   
   .chat-header {
-    padding: 0.5rem 0.75rem;
+    padding: var(--space-2) var(--space-3);
     min-height: 45px;
   }
   
   .chat-title {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
   }
   
   .close-btn {
@@ -645,25 +609,25 @@
   }
   
   .messages-container {
-    padding: 0.5rem;
+    padding: var(--space-2);
   }
   
   .message-content {
     max-width: 90%;
-    padding: 0.5rem 0.75rem;
-    border-radius: 14px;
-    font-size: 0.9rem;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
   }
   
   .message-input-container {
-    padding: 0.5rem;
-    gap: 0.375rem;
+    padding: var(--space-2);
+    gap: var(--space-1);
   }
   
   .message-input {
-    padding: 0.5rem 0.75rem;
+    padding: var(--space-2) var(--space-3);
     font-size: 0.85rem;
-    border-radius: 18px;
+    border-radius: var(--radius-md);
     min-height: 36px;
   }
   
@@ -678,8 +642,8 @@
   }
   
   .file-attachment {
-    padding: 0.5rem;
-    gap: 0.5rem;
+    padding: var(--space-2);
+    gap: var(--space-2);
   }
   
   .file-name {
@@ -701,21 +665,21 @@
   }
   
   .event-chat-container.fullscreen .messages-container {
-    padding: 0.5rem;
+    padding: var(--space-2);
     flex: 1;
     overflow-y: auto;
   }
   
   .event-chat-container.fullscreen .message-input-container {
-    padding: 0.5rem;
+    padding: var(--space-2);
     background: var(--bg-card);
     border-top: 1px solid var(--border-primary);
   }
   
   .event-chat-container.fullscreen .message-input {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.9rem;
-    border-radius: 20px;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    border-radius: var(--radius-lg);
     min-height: 40px;
   }
   
@@ -729,33 +693,9 @@
   
   .event-chat-container.fullscreen .message-content {
     max-width: 90%;
-    padding: 0.625rem 0.875rem;
-    border-radius: 16px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .event-chat-container {
-    background: var(--bg-card-dark, #1a1a1a);
-    border-color: var(--border-primary-dark, #333);
-  }
-  
-  .message.received .message-content {
-    background: var(--bg-card-dark, #1a1a1a);
-    border-color: var(--border-primary-dark, #333);
-  }
-  
-  .message-input {
-    background: var(--bg-primary-dark, #111);
-    border-color: var(--border-primary-dark, #333);
-    color: var(--text-primary-dark, #fff);
-  }
-  
-  .file-attachment {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--border-primary-dark, #333);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
   }
 }
 
@@ -779,7 +719,7 @@
 .send-btn:focus,
 .message-input:focus,
 .close-btn:focus {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 

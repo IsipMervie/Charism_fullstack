@@ -460,6 +460,11 @@ const EventChatPage = () => {
 
   return (
     <div className="event-chat-page">
+      {/* Background Pattern */}
+      <div className="event-chat-background">
+        <div className="background-pattern"></div>
+      </div>
+
       {/* Header Section */}
       <div className="event-chat-header">
         <div className="header-content">
