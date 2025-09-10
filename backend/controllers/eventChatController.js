@@ -72,6 +72,13 @@ exports.sendMessageWithFiles = async (req, res) => {
         url: `/api/uploads/chat-files/${file.filename}`
       };
 
+      console.log('📁 Created attachment:', {
+        filename: file.filename,
+        originalName: file.originalname,
+        url: attachment.url,
+        filePath: `uploads/chat-files/${file.filename}`
+      });
+
       // Create new chat message
       const chatMessage = new EventChat({
         eventId,

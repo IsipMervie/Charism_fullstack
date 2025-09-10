@@ -705,7 +705,6 @@ const EventChatPage = () => {
               
               <div className="profile-details">
                 <h2>{selectedProfile.name}</h2>
-                <p className="profile-role">{selectedProfile.role}</p>
                 <p className="profile-email">{selectedProfile.email}</p>
                 
                 {selectedProfile.bio && (
@@ -715,24 +714,39 @@ const EventChatPage = () => {
                   </div>
                 )}
                 
-                {selectedProfile.department && (
-                  <div className="profile-info">
-                    <h4>Department</h4>
-                    <p>{selectedProfile.department}</p>
-                  </div>
-                )}
-                
-                {selectedProfile.yearLevel && (
-                  <div className="profile-info">
-                    <h4>Year Level</h4>
-                    <p>{selectedProfile.yearLevel}</p>
-                  </div>
-                )}
-                
+                {/* Role - Always shown */}
                 <div className="profile-info">
-                  <h4>Member Since</h4>
-                  <p>{selectedProfile.createdAt ? new Date(selectedProfile.createdAt).toLocaleDateString() : 'Unknown'}</p>
+                  <h4>Role</h4>
+                  <p>{selectedProfile.role || 'Unknown'}</p>
                 </div>
+                
+                {/* Student-specific information */}
+                {selectedProfile.role === 'Student' && (
+                  <>
+                    {selectedProfile.department && (
+                      <div className="profile-info">
+                        <h4>Department</h4>
+                        <p>{selectedProfile.department}</p>
+                      </div>
+                    )}
+                    
+                    {selectedProfile.section && (
+                      <div className="profile-info">
+                        <h4>Section</h4>
+                        <p>{selectedProfile.section}</p>
+                      </div>
+                    )}
+                    
+                    {selectedProfile.yearLevel && (
+                      <div className="profile-info">
+                        <h4>Year Level</h4>
+                        <p>{selectedProfile.yearLevel}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+                
+                {/* Admin/Staff - only show role (already shown above) */}
               </div>
             </div>
           </div>

@@ -12,6 +12,9 @@ const fs = require('fs');
 const uploadDir = 'uploads/chat-files/';
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
+  console.log('✅ Created chat-files directory:', uploadDir);
+} else {
+  console.log('✅ Chat-files directory already exists:', uploadDir);
 }
 
 // Configure multer for file uploads

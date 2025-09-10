@@ -111,6 +111,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Specific route for chat files
+app.use('/api/uploads/chat-files', express.static(path.join(__dirname, 'uploads/chat-files')));
+
 // Add CORS headers to static files
 app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -120,6 +123,13 @@ app.use('/uploads', (req, res, next) => {
 });
 
 app.use('/api/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
+app.use('/api/uploads/chat-files', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
