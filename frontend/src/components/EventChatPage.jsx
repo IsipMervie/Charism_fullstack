@@ -28,6 +28,17 @@ const EventChatPage = () => {
 
   // Check if user can access chat for this event
   const canAccessChat = (event) => {
+    console.log('🔍 canAccessChat called with:', {
+      eventId: event?._id,
+      eventTitle: event?.title,
+      hasEvent: !!event,
+      hasAttendance: !!event?.attendance,
+      attendanceLength: event?.attendance?.length || 0,
+      userRole: role,
+      userId: user._id,
+      userEmail: user.email
+    });
+    
     // Admin and Staff can access chat for all events
     if (role === 'Admin' || role === 'Staff') {
       console.log('✅ Admin/Staff access granted');
@@ -87,7 +98,16 @@ const EventChatPage = () => {
       return isApproved;
     }
     
-    console.log('❌ Access denied:', { role, hasEvent: !!event, hasAttendance: !!event?.attendance });
+    console.log('❌ Access denied:', { 
+      role, 
+      hasEvent: !!event, 
+      hasAttendance: !!event?.attendance,
+      eventId: event?._id,
+      eventTitle: event?.title,
+      attendanceCount: event?.attendance?.length || 0,
+      attendanceStructure: event?.attendance ? 'Array' : 'Not Array',
+      sampleAttendance: event?.attendance?.slice(0, 2) || 'No attendance data'
+    });
     return false;
   };
 
@@ -314,6 +334,15 @@ const EventChatPage = () => {
         // Import the API function
         const { getEventDetails } = await import('../api/api');
         const eventData = await getEventDetails(eventId);
+        
+        console.log('📊 Event data loaded:', {
+          eventId: eventData?._id,
+          eventTitle: eventData?.title,
+          hasAttendance: !!eventData?.attendance,
+          attendanceLength: eventData?.attendance?.length || 0,
+          attendanceStructure: Array.isArray(eventData?.attendance) ? 'Array' : typeof eventData?.attendance,
+          sampleAttendance: eventData?.attendance?.slice(0, 2) || 'No attendance data'
+        });
         
         setEvent(eventData);
         
