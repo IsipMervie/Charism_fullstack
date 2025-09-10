@@ -41,7 +41,6 @@ console.log('\n=== Environment Check ===');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('FRONTEND_URL_PRODUCTION:', process.env.FRONTEND_URL_PRODUCTION || 'NOT SET');
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL || 'NOT SET');
-console.log('FRONTEND_URL_VERCEL:', process.env.FRONTEND_URL_VERCEL || 'NOT SET');
 
 console.log('\n🔧 If links are not working, check your environment variables!');
-console.log('📖 See VERCEL_ENVIRONMENT_SETUP.md for setup instructions.');
+console.log('📖 See DEPLOYMENT.md for setup instructions.');

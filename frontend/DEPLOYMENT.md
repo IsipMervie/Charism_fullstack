@@ -1,12 +1,11 @@
 # Frontend Deployment Guide
 
 ## Overview
-This frontend is deployed separately from the backend on Vercel as a static React application.
+This frontend is deployed separately from the backend on Render as a static React application.
 
 ## Prerequisites
 - Node.js 16+ installed
-- Vercel CLI installed: `npm i -g vercel`
-- Vercel account and project created
+- Render account and project created
 
 ## Environment Setup
 1. Copy `env_template_safe.txt` to `.env.local`
@@ -22,48 +21,35 @@ npm start
 
 ## Building for Production
 ```bash
-npm run build:vercel
+npm run build:render
 ```
 
 ## Deployment Steps
 
-### Option 1: Vercel CLI (Recommended)
-1. Navigate to frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Deploy to Vercel:
-   ```bash
-   vercel --prod
-   ```
-
-3. Follow the prompts to:
-   - Link to existing project or create new
-   - Set build settings
-   - Deploy
-
-### Option 2: GitHub Integration
-1. Push your frontend code to a separate repository
-2. Connect the repository to Vercel
-3. Set build settings:
-   - Build Command: `npm run build:vercel`
+### Option 1: Render Dashboard (Recommended)
+1. Connect your GitHub repository to Render
+2. Set build settings:
+   - Build Command: `npm run build:render`
    - Output Directory: `build`
    - Install Command: `npm install`
 
+### Option 2: Manual Upload
+1. Build the project: `npm run build:render`
+2. Upload the `build` folder to your hosting service
+
 ## Environment Variables
-Set these in your Vercel project settings:
+Set these in your Render project settings:
 - `REACT_APP_API_URL`: Your backend API URL
 - `REACT_APP_ENVIRONMENT`: `production`
 - Any other frontend-specific environment variables
 
 ## Build Configuration
 - Uses `react-app-rewired` for custom build configuration
-- Build script: `npm run build:vercel`
+- Build script: `npm run build:render`
 - Output directory: `build/`
 
 ## Troubleshooting
-- If build fails, check the build logs in Vercel
+- If build fails, check the build logs in Render
 - Ensure all dependencies are in `package.json`
 - Verify environment variables are set correctly
 - Check that the backend API is accessible from the frontend domain

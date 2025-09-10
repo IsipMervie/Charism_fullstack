@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl requests, or Vercel internal requests)
+    // Allow requests with no origin (like mobile apps, curl requests)
     if (!origin) {
       console.log('✅ Allowing request with no origin');
       return callback(null, true);
@@ -48,8 +48,6 @@ app.use(cors({
           'http://localhost:3000',
           'https://charism.onrender.com',
           'https://charism-api.onrender.com',
-          'https://charism.vercel.app',
-          'https://charism-server-ua-backend.vercel.app'
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
@@ -217,7 +215,7 @@ const startServer = async () => {
   }
 };
 
-// Start the server only if running directly (not on Vercel)
+// Start the server
 if (require.main === module) {
   startServer();
 }
@@ -634,7 +632,7 @@ console.log(' Feedback routes loaded');
 app.use('/api/files', require('./routes/fileRoutes'));
 console.log(' File routes loaded');
 
-// File serving fallback for Vercel
+// File serving fallback
 app.get('/api/files/*', (req, res) => {
   res.status(404).json({ 
     message: 'File not found',
@@ -720,5 +718,5 @@ process.on('SIGINT', () => {
   }
 });
 
-// For Vercel, export the app
+// Export the app
 module.exports = app;

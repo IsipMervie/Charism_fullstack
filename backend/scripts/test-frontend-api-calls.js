@@ -12,14 +12,14 @@ const testFrontendApiCalls = async () => {
     console.log('\n📋 Expected API Endpoints:');
     console.log('   Frontend should call: /api/settings/public');
     console.log('   Backend route: /api/settings/public');
-    console.log('   Full URL: https://charism.vercel.app/api/settings/public');
+    console.log('   Full URL: https://charism.onrender.com/api/settings/public');
     
-    console.log('\n📋 Vercel Routing:');
-    console.log('   /api/* → backend/vercel-server.js');
+    console.log('\n📋 Render Routing:');
+    console.log('   /api/* → backend server');
     console.log('   /* → frontend/build (static files)');
     
     console.log('\n📋 Frontend Configuration:');
-    console.log('   REACT_APP_API_URL should be: https://charism.vercel.app/api');
+    console.log('   REACT_APP_API_URL should be: https://charism.onrender.com/api');
     console.log('   axiosInstance baseURL: process.env.REACT_APP_API_URL || http://localhost:5000/api');
     
     console.log('\n📋 Issue Analysis:');
@@ -30,7 +30,7 @@ const testFrontendApiCalls = async () => {
     console.log('\n🔧 Solution:');
     console.log('   1. Check REACT_APP_API_URL in frontend environment');
     console.log('   2. Ensure frontend uses axiosInstance for all API calls');
-    console.log('   3. Verify vercel.json routing is correct');
+    console.log('   3. Verify routing configuration is correct');
     
     console.log('\n✅ Frontend API call testing completed');
     

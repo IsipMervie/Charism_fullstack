@@ -1,4 +1,4 @@
-// Build configuration for Vercel deployment
+// Build configuration for production deployment
 // This file sets environment variables to disable ESLint during build
 
 const path = require('path');

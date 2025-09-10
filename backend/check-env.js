@@ -1,13 +1,13 @@
-// check-env.js - Environment variable checker for Vercel deployment
+// check-env.js - Environment variable checker for production deployment
 const fs = require('fs');
 const path = require('path');
 
 console.log('🔍 Environment Variable Checker');
 console.log('===============================\n');
 
-// Check if we're in Vercel
-const isVercel = process.env.VERCEL === '1';
-console.log('🌐 Environment:', isVercel ? 'Vercel' : 'Local/Other');
+// Check if we're in production
+const isProduction = process.env.NODE_ENV === 'production';
+console.log('🌐 Environment:', isProduction ? 'Production' : 'Local/Other');
 console.log('NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
 
 // Required environment variables
@@ -90,14 +90,14 @@ console.log('========================');
 
 if (missingVars.length > 0) {
   console.log(`❌ Missing required variables: ${missingVars.join(', ')}`);
-  console.log('   These must be set in Vercel environment variables');
+  console.log('   These must be set in production environment variables');
 } else {
   console.log('✅ All required environment variables are set');
 }
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('⚠️  NODE_ENV is not set to "production"');
-  console.log('   This may cause issues in Vercel deployment');
+  console.log('   This may cause issues in production deployment');
 }
 
 if (!process.env.CORS_ORIGINS) {
@@ -108,7 +108,7 @@ console.log('\n📝 Next Steps:');
 console.log('===============');
 
 if (missingVars.length > 0) {
-  console.log('1. Go to Vercel Dashboard → Your Project → Settings → Environment Variables');
+  console.log('1. Go to your hosting platform → Your Project → Settings → Environment Variables');
   console.log('2. Add the missing variables:');
   missingVars.forEach(varName => {
     console.log(`   - ${varName}`);

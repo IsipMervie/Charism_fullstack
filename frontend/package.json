@@ -26,8 +26,6 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "build:prod": "react-app-rewired build",
-    "build:vercel": "react-app-rewired build",
-    "vercel-build": "node build-vercel.js",
     "build:render": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",

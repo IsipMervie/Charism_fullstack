@@ -154,11 +154,11 @@ const getConnectionStatus = () => {
   };
 };
 
-// For Vercel serverless, don't connect immediately
+// Lazy connection for better performance
 let connection = null;
 let lazyConnection = null;
 
-// Optimized lazy connection for Vercel - faster connection with better error handling
+// Optimized lazy connection - faster connection with better error handling
 const getLazyConnection = async () => {
   try {
     if (!lazyConnection || mongoose.connection.readyState !== 1) {

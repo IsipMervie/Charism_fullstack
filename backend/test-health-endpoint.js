@@ -51,7 +51,7 @@ const main = async () => {
   
   const baseUrls = [
     'http://localhost:5000',
-    'https://charism-server-ua-backend.vercel.app'
+    'https://charism-api.onrender.com'
   ];
   
   for (const baseUrl of baseUrls) {

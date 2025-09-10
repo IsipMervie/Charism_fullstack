@@ -50,9 +50,9 @@ const testCompleteFlow = async () => {
     
     // Test 5: Expected vs Actual
     console.log('\n📋 Test 5: Expected vs Actual');
-    const expectedVerification = 'https://charism.vercel.app/#/verify-email/';
-    const expectedReset = 'https://charism.vercel.app/#/reset-password/';
-    const expectedEvent = 'https://charism.vercel.app/#/events/register/';
+    const expectedVerification = 'https://charism.onrender.com/#/verify-email/';
+    const expectedReset = 'https://charism.onrender.com/#/reset-password/';
+    const expectedEvent = 'https://charism.onrender.com/#/events/register/';
     
     console.log('   Verification matches:', verificationLink.startsWith(expectedVerification));
     console.log('   Reset matches:', resetLink.startsWith(expectedReset));

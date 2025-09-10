@@ -1,12 +1,11 @@
 # Backend Deployment Guide
 
 ## Overview
-This backend is deployed separately from the frontend on Vercel as a serverless Node.js API.
+This backend is deployed separately from the frontend on Render as a Node.js API.
 
 ## Prerequisites
 - Node.js 16+ installed
-- Vercel CLI installed: `npm i -g vercel`
-- Vercel account and project created
+- Render account and project created
 - MongoDB database (MongoDB Atlas recommended)
 
 ## Environment Setup
@@ -27,32 +26,19 @@ npm run dev
 
 ## Deployment Steps
 
-### Option 1: Vercel CLI (Recommended)
-1. Navigate to backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Deploy to Vercel:
-   ```bash
-   vercel --prod
-   ```
-
-3. Follow the prompts to:
-   - Link to existing project or create new
-   - Set build settings
-   - Deploy
-
-### Option 2: GitHub Integration
-1. Push your backend code to a separate repository
-2. Connect the repository to Vercel
-3. Set build settings:
+### Option 1: Render Dashboard (Recommended)
+1. Connect your GitHub repository to Render
+2. Set build settings:
    - Build Command: `echo 'No build step required'`
    - Output Directory: `none`
    - Install Command: `npm install`
 
+### Option 2: Manual Upload
+1. Build the project: `npm run build`
+2. Upload the backend folder to your hosting service
+
 ## Environment Variables
-Set these in your Vercel project settings:
+Set these in your Render project settings:
 - `MONGO_URI`: MongoDB connection string
 - `JWT_SECRET`: JWT signing secret
 - `EMAIL_USER`: Email service username
@@ -80,13 +66,13 @@ Test these endpoints after deployment:
 ## CORS Configuration
 The backend is configured to allow requests from:
 - Your frontend domain
-- Vercel domains
+- Render domains
 - Any origin specified in `CORS_ORIGINS` environment variable
 
 ## Troubleshooting
-- Check Vercel function logs for errors
+- Check Render logs for errors
 - Verify environment variables are set correctly
-- Ensure MongoDB is accessible from Vercel
+- Ensure MongoDB is accessible from Render
 - Check CORS configuration if frontend can't reach backend
 
 ## Post-Deployment
@@ -97,7 +83,7 @@ The backend is configured to allow requests from:
 5. Monitor performance and errors
 
 ## Scaling Considerations
-- Vercel functions have execution time limits
+- Render has execution time limits
 - Consider database connection pooling
-- Monitor memory usage in function logs
+- Monitor memory usage in logs
 - Use appropriate timeout settings for long-running operations

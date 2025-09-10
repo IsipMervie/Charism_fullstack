@@ -331,9 +331,13 @@ const EventChatPage = () => {
         setLoading(true);
         setError('');
         
-        // Import the API function
-        const { getEventDetails } = await import('../api/api');
+        // Import the API functions
+        const { getEventDetails, getEventAttendance } = await import('../api/api');
         const eventData = await getEventDetails(eventId);
+        const attendanceData = await getEventAttendance(eventId);
+        
+        // Add attendance data to event object
+        eventData.attendance = attendanceData;
         
         console.log('📊 Event data loaded:', {
           eventId: eventData?._id,

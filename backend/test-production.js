@@ -3,7 +3,7 @@
 
 const axios = require('axios');
 
-const BASE_URL = 'https://charism.vercel.app';
+const BASE_URL = 'https://charism.onrender.com';
 
 const testEndpoints = [
   '/api/health',

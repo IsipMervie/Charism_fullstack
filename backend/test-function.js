@@ -1,4 +1,4 @@
-// Simple test function for Vercel
+// Simple test function
 module.exports = (req, res) => {
   try {
     console.log('🧪 Test function called');

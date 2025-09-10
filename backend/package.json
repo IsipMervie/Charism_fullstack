@@ -5,7 +5,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server-simple.js",
-    "vercel-build": "echo 'Vercel build completed'",
     "dev": "nodemon server.js",
     "build": "echo 'No build step required for Node.js backend'",
     "postinstall": "echo 'Backend dependencies installed successfully'"

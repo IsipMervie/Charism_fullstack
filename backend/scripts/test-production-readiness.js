@@ -38,18 +38,18 @@ const testProductionReadiness = async () => {
     console.log('\n📋 Test 3: URL Structure Validation');
     const urls = [verificationLink, resetLink, eventRegLink];
     const allValid = urls.every(url => {
-      const isValid = url.includes('#') && url.includes('charism.vercel.app');
+      const isValid = url.includes('#') && url.includes('charism.onrender.com');
       console.log(`   ${url.includes('#') ? '✅' : '❌'} HashRouter: ${url.includes('#')}`);
-      console.log(`   ${url.includes('charism.vercel.app') ? '✅' : '❌'} Domain: ${url.includes('charism.vercel.app')}`);
+      console.log(`   ${url.includes('charism.onrender.com') ? '✅' : '❌'} Domain: ${url.includes('charism.onrender.com')}`);
       return isValid;
     });
     
     // Test 4: Expected vs Actual URLs
     console.log('\n📋 Test 4: Expected vs Actual URLs');
     const expectedPatterns = [
-      'https://charism.vercel.app/#/verify-email/',
-      'https://charism.vercel.app/#/reset-password/',
-      'https://charism.vercel.app/#/events/register/'
+      'https://charism.onrender.com/#/verify-email/',
+      'https://charism.onrender.com/#/reset-password/',
+      'https://charism.onrender.com/#/events/register/'
     ];
     
     const actualUrls = [verificationLink, resetLink, eventRegLink];
