@@ -21,6 +21,7 @@ const EventChatPage = () => {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showFullscreenChat, setShowFullscreenChat] = useState(false);
+  const [chatJoinRequested, setChatJoinRequested] = useState(false);
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = localStorage.getItem('role');
@@ -33,8 +34,7 @@ const EventChatPage = () => {
       return true;
     }
     
-    // Students can access chat if they are registered for the event
-    // The approval system is for chat participation, not initial access
+    // Students can access chat if they are registered and approved for chat
     if (role === 'Student' && event?.attendance) {
       const userAttendance = event.attendance.find(att => 
         (att.userId?._id || att.userId) === user._id
@@ -50,12 +50,43 @@ const EventChatPage = () => {
         } : null
       });
       
-      // Allow access if student is registered (has attendance record)
-      return !!userAttendance;
+      // Allow access if student is registered and approved for chat
+      return userAttendance?.registrationApproved || userAttendance?.status === 'Approved';
     }
     
     console.log('❌ Access denied:', { role, hasEvent: !!event, hasAttendance: !!event?.attendance });
     return false;
+  };
+
+  // Check if student can request chat access
+  const canRequestChatAccess = (event) => {
+    if (role !== 'Student' || !event?.attendance) return false;
+    
+    const userAttendance = event.attendance.find(att => 
+      (att.userId?._id || att.userId) === user._id
+    );
+    
+    // Can request if registered but not approved for chat
+    return userAttendance && !userAttendance.registrationApproved && userAttendance.status !== 'Approved';
+  };
+
+  // Request chat access
+  const requestChatAccess = async () => {
+    try {
+      const { requestEventChatAccess } = await import('../api/api');
+      await requestEventChatAccess(eventId);
+      setChatJoinRequested(true);
+      Swal.fire({
+        icon: 'success',
+        title: 'Chat Access Requested!',
+        text: 'Your request to join the chat has been submitted. Please wait for admin/staff approval.',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } catch (err) {
+      console.error('Error requesting chat access:', err);
+      Swal.fire('Error', 'Failed to request chat access. Please try again.', 'error');
+    }
   };
 
   // Load participants
@@ -282,8 +313,29 @@ const EventChatPage = () => {
       <div className="event-chat-page">
         <div className="error-container">
           <div className="error-icon">⚠️</div>
-          <h2>Access Denied</h2>
+          <h2>Chat Access</h2>
           <p>{error}</p>
+          
+          {/* Show different options based on user role and status */}
+          {role === 'Student' && event && canRequestChatAccess(event) && !chatJoinRequested && (
+            <div className="chat-access-options">
+              <p>You are registered for this event but need approval to join the chat.</p>
+              <button 
+                className="request-chat-access-btn"
+                onClick={requestChatAccess}
+              >
+                Request Chat Access
+              </button>
+            </div>
+          )}
+          
+          {role === 'Student' && chatJoinRequested && (
+            <div className="chat-request-status">
+              <p>✅ Your chat access request has been submitted!</p>
+              <p>Please wait for admin/staff approval to join the chat.</p>
+            </div>
+          )}
+          
           <button 
             className="back-button"
             onClick={() => navigate('/events')}

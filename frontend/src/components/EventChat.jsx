@@ -15,6 +15,7 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
   const [replyingTo, setReplyingTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   
   const messagesEndRef = useRef(null);
   const messageInputRef = useRef(null);
@@ -150,6 +151,16 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
 
   const emojis = ['👍', '❤️', '😂', '😮', '😢', '😡'];
 
+  // Filter messages based on search term
+  const filteredMessages = messages.filter(message => {
+    if (!searchTerm.trim()) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      message.message.toLowerCase().includes(searchLower) ||
+      message.user?.name?.toLowerCase().includes(searchLower)
+    );
+  });
+
   // Validate eventId after all hooks
   if (!eventId) {
     return (
@@ -177,13 +188,38 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className="chat-search-container">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search messages..."
+          className="chat-search-input"
+        />
+        {searchTerm && (
+          <button 
+            className="clear-search-btn"
+            onClick={() => setSearchTerm('')}
+            title="Clear search"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
       {/* Messages Area */}
       <div className="messages-container">
         {loading ? (
           <div className="loading-messages">Loading messages...</div>
         ) : (
           <>
-            {messages.map((message) => (
+            {filteredMessages.length === 0 && searchTerm ? (
+              <div className="no-search-results">
+                <p>No messages found matching "{searchTerm}"</p>
+              </div>
+            ) : (
+              filteredMessages.map((message) => (
               <div key={message._id} className={`message ${message.userId === user._id ? 'own-message' : ''}`}>
                 <div className="message-content">
                   <div className="message-header">
@@ -257,7 +293,8 @@ const EventChat = ({ eventId, eventTitle, onClose }) => {
                   </div>
                 </div>
               </div>
-            ))}
+              ))
+            )}
             <div ref={messagesEndRef} />
           </>
         )}

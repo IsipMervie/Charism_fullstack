@@ -48,6 +48,54 @@
   max-width: 500px;
 }
 
+/* Chat Access Options */
+.chat-access-options {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-primary);
+}
+
+.chat-access-options p {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.request-chat-access-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.request-chat-access-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.chat-request-status {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f0f9ff;
+  border-radius: 8px;
+  border: 1px solid #0ea5e9;
+}
+
+.chat-request-status p {
+  margin-bottom: 0.5rem;
+  color: #0c4a6e;
+}
+
+.chat-request-status p:first-child {
+  font-weight: 600;
+}
+
 /* Event Header */
 .event-header {
   display: flex;
