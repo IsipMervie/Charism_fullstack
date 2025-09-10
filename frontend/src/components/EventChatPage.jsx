@@ -320,9 +320,22 @@ const EventChatPage = () => {
   };
 
   // View user profile
-  const viewProfile = (participant) => {
-    setSelectedProfile(participant);
-    setShowProfileModal(true);
+  const viewProfile = async (participant) => {
+    try {
+      // If participant doesn't have full user data, fetch it
+      if (!participant.role || !participant.department) {
+        const { getUserProfile } = await import('../api/api');
+        const userData = await getUserProfile(participant._id);
+        setSelectedProfile({ ...participant, ...userData });
+      } else {
+        setSelectedProfile(participant);
+      }
+      setShowProfileModal(true);
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      setSelectedProfile(participant);
+      setShowProfileModal(true);
+    }
   };
 
   // Load event details

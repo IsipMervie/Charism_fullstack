@@ -318,7 +318,37 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
                             src={message.attachment.url} 
                             alt={message.attachment.originalName}
                             className="attachment-image"
-                            onClick={() => window.open(message.attachment.url, '_blank')}
+                            onClick={() => {
+                              // Create fullscreen image modal
+                              const modal = document.createElement('div');
+                              modal.style.cssText = `
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                width: 100vw;
+                                height: 100vh;
+                                background: rgba(0,0,0,0.9);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                z-index: 10000;
+                                cursor: pointer;
+                              `;
+                              
+                              const img = document.createElement('img');
+                              img.src = message.attachment.url;
+                              img.style.cssText = `
+                                max-width: 90vw;
+                                max-height: 90vh;
+                                object-fit: contain;
+                                border-radius: 8px;
+                              `;
+                              
+                              modal.appendChild(img);
+                              document.body.appendChild(modal);
+                              
+                              modal.onclick = () => document.body.removeChild(modal);
+                            }}
                           />
                         </div>
                       ) : (

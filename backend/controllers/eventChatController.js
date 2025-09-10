@@ -69,7 +69,7 @@ exports.sendMessageWithFiles = async (req, res) => {
         originalName: file.originalname,
         fileSize: file.size,
         contentType: file.mimetype,
-        url: `/api/uploads/chat-files/${file.filename}`
+        url: `/uploads/chat-files/${file.filename}`
       };
 
       console.log('📁 Created attachment:', {

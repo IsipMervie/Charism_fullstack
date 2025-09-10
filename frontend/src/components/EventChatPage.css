@@ -534,11 +534,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10000;
   padding: 1rem;
 }
 
@@ -711,12 +711,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: var(--bg-primary);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
   z-index: 2000;
   padding: 0;
+  margin: 0;
 }
 
 .fullscreen-chat-container {
@@ -726,17 +727,23 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .fullscreen-chat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-primary);
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .fullscreen-chat-title h2 {
@@ -780,6 +787,8 @@
   flex-direction: column;
   overflow: hidden;
   background: var(--bg-primary);
+  height: calc(100vh - 60px);
+  min-height: 0;
 }
 
 /* Ensure the EventChat component takes full height in fullscreen */
@@ -791,33 +800,63 @@
 
 /* Responsive adjustments for fullscreen */
 @media (max-width: 768px) {
+  .fullscreen-chat-overlay {
+    background: var(--bg-primary);
+  }
+  
+  .fullscreen-chat-container {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  
   .fullscreen-chat-header {
-    padding: 0.75rem 1rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    flex-direction: row;
+    gap: 0.5rem;
+    min-height: 50px;
   }
   
   .fullscreen-chat-title h2 {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  
+  .fullscreen-chat-title p {
+    font-size: 0.8rem;
+    margin: 0;
   }
   
   .exit-fullscreen-btn {
-    align-self: flex-end;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: auto;
+  }
+  
+  .fullscreen-chat-content {
+    height: calc(100vh - 50px);
+  }
+  
+  .fullscreen-chat-content .event-chat {
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
   }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .event-chat-page {
-    padding: 1rem;
+    padding: 0.5rem;
+    min-height: 100vh;
   }
   
   .event-header {
     flex-direction: column;
     align-items: stretch;
+    padding: 1rem;
   }
   
   .event-info {
@@ -831,6 +870,16 @@
   
   .event-actions {
     justify-content: center;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  .chat-button, .fullscreen-chat-btn {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.875rem 1rem;
+    font-size: 0.95rem;
   }
 }
 
