@@ -4,12 +4,20 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaPaperPlane, FaSmile, FaImage, FaReply, FaEdit, FaTrash, FaThumbsUp, FaHeart, FaLaugh, FaAngry, FaFile, FaDownload, FaTimes } from 'react-icons/fa';
 import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
+import { API_URL } from '../config/environment';
 import './EventChat.css';
 
 const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = false }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Helper function to construct full URL for attachments
+  const getAttachmentUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${API_URL}${url}`;
+  };
   const [sending, setSending] = useState(false);
   const [participants, setParticipants] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
@@ -315,7 +323,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
                       {message.messageType === 'image' ? (
                         <div className="image-attachment">
                           <img 
-                            src={message.attachment.url} 
+                            src={getAttachmentUrl(message.attachment.url)} 
                             alt={message.attachment.originalName}
                             className="attachment-image"
                             onClick={() => {
@@ -336,7 +344,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
                               `;
                               
                               const img = document.createElement('img');
-                              img.src = message.attachment.url;
+                              img.src = getAttachmentUrl(message.attachment.url);
                               img.style.cssText = `
                                 max-width: 90vw;
                                 max-height: 90vh;
@@ -362,7 +370,7 @@ const EventChat = ({ eventId, eventTitle, onClose, viewProfile, isFullscreen = f
                           </div>
                           <button 
                             className="download-btn"
-                            onClick={() => window.open(message.attachment.url, '_blank')}
+                            onClick={() => window.open(getAttachmentUrl(message.attachment.url), '_blank')}
                             title="Download file"
                           >
                             <FaDownload />
