@@ -10,7 +10,6 @@ import {
   FaEdit, 
   FaTrash, 
   FaThumbsUp, 
-  FaHeart, 
   FaLaugh, 
   FaAngry, 
   FaFile, 
@@ -18,7 +17,6 @@ import {
   FaTimes,
   FaEllipsisV,
   FaCopy,
-  FaShare,
   FaMicrophone,
   FaStop,
   FaVolumeUp,
@@ -37,7 +35,7 @@ import {
   FaEyeSlash,
   FaRedoAlt
 } from 'react-icons/fa';
-import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
+import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, getEventParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import { API_URL } from '../config/environment';
 import './EventChat.css';
 
@@ -129,7 +127,11 @@ const EventChat = ({
     if (diffInHours < 1) {
       return 'Just now';
     } else if (diffInHours < 24) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      });
     } else {
       return date.toLocaleDateString();
     }
@@ -164,21 +166,6 @@ const EventChat = ({
     }
   }, []);
 
-  const shareMessage = useCallback(async (message) => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Shared Message',
-          text: message.message,
-          url: window.location.href
-        });
-      } catch (err) {
-        console.error('Error sharing:', err);
-      }
-    } else {
-      copyToClipboard(message.message);
-    }
-  }, [copyToClipboard]);
 
   // Typing indicator handlers
   const handleTyping = useCallback(() => {
@@ -247,10 +234,27 @@ const EventChat = ({
   // Load participants
   const loadParticipants = useCallback(async () => {
     try {
-      const data = await getEventChatParticipants(eventId);
-      setParticipants(data.participants || []);
+      // Load both chat participants and event participants
+      const [chatData, eventData] = await Promise.all([
+        getEventChatParticipants(eventId).catch(() => ({ participants: [] })),
+        getEventParticipants(eventId).catch(() => ({ participants: [] }))
+      ]);
+      
+      const chatParticipants = chatData.participants || [];
+      const eventParticipants = eventData.participants || [];
+      
+      // Combine and deduplicate participants
+      const allParticipants = [...chatParticipants];
+      eventParticipants.forEach(eventParticipant => {
+        if (!allParticipants.find(p => p._id === eventParticipant._id)) {
+          allParticipants.push(eventParticipant);
+        }
+      });
+      
+      setParticipants(allParticipants);
     } catch (error) {
       console.error('Error loading participants:', error);
+      setParticipants([]);
     }
   }, [eventId]);
 
@@ -490,9 +494,6 @@ const EventChat = ({
       case 'copy':
         copyToClipboard(message.message);
         break;
-      case 'share':
-        shareMessage(message);
-        break;
       case 'reply':
         setReplyingTo({ id: message._id, user: message.user, message: message.message });
         break;
@@ -510,7 +511,7 @@ const EventChat = ({
         break;
     }
     setShowMessageOptions(null);
-  }, [copyToClipboard, shareMessage, deleteMessage, user._id]);
+  }, [copyToClipboard, deleteMessage, user._id]);
 
   // Enhanced emoji reactions
   const emojiReactions = useMemo(() => [
@@ -743,11 +744,10 @@ const EventChat = ({
                                         alt={attachment.originalName}
                                         className="attachment-image"
                                         onError={(e) => {
-                                          console.warn('Image not available on server:', getAttachmentUrl(attachment.url));
                                           setFailedImages(prev => new Set([...prev, attachment.url]));
                                         }}
                                         onLoad={() => {
-                                          console.log('Image loaded successfully:', getAttachmentUrl(attachment.url));
+                                          // Image loaded successfully
                                         }}
                                         onClick={() => {
                                           // Create fullscreen image modal
@@ -779,7 +779,6 @@ const EventChat = ({
                                             onClick={() => {
                                               try {
                                                 const fileUrl = getAttachmentUrl(attachment.url);
-                                                console.log('Attempting to download image:', fileUrl);
                                                 const link = document.createElement('a');
                                                 link.href = fileUrl;
                                                 link.download = attachment.originalName;
@@ -788,7 +787,6 @@ const EventChat = ({
                                                 link.click();
                                                 document.body.removeChild(link);
                                               } catch (error) {
-                                                console.error('Error downloading image:', error);
                                                 alert('File not available for download. The file may have been deleted from the server.');
                                               }
                                             }}
@@ -811,8 +809,16 @@ const EventChat = ({
                                   <div className="audio-attachment">
                                     <div className="audio-player">
                                       <FaVolumeUp className="audio-icon" />
-                                      <audio controls>
+                                      <audio 
+                                        controls 
+                                        preload="metadata"
+                                        onError={(e) => {
+                                          console.warn('Audio playback failed:', e);
+                                        }}
+                                      >
                                         <source src={getAttachmentUrl(attachment.url)} type={attachment.contentType} />
+                                        <source src={getAttachmentUrl(attachment.url)} type="audio/mpeg" />
+                                        <source src={getAttachmentUrl(attachment.url)} type="audio/wav" />
                                         Your browser does not support the audio element.
                                       </audio>
                                     </div>
@@ -901,13 +907,6 @@ const EventChat = ({
                             title="Copy"
                           >
                             <FaCopy />
-                          </button>
-                          <button
-                            className="action-btn"
-                            onClick={() => handleMessageAction('share', message)}
-                            title="Share"
-                          >
-                            <FaShare />
                           </button>
                           {message.userId === user._id && (
                             <>

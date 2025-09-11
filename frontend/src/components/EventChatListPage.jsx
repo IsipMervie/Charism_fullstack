@@ -17,9 +17,6 @@ import {
   FaBell,
   FaBellSlash,
   FaStar,
-  FaHeart,
-  FaBookmark,
-  FaShare,
   FaDownload,
   FaRedoAlt,
   FaExclamationTriangle,
@@ -59,8 +56,6 @@ const EventChatListPage = () => {
   const [viewMode, setViewMode] = useState('grid'); // grid, list
   const [showFilters, setShowFilters] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
-  const [favorites, setFavorites] = useState(new Set());
-  const [bookmarks, setBookmarks] = useState(new Set());
   
   // Navigation
   const navigate = useNavigate();
@@ -277,52 +272,6 @@ const EventChatListPage = () => {
     setSearchTerm('');
   }, []);
 
-  const toggleFavorite = useCallback((eventId) => {
-    setFavorites(prev => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(eventId)) {
-        newFavorites.delete(eventId);
-      } else {
-        newFavorites.add(eventId);
-      }
-      return newFavorites;
-    });
-  }, []);
-
-  const toggleBookmark = useCallback((eventId) => {
-    setBookmarks(prev => {
-      const newBookmarks = new Set(prev);
-      if (newBookmarks.has(eventId)) {
-        newBookmarks.delete(eventId);
-      } else {
-        newBookmarks.add(eventId);
-      }
-      return newBookmarks;
-    });
-  }, []);
-
-  const shareEvent = useCallback(async (event) => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: event.title,
-          text: event.description,
-          url: window.location.href
-        });
-      } catch (err) {
-        console.error('Error sharing:', err);
-      }
-    } else {
-      // Fallback: copy to clipboard
-      const eventUrl = `${window.location.origin}/event-chat/${event._id}`;
-      try {
-        await navigator.clipboard.writeText(eventUrl);
-        alert('Event link copied to clipboard!');
-      } catch (err) {
-        console.error('Failed to copy:', err);
-      }
-    }
-  }, []);
 
   // Load events
   useEffect(() => {
@@ -657,27 +606,6 @@ const EventChatListPage = () => {
                     </div>
                     
                     <div className="event-actions-overlay">
-                      <button 
-                        className={`action-btn ${favorites.has(event._id) ? 'active' : ''}`}
-                        onClick={() => toggleFavorite(event._id)}
-                        title={favorites.has(event._id) ? 'Remove from favorites' : 'Add to favorites'}
-                      >
-                        <FaHeart />
-                      </button>
-                      <button 
-                        className={`action-btn ${bookmarks.has(event._id) ? 'active' : ''}`}
-                        onClick={() => toggleBookmark(event._id)}
-                        title={bookmarks.has(event._id) ? 'Remove bookmark' : 'Bookmark event'}
-                      >
-                        <FaBookmark />
-                      </button>
-                      <button 
-                        className="action-btn"
-                        onClick={() => shareEvent(event)}
-                        title="Share event"
-                      >
-                        <FaShare />
-                      </button>
                     </div>
                   </div>
                 </div>

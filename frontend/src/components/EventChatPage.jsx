@@ -9,8 +9,6 @@ import {
   FaUsers, 
   FaExpand, 
   FaCompress, 
-  FaBell, 
-  FaBellSlash,
   FaSearch,
   FaFilter,
   FaUserPlus,
@@ -623,13 +621,6 @@ const EventChatPage = () => {
           </div>
 
           <div className="header-right">
-            <button 
-              className="notification-toggle"
-              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-              title={notificationsEnabled ? "Disable notifications" : "Enable notifications"}
-            >
-              {notificationsEnabled ? <FaBell /> : <FaBellSlash />}
-            </button>
             
             <button 
               className="fullscreen-toggle"
