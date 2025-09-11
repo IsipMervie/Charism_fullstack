@@ -461,12 +461,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.5rem;
   background: var(--bg-hover);
   border: 1px solid var(--border-primary);
   border-radius: 12px;
   color: var(--text-secondary);
-  gap: 0.5rem;
+  gap: 0.75rem;
+  min-height: 120px;
 }
 
 .image-fallback svg {
@@ -476,6 +477,27 @@
 
 .image-fallback span {
   font-size: 0.85rem;
+  text-align: center;
+}
+
+.image-fallback .download-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.image-fallback .download-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
 }
 
 .attachment-image {

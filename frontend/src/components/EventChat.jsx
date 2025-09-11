@@ -95,6 +95,10 @@ const EventChat = ({
   const getAttachmentUrl = useCallback((url) => {
     if (!url) return '';
     if (url.startsWith('http')) return url;
+    // If URL already starts with /api, don't prepend API_URL again
+    if (url.startsWith('/api')) {
+      return `${API_URL.replace('/api', '')}${url}`;
+    }
     return `${API_URL}${url}`;
   }, []);
 
@@ -724,9 +728,13 @@ const EventChat = ({
                                       alt={attachment.originalName}
                                       className="attachment-image"
                                       onError={(e) => {
+                                        console.error('Image failed to load:', getAttachmentUrl(attachment.url));
                                         e.target.style.display = 'none';
                                         const fallback = e.target.nextSibling;
                                         if (fallback) fallback.style.display = 'block';
+                                      }}
+                                      onLoad={() => {
+                                        console.log('Image loaded successfully:', getAttachmentUrl(attachment.url));
                                       }}
                                       onClick={() => {
                                         // Create fullscreen image modal
@@ -750,6 +758,28 @@ const EventChat = ({
                                     <div className="image-fallback" style={{display: 'none'}}>
                                       <FaImage />
                                       <span>Image failed to load</span>
+                                      <button 
+                                        className="download-btn"
+                                        onClick={() => {
+                                          try {
+                                            const fileUrl = getAttachmentUrl(attachment.url);
+                                            console.log('Downloading image:', fileUrl);
+                                            const link = document.createElement('a');
+                                            link.href = fileUrl;
+                                            link.download = attachment.originalName;
+                                            link.target = '_blank';
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                          } catch (error) {
+                                            console.error('Error downloading image:', error);
+                                            alert('Failed to download image. Please try again.');
+                                          }
+                                        }}
+                                        title="Download image"
+                                      >
+                                        <FaDownload />
+                                      </button>
                                     </div>
                                     <div className="image-info">
                                       <span className="image-name">{attachment.originalName}</span>
@@ -780,13 +810,20 @@ const EventChat = ({
                                     <button 
                                       className="download-btn"
                                       onClick={() => {
-                                        const link = document.createElement('a');
-                                        link.href = getAttachmentUrl(attachment.url);
-                                        link.download = attachment.originalName;
-                                        link.target = '_blank';
-                                        document.body.appendChild(link);
-                                        link.click();
-                                        document.body.removeChild(link);
+                                        try {
+                                          const fileUrl = getAttachmentUrl(attachment.url);
+                                          console.log('Downloading file:', fileUrl);
+                                          const link = document.createElement('a');
+                                          link.href = fileUrl;
+                                          link.download = attachment.originalName;
+                                          link.target = '_blank';
+                                          document.body.appendChild(link);
+                                          link.click();
+                                          document.body.removeChild(link);
+                                        } catch (error) {
+                                          console.error('Error downloading file:', error);
+                                          alert('Failed to download file. Please try again.');
+                                        }
                                       }}
                                       title="Download file"
                                     >
