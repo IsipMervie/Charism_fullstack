@@ -1,8 +1,40 @@
-// EventChatPage.jsx - Dedicated page for event chat functionality
+// EventChatPage.jsx - Modern Event Chat Interface
+// Complete redesign with enhanced UX and modern design patterns
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaComments, FaUsers } from 'react-icons/fa';
+import { 
+  FaArrowLeft, 
+  FaComments, 
+  FaUsers, 
+  FaExpand, 
+  FaCompress, 
+  FaBell, 
+  FaBellSlash,
+  FaSearch,
+  FaFilter,
+  FaUserPlus,
+  FaCog,
+  FaPaperPlane,
+  FaImage,
+  FaFile,
+  FaSmile,
+  FaHeart,
+  FaThumbsUp,
+  FaReply,
+  FaEdit,
+  FaTrash,
+  FaDownload,
+  FaTimes,
+  FaCheck,
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaCalendarAlt,
+  FaClock,
+  FaMapMarkerAlt,
+  FaEye,
+  FaEyeSlash
+} from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import EventChat from './EventChat';
 import { getProfilePictureUrl } from '../utils/imageUtils';
@@ -11,21 +43,80 @@ import './EventChatPage.css';
 const EventChatPage = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  
+  // Core state
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // UI state
   const [showChat, setShowChat] = useState(false);
+  const [showFullscreenChat, setShowFullscreenChat] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState('chat'); // 'chat', 'participants', 'info'
+  
+  // Participants and approvals
   const [participants, setParticipants] = useState([]);
-  const [showParticipants, setShowParticipants] = useState(false);
   const [pendingApprovals, setPendingApprovals] = useState([]);
+  const [participantSearch, setParticipantSearch] = useState('');
   const [showApprovals, setShowApprovals] = useState(false);
+  
+  // Profile modal
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [showFullscreenChat, setShowFullscreenChat] = useState(false);
-  const [chatJoinRequested, setChatJoinRequested] = useState(false);
   
+  // Chat access
+  const [chatJoinRequested, setChatJoinRequested] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  
+  // User data
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = localStorage.getItem('role');
+
+  // Utility functions
+  const formatEventDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  const formatEventTime = (startTime, endTime) => {
+    return `${startTime} - ${endTime}`;
+  };
+
+  const getEventStatus = (event) => {
+    if (!event) return 'unknown';
+    const now = new Date();
+    const eventDate = new Date(event.date);
+    const eventStartTime = new Date(`${eventDate.toDateString()} ${event.startTime || '00:00'}`);
+    const eventEndTime = new Date(`${eventDate.toDateString()} ${event.endTime || '23:59'}`);
+    
+    if (now < eventStartTime) return 'upcoming';
+    if (now >= eventStartTime && now <= eventEndTime) return 'ongoing';
+    return 'completed';
+  };
+
+  const getEventStatusColor = (status) => {
+    switch (status) {
+      case 'upcoming': return 'var(--info)';
+      case 'ongoing': return 'var(--success)';
+      case 'completed': return 'var(--text-secondary)';
+      default: return 'var(--text-secondary)';
+    }
+  };
+
+  const getEventStatusIcon = (status) => {
+    switch (status) {
+      case 'upcoming': return '⏰';
+      case 'ongoing': return '🟢';
+      case 'completed': return '✅';
+      default: return '❓';
+    }
+  };
 
   // Check if user can access chat for this event
   const canAccessChat = (event) => {
@@ -156,17 +247,32 @@ const EventChatPage = () => {
     }
   };
 
-  // Load participants
-  const loadParticipants = async () => {
+  // Load participants with enhanced functionality
+  const loadParticipants = useCallback(async () => {
     try {
       const { getEventChatParticipants } = await import('../api/api');
       const participantsData = await getEventChatParticipants(eventId);
-      setParticipants(Array.isArray(participantsData) ? participantsData : []);
+      const participantsArray = Array.isArray(participantsData) ? participantsData : [];
+      
+      // Sort participants by role (Admin/Staff first, then Students)
+      const sortedParticipants = participantsArray.sort((a, b) => {
+        const roleOrder = { 'Admin': 0, 'Staff': 1, 'Student': 2 };
+        return (roleOrder[a.role] || 3) - (roleOrder[b.role] || 3);
+      });
+      
+      setParticipants(sortedParticipants);
     } catch (err) {
       console.error('Error loading participants:', err);
       setParticipants([]);
     }
-  };
+  }, [eventId]);
+
+  // Filter participants based on search
+  const filteredParticipants = participants.filter(participant => 
+    participant.name.toLowerCase().includes(participantSearch.toLowerCase()) ||
+    participant.email.toLowerCase().includes(participantSearch.toLowerCase()) ||
+    (participant.role && participant.role.toLowerCase().includes(participantSearch.toLowerCase()))
+  );
 
   // Load pending chat approvals
   const loadPendingApprovals = async () => {
@@ -461,223 +567,375 @@ const EventChatPage = () => {
 
   return (
     <div className="event-chat-page">
-      {/* Background Pattern */}
+      {/* Modern Background */}
       <div className="event-chat-background">
-        <div className="background-pattern"></div>
+        <div className="background-gradient"></div>
+        <div className="floating-elements">
+          <div className="floating-element element-1"></div>
+          <div className="floating-element element-2"></div>
+          <div className="floating-element element-3"></div>
+        </div>
       </div>
 
       {/* Main Container */}
-      <div className="event-chat-container visible">
-        {/* Hero Section */}
-        <div className="hero-section">
-          <div className="hero-content">
-            <div className="hero-icon">
-              <div className="icon-symbol">💬</div>
+      <div className="event-chat-container">
+        {/* Modern Header */}
+        <header className="chat-page-header">
+          <div className="header-left">
+            <button 
+              className="back-button"
+              onClick={() => navigate('/events')}
+              title="Back to Events"
+            >
+              <FaArrowLeft />
+              <span>Back</span>
+            </button>
+            
+            <div className="event-info">
+              <h1 className="event-title">{event.title}</h1>
+              <div className="event-status">
+                <span 
+                  className="status-indicator"
+                  style={{ color: getEventStatusColor(getEventStatus(event)) }}
+                >
+                  {getEventStatusIcon(getEventStatus(event))}
+                </span>
+                <span className="status-text">{getEventStatus(event)}</span>
+              </div>
             </div>
-            <h1 className="hero-title">Event Chat</h1>
-            <p className="hero-subtitle">Connect and collaborate with event participants in real-time</p>
           </div>
-        </div>
 
-        {/* Header Section */}
-        <div className="event-chat-header">
-        <div className="header-content">
-          <button 
-            className="back-button"
-            onClick={() => navigate('/events')}
-          >
-            <FaArrowLeft className="back-button-icon" />
-            Back to Events
-          </button>
-          
-          <div className="event-title-header">
-            <h1 className="event-title-main">{event.title}</h1>
-            <div className="event-meta-header">
-              <div className="event-meta-item">
-                <span className="event-meta-icon">📅</span>
-                <span>{new Date(event.date).toLocaleDateString()}</span>
+          <div className="header-center">
+            <div className="event-meta">
+              <div className="meta-item">
+                <FaCalendarAlt />
+                <span>{formatEventDate(event.date)}</span>
               </div>
-              <div className="event-meta-item">
-                <span className="event-meta-icon">🕐</span>
-                <span>{event.startTime} - {event.endTime}</span>
+              <div className="meta-item">
+                <FaClock />
+                <span>{formatEventTime(event.startTime, event.endTime)}</span>
               </div>
-              <div className="event-meta-item">
-                <span className="event-meta-icon">📍</span>
+              <div className="meta-item">
+                <FaMapMarkerAlt />
                 <span>{event.location}</span>
               </div>
             </div>
           </div>
-          
-          <button 
-            className="fullscreen-toggle"
-            onClick={() => setShowFullscreenChat(true)}
-          >
-            <span className="fullscreen-toggle-icon">🔍</span>
-            View Full Screen
-          </button>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="event-chat-main">
-        {/* Chat Section */}
-        <div className="chat-section">
-          <div className="chat-container">
-            <EventChat 
-              eventId={eventId}
-              eventTitle={event.title}
-              onClose={() => navigate('/events')}
-              viewProfile={viewProfile}
-            />
+          <div className="header-right">
+            <button 
+              className="notification-toggle"
+              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+              title={notificationsEnabled ? "Disable notifications" : "Enable notifications"}
+            >
+              {notificationsEnabled ? <FaBell /> : <FaBellSlash />}
+            </button>
+            
+            <button 
+              className="fullscreen-toggle"
+              onClick={() => setShowFullscreenChat(true)}
+              title="Fullscreen Chat"
+            >
+              <FaExpand />
+            </button>
+            
+            <button 
+              className="sidebar-toggle"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              title={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+            >
+              {sidebarCollapsed ? <FaEye /> : <FaEyeSlash />}
+            </button>
           </div>
-        </div>
+        </header>
 
-        {/* Event Info Sidebar */}
-        <div className="event-info-sidebar">
-          {/* Event Description */}
-          <div className="sidebar-section">
-            <h3 className="section-title description">Event Description</h3>
-            <p className="event-description">{event.description}</p>
-          </div>
+        {/* Main Content Area */}
+        <div className="main-content">
+          {/* Chat Area */}
+          <div className="chat-area">
+            <div className="chat-tabs">
+              <button 
+                className={`tab-button ${activeTab === 'chat' ? 'active' : ''}`}
+                onClick={() => setActiveTab('chat')}
+              >
+                <FaComments />
+                <span>Chat</span>
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'participants' ? 'active' : ''}`}
+                onClick={() => setActiveTab('participants')}
+              >
+                <FaUsers />
+                <span>Participants ({participants.length})</span>
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
+                onClick={() => setActiveTab('info')}
+              >
+                <FaInfoCircle />
+                <span>Event Info</span>
+              </button>
+            </div>
 
-          {/* Participants */}
-          <div className="sidebar-section">
-            <h3 className="section-title participants">Participants ({participants.length})</h3>
-            <div className="participants-list">
-              {participants.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-state-icon">👥</div>
-                  <div className="empty-state-text">No participants yet</div>
-                  <div className="empty-state-subtext">Participants will appear here once they join the chat</div>
+            <div className="tab-content">
+              {activeTab === 'chat' && (
+                <div className="chat-container">
+                  <EventChat 
+                    eventId={eventId}
+                    eventTitle={event.title}
+                    onClose={() => navigate('/events')}
+                    viewProfile={viewProfile}
+                    notificationsEnabled={notificationsEnabled}
+                  />
                 </div>
-              ) : (
-                participants.map((participant) => (
-                  <div key={participant._id} className="participant-item">
-                    <img 
-                      className="participant-avatar"
-                      src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
-                      alt={participant.name}
-                      onClick={() => viewProfile(participant)}
-                    />
-                    <div className="participant-info">
-                      <div className="participant-name">{participant.name}</div>
-                      <div className="participant-role">{participant.role || 'Unknown'}</div>
+              )}
+
+              {activeTab === 'participants' && (
+                <div className="participants-container">
+                  <div className="participants-header">
+                    <div className="search-box">
+                      <FaSearch />
+                      <input
+                        type="text"
+                        placeholder="Search participants..."
+                        value={participantSearch}
+                        onChange={(e) => setParticipantSearch(e.target.value)}
+                      />
+                    </div>
+                    
+                    {(role === 'Admin' || role === 'Staff') && pendingApprovals.length > 0 && (
+                      <button 
+                        className="approvals-button"
+                        onClick={() => setShowApprovals(!showApprovals)}
+                      >
+                        <FaUserPlus />
+                        <span>Pending ({pendingApprovals.length})</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="participants-list">
+                    {filteredParticipants.length === 0 ? (
+                      <div className="empty-state">
+                        <div className="empty-icon">👥</div>
+                        <h3>No participants found</h3>
+                        <p>{participantSearch ? 'No participants match your search' : 'Participants will appear here once they join the chat'}</p>
+                      </div>
+                    ) : (
+                      filteredParticipants.map((participant) => (
+                        <div key={participant._id} className="participant-card">
+                          <div className="participant-avatar">
+                            <img 
+                              src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
+                              alt={participant.name}
+                              onClick={() => viewProfile(participant)}
+                            />
+                            <div className="online-indicator"></div>
+                          </div>
+                          <div className="participant-info">
+                            <h4 className="participant-name">{participant.name}</h4>
+                            <p className="participant-email">{participant.email}</p>
+                            <div className="participant-role">
+                              <span className={`role-badge role-${participant.role?.toLowerCase()}`}>
+                                {participant.role || 'Unknown'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="participant-actions">
+                            <button 
+                              className="action-button"
+                              onClick={() => viewProfile(participant)}
+                              title="View Profile"
+                            >
+                              <FaEye />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'info' && (
+                <div className="event-info-container">
+                  <div className="info-section">
+                    <h3>Event Description</h3>
+                    <p className="event-description">{event.description}</p>
+                  </div>
+                  
+                  <div className="info-section">
+                    <h3>Event Details</h3>
+                    <div className="details-grid">
+                      <div className="detail-item">
+                        <FaCalendarAlt />
+                        <div>
+                          <label>Date</label>
+                          <span>{formatEventDate(event.date)}</span>
+                        </div>
+                      </div>
+                      <div className="detail-item">
+                        <FaClock />
+                        <div>
+                          <label>Time</label>
+                          <span>{formatEventTime(event.startTime, event.endTime)}</span>
+                        </div>
+                      </div>
+                      <div className="detail-item">
+                        <FaMapMarkerAlt />
+                        <div>
+                          <label>Location</label>
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
+                      <div className="detail-item">
+                        <FaUsers />
+                        <div>
+                          <label>Participants</label>
+                          <span>{participants.length} joined</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                ))
+                </div>
               )}
             </div>
           </div>
+
+          {/* Sidebar */}
+          {!sidebarCollapsed && (
+            <aside className="sidebar">
+              <div className="sidebar-content">
+                <div className="quick-stats">
+                  <div className="stat-item">
+                    <div className="stat-icon">👥</div>
+                    <div className="stat-info">
+                      <span className="stat-number">{participants.length}</span>
+                      <span className="stat-label">Participants</span>
+                    </div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-icon">💬</div>
+                    <div className="stat-info">
+                      <span className="stat-number">-</span>
+                      <span className="stat-label">Messages</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="recent-activity">
+                  <h4>Recent Activity</h4>
+                  <div className="activity-list">
+                    <div className="activity-item">
+                      <div className="activity-icon">💬</div>
+                      <div className="activity-text">
+                        <span>Chat started</span>
+                        <small>Just now</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          )}
         </div>
       </div>
 
-
       {/* Fullscreen Chat Modal */}
       {showFullscreenChat && (
-        <div className="fullscreen-chat-overlay">
-          <div className="fullscreen-chat-header">
-            <h3 className="fullscreen-chat-title">{event.title}</h3>
+        <div className="fullscreen-overlay">
+          <div className="fullscreen-header">
+            <div className="fullscreen-title">
+              <FaComments />
+              <span>{event.title}</span>
+            </div>
             <button 
-              className="exit-fullscreen-btn"
+              className="exit-fullscreen"
               onClick={() => setShowFullscreenChat(false)}
             >
-              Exit Full Screen
+              <FaCompress />
             </button>
           </div>
           
-          <div className="fullscreen-chat-content">
+          <div className="fullscreen-content">
             <EventChat 
               eventId={eventId}
               eventTitle={event.title}
               onClose={() => setShowFullscreenChat(false)}
               viewProfile={viewProfile}
               isFullscreen={true}
+              notificationsEnabled={notificationsEnabled}
             />
           </div>
         </div>
       )}
 
-      {/* Profile Modal */}
+      {/* Enhanced Profile Modal */}
       {showProfileModal && selectedProfile && (
         <div className="profile-modal-overlay" onClick={() => setShowProfileModal(false)}>
           <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="profile-modal-header">
-              <h3>User Profile</h3>
+            <div className="profile-header">
               <button 
-                className="close-btn"
+                className="close-profile-btn"
                 onClick={() => setShowProfileModal(false)}
               >
-                ×
+                <FaTimes />
               </button>
             </div>
             
-            <div className="profile-modal-content">
-              <div className="profile-avatar-large">
-                {selectedProfile.profilePicture ? (
-                  <img 
-                    src={getProfilePictureUrl(selectedProfile.profilePicture, selectedProfile._id)} 
-                    alt={selectedProfile.name}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div className="profile-avatar-placeholder" style={{ display: selectedProfile.profilePicture ? 'none' : 'flex' }}>
-                  {selectedProfile.name?.charAt(0)?.toUpperCase() || '?'}
+            <div className="profile-content">
+              <div className="profile-avatar-section">
+                <img 
+                  src={getProfilePictureUrl(selectedProfile.profilePicture, selectedProfile._id)} 
+                  alt={selectedProfile.name}
+                  className="profile-avatar"
+                />
+                <div className="profile-status">
+                  <span className="status-dot"></span>
+                  <span>Online</span>
                 </div>
               </div>
               
-              <div className="profile-details">
-                <h2>{selectedProfile.name}</h2>
+              <div className="profile-info-section">
+                <h2 className="profile-name">{selectedProfile.name}</h2>
                 <p className="profile-email">{selectedProfile.email}</p>
                 
-                {selectedProfile.bio && (
-                  <div className="profile-bio">
-                    <h4>Bio</h4>
-                    <p>{selectedProfile.bio}</p>
+                <div className="profile-details">
+                  <div className="detail-row">
+                    <label>Role</label>
+                    <span className={`role-badge role-${selectedProfile.role?.toLowerCase()}`}>
+                      {selectedProfile.role || 'Unknown'}
+                    </span>
                   </div>
-                )}
-                
-                {/* Role - Always shown */}
-                <div className="profile-info">
-                  <h4>Role</h4>
-                  <p>{selectedProfile.role || 'Unknown'}</p>
+                  
+                  {selectedProfile.role === 'Student' && (
+                    <>
+                      {selectedProfile.department && (
+                        <div className="detail-row">
+                          <label>Department</label>
+                          <span>{selectedProfile.department}</span>
+                        </div>
+                      )}
+                      {selectedProfile.section && (
+                        <div className="detail-row">
+                          <label>Section</label>
+                          <span>{selectedProfile.section}</span>
+                        </div>
+                      )}
+                      {selectedProfile.yearLevel && (
+                        <div className="detail-row">
+                          <label>Year Level</label>
+                          <span>{selectedProfile.yearLevel}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
-                
-                {/* Student-specific information */}
-                {selectedProfile.role === 'Student' && (
-                  <>
-                    {selectedProfile.department && (
-                      <div className="profile-info">
-                        <h4>Department</h4>
-                        <p>{selectedProfile.department}</p>
-                      </div>
-                    )}
-                    
-                    {selectedProfile.section && (
-                      <div className="profile-info">
-                        <h4>Section</h4>
-                        <p>{selectedProfile.section}</p>
-                      </div>
-                    )}
-                    
-                    {selectedProfile.yearLevel && (
-                      <div className="profile-info">
-                        <h4>Year Level</h4>
-                        <p>{selectedProfile.yearLevel}</p>
-                      </div>
-                    )}
-                  </>
-                )}
-                
-                {/* Admin/Staff - only show role (already shown above) */}
               </div>
             </div>
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 };
