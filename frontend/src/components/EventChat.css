@@ -477,6 +477,35 @@
 
 .image-fallback span {
   font-size: 0.85rem;
+}
+
+.fallback-icon {
+  font-size: 2rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.fallback-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.fallback-text {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.fallback-subtext {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.image-status {
+  font-size: 0.75rem;
+  color: var(--error-color);
+  font-style: italic;
   text-align: center;
 }
 

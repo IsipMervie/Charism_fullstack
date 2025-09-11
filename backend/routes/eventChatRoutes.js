@@ -93,4 +93,7 @@ router.delete('/messages/:messageId/reactions', eventChatController.removeReacti
 // Get event chat participants
 router.get('/:eventId/participants', eventChatController.getParticipants);
 
+// Check if file exists
+router.get('/files/check/:filename', eventChatController.checkFileExists);
+
 module.exports = router;

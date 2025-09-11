@@ -427,3 +427,24 @@ exports.getParticipants = async (req, res) => {
     res.status(500).json({ message: 'Error fetching participants.', error: err.message });
   }
 };
+
+// Check if file exists
+exports.checkFileExists = async (req, res) => {
+  try {
+    const { filename } = req.params;
+    const fs = require('fs');
+    const path = require('path');
+    
+    const filePath = path.join(__dirname, '..', 'uploads', 'chat-files', filename);
+    const exists = fs.existsSync(filePath);
+    
+    res.json({ 
+      exists,
+      filename,
+      path: exists ? `/api/uploads/chat-files/${filename}` : null
+    });
+  } catch (err) {
+    console.error('Error checking file existence:', err);
+    res.status(500).json({ message: 'Error checking file.', error: err.message });
+  }
+};
