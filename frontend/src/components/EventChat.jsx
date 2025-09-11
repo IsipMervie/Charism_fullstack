@@ -82,6 +82,9 @@ const EventChat = ({
   // Message status
   const [messageStatus, setMessageStatus] = useState({});
   
+  // Track failed images
+  const [failedImages, setFailedImages] = useState(new Set());
+  
   // Refs
   const messagesEndRef = useRef(null);
   const messageInputRef = useRef(null);
@@ -734,71 +737,74 @@ const EventChat = ({
                               <div key={index} className="message-attachment">
                                 {attachment.contentType?.startsWith('image/') ? (
                                   <div className="image-attachment">
-                                    <img 
-                                      src={getAttachmentUrl(attachment.url)} 
-                                      alt={attachment.originalName}
-                                      className="attachment-image"
-                                      onError={(e) => {
-                                        console.warn('Image failed to load:', getAttachmentUrl(attachment.url));
-                                        e.target.style.display = 'none';
-                                        const fallback = e.target.nextSibling;
-                                        if (fallback) fallback.style.display = 'flex';
-                                      }}
-                                      onLoad={() => {
-                                        console.log('Image loaded successfully:', getAttachmentUrl(attachment.url));
-                                      }}
-                                      onClick={() => {
-                                        // Create fullscreen image modal
-                                        const modal = document.createElement('div');
-                                        modal.className = 'image-modal-overlay';
-                                        modal.innerHTML = `
-                                          <div class="image-modal">
-                                            <img src="${getAttachmentUrl(attachment.url)}" alt="${attachment.originalName}" />
-                                            <button class="close-modal">×</button>
-                                          </div>
-                                        `;
-                                        document.body.appendChild(modal);
-                                        
-                                        modal.onclick = (e) => {
-                                          if (e.target === modal || e.target.classList.contains('close-modal')) {
-                                            document.body.removeChild(modal);
-                                          }
-                                        };
-                                      }}
-                                    />
-                                    <div className="image-fallback" style={{display: 'none'}}>
-                                      <FaImage className="fallback-icon" />
-                                      <div className="fallback-content">
-                                        <span className="fallback-text">Image not available</span>
-                                        <span className="fallback-subtext">File may have been deleted or moved</span>
-                                        <button 
-                                          className="download-btn"
-                                          onClick={() => {
-                                            try {
-                                              const fileUrl = getAttachmentUrl(attachment.url);
-                                              console.log('Attempting to download image:', fileUrl);
-                                              const link = document.createElement('a');
-                                              link.href = fileUrl;
-                                              link.download = attachment.originalName;
-                                              link.target = '_blank';
-                                              document.body.appendChild(link);
-                                              link.click();
-                                              document.body.removeChild(link);
-                                            } catch (error) {
-                                              console.error('Error downloading image:', error);
-                                              alert('File not available for download. The file may have been deleted from the server.');
+                                    {!failedImages.has(attachment.url) ? (
+                                      <img 
+                                        src={getAttachmentUrl(attachment.url)} 
+                                        alt={attachment.originalName}
+                                        className="attachment-image"
+                                        onError={(e) => {
+                                          console.warn('Image not available on server:', getAttachmentUrl(attachment.url));
+                                          setFailedImages(prev => new Set([...prev, attachment.url]));
+                                        }}
+                                        onLoad={() => {
+                                          console.log('Image loaded successfully:', getAttachmentUrl(attachment.url));
+                                        }}
+                                        onClick={() => {
+                                          // Create fullscreen image modal
+                                          const modal = document.createElement('div');
+                                          modal.className = 'image-modal-overlay';
+                                          modal.innerHTML = `
+                                            <div class="image-modal">
+                                              <img src="${getAttachmentUrl(attachment.url)}" alt="${attachment.originalName}" />
+                                              <button class="close-modal">×</button>
+                                            </div>
+                                          `;
+                                          document.body.appendChild(modal);
+                                          
+                                          modal.onclick = (e) => {
+                                            if (e.target === modal || e.target.classList.contains('close-modal')) {
+                                              document.body.removeChild(modal);
                                             }
-                                          }}
-                                          title="Try to download image"
-                                        >
-                                          <FaDownload />
-                                          Try Download
-                                        </button>
+                                          };
+                                        }}
+                                      />
+                                    ) : (
+                                      <div className="image-fallback">
+                                        <FaImage className="fallback-icon" />
+                                        <div className="fallback-content">
+                                          <span className="fallback-text">Image not available</span>
+                                          <span className="fallback-subtext">File may have been deleted or moved</span>
+                                          <button 
+                                            className="download-btn"
+                                            onClick={() => {
+                                              try {
+                                                const fileUrl = getAttachmentUrl(attachment.url);
+                                                console.log('Attempting to download image:', fileUrl);
+                                                const link = document.createElement('a');
+                                                link.href = fileUrl;
+                                                link.download = attachment.originalName;
+                                                link.target = '_blank';
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                              } catch (error) {
+                                                console.error('Error downloading image:', error);
+                                                alert('File not available for download. The file may have been deleted from the server.');
+                                              }
+                                            }}
+                                            title="Try to download image"
+                                          >
+                                            <FaDownload />
+                                            Try Download
+                                          </button>
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
                                     <div className="image-info">
                                       <span className="image-name">{attachment.originalName}</span>
-                                      <span className="image-status">File not found</span>
+                                      {failedImages.has(attachment.url) && (
+                                        <span className="image-status">File not found</span>
+                                      )}
                                     </div>
                                   </div>
                                 ) : attachment.contentType?.startsWith('audio/') ? (
