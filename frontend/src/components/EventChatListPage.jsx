@@ -1,7 +1,7 @@
 // EventChatListPage.jsx - Modern Event Discovery Interface
 // Enhanced with better filtering, search, and modern design
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   FaComments, 
@@ -21,17 +21,18 @@ import {
   FaBookmark,
   FaShare,
   FaDownload,
-  FaRefresh,
+  FaRedoAlt,
   FaExclamationTriangle,
   FaCheckCircle,
   FaTimesCircle,
   FaInfoCircle,
   FaArrowLeft,
   FaPlus,
-  FaGrid3X3,
+  FaTh,
   FaList,
   FaThumbsUp,
-  FaThumbsDown
+  FaThumbsDown,
+  FaTimes
 } from 'react-icons/fa';
 import { getEvents } from '../api/api';
 import { formatTimeRange12Hour, formatDatePhilippines } from '../utils/timeUtils';
@@ -409,7 +410,7 @@ const EventChatListPage = () => {
               onClick={() => window.location.reload()}
               title="Refresh events"
             >
-              <FaRefresh />
+              <FaRedoAlt />
             </button>
             
             <div className="view-controls">
@@ -418,7 +419,7 @@ const EventChatListPage = () => {
                 onClick={() => setViewMode('grid')}
                 title="Grid view"
               >
-                <FaGrid3X3 />
+                <FaTh />
               </button>
               <button 
                 className={`view-toggle ${viewMode === 'list' ? 'active' : ''}`}
