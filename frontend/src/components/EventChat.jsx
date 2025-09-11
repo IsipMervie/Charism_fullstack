@@ -185,14 +185,41 @@ const EventChat = ({
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // Load messages
-  const loadMessages = useCallback(async () => {
+  // Load messages with retry logic
+  const loadMessages = useCallback(async (retryCount = 0) => {
     try {
       setLoading(true);
       const data = await getEventChatMessages(eventId);
       setMessages(data.messages || []);
     } catch (error) {
       console.error('Error loading messages:', error);
+      
+      // Retry logic for network errors
+      if (retryCount < 2 && (
+        error.message.includes('Network') || 
+        error.message.includes('protocol error') ||
+        error.message.includes('Server error')
+      )) {
+        console.log(`Retrying message load (attempt ${retryCount + 1})...`);
+        setTimeout(() => {
+          loadMessages(retryCount + 1);
+        }, 2000 * (retryCount + 1)); // Exponential backoff
+        return;
+      }
+      
+      // Show user-friendly error message
+      setMessages([]);
+      if (error.message.includes('Network connection failed')) {
+        alert('Unable to connect to the server. Please check your internet connection and try refreshing the page.');
+      } else if (error.message.includes('Connection protocol error')) {
+        alert('Connection error detected. Please refresh the page to reconnect.');
+      } else if (error.message.includes('Chat not found')) {
+        alert('This event does not have a chat enabled or the chat is not available.');
+      } else if (error.message.includes('Access denied')) {
+        alert('You do not have permission to view this chat. Please contact the event organizer.');
+      } else {
+        alert('Failed to load chat messages. Please try refreshing the page.');
+      }
     } finally {
       setLoading(false);
     }
@@ -572,6 +599,15 @@ const EventChat = ({
         </div>
         
         <div className="header-right">
+          <button 
+            className="refresh-btn"
+            onClick={() => loadMessages()}
+            title="Refresh messages"
+            disabled={loading}
+          >
+            <FaRedoAlt />
+          </button>
+          
           <button 
             className="search-toggle"
             onClick={() => setShowSearch(!showSearch)}

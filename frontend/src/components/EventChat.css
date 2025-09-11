@@ -97,7 +97,8 @@
 }
 
 .search-toggle,
-.close-btn {
+.close-btn,
+.refresh-btn {
   width: 36px;
   height: 36px;
   border: none;
@@ -117,6 +118,23 @@
   background: var(--primary);
   color: var(--text-inverse);
   transform: scale(1.05);
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: var(--success);
+  color: var(--text-inverse);
+  transform: scale(1.05);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.refresh-btn:disabled:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  transform: none;
 }
 
 .close-btn:hover {
@@ -1316,7 +1334,8 @@
   }
   
   .search-toggle,
-  .close-btn {
+  .close-btn,
+  .refresh-btn {
     width: 32px;
     height: 32px;
     font-size: 0.8rem;

@@ -1763,6 +1763,20 @@ export const getEventChatMessages = async (eventId, page = 1, limit = 50, before
     return response.data;
   } catch (error) {
     console.error('Error fetching chat messages:', error);
+    
+    // Handle specific error types
+    if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
+      throw new Error('Network connection failed. Please check your internet connection and try again.');
+    } else if (error.code === 'ERR_QUIC_PROTOCOL_ERROR') {
+      throw new Error('Connection protocol error. Please refresh the page and try again.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Chat not found. This event may not have a chat enabled.');
+    } else if (error.response?.status === 403) {
+      throw new Error('Access denied. You may not have permission to view this chat.');
+    } else if (error.response?.status >= 500) {
+      throw new Error('Server error. Please try again in a few moments.');
+    }
+    
     throw new Error('Failed to load messages. Please try again.');
   }
 };
