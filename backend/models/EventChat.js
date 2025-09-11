@@ -21,7 +21,7 @@ const eventChatSchema = new mongoose.Schema({
   },
   messageType: { 
     type: String, 
-    enum: ['text', 'image', 'file', 'system'], 
+    enum: ['text', 'image', 'file', 'audio', 'video', 'system'], 
     default: 'text' 
   },
   // For file attachments

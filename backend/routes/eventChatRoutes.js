@@ -36,15 +36,18 @@ const upload = multer({
   },
   fileFilter: (req, file, cb) => {
     try {
-      // Allow images and common document types
-      const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|txt|zip|rar/;
+      // Allow images, documents, audio, and video types
+      const allowedTypes = /jpeg|jpg|png|gif|webp|svg|pdf|doc|docx|txt|zip|rar|mp3|wav|webm|ogg|mp4|avi|mov/;
       const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
       const mimetype = allowedTypes.test(file.mimetype);
       
-      if (mimetype && extname) {
+      // Also allow audio and video MIME types
+      const isAudioVideo = file.mimetype.startsWith('audio/') || file.mimetype.startsWith('video/');
+      
+      if ((mimetype && extname) || isAudioVideo) {
         return cb(null, true);
       } else {
-        cb(new Error(`File type not allowed: ${file.originalname}`));
+        cb(new Error(`File type not allowed: ${file.originalname} (${file.mimetype})`));
       }
     } catch (error) {
       cb(new Error(`File filter error: ${error.message}`));

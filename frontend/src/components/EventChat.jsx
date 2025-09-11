@@ -34,7 +34,8 @@ import {
   FaPlus,
   FaMinus,
   FaEye,
-  FaEyeSlash
+  FaEyeSlash,
+  FaRedoAlt
 } from 'react-icons/fa';
 import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import { API_URL } from '../config/environment';

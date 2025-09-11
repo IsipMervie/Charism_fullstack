@@ -61,7 +61,13 @@ exports.sendMessageWithFiles = async (req, res) => {
     for (const file of files) {
       // Determine message type based on file type
       const isImage = file.mimetype.startsWith('image/');
-      const finalMessageType = isImage ? 'image' : 'file';
+      const isAudio = file.mimetype.startsWith('audio/');
+      const isVideo = file.mimetype.startsWith('video/');
+      
+      let finalMessageType = 'file';
+      if (isImage) finalMessageType = 'image';
+      else if (isAudio) finalMessageType = 'audio';
+      else if (isVideo) finalMessageType = 'video';
       
       // Create attachment object
       const attachment = {
@@ -80,10 +86,15 @@ exports.sendMessageWithFiles = async (req, res) => {
       });
 
       // Create new chat message
+      let defaultMessage = '📎 File';
+      if (isImage) defaultMessage = '📷 Image';
+      else if (isAudio) defaultMessage = '🎵 Audio';
+      else if (isVideo) defaultMessage = '🎥 Video';
+      
       const chatMessage = new EventChat({
         eventId,
         userId,
-        message: message || (isImage ? '📷 Image' : '📎 File'),
+        message: message || defaultMessage,
         messageType: finalMessageType,
         replyTo,
         attachment
