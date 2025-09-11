@@ -214,10 +214,11 @@ const EventChat = ({
     const validFiles = fileArray.filter(file => {
       const maxSize = 10 * 1024 * 1024; // 10MB
       const allowedTypes = [
-        'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
         'application/pdf', 'text/plain', 'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'audio/mpeg', 'audio/wav', 'video/mp4', 'video/webm'
+        'audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg',
+        'video/mp4', 'video/webm', 'video/ogg'
       ];
       
       if (file.size > maxSize) {
@@ -274,26 +275,44 @@ const EventChat = ({
   // Audio recording functionality
   const startRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      // Request microphone permission first
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100
+        } 
+      });
+      
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
       const chunks = [];
 
       mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data);
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const blob = new Blob(chunks, { type: 'audio/webm' });
         setAudioBlob(blob);
         stream.getTracks().forEach(track => track.stop());
       };
 
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
+      mediaRecorder.start(1000); // Record in 1-second chunks
       setIsRecording(true);
     } catch (err) {
       console.error('Error starting recording:', err);
-      alert('Unable to access microphone');
+      if (err.name === 'NotAllowedError') {
+        alert('Microphone permission denied. Please allow microphone access to record voice messages.');
+      } else if (err.name === 'NotFoundError') {
+        alert('No microphone found. Please connect a microphone to record voice messages.');
+      } else {
+        alert('Unable to access microphone. Please check your microphone settings.');
+      }
     }
   }, []);
 
@@ -310,15 +329,16 @@ const EventChat = ({
     try {
       setSending(true);
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'voice-message.wav');
+      formData.append('files', audioBlob, 'voice-message.webm');
       formData.append('messageType', 'audio');
+      formData.append('content', 'Voice message');
 
       const data = await sendEventChatMessageWithFiles(eventId, formData);
       setMessages(prev => [...prev, data.chatMessage]);
       setAudioBlob(null);
     } catch (error) {
       console.error('Error sending audio message:', error);
-      alert('Failed to send audio message');
+      alert('Failed to send voice message: ' + error.message);
     } finally {
       setSending(false);
     }
@@ -656,62 +676,89 @@ const EventChat = ({
                         <div className="message-text">{message.message}</div>
                         
                         {/* Enhanced File Attachments */}
-                        {message.attachment && (
-                          <div className="message-attachment">
-                            {message.messageType === 'image' ? (
-                              <div className="image-attachment">
-                                <img 
-                                  src={getAttachmentUrl(message.attachment.url)} 
-                                  alt={message.attachment.originalName}
-                                  className="attachment-image"
-                                  onClick={() => {
-                                    // Create fullscreen image modal
-                                    const modal = document.createElement('div');
-                                    modal.className = 'image-modal-overlay';
-                                    modal.innerHTML = `
-                                      <div class="image-modal">
-                                        <img src="${getAttachmentUrl(message.attachment.url)}" alt="${message.attachment.originalName}" />
-                                        <button class="close-modal">×</button>
-                                      </div>
-                                    `;
-                                    document.body.appendChild(modal);
-                                    
-                                    modal.onclick = (e) => {
-                                      if (e.target === modal || e.target.classList.contains('close-modal')) {
-                                        document.body.removeChild(modal);
-                                      }
-                                    };
-                                  }}
-                                />
-                              </div>
-                            ) : message.messageType === 'audio' ? (
-                              <div className="audio-attachment">
-                                <div className="audio-player">
-                                  <FaVolumeUp className="audio-icon" />
-                                  <audio controls>
-                                    <source src={getAttachmentUrl(message.attachment.url)} type="audio/wav" />
-                                    Your browser does not support the audio element.
-                                  </audio>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="file-attachment">
-                                <div className="file-info">
-                                  {getFileIcon({ type: message.attachment.contentType })}
-                                  <div className="file-details">
-                                    <span className="file-name">{message.attachment.originalName}</span>
-                                    <span className="file-size">{formatFileSize(message.attachment.fileSize)}</span>
+                        {(message.attachment || (message.attachments && message.attachments.length > 0)) && (
+                          <div className="message-attachments">
+                            {(message.attachments || [message.attachment]).map((attachment, index) => (
+                              <div key={index} className="message-attachment">
+                                {attachment.contentType?.startsWith('image/') ? (
+                                  <div className="image-attachment">
+                                    <img 
+                                      src={getAttachmentUrl(attachment.url)} 
+                                      alt={attachment.originalName}
+                                      className="attachment-image"
+                                      onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        const fallback = e.target.nextSibling;
+                                        if (fallback) fallback.style.display = 'block';
+                                      }}
+                                      onClick={() => {
+                                        // Create fullscreen image modal
+                                        const modal = document.createElement('div');
+                                        modal.className = 'image-modal-overlay';
+                                        modal.innerHTML = `
+                                          <div class="image-modal">
+                                            <img src="${getAttachmentUrl(attachment.url)}" alt="${attachment.originalName}" />
+                                            <button class="close-modal">×</button>
+                                          </div>
+                                        `;
+                                        document.body.appendChild(modal);
+                                        
+                                        modal.onclick = (e) => {
+                                          if (e.target === modal || e.target.classList.contains('close-modal')) {
+                                            document.body.removeChild(modal);
+                                          }
+                                        };
+                                      }}
+                                    />
+                                    <div className="image-fallback" style={{display: 'none'}}>
+                                      <FaImage />
+                                      <span>Image failed to load</span>
+                                    </div>
+                                    <div className="image-info">
+                                      <span className="image-name">{attachment.originalName}</span>
+                                    </div>
                                   </div>
-                                </div>
-                                <button 
-                                  className="download-btn"
-                                  onClick={() => window.open(getAttachmentUrl(message.attachment.url), '_blank')}
-                                  title="Download file"
-                                >
-                                  <FaDownload />
-                                </button>
+                                ) : attachment.contentType?.startsWith('audio/') ? (
+                                  <div className="audio-attachment">
+                                    <div className="audio-player">
+                                      <FaVolumeUp className="audio-icon" />
+                                      <audio controls>
+                                        <source src={getAttachmentUrl(attachment.url)} type={attachment.contentType} />
+                                        Your browser does not support the audio element.
+                                      </audio>
+                                    </div>
+                                    <div className="audio-info">
+                                      <span className="audio-name">{attachment.originalName}</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="file-attachment">
+                                    <div className="file-info">
+                                      {getFileIcon({ type: attachment.contentType })}
+                                      <div className="file-details">
+                                        <span className="file-name">{attachment.originalName}</span>
+                                        <span className="file-size">{formatFileSize(attachment.fileSize)}</span>
+                                      </div>
+                                    </div>
+                                    <button 
+                                      className="download-btn"
+                                      onClick={() => {
+                                        const link = document.createElement('a');
+                                        link.href = getAttachmentUrl(attachment.url);
+                                        link.download = attachment.originalName;
+                                        link.target = '_blank';
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                      }}
+                                      title="Download file"
+                                    >
+                                      <FaDownload />
+                                    </button>
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            ))}
                           </div>
                         )}
                         
