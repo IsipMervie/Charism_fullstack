@@ -242,15 +242,29 @@ const EventChatListPage = () => {
 
   // Request to join chat
   const requestToJoinChat = async (eventId) => {
+    // Prevent multiple clicks
+    if (loading) return;
+    
+    setLoading(true);
     try {
       const { requestEventChatAccess } = await import('../api/api');
-      await requestEventChatAccess(eventId);
-      alert('Chat access request sent! Admin/Staff will review your request.');
+      const response = await requestEventChatAccess(eventId);
+      
+      if (response.alreadyRegistered) {
+        alert('You are already registered for this event.');
+      } else if (response.requiresApproval) {
+        alert('Chat access request sent! Admin/Staff will review your request.');
+      } else {
+        alert('Successfully joined event chat!');
+      }
+      
       // Refresh the events list
       window.location.reload();
     } catch (err) {
       console.error('Error requesting chat access:', err);
       alert('Failed to send request. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -660,9 +674,10 @@ const EventChatListPage = () => {
                     <button 
                       className="secondary-button request-button"
                       onClick={() => requestToJoinChat(event._id)}
+                      disabled={loading}
                     >
                       <FaBell />
-                      <span>Request Access</span>
+                      <span>{loading ? 'Requesting...' : 'Request Access'}</span>
                     </button>
                   ) : (
                     <button 

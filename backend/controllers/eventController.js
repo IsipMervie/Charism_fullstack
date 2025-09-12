@@ -773,8 +773,8 @@ exports.joinEvent = async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Check department access
-    if (!event.isForAllDepartments) {
+    // Check department access (Admin and Staff can access all events)
+    if (user.role !== 'Admin' && user.role !== 'Staff' && !event.isForAllDepartments) {
       if (event.departments && event.departments.length > 0) {
         // Check if user's department is in the allowed departments
         if (!event.departments.includes(user.department)) {
@@ -1454,7 +1454,8 @@ exports.getAllEventRegistrations = async (req, res) => {
 
     if (user.role === 'Staff') {
       // Staff can only see registrations for events in their department
-      if (!event.isForAllDepartments) {
+      // If staff doesn't have a department set, they can only see events for all departments
+      if (!event.isForAllDepartments && user.department) {
         if (event.departments && event.departments.length > 0) {
           if (!event.departments.includes(user.department)) {
             return res.status(403).json({ message: 'Access denied. Event not in your department.' });
@@ -1462,8 +1463,11 @@ exports.getAllEventRegistrations = async (req, res) => {
         } else if (event.department && event.department !== user.department) {
           return res.status(403).json({ message: 'Access denied. Event not in your department.' });
         }
+      } else if (!event.isForAllDepartments && !user.department) {
+        return res.status(403).json({ message: 'Access denied. You need to have a department assigned to view department-specific events.' });
       }
     }
+    // Admin users can see all events regardless of department
 
     // Group registrations by status
     const registrations = {
@@ -1518,8 +1522,10 @@ exports.getPendingRegistrations = async (req, res) => {
 
     if (user.role === 'Staff') {
       // Staff can only approve registrations for events in their department
+      // If staff doesn't have a department set, they can only see events for all departments
       filteredEvents = events.filter(event => {
         if (event.isForAllDepartments) return true;
+        if (!user.department) return false; // Staff without department can only see all-department events
         if (event.departments && event.departments.length > 0) {
           return event.departments.includes(user.department);
         }
@@ -1527,6 +1533,7 @@ exports.getPendingRegistrations = async (req, res) => {
       });
       console.log(`🔒 Filtered to ${filteredEvents.length} events for staff department`);
     }
+    // Admin users can see all events regardless of department
 
     // Filter out events that don't have any pending registrations after filtering
     const finalEvents = filteredEvents.filter(event => {
@@ -1598,15 +1605,24 @@ exports.getPendingRegistrationsForEvent = async (req, res) => {
 
     if (user.role === 'Staff') {
       // Staff can only see registrations for events in their department
-      if (!event.isForAllDepartments && 
-          (!event.departments || !event.departments.includes(user.department)) &&
-          event.department !== user.department) {
-        return res.status(403).json({ 
-          message: 'You do not have permission to view registrations for this event',
-          error: 'INSUFFICIENT_PERMISSIONS'
-        });
+      // If staff doesn't have a department set, they can only see events for all departments
+      if (!event.isForAllDepartments) {
+        if (!user.department) {
+          return res.status(403).json({ 
+            message: 'You need to have a department assigned to view department-specific events',
+            error: 'INSUFFICIENT_PERMISSIONS'
+          });
+        }
+        if ((!event.departments || !event.departments.includes(user.department)) &&
+            event.department !== user.department) {
+          return res.status(403).json({ 
+            message: 'You do not have permission to view registrations for this event',
+            error: 'INSUFFICIENT_PERMISSIONS'
+          });
+        }
       }
     }
+    // Admin users can see all events regardless of department
 
     res.json({
       eventId: event._id,

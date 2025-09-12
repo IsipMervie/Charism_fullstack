@@ -532,6 +532,9 @@ function EventListPage() {
   // This useEffect was causing infinite loops - removed duplicate call
 
   const handleJoin = async (eventId) => {
+    // Prevent multiple clicks
+    if (loading) return;
+    
     const event = events.find(e => e._id === eventId);
     if (!event) return;
 
@@ -578,6 +581,7 @@ function EventListPage() {
 
     if (!result.isConfirmed) return;
 
+    setLoading(true);
     try {
       const response = await joinEvent(eventId);
       await refreshEvents();
@@ -605,6 +609,8 @@ function EventListPage() {
         title: 'Registration Failed', 
         text: 'Failed to register for event. Please try again.' 
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1426,8 +1432,9 @@ function EventListPage() {
                               <button 
                                 className="register-event-button"
                                 onClick={() => handleJoin(event._id)}
+                                disabled={loading}
                               >
-                                Register for Event
+                                {loading ? 'Registering...' : 'Register for Event'}
                               </button>
                             ) : (
                               <div className="event-unavailable">

@@ -142,6 +142,9 @@ const EventAttendancePage = memo(() => {
   }, []);
 
   const handleJoin = useCallback(async (eventId) => {
+    // Prevent multiple clicks
+    if (loading) return;
+    
     const event = events.find(e => e._id === eventId);
     if (!event) return;
 
@@ -179,6 +182,7 @@ const EventAttendancePage = memo(() => {
 
     if (!result.isConfirmed) return;
 
+    setLoading(true);
     try {
       await joinEvent(eventId);
       await refreshEvents();
@@ -193,8 +197,10 @@ const EventAttendancePage = memo(() => {
         title: 'Registration Failed', 
         text: 'Failed to register for event. Please try again.' 
       });
+    } finally {
+      setLoading(false);
     }
-  }, [events, refreshEvents, joinEvent]);
+  }, [events, refreshEvents, joinEvent, loading]);
 
   const handleTimeIn = useCallback(async (eventId) => {
     const event = events.find(e => e._id === eventId);
@@ -691,8 +697,9 @@ const EventAttendancePage = memo(() => {
                             <button 
                               className="action-btn primary-btn"
                               onClick={() => handleJoin(event._id)}
+                              disabled={loading}
                             >
-                              Register for Event
+                              {loading ? 'Registering...' : 'Register for Event'}
                             </button>
                           ) : (
                             <div className="event-unavailable">

@@ -409,43 +409,7 @@ exports.getParticipants = async (req, res) => {
 
     console.log(`📊 Event ${eventId} found with ${event.attendance.length} attendance records in chat participants`);
 
-    // Auto-register current user if they're not already registered and can access chat
-    if (userId) {
-      const userRole = req.user.role;
-      const isAlreadyRegistered = event.attendance.some(att => 
-        att.userId && att.userId.toString() === userId
-      );
-
-      if (!isAlreadyRegistered) {
-        console.log(`🔄 Auto-registering user ${userId} for chat access`);
-        
-        // Get user details
-        const user = await User.findById(userId);
-        if (user) {
-          // Auto-approve based on role
-          let registrationApproved = false;
-          if (userRole === 'Admin' || userRole === 'Staff') {
-            registrationApproved = true;
-          } else if (userRole === 'Student') {
-            // Students need approval unless event doesn't require it
-            registrationApproved = !event.requiresApproval;
-          }
-
-          // Add user to event attendance
-          event.attendance.push({
-            userId: userId,
-            status: registrationApproved ? 'Approved' : 'Pending',
-            registrationApproved: registrationApproved,
-            registeredAt: new Date()
-          });
-
-          await event.save();
-          console.log(`✅ User ${user.name} auto-registered for event chat`);
-        }
-      }
-    }
-
-    // Re-populate after potential new registration
+    // Populate the event with user details
     const updatedEvent = await Event.findById(eventId)
       .populate('attendance.userId', 'name email department academicYear year section role profilePicture');
     console.log('Raw attendance data:', updatedEvent.attendance.map(att => ({
@@ -507,6 +471,119 @@ exports.getParticipants = async (req, res) => {
   } catch (err) {
     console.error('Error fetching participants:', err);
     res.status(500).json({ message: 'Error fetching participants.', error: err.message });
+  }
+};
+
+// Request access to event chat
+exports.requestChatAccess = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    // Validate eventId format
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: 'Invalid event ID format.' });
+    }
+
+    // Get the event
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Check if user is already registered
+    const existingAttendance = event.attendance.find(att => 
+      att.userId && att.userId.toString() === userId
+    );
+
+    if (existingAttendance) {
+      return res.status(400).json({ 
+        message: 'You are already registered for this event.',
+        alreadyRegistered: true
+      });
+    }
+
+    // Check if event is active and visible to students
+    if (event.status !== 'Active') {
+      return res.status(400).json({ message: 'Event is not active.' });
+    }
+    
+    if (!event.isVisibleToStudents) {
+      return res.status(400).json({ message: 'This event is not available for student registration.' });
+    }
+
+    // Get user details to check department access
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check department access (Admin and Staff can access all events)
+    if (userRole !== 'Admin' && userRole !== 'Staff' && !event.isForAllDepartments) {
+      if (event.departments && event.departments.length > 0) {
+        // Check if user's department is in the allowed departments
+        if (!event.departments.includes(user.department)) {
+          return res.status(403).json({ 
+            message: 'This event is not available for your department.' 
+          });
+        }
+      } else if (event.department && event.department !== user.department) {
+        // Backward compatibility check
+        return res.status(403).json({ 
+          message: 'This event is not available for your department.' 
+        });
+      }
+    }
+
+    // Check if event is full - only count approved registrations
+    if (event.maxParticipants > 0) {
+      const approvedAttendees = event.attendance.filter(
+        a => a.registrationApproved === true
+      ).length;
+      
+      if (approvedAttendees >= event.maxParticipants) {
+        return res.status(400).json({ 
+          message: 'Event is full. All approved slots have been taken. You can still register and wait for approval if any approved registrations are cancelled.' 
+        });
+      }
+    }
+
+    // Determine initial status based on whether approval is required
+    let initialStatus = 'Pending';
+    let registrationApproved = false;
+    
+    if (!event.requiresApproval) {
+      initialStatus = 'Attended';
+      registrationApproved = true;
+    }
+
+    // Add user to attendance
+    event.attendance.push({
+      userId: userId,
+      status: initialStatus,
+      registeredAt: new Date(),
+      registrationApproved: registrationApproved
+    });
+
+    await event.save();
+    
+    console.log(`✅ User ${user.name} requested chat access for event ${eventId}`);
+
+    if (event.requiresApproval) {
+      res.json({ 
+        message: 'Chat access request sent! Admin/Staff will review your request.',
+        requiresApproval: true
+      });
+    } else {
+      res.json({ 
+        message: 'Successfully joined event chat. No approval required.',
+        requiresApproval: false
+      });
+    }
+  } catch (err) {
+    console.error('Error requesting chat access:', err);
+    res.status(500).json({ message: 'Error requesting chat access.', error: err.message });
   }
 };
 

@@ -99,4 +99,7 @@ router.delete('/:eventId/participants/:participantId', eventChatController.remov
 // Check if file exists
 router.get('/files/check/:filename', eventChatController.checkFileExists);
 
+// Request access to event chat
+router.post('/:eventId/request-access', eventChatController.requestChatAccess);
+
 module.exports = router;
