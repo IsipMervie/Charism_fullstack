@@ -1420,6 +1420,13 @@
   transform: scale(1.1);
 }
 
+/* Hide header buttons on desktop view */
+@media (min-width: 1025px) {
+  .header-right {
+    display: none;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .event-chat-container {
