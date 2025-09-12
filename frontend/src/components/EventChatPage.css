@@ -146,28 +146,6 @@
   flex: 1;
 }
 
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-hover);
-  border: 1px solid var(--border-primary);
-  border-radius: 12px;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.back-button:hover {
-  background: var(--primary);
-  color: var(--text-inverse);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--primary-shadow);
-}
 
 .event-info {
   display: flex;
@@ -814,6 +792,12 @@
   font-size: 1.3rem;
 }
 
+.fullscreen-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .exit-fullscreen {
   width: 44px;
   height: 44px;
@@ -1220,7 +1204,6 @@
     animation: none;
   }
   
-  .back-button:hover,
   .notification-toggle:hover,
   .participant-card:hover,
   .detail-item:hover {
@@ -1229,7 +1212,6 @@
 }
 
 /* Focus States */
-.back-button:focus,
 .notification-toggle:focus,
 .tab-button:focus,
 .close-profile-btn:focus,

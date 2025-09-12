@@ -4,7 +4,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  FaArrowLeft, 
   FaComments, 
   FaUsers, 
   FaExpand, 
@@ -702,15 +701,6 @@ const EventChatPage = () => {
         {/* Modern Header */}
         <header className="chat-page-header">
           <div className="header-left">
-            <button 
-              className="back-button"
-              onClick={() => navigate('/events')}
-              title="Back to Events"
-            >
-              <FaArrowLeft />
-              <span>Back</span>
-            </button>
-            
             <div className="event-info">
               <h1 className="event-title">{event.title}</h1>
               <div className="event-status">
@@ -949,12 +939,15 @@ const EventChatPage = () => {
               <FaComments />
               <span>{event.title}</span>
             </div>
-            <button 
-              className="exit-fullscreen"
-              onClick={() => setShowFullscreenChat(false)}
-            >
-              <FaCompress />
-            </button>
+            <div className="fullscreen-controls">
+              <button 
+                className="exit-fullscreen"
+                onClick={() => setShowFullscreenChat(false)}
+                title="Exit Fullscreen"
+              >
+                <FaCompress />
+              </button>
+            </div>
           </div>
           
           <div className="fullscreen-content">
