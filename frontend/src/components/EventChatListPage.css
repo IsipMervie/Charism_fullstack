@@ -36,28 +36,6 @@
   flex: 1;
 }
 
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--bg-hover);
-  border: 1px solid var(--border-primary);
-  border-radius: 12px;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.back-button:hover {
-  background: var(--primary);
-  color: var(--text-inverse);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--primary-shadow);
-}
 
 .page-info {
   display: flex;
@@ -620,6 +598,13 @@
   color: var(--primary);
 }
 
+/* Dark mode support for participants count */
+[data-theme="dark"] .participants-count {
+  background: var(--primary-dark);
+  color: var(--text-inverse);
+  border: 1px solid var(--primary);
+}
+
 .event-details {
   display: flex;
   flex-direction: column;
@@ -848,10 +833,6 @@
     font-size: 0.9rem;
   }
   
-  .back-button {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-  }
   
   .search-input {
     padding: 0.75rem 0.875rem 0.75rem 2.25rem;
@@ -913,7 +894,6 @@
 }
 
 /* Focus States */
-.back-button:focus,
 .refresh-button:focus,
 .view-toggle:focus,
 .filter-toggle:focus,

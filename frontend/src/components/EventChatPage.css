@@ -245,8 +245,7 @@
   gap: 1rem;
 }
 
-.notification-toggle,
-.fullscreen-toggle {
+.notification-toggle {
   width: 44px;
   height: 44px;
   border: none;
@@ -261,12 +260,35 @@
   font-size: 1.1rem;
 }
 
-.notification-toggle:hover,
-.fullscreen-toggle:hover {
+/* Fullscreen button in chat tabs */
+.chat-tabs .fullscreen-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.notification-toggle:hover {
   background: var(--primary);
   color: var(--text-inverse);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px var(--primary-shadow);
+}
+
+.chat-tabs .fullscreen-toggle:hover {
+  background: var(--primary);
+  color: var(--text-inverse);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--primary-shadow);
 }
 
 .notification-toggle.active {
@@ -1200,7 +1222,6 @@
   
   .back-button:hover,
   .notification-toggle:hover,
-  .fullscreen-toggle:hover,
   .participant-card:hover,
   .detail-item:hover {
     transform: none;
@@ -1210,7 +1231,6 @@
 /* Focus States */
 .back-button:focus,
 .notification-toggle:focus,
-.fullscreen-toggle:focus,
 .tab-button:focus,
 .close-profile-btn:focus,
 .exit-fullscreen:focus {

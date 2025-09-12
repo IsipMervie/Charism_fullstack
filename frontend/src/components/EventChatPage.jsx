@@ -744,14 +744,6 @@ const EventChatPage = () => {
 
           <div className="header-right">
             
-            <button 
-              className="fullscreen-toggle"
-              onClick={() => setShowFullscreenChat(true)}
-              title="Fullscreen Chat"
-            >
-              <FaExpand />
-            </button>
-            
           </div>
         </header>
 
@@ -780,6 +772,15 @@ const EventChatPage = () => {
               >
                 <FaInfoCircle />
                 <span>Event Info</span>
+              </button>
+              
+              <button 
+                className="fullscreen-toggle"
+                onClick={() => setShowFullscreenChat(true)}
+                title="Fullscreen Chat"
+              >
+                <FaExpand />
+                <span>Fullscreen</span>
               </button>
             </div>
 

@@ -23,7 +23,6 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaInfoCircle,
-  FaArrowLeft,
   FaPlus,
   FaTh,
   FaList,
@@ -106,7 +105,7 @@ const EventChatListPage = () => {
   }, []);
 
   const formatEventTime = useCallback((startTime, endTime) => {
-    return `${startTime} - ${endTime}`;
+    return formatTimeRange12Hour(startTime, endTime);
   }, []);
 
   // Enhanced filtering and sorting
@@ -352,15 +351,6 @@ const EventChatListPage = () => {
       <header className="page-header">
         <div className="header-content">
           <div className="header-left">
-            <button 
-              className="back-button"
-              onClick={() => navigate('/events')}
-              title="Back to Events"
-            >
-              <FaArrowLeft />
-              <span>Back to Events</span>
-            </button>
-            
             <div className="page-info">
               <h1 className="page-title">Event Chats</h1>
               <p className="page-subtitle">Join discussions for events you're approved for</p>
