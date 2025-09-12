@@ -392,57 +392,63 @@ exports.removeReaction = async (req, res) => {
   }
 };
 
-// Get event chat participants (actual chat participants, not event attendees)
+// Get event chat participants (all event participants, not just those who sent messages)
 exports.getParticipants = async (req, res) => {
   try {
     const { eventId } = req.params;
     const userId = req.user?.id; // Get current user ID
 
     // First check if event exists
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId)
+      .populate('attendance.userId', 'name email department academicYear year section role profilePicture');
+    
     if (!event) {
       console.log(`❌ Event ${eventId} not found in chat participants`);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    console.log(`📊 Event ${eventId} found, getting actual chat participants`);
+    console.log(`📊 Event ${eventId} found, getting all event participants`);
 
-    // Get actual chat participants - users who have sent messages in the chat
-    const chatMessages = await EventChat.find({ 
-      eventId: eventId,
-      isDeleted: { $ne: true } // Exclude deleted messages
-    }).select('userId').lean();
+    // Deduplicate participants by userId - keep the most recent registration
+    const uniqueParticipants = new Map();
+    
+    event.attendance.forEach(attendance => {
+      if (attendance.userId) {
+        const userId = attendance.userId._id.toString();
+        const existing = uniqueParticipants.get(userId);
+        
+        // If no existing participant or this one is more recent, use this one
+        if (!existing || new Date(attendance.registeredAt) > new Date(existing.registeredAt)) {
+          uniqueParticipants.set(userId, attendance);
+        }
+      }
+    });
 
-    // Get unique user IDs who have participated in chat
-    const uniqueUserIds = [...new Set(chatMessages.map(msg => msg.userId.toString()))];
-    console.log(`📊 Found ${uniqueUserIds.length} unique users who have participated in chat`);
+    const deduplicatedAttendance = Array.from(uniqueParticipants.values());
 
-    if (uniqueUserIds.length === 0) {
-      console.log('📊 No chat participants found - returning empty list');
+    console.log(`📊 Found ${deduplicatedAttendance.length} unique event participants (deduplicated from ${event.attendance.length})`);
+
+    if (deduplicatedAttendance.length === 0) {
+      console.log('📊 No event participants found - returning empty list');
       return res.json({ participants: [] });
     }
 
-    // Get user details for chat participants
-    const participants = await User.find({ 
-      _id: { $in: uniqueUserIds } 
-    }).select('name email department academicYear year section role profilePicture').lean();
-
-    console.log(`📊 Found ${participants.length} user details for chat participants`);
-
     // Format participants data
-    const formattedParticipants = participants.map(user => ({
-      _id: user._id,
-      name: user.name || 'Unknown User',
-      email: user.email || 'No email provided',
-      department: user.department || (user.role === 'Student' ? 'Not specified' : 'Staff'),
-      academicYear: user.academicYear || (user.role === 'Student' ? 'Not specified' : null),
-      year: user.year || (user.role === 'Student' ? 'Not specified' : null),
-      section: user.section || (user.role === 'Student' ? 'Not specified' : null),
-      role: user.role || 'Student',
-      profilePicture: user.profilePicture || null
+    const formattedParticipants = deduplicatedAttendance.map(attendance => ({
+      _id: attendance.userId._id,
+      name: attendance.userId.name || 'Unknown User',
+      email: attendance.userId.email || 'No email provided',
+      department: attendance.userId.department || (attendance.userId.role === 'Student' ? 'Not specified' : 'Staff'),
+      academicYear: attendance.userId.academicYear || (attendance.userId.role === 'Student' ? 'Not specified' : null),
+      year: attendance.userId.year || (attendance.userId.role === 'Student' ? 'Not specified' : null),
+      section: attendance.userId.section || (attendance.userId.role === 'Student' ? 'Not specified' : null),
+      role: attendance.userId.role || 'Student',
+      profilePicture: attendance.userId.profilePicture || null,
+      registrationApproved: attendance.registrationApproved,
+      status: attendance.status
     }));
 
-    console.log(`Returning ${formattedParticipants.length} actual chat participants:`, 
+    console.log(`Returning ${formattedParticipants.length} event participants:`, 
       formattedParticipants.map(p => ({ name: p.name, email: p.email, role: p.role })));
 
     res.json({ participants: formattedParticipants });
