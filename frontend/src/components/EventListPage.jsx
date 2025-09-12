@@ -1485,9 +1485,9 @@ function EventListPage() {
                               </>
                             )}
 
-                            {/* Only show time buttons if registration is approved or no approval required */}
-                            {/* Only show time tracking to Admin/Staff, hide from students */}
-                            {((att.registrationApproved || !event.requiresApproval) && att.status !== 'Disapproved') && (role === 'Admin' || role === 'Staff') && (
+                            {/* Show time buttons if registration is approved or no approval required */}
+                            {/* Allow students to see their own time tracking buttons */}
+                            {((att.registrationApproved || !event.requiresApproval) && att.status !== 'Disapproved') && (
                               <div className="time-buttons">
                                 <button 
                                   className={`action-button time-in-button ${att && att.timeIn ? 'success-button disabled' : 'warning-button'}`}
