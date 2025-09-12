@@ -1037,13 +1037,19 @@ exports.timeOut = async (req, res) => {
 exports.getEventParticipants = async (req, res) => {
   try {
     const event = await Event.findById(req.params.eventId)
-      .populate('attendance.userId', 'name email department academicYear');
+      .populate('attendance.userId', 'name email department academicYear year yearLevel section role profilePicture');
 
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    res.json(event.attendance);
+    // Transform the data to maintain the userId structure expected by frontend
+    const participants = event.attendance.map(attendance => ({
+      ...attendance.toObject(),
+      userId: attendance.userId // Keep the populated user data under userId
+    }));
+
+    res.json(participants);
   } catch (err) {
     console.error('Error in getEventParticipants:', err);
     res.status(500).json({ message: 'Error fetching participants.', error: err.message });
@@ -1054,7 +1060,7 @@ exports.getEventParticipants = async (req, res) => {
 exports.getEventParticipantsPublic = async (req, res) => {
   try {
     const event = await Event.findById(req.params.eventId)
-      .populate('attendance.userId', 'name email department academicYear profilePicture role section yearLevel');
+      .populate('attendance.userId', 'name email department academicYear year yearLevel section role profilePicture');
 
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
@@ -1067,10 +1073,11 @@ exports.getEventParticipantsPublic = async (req, res) => {
       email: att.userId.email,
       department: att.userId.department,
       academicYear: att.userId.academicYear,
-      profilePicture: att.userId.profilePicture,
-      role: att.userId.role,
-      section: att.userId.section,
+      year: att.userId.year,
       yearLevel: att.userId.yearLevel,
+      section: att.userId.section,
+      role: att.userId.role,
+      profilePicture: att.userId.profilePicture,
       registrationApproved: att.registrationApproved,
       status: att.status
     }));

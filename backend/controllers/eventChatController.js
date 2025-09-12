@@ -397,29 +397,29 @@ exports.getParticipants = async (req, res) => {
   try {
     const { eventId } = req.params;
 
-    // Get all users who have sent messages in this event chat
-    const participants = await EventChat.aggregate([
-      { $match: { eventId: new mongoose.Types.ObjectId(eventId), isDeleted: false } },
-      { $group: { _id: '$userId' } },
-      {
-        $lookup: {
-          from: 'users',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'user'
-        }
-      },
-      { $unwind: '$user' },
-      {
-        $project: {
-          _id: '$user._id',
-          name: '$user.name',
-          email: '$user.email',
-          profilePicture: '$user.profilePicture',
-          department: '$user.department'
-        }
-      }
-    ]);
+    // Get the event with populated attendance
+    const event = await Event.findById(eventId)
+      .populate('attendance.userId', 'name email department academicYear year yearLevel section role profilePicture');
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Return all event participants (not just those who have sent messages)
+    const participants = event.attendance.map(att => ({
+      _id: att.userId._id,
+      name: att.userId.name,
+      email: att.userId.email,
+      department: att.userId.department,
+      academicYear: att.userId.academicYear,
+      year: att.userId.year,
+      yearLevel: att.userId.yearLevel,
+      section: att.userId.section,
+      role: att.userId.role,
+      profilePicture: att.userId.profilePicture,
+      registrationApproved: att.registrationApproved,
+      status: att.status
+    }));
 
     res.json({ participants });
   } catch (err) {
