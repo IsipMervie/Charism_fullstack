@@ -168,6 +168,26 @@ export const clearCache = (cacheKey) => {
   console.log(`🧹 Cleared cache: ${cacheKey}`);
 };
 
+// Clear participant-related cache
+export const clearParticipantCache = (eventId) => {
+  // Clear all participant-related caches
+  const keysToRemove = [];
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    if (key && (
+      key.includes('participants') || 
+      key.includes('events-cache') || 
+      key.includes('events_cache') ||
+      key.includes('publicSettings')
+    )) {
+      keysToRemove.push(key);
+    }
+  }
+  
+  keysToRemove.forEach(key => sessionStorage.removeItem(key));
+  console.log(`🧹 Cleared participant cache for event ${eventId}`);
+};
+
 // =======================
 // API Functions
 // =======================
@@ -676,6 +696,12 @@ export const getStudents40Hours = async () => {
 export const deleteEvent = async (eventId) => {
   try {
     const response = await axiosInstance.delete(`/events/${eventId}`);
+    
+    // Clear participant and event-related caches after successful deletion
+    clearParticipantCache(eventId);
+    clearAllCache();
+    console.log('🧹 Cleared all caches after event deletion');
+    
     return response.data;
   } catch (error) {
     console.error('Error deleting event:', error);

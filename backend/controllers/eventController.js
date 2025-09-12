@@ -695,16 +695,30 @@ exports.updateEvent = async (req, res) => {
 // Delete Event
 exports.deleteEvent = async (req, res) => {
   try {
-    const event = await Event.findByIdAndDelete(req.params.eventId);
+    const eventId = req.params.eventId;
     
+    // First check if event exists
+    const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    // Delete all related chat messages
+    const EventChat = require('../models/EventChat');
+    const deletedChatMessages = await EventChat.deleteMany({ eventId: eventId });
+    console.log(`🗑️ Deleted ${deletedChatMessages.deletedCount} chat messages for event ${eventId}`);
+
+    // Delete the event
+    await Event.findByIdAndDelete(eventId);
+    console.log(`🗑️ Deleted event ${eventId}`);
+
     // No need to delete image from local storage - it's stored in MongoDB
     // The image data will be automatically removed when the event is deleted
 
-    res.json({ message: 'Event deleted successfully.' });
+    res.json({ 
+      message: 'Event and all related data deleted successfully.',
+      deletedChatMessages: deletedChatMessages.deletedCount
+    });
   } catch (err) {
     console.error('Error in deleteEvent:', err);
     res.status(500).json({ message: 'Error deleting event.', error: err.message });

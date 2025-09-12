@@ -392,85 +392,63 @@ exports.removeReaction = async (req, res) => {
   }
 };
 
-// Get event chat participants
+// Get event chat participants (actual chat participants, not event attendees)
 exports.getParticipants = async (req, res) => {
   try {
     const { eventId } = req.params;
     const userId = req.user?.id; // Get current user ID
 
-    // Get the event with populated attendance
-    const event = await Event.findById(eventId)
-      .populate('attendance.userId', 'name email department academicYear year section role profilePicture');
-
+    // First check if event exists
+    const event = await Event.findById(eventId);
     if (!event) {
       console.log(`❌ Event ${eventId} not found in chat participants`);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    console.log(`📊 Event ${eventId} found with ${event.attendance.length} attendance records in chat participants`);
+    console.log(`📊 Event ${eventId} found, getting actual chat participants`);
 
-    // Populate the event with user details
-    const updatedEvent = await Event.findById(eventId)
-      .populate('attendance.userId', 'name email department academicYear year section role profilePicture');
-    console.log('Raw attendance data:', updatedEvent.attendance.map(att => ({
-      userId: att.userId,
-      hasUserId: !!att.userId,
-      userIdType: typeof att.userId,
-      registrationApproved: att.registrationApproved,
-      status: att.status
-    })));
+    // Get actual chat participants - users who have sent messages in the chat
+    const chatMessages = await EventChat.find({ 
+      eventId: eventId,
+      isDeleted: { $ne: true } // Exclude deleted messages
+    }).select('userId').lean();
 
-    // Filter out attendance records with invalid userId references AND only show approved participants
-    const validAttendanceRecords = updatedEvent.attendance.filter(att => {
-      if (!att.userId) {
-        console.log('⚠️ Attendance record has no userId in chat participants:', att._id);
-        return false;
-      }
-      
-      // Check if userId is populated (has name property) or is a valid ObjectId
-      if (typeof att.userId === 'object' && att.userId.name) {
-        // Include if registration is approved OR if user is Staff/Admin (they don't need approval)
-        if (att.registrationApproved || att.userId.role === 'Staff' || att.userId.role === 'Admin') {
-          console.log(`✅ Approved chat participant: ${att.userId.name} (${att.userId.email}) - Role: ${att.userId.role}`);
-          return true;
-        } else {
-          console.log(`❌ Not approved for chat: ${att.userId.name} (${att.userId.email}) - registrationApproved: ${att.registrationApproved}, Role: ${att.userId.role}`);
-          return false;
-        }
-      }
-      
-      if (typeof att.userId === 'string' && att.userId.length === 24) {
-        console.log('⚠️ Attendance record has unpopulated userId in chat participants:', att._id, att.userId);
-        return false; // Unpopulated ObjectId string
-      }
-      
-      return false;
-    });
+    // Get unique user IDs who have participated in chat
+    const uniqueUserIds = [...new Set(chatMessages.map(msg => msg.userId.toString()))];
+    console.log(`📊 Found ${uniqueUserIds.length} unique users who have participated in chat`);
 
-    console.log(`📊 Valid attendance records in chat: ${validAttendanceRecords.length} out of ${updatedEvent.attendance.length}`);
+    if (uniqueUserIds.length === 0) {
+      console.log('📊 No chat participants found - returning empty list');
+      return res.json({ participants: [] });
+    }
 
-    // Return all event participants (not just those who have sent messages)
-    const participants = validAttendanceRecords.map(att => ({
-      _id: att.userId._id,
-      name: att.userId.name || 'Unknown User',
-      email: att.userId.email || 'No email provided',
-      department: att.userId.department || (att.userId.role === 'Student' ? 'Not specified' : 'Staff'),
-      academicYear: att.userId.academicYear || (att.userId.role === 'Student' ? 'Not specified' : null),
-      year: att.userId.year || (att.userId.role === 'Student' ? 'Not specified' : null),
-      section: att.userId.section || (att.userId.role === 'Student' ? 'Not specified' : null),
-      role: att.userId.role || 'Student',
-      profilePicture: att.userId.profilePicture || null,
-      registrationApproved: att.registrationApproved,
-      status: att.status
+    // Get user details for chat participants
+    const participants = await User.find({ 
+      _id: { $in: uniqueUserIds } 
+    }).select('name email department academicYear year section role profilePicture').lean();
+
+    console.log(`📊 Found ${participants.length} user details for chat participants`);
+
+    // Format participants data
+    const formattedParticipants = participants.map(user => ({
+      _id: user._id,
+      name: user.name || 'Unknown User',
+      email: user.email || 'No email provided',
+      department: user.department || (user.role === 'Student' ? 'Not specified' : 'Staff'),
+      academicYear: user.academicYear || (user.role === 'Student' ? 'Not specified' : null),
+      year: user.year || (user.role === 'Student' ? 'Not specified' : null),
+      section: user.section || (user.role === 'Student' ? 'Not specified' : null),
+      role: user.role || 'Student',
+      profilePicture: user.profilePicture || null
     }));
 
-    console.log(`Event ${eventId} has ${updatedEvent.attendance.length} attendance records`);
-    console.log(`Returning ${participants.length} participants:`, participants.map(p => ({ name: p.name, email: p.email, role: p.role })));
+    console.log(`Returning ${formattedParticipants.length} actual chat participants:`, 
+      formattedParticipants.map(p => ({ name: p.name, email: p.email, role: p.role })));
 
-    res.json({ participants });
+    res.json({ participants: formattedParticipants });
   } catch (err) {
-    console.error('Error fetching participants:', err);
-    res.status(500).json({ message: 'Error fetching participants.', error: err.message });
+    console.error('Error fetching chat participants:', err);
+    res.status(500).json({ message: 'Error fetching chat participants.', error: err.message });
   }
 };
 

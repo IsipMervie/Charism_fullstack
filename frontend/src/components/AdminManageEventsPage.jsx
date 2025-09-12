@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache } from '../api/api';
+import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache, clearAllCache } from '../api/api';
 import Swal from 'sweetalert2';
 import { showConfirm, showError, showSuccess, showWarning } from '../utils/sweetAlertUtils';
 import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaEyeSlash, FaShare } from 'react-icons/fa';
@@ -251,9 +251,12 @@ function AdminManageEventsPage() {
 
     try {
       await deleteEvent(eventId);
-      // Clear cache to ensure fresh data
+      // Clear all relevant caches to ensure fresh data
       clearCache('events_cache_Admin');
       clearCache('events_cache_Staff');
+      clearCache('events-cache');
+      clearCache('publicSettings');
+      clearAllCache(); // Clear all cached data
       showSuccess('Deleted', 'Event deleted.');
       fetchEvents();
     } catch (err) {

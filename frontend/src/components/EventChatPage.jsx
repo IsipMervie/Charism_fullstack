@@ -290,6 +290,10 @@ const EventChatPage = () => {
       setParticipantsError('');
       console.log('🔄 Loading participants for event:', eventId);
       
+      // Clear any cached participant data to ensure fresh data
+      const { clearAllCache } = await import('../api/api');
+      clearAllCache();
+      
       // Try to load event participants first (this should be the primary source)
       const { getEventParticipantsPublic } = await import('../api/api');
       
