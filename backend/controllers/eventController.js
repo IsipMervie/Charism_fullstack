@@ -1057,8 +1057,21 @@ exports.getEventParticipants = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    // Deduplicate participants by userId - keep the most recent registration
+    const uniqueParticipants = new Map();
+    
+    event.attendance.forEach(attendance => {
+      const userId = attendance.userId._id.toString();
+      const existing = uniqueParticipants.get(userId);
+      
+      // If no existing participant or this one is more recent, use this one
+      if (!existing || new Date(attendance.registeredAt) > new Date(existing.registeredAt)) {
+        uniqueParticipants.set(userId, attendance);
+      }
+    });
+
     // Transform the data to maintain the userId structure expected by frontend
-    const participants = event.attendance.map(attendance => ({
+    const participants = Array.from(uniqueParticipants.values()).map(attendance => ({
       ...attendance.toObject(),
       userId: attendance.userId // Keep the populated user data under userId
     }));
@@ -1113,7 +1126,20 @@ exports.getEventParticipantsPublic = async (req, res) => {
 
     console.log(`📊 Valid attendance records: ${validAttendanceRecords.length} out of ${event.attendance.length}`);
 
-    const participants = validAttendanceRecords.map(att => ({
+    // Deduplicate participants by userId - keep the most recent registration
+    const uniqueParticipants = new Map();
+    
+    validAttendanceRecords.forEach(attendance => {
+      const userId = attendance.userId._id.toString();
+      const existing = uniqueParticipants.get(userId);
+      
+      // If no existing participant or this one is more recent, use this one
+      if (!existing || new Date(attendance.registeredAt) > new Date(existing.registeredAt)) {
+        uniqueParticipants.set(userId, attendance);
+      }
+    });
+
+    const participants = Array.from(uniqueParticipants.values()).map(att => ({
       _id: att.userId._id,
       name: att.userId.name || 'Unknown User',
       email: att.userId.email || 'No email provided',
@@ -1137,6 +1163,49 @@ exports.getEventParticipantsPublic = async (req, res) => {
   }
 };
 
+// Clean up duplicate participants in an event
+exports.cleanupDuplicateParticipants = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Group attendance by userId and keep only the most recent registration
+    const uniqueAttendance = new Map();
+    let duplicatesRemoved = 0;
+    
+    event.attendance.forEach(attendance => {
+      const userId = attendance.userId.toString();
+      const existing = uniqueAttendance.get(userId);
+      
+      if (!existing || new Date(attendance.registeredAt) > new Date(existing.registeredAt)) {
+        if (existing) {
+          duplicatesRemoved++;
+        }
+        uniqueAttendance.set(userId, attendance);
+      } else {
+        duplicatesRemoved++;
+      }
+    });
+
+    // Update the event with deduplicated attendance
+    event.attendance = Array.from(uniqueAttendance.values());
+    await event.save();
+
+    res.json({ 
+      message: `Successfully cleaned up ${duplicatesRemoved} duplicate participants.`,
+      duplicatesRemoved,
+      totalParticipants: event.attendance.length
+    });
+  } catch (err) {
+    console.error('Error in cleanupDuplicateParticipants:', err);
+    res.status(500).json({ message: 'Error cleaning up duplicate participants.', error: err.message });
+  }
+};
+
 // Get Event Attendance
 exports.getEventAttendance = async (req, res) => {
   try {
@@ -1148,9 +1217,26 @@ exports.getEventAttendance = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Return the attendance array with populated user data
-    console.log(`Event ${eventId} attendance: ${event.attendance.length} records`);
-    console.log('Attendance data:', event.attendance.map(att => ({ 
+    // Deduplicate attendance by userId - keep the most recent registration
+    const uniqueAttendance = new Map();
+    
+    event.attendance.forEach(attendance => {
+      if (attendance.userId) {
+        const userId = attendance.userId._id.toString();
+        const existing = uniqueAttendance.get(userId);
+        
+        // If no existing attendance or this one is more recent, use this one
+        if (!existing || new Date(attendance.registeredAt) > new Date(existing.registeredAt)) {
+          uniqueAttendance.set(userId, attendance);
+        }
+      }
+    });
+
+    const deduplicatedAttendance = Array.from(uniqueAttendance.values());
+
+    // Return the deduplicated attendance array with populated user data
+    console.log(`Event ${eventId} attendance: ${deduplicatedAttendance.length} records (deduplicated from ${event.attendance.length})`);
+    console.log('Attendance data:', deduplicatedAttendance.map(att => ({ 
       userId: att.userId?._id, 
       name: att.userId?.name, 
       email: att.userId?.email, 
@@ -1159,7 +1245,7 @@ exports.getEventAttendance = async (req, res) => {
       status: att.status
     })));
     
-    res.json(event.attendance || []);
+    res.json(deduplicatedAttendance);
   } catch (err) {
     console.error('Error in getEventAttendance:', err);
     res.status(500).json({ message: 'Error fetching event attendance.', error: err.message });

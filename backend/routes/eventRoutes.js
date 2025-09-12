@@ -179,6 +179,14 @@ router.get(
   eventController.getEventAttendance
 );
 
+// Clean up duplicate participants (Admin/Staff)
+router.post(
+  '/:eventId/cleanup-duplicates',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.cleanupDuplicateParticipants
+);
+
 // Approve/reject registration (Admin/Staff)
 router.patch(
   '/:eventId/attendance/:userId/approve-registration',

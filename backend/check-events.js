@@ -1,32 +1,30 @@
 const mongoose = require('mongoose');
 const Event = require('./models/Event');
-require('dotenv').config();
 
 async function checkEvents() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to database');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/communitylink');
+    console.log('Connected to MongoDB');
     
-    const events = await Event.find({}).select('title status isVisibleToStudents createdAt');
-    console.log('\n=== ALL EVENTS ===');
-    events.forEach((event, index) => {
-      console.log(`${index + 1}. ${event.title}`);
-      console.log(`   Status: ${event.status}`);
-      console.log(`   Visible to Students: ${event.isVisibleToStudents}`);
-      console.log(`   Created: ${event.createdAt}`);
-      console.log('---');
+    const events = await Event.find({}).select('title attendance').lean();
+    console.log('Total events:', events.length);
+    
+    events.forEach(event => {
+      console.log(`Event: ${event.title}`);
+      console.log(`  Participants: ${event.attendance ? event.attendance.length : 0}`);
+      if (event.attendance && event.attendance.length > 0) {
+        const userIds = event.attendance.map(a => a.userId);
+        const uniqueUserIds = [...new Set(userIds.map(id => id.toString()))];
+        console.log(`  Unique users: ${uniqueUserIds.length}`);
+        if (userIds.length !== uniqueUserIds.length) {
+          console.log('  ⚠️  DUPLICATE USERS FOUND!');
+          
+          // Find duplicates
+          const duplicates = userIds.filter((id, index) => userIds.indexOf(id) !== index);
+          console.log('  Duplicate user IDs:', [...new Set(duplicates)]);
+        }
+      }
     });
-    
-    console.log('\n=== DISABLED EVENTS ===');
-    const disabledEvents = events.filter(e => e.status === 'Disabled' || !e.isVisibleToStudents);
-    disabledEvents.forEach((event, index) => {
-      console.log(`${index + 1}. ${event.title}`);
-      console.log(`   Status: ${event.status}`);
-      console.log(`   Visible to Students: ${event.isVisibleToStudents}`);
-    });
-    
-    console.log(`\nTotal events: ${events.length}`);
-    console.log(`Disabled events: ${disabledEvents.length}`);
     
     process.exit(0);
   } catch (error) {
