@@ -751,8 +751,8 @@ const EventChatPage = () => {
                             <h4 className="participant-name">{participant.name}</h4>
                             <p className="participant-email">{participant.email}</p>
                             <div className="participant-role">
-                              <span className={`role-badge role-${participant.role?.toLowerCase()}`}>
-                                {participant.role || 'Unknown'}
+                              <span className={`role-badge role-${participant.role?.toLowerCase() || 'unknown'}`}>
+                                {participant.role || 'Student'}
                               </span>
                             </div>
                           </div>
@@ -889,8 +889,8 @@ const EventChatPage = () => {
                 <div className="profile-details">
                   <div className="detail-row">
                     <label>Role</label>
-                    <span className={`role-badge role-${selectedProfile.role?.toLowerCase()}`}>
-                      {selectedProfile.role || 'Unknown'}
+                    <span className={`role-badge role-${selectedProfile.role?.toLowerCase() || 'unknown'}`}>
+                      {selectedProfile.role || 'Student'}
                     </span>
                   </div>
                   

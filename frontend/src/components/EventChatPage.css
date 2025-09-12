@@ -2,6 +2,16 @@
 
 /* EventChatPage.css - Modern Design System */
 
+/* Remove unwanted outlines */
+* {
+  outline: none !important;
+}
+
+*:focus {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
 /* Enhanced CSS Variables */
 :root {
   --tab-border-radius: 16px;
@@ -524,10 +534,18 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  object-fit: cover;
+  overflow: hidden;
   border: 3px solid var(--primary);
   box-shadow: 0 4px 15px var(--primary-shadow);
   transition: all 0.3s ease;
+}
+
+.participant-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .participant-card:hover .participant-avatar {
@@ -604,6 +622,11 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.role-badge.role-unknown {
+  background: var(--warning-light);
+  color: var(--warning);
 }
 
 .role-admin {
@@ -734,6 +757,8 @@
   border: 1px solid var(--border-primary);
   box-shadow: 0 8px 25px var(--shadow-lg);
   overflow: hidden;
+  outline: none;
+  position: relative;
 }
 
 .sidebar-content {
