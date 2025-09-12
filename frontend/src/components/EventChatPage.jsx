@@ -248,32 +248,38 @@ const EventChatPage = () => {
   // Load participants with enhanced functionality
   const loadParticipants = useCallback(async () => {
     try {
-      // Load both chat participants and event participants
-      const { getEventChatParticipants, getEventParticipantsPublic } = await import('../api/api');
-      const [chatData, eventData] = await Promise.all([
-        getEventChatParticipants(eventId).catch((error) => {
-          console.warn('Failed to load chat participants:', error);
-          return { participants: [] };
-        }),
-        getEventParticipantsPublic(eventId).catch((error) => {
-          console.warn('Failed to load event participants:', error);
-          return { participants: [] };
-        })
-      ]);
+      console.log('🔄 Loading participants for event:', eventId);
       
-      const chatParticipants = chatData.participants || [];
-      const eventParticipants = eventData.participants || [];
+      // Try to load event participants first (this should be the primary source)
+      const { getEventParticipantsPublic } = await import('../api/api');
       
-      console.log('Chat participants:', chatParticipants);
-      console.log('Event participants:', eventParticipants);
+      let eventParticipants = [];
+      try {
+        const eventData = await getEventParticipantsPublic(eventId);
+        eventParticipants = eventData.participants || [];
+        console.log('✅ Event participants loaded:', eventParticipants.length);
+        console.log('Event participants data:', eventParticipants);
+      } catch (error) {
+        console.error('❌ Failed to load event participants:', error);
+      }
       
-      // Combine and deduplicate participants
-      const allParticipants = [...chatParticipants];
-      eventParticipants.forEach(eventParticipant => {
-        if (!allParticipants.find(p => p._id === eventParticipant._id)) {
-          allParticipants.push(eventParticipant);
-        }
-      });
+      // Try to load chat participants as backup
+      let chatParticipants = [];
+      try {
+        const { getEventChatParticipants } = await import('../api/api');
+        const chatData = await getEventChatParticipants(eventId);
+        chatParticipants = chatData.participants || [];
+        console.log('✅ Chat participants loaded:', chatParticipants.length);
+        console.log('Chat participants data:', chatParticipants);
+      } catch (error) {
+        console.error('❌ Failed to load chat participants:', error);
+      }
+      
+      // Use event participants as primary source, fallback to chat participants
+      let allParticipants = eventParticipants.length > 0 ? eventParticipants : chatParticipants;
+      
+      console.log('📊 Final participant count:', allParticipants.length);
+      console.log('📊 Using data source:', eventParticipants.length > 0 ? 'event participants' : 'chat participants');
       
       // Ensure all participants have required fields with fallbacks
       const processedParticipants = allParticipants.map(participant => ({
@@ -293,10 +299,11 @@ const EventChatPage = () => {
         return (roleOrder[a.role] || 3) - (roleOrder[b.role] || 3);
       });
       
-      console.log('Processed participants:', sortedParticipants);
+      console.log('✅ Final processed participants:', sortedParticipants.length);
+      console.log('Participants:', sortedParticipants.map(p => ({ name: p.name, email: p.email, role: p.role })));
       setParticipants(sortedParticipants);
     } catch (err) {
-      console.error('Error loading participants:', err);
+      console.error('❌ Error loading participants:', err);
       setParticipants([]);
     }
   }, [eventId]);

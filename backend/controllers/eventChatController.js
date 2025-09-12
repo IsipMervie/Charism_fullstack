@@ -402,24 +402,44 @@ exports.getParticipants = async (req, res) => {
       .populate('attendance.userId', 'name email department academicYear year yearLevel section role profilePicture');
 
     if (!event) {
+      console.log(`❌ Event ${eventId} not found in chat participants`);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    // Return all event participants (not just those who have sent messages)
-    const participants = event.attendance.map(att => ({
-      _id: att.userId._id,
-      name: att.userId.name,
-      email: att.userId.email,
-      department: att.userId.department,
-      academicYear: att.userId.academicYear,
-      year: att.userId.year,
-      yearLevel: att.userId.yearLevel,
-      section: att.userId.section,
-      role: att.userId.role,
-      profilePicture: att.userId.profilePicture,
+    console.log(`📊 Event ${eventId} found with ${event.attendance.length} attendance records in chat participants`);
+    console.log('Raw attendance data:', event.attendance.map(att => ({
+      userId: att.userId,
+      hasUserId: !!att.userId,
+      userIdType: typeof att.userId,
       registrationApproved: att.registrationApproved,
       status: att.status
-    }));
+    })));
+
+    // Return all event participants (not just those who have sent messages)
+    const participants = event.attendance.map(att => {
+      if (!att.userId) {
+        console.log('⚠️ Attendance record has no userId in chat participants:', att);
+        return null;
+      }
+      
+      return {
+        _id: att.userId._id,
+        name: att.userId.name,
+        email: att.userId.email,
+        department: att.userId.department,
+        academicYear: att.userId.academicYear,
+        year: att.userId.year,
+        yearLevel: att.userId.yearLevel,
+        section: att.userId.section,
+        role: att.userId.role,
+        profilePicture: att.userId.profilePicture,
+        registrationApproved: att.registrationApproved,
+        status: att.status
+      };
+    }).filter(Boolean); // Remove null entries
+
+    console.log(`Event ${eventId} has ${event.attendance.length} attendance records`);
+    console.log(`Returning ${participants.length} participants:`, participants.map(p => ({ name: p.name, email: p.email, role: p.role })));
 
     res.json({ participants });
   } catch (err) {
