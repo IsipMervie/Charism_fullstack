@@ -1050,6 +1050,38 @@ exports.getEventParticipants = async (req, res) => {
   }
 };
 
+// Get Event Participants (Public - for chat display)
+exports.getEventParticipantsPublic = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.eventId)
+      .populate('attendance.userId', 'name email department academicYear profilePicture role section yearLevel');
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Return only basic participant info for public access
+    const participants = event.attendance.map(att => ({
+      _id: att.userId._id,
+      name: att.userId.name,
+      email: att.userId.email,
+      department: att.userId.department,
+      academicYear: att.userId.academicYear,
+      profilePicture: att.userId.profilePicture,
+      role: att.userId.role,
+      section: att.userId.section,
+      yearLevel: att.userId.yearLevel,
+      registrationApproved: att.registrationApproved,
+      status: att.status
+    }));
+
+    res.json({ participants });
+  } catch (err) {
+    console.error('Error in getEventParticipantsPublic:', err);
+    res.status(500).json({ message: 'Error fetching participants.', error: err.message });
+  }
+};
+
 // Get Event Attendance
 exports.getEventAttendance = async (req, res) => {
   try {

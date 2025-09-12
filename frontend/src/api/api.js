@@ -633,6 +633,16 @@ export const getEventParticipants = async (eventId) => {
   }
 };
 
+export const getEventParticipantsPublic = async (eventId) => {
+  try {
+    const response = await axiosInstance.get(`/events/${eventId}/participants/public`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching event participants:', error);
+    throw new Error('Failed to fetch event participants. Please try again.');
+  }
+};
+
 export const getStudentsByYear = async () => {
   try {
     const response = await axiosInstance.get('/admin/students-by-year');

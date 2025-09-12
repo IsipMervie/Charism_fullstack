@@ -166,6 +166,12 @@ router.get(
   eventController.getEventParticipants
 );
 
+// Get event participants (Public - for chat participants display)
+router.get(
+  '/:eventId/participants/public',
+  eventController.getEventParticipantsPublic
+);
+
 // Get event attendance (Admin/Staff/Student - for chat access)
 router.get(
   '/:eventId/attendance',

@@ -248,12 +248,26 @@ const EventChatPage = () => {
   // Load participants with enhanced functionality
   const loadParticipants = useCallback(async () => {
     try {
-      const { getEventChatParticipants } = await import('../api/api');
-      const participantsData = await getEventChatParticipants(eventId);
-      const participantsArray = Array.isArray(participantsData) ? participantsData : [];
+      // Load both chat participants and event participants
+      const { getEventChatParticipants, getEventParticipantsPublic } = await import('../api/api');
+      const [chatData, eventData] = await Promise.all([
+        getEventChatParticipants(eventId).catch(() => ({ participants: [] })),
+        getEventParticipantsPublic(eventId).catch(() => ({ participants: [] }))
+      ]);
+      
+      const chatParticipants = chatData.participants || [];
+      const eventParticipants = eventData.participants || [];
+      
+      // Combine and deduplicate participants
+      const allParticipants = [...chatParticipants];
+      eventParticipants.forEach(eventParticipant => {
+        if (!allParticipants.find(p => p._id === eventParticipant._id)) {
+          allParticipants.push(eventParticipant);
+        }
+      });
       
       // Sort participants by role (Admin/Staff first, then Students)
-      const sortedParticipants = participantsArray.sort((a, b) => {
+      const sortedParticipants = allParticipants.sort((a, b) => {
         const roleOrder = { 'Admin': 0, 'Staff': 1, 'Student': 2 };
         return (roleOrder[a.role] || 3) - (roleOrder[b.role] || 3);
       });
@@ -797,35 +811,6 @@ const EventChatPage = () => {
           {!sidebarCollapsed && (
             <aside className="sidebar">
               <div className="sidebar-content">
-                <div className="quick-stats">
-                  <div className="stat-item">
-                    <div className="stat-icon">👥</div>
-                    <div className="stat-info">
-                      <span className="stat-number">{participants.length}</span>
-                      <span className="stat-label">Participants</span>
-                    </div>
-                  </div>
-                  <div className="stat-item">
-                    <div className="stat-icon">💬</div>
-                    <div className="stat-info">
-                      <span className="stat-number">-</span>
-                      <span className="stat-label">Messages</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="recent-activity">
-                  <h4>Recent Activity</h4>
-                  <div className="activity-list">
-                    <div className="activity-item">
-                      <div className="activity-icon">💬</div>
-                      <div className="activity-text">
-                        <span>Chat started</span>
-                        <small>Just now</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </aside>
           )}

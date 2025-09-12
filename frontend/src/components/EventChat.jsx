@@ -35,7 +35,7 @@ import {
   FaEyeSlash,
   FaRedoAlt
 } from 'react-icons/fa';
-import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, getEventParticipants, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
+import { getEventChatMessages, sendEventChatMessage, sendEventChatMessageWithFiles, getEventChatParticipants, getEventParticipantsPublic, addEventChatReaction, deleteEventChatMessage, editEventChatMessage } from '../api/api';
 import { API_URL } from '../config/environment';
 import './EventChat.css';
 
@@ -80,8 +80,9 @@ const EventChat = ({
   // Message status
   const [messageStatus, setMessageStatus] = useState({});
   
-  // Track failed images
+  // Track failed images and audio
   const [failedImages, setFailedImages] = useState(new Set());
+  const [failedAudio, setFailedAudio] = useState(new Set());
   
   // Refs
   const messagesEndRef = useRef(null);
@@ -237,7 +238,7 @@ const EventChat = ({
       // Load both chat participants and event participants
       const [chatData, eventData] = await Promise.all([
         getEventChatParticipants(eventId).catch(() => ({ participants: [] })),
-        getEventParticipants(eventId).catch(() => ({ participants: [] }))
+        getEventParticipantsPublic(eventId).catch(() => ({ participants: [] }))
       ]);
       
       const chatParticipants = chatData.participants || [];
@@ -739,35 +740,60 @@ const EventChat = ({
                                 {attachment.contentType?.startsWith('image/') ? (
                                   <div className="image-attachment">
                                     {!failedImages.has(attachment.url) ? (
-                                      <img 
-                                        src={getAttachmentUrl(attachment.url)} 
-                                        alt={attachment.originalName}
-                                        className="attachment-image"
-                                        onError={(e) => {
-                                          setFailedImages(prev => new Set([...prev, attachment.url]));
-                                        }}
-                                        onLoad={() => {
-                                          // Image loaded successfully
-                                        }}
-                                        onClick={() => {
-                                          // Create fullscreen image modal
-                                          const modal = document.createElement('div');
-                                          modal.className = 'image-modal-overlay';
-                                          modal.innerHTML = `
-                                            <div class="image-modal">
-                                              <img src="${getAttachmentUrl(attachment.url)}" alt="${attachment.originalName}" />
-                                              <button class="close-modal">×</button>
-                                            </div>
-                                          `;
-                                          document.body.appendChild(modal);
-                                          
-                                          modal.onclick = (e) => {
-                                            if (e.target === modal || e.target.classList.contains('close-modal')) {
-                                              document.body.removeChild(modal);
-                                            }
-                                          };
-                                        }}
-                                      />
+                                      <div className="image-container">
+                                        <img 
+                                          src={getAttachmentUrl(attachment.url)} 
+                                          alt={attachment.originalName}
+                                          className="attachment-image"
+                                          onError={(e) => {
+                                            setFailedImages(prev => new Set([...prev, attachment.url]));
+                                          }}
+                                          onLoad={() => {
+                                            // Image loaded successfully
+                                          }}
+                                          onClick={() => {
+                                            // Create fullscreen image modal
+                                            const modal = document.createElement('div');
+                                            modal.className = 'image-modal-overlay';
+                                            modal.innerHTML = `
+                                              <div class="image-modal">
+                                                <img src="${getAttachmentUrl(attachment.url)}" alt="${attachment.originalName}" />
+                                                <button class="close-modal">×</button>
+                                              </div>
+                                            `;
+                                            document.body.appendChild(modal);
+                                            
+                                            modal.onclick = (e) => {
+                                              if (e.target === modal || e.target.classList.contains('close-modal')) {
+                                                document.body.removeChild(modal);
+                                              }
+                                            };
+                                          }}
+                                        />
+                                        <div className="image-overlay">
+                                          <button 
+                                            className="download-btn"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              try {
+                                                const fileUrl = getAttachmentUrl(attachment.url);
+                                                const link = document.createElement('a');
+                                                link.href = fileUrl;
+                                                link.download = attachment.originalName;
+                                                link.target = '_blank';
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                              } catch (error) {
+                                                alert('Failed to download image. Please try again.');
+                                              }
+                                            }}
+                                            title="Download image"
+                                          >
+                                            <FaDownload />
+                                          </button>
+                                        </div>
+                                      </div>
                                     ) : (
                                       <div className="image-fallback">
                                         <FaImage className="fallback-icon" />
@@ -798,40 +824,66 @@ const EventChat = ({
                                         </div>
                                       </div>
                                     )}
-                                    <div className="image-info">
-                                      <span className="image-name">{attachment.originalName}</span>
-                                      {failedImages.has(attachment.url) && (
+                                    {failedImages.has(attachment.url) && (
+                                      <div className="image-info">
                                         <span className="image-status">File not found</span>
-                                      )}
-                                    </div>
+                                      </div>
+                                    )}
                                   </div>
                                 ) : attachment.contentType?.startsWith('audio/') ? (
                                   <div className="audio-attachment">
-                                    <div className="audio-player">
-                                      <FaVolumeUp className="audio-icon" />
-                                      <audio 
-                                        controls 
-                                        preload="metadata"
-                                        onError={(e) => {
-                                          console.warn('Audio playback failed:', e);
-                                        }}
-                                      >
-                                        <source src={getAttachmentUrl(attachment.url)} type={attachment.contentType} />
-                                        <source src={getAttachmentUrl(attachment.url)} type="audio/mpeg" />
-                                        <source src={getAttachmentUrl(attachment.url)} type="audio/wav" />
-                                        Your browser does not support the audio element.
-                                      </audio>
-                                    </div>
-                                    <div className="audio-info">
-                                      <span className="audio-name">{attachment.originalName}</span>
-                                    </div>
+                                    {!failedAudio.has(attachment.url) ? (
+                                      <div className="audio-player">
+                                        <FaVolumeUp className="audio-icon" />
+                                        <audio 
+                                          controls 
+                                          preload="metadata"
+                                          onError={(e) => {
+                                            setFailedAudio(prev => new Set([...prev, attachment.url]));
+                                          }}
+                                        >
+                                          <source src={getAttachmentUrl(attachment.url)} type={attachment.contentType} />
+                                          <source src={getAttachmentUrl(attachment.url)} type="audio/mpeg" />
+                                          <source src={getAttachmentUrl(attachment.url)} type="audio/wav" />
+                                          Your browser does not support the audio element.
+                                        </audio>
+                                      </div>
+                                    ) : (
+                                      <div className="audio-fallback">
+                                        <FaVolumeUp className="fallback-icon" />
+                                        <div className="fallback-content">
+                                          <span className="fallback-text">Audio not available</span>
+                                          <span className="fallback-subtext">File may have been deleted or moved</span>
+                                          <button 
+                                            className="download-btn"
+                                            onClick={() => {
+                                              try {
+                                                const fileUrl = getAttachmentUrl(attachment.url);
+                                                const link = document.createElement('a');
+                                                link.href = fileUrl;
+                                                link.download = attachment.originalName;
+                                                link.target = '_blank';
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                              } catch (error) {
+                                                alert('File not available for download. The file may have been deleted from the server.');
+                                              }
+                                            }}
+                                            title="Try to download audio"
+                                          >
+                                            <FaDownload />
+                                            Try Download
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
                                 ) : (
                                   <div className="file-attachment">
                                     <div className="file-info">
                                       {getFileIcon({ type: attachment.contentType })}
                                       <div className="file-details">
-                                        <span className="file-name">{attachment.originalName}</span>
                                         <span className="file-size">{formatFileSize(attachment.fileSize)}</span>
                                       </div>
                                     </div>
@@ -840,7 +892,6 @@ const EventChat = ({
                                       onClick={() => {
                                         try {
                                           const fileUrl = getAttachmentUrl(attachment.url);
-                                          console.log('Downloading file:', fileUrl);
                                           const link = document.createElement('a');
                                           link.href = fileUrl;
                                           link.download = attachment.originalName;
@@ -849,7 +900,6 @@ const EventChat = ({
                                           link.click();
                                           document.body.removeChild(link);
                                         } catch (error) {
-                                          console.error('Error downloading file:', error);
                                           alert('Failed to download file. Please try again.');
                                         }
                                       }}

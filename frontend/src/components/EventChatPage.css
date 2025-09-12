@@ -621,109 +621,7 @@
   gap: 1.5rem;
 }
 
-.quick-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--bg-hover);
-  border-radius: 12px;
-  border: 1px solid var(--border-primary);
-  transition: all 0.3s ease;
-}
-
-.stat-item:hover {
-  background: var(--bg-tertiary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--shadow-sm);
-}
-
-.stat-icon {
-  font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary-light);
-  border-radius: 10px;
-}
-
-.stat-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.stat-number {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.stat-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.recent-activity h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0 0 1rem 0;
-}
-
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.activity-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  background: var(--bg-hover);
-  border-radius: 10px;
-  border: 1px solid var(--border-primary);
-}
-
-.activity-icon {
-  font-size: 1rem;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--success-light);
-  border-radius: 8px;
-}
-
-.activity-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.activity-text span {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.activity-text small {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
 
 /* Empty States */
 .empty-state {
@@ -1017,9 +915,6 @@
     gap: 2rem;
   }
   
-  .quick-stats {
-    flex-direction: row;
-  }
 }
 
 @media (max-width: 768px) {
@@ -1075,9 +970,6 @@
     flex-direction: column;
   }
   
-  .quick-stats {
-    flex-direction: column;
-  }
   
   .profile-modal {
     margin: 1rem;
@@ -1143,8 +1035,7 @@
   .fullscreen-toggle:hover,
   .sidebar-toggle:hover,
   .participant-card:hover,
-  .detail-item:hover,
-  .stat-item:hover {
+  .detail-item:hover {
     transform: none;
   }
 }
@@ -1172,8 +1063,7 @@
   }
   
   .participant-card,
-  .detail-item,
-  .stat-item {
+  .detail-item {
     border-width: 2px;
   }
 }
