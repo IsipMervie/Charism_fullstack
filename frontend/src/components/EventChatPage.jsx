@@ -36,6 +36,7 @@ import {
 import Swal from 'sweetalert2';
 import EventChat from './EventChat';
 import { getProfilePictureUrl } from '../utils/imageUtils';
+import { formatTimeRange12Hour } from '../utils/timeUtils';
 import './EventChatPage.css';
 
 const EventChatPage = () => {
@@ -84,7 +85,7 @@ const EventChatPage = () => {
   };
 
   const formatEventTime = (startTime, endTime) => {
-    return `${startTime} - ${endTime}`;
+    return formatTimeRange12Hour(startTime, endTime);
   };
 
   const getEventStatus = (event) => {
