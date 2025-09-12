@@ -1,0 +1,22 @@
+[33mcommit bb951d79a7a5fe9cd68db30bf2c431e41a4edf13[m
+Author: IsipMervie <mervieisip29@gmail.com>
+Date:   Fri Sep 12 16:57:35 2025 +0800
+
+    fix chat14
+
+[1mdiff --git a/frontend/src/components/EventChat.css b/frontend/src/components/EventChat.css[m
+[1mindex ac138a3..56cecc0 100644[m
+[1m--- a/frontend/src/components/EventChat.css[m
+[1m+++ b/frontend/src/components/EventChat.css[m
+[36m@@ -1420,9 +1420,9 @@[m
+   transform: scale(1.1);[m
+ }[m
+ [m
+[31m-/* Hide all header buttons on desktop view - mobile-specific functionality */[m
+[32m+[m[32m/* Hide only close button on desktop view - keep refresh and search visible */[m
+ @media (min-width: 1025px) {[m
+[31m-  .header-right {[m
+[32m+[m[32m  .close-btn {[m
+     display: none;[m
+   }[m
+ }[m
