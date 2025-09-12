@@ -1537,7 +1537,7 @@ function EventListPage() {
                             className="view-participants-button"
                             onClick={() => navigate(`/events/${event._id}`)}
                           >
-                            <FaEye className="button-icon" /> View Participants
+                            <FaEye className="button-icon" /> View 
                           </button>
                         )}
 
