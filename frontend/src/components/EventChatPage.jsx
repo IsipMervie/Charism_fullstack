@@ -654,13 +654,6 @@ const EventChatPage = () => {
               <p>Please wait for admin/staff approval to join the chat.</p>
             </div>
           )}
-          
-          <button 
-            className="back-button"
-            onClick={() => navigate('/events')}
-          >
-            <FaArrowLeft /> Back to Events
-          </button>
         </div>
       </div>
     );
@@ -673,12 +666,6 @@ const EventChatPage = () => {
           <div className="error-icon">❌</div>
           <h2>Event Not Found</h2>
           <p>The event you're looking for could not be found.</p>
-          <button 
-            className="back-button"
-            onClick={() => navigate('/events')}
-          >
-            <FaArrowLeft /> Back to Events
-          </button>
         </div>
       </div>
     );
