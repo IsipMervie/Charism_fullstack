@@ -1420,9 +1420,10 @@
   transform: scale(1.1);
 }
 
-/* Hide header buttons on desktop view */
+/* Hide refresh and search buttons on desktop view, keep close button visible */
 @media (min-width: 1025px) {
-  .header-right {
+  .refresh-btn,
+  .search-toggle {
     display: none;
   }
 }
