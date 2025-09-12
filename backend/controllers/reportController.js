@@ -399,14 +399,14 @@ const students40HoursPDF = async (req, res) => {
 const eventAttendancePDF = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const { status, department, yearLevel, section } = req.query;
+    const { status, department, yearLevel, section, studentsOnly } = req.query;
     
     if (!eventId) {
       return res.status(400).json({ message: 'Event ID is required' });
     }
 
     // Get event details
-    const event = await Event.findById(eventId).populate('attendance.userId', 'name email department year section');
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email department year section role');
     
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
@@ -450,10 +450,15 @@ const eventAttendancePDF = async (req, res) => {
     }
 
     // Filter by user attributes
-    if (department || yearLevel || section) {
+    if (department || yearLevel || section || studentsOnly) {
       attendedParticipants = attendedParticipants.filter(a => {
         const user = a.userId;
         if (!user) return false;
+        
+        // Filter out admin/staff if studentsOnly is requested
+        if (studentsOnly === 'true' && user.role !== 'Student') {
+          return false;
+        }
         
         if (department && user.department !== department) return false;
         if (yearLevel && user.year !== yearLevel) return false;
@@ -493,6 +498,7 @@ const eventAttendancePDF = async (req, res) => {
 
     // Add filter information
     const filters = [];
+    if (studentsOnly === 'true') filters.push('Students Only');
     if (status) filters.push(`Status: ${status}`);
     if (department) filters.push(`Department: ${department}`);
     if (yearLevel) filters.push(`Year Level: ${yearLevel}`);

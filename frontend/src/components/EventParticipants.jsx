@@ -230,6 +230,12 @@ function EventParticipantsPage() {
           <p>Choose filter options for the PDF report:</p>
           <div style="margin: 10px 0;">
             <label>
+              <input type="checkbox" id="students-only-filter" style="margin-right: 8px;" checked>
+              Show students only (exclude admin/staff)
+            </label>
+          </div>
+          <div style="margin: 10px 0;">
+            <label>
               <input type="checkbox" id="status-filter" style="margin-right: 8px;">
               Include only completed participants
             </label>
@@ -248,9 +254,10 @@ function EventParticipantsPage() {
       confirmButtonColor: '#0891b2',
       cancelButtonColor: '#6c757d',
       preConfirm: () => {
+        const studentsOnlyFilter = document.getElementById('students-only-filter').checked;
         const statusFilter = document.getElementById('status-filter').checked;
         const timedOutFilter = document.getElementById('timed-out-filter').checked;
-        return { statusFilter, timedOutFilter };
+        return { studentsOnlyFilter, statusFilter, timedOutFilter };
       }
     });
 
@@ -261,6 +268,9 @@ function EventParticipantsPage() {
       const params = { eventId };
       
       // Add filters based on user selection
+      if (filters.studentsOnlyFilter) {
+        params.studentsOnly = 'true';
+      }
       if (filters.statusFilter) {
         params.status = 'Completed';
       }
