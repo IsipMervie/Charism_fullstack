@@ -488,14 +488,35 @@
   background: var(--bg-hover);
   border-radius: 16px;
   border: 1px solid var(--border-primary);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  margin-bottom: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.participant-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 16px;
 }
 
 .participant-card:hover {
   background: var(--bg-tertiary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.participant-card:hover::before {
+  opacity: 0.05;
 }
 
 .participant-avatar {
@@ -518,16 +539,32 @@
   position: absolute;
   bottom: 2px;
   right: 2px;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   background: var(--success);
-  border: 2px solid var(--bg-card);
+  border: 3px solid var(--bg-card);
   border-radius: 50%;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
 }
 
 .participant-info {
   flex: 1;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .participant-name {
@@ -538,6 +575,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.3s ease;
 }
 
 .participant-email {
@@ -547,6 +585,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.participant-card:hover .participant-name {
+  color: var(--text-primary);
+}
+
+.participant-card:hover .participant-email {
+  color: var(--text-primary);
 }
 
 .role-badge {
@@ -1204,31 +1251,54 @@
   color: var(--primary);
 }
 
+[data-theme="dark"] .search-box {
+  background: var(--bg-hover);
+  border-radius: 16px;
+  padding: 0.25rem;
+  border: 1px solid var(--border-primary);
+}
+
+[data-theme="dark"] .search-box input {
+  background: var(--bg-input);
+  border: 2px solid var(--border-primary);
+}
+
+[data-theme="dark"] .search-box input:focus {
+  background: var(--bg-card);
+  border-color: var(--primary);
+}
+
 /* Additional dark mode improvements */
 [data-theme="dark"] .tab-content {
   background: var(--bg-card);
   border-color: var(--border-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .participants-container,
 [data-theme="dark"] .event-info-container {
   background: var(--bg-card);
   border-color: var(--border-primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="dark"] .participant-card {
   background: var(--bg-hover);
   border-color: var(--border-primary);
+  transition: all 0.3s ease;
 }
 
 [data-theme="dark"] .participant-card:hover {
   background: var(--bg-primary);
   border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
 }
 
 [data-theme="dark"] .role-badge {
   background: var(--primary);
   color: var(--text-inverse);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 /* Improve text contrast in dark mode */
@@ -1238,6 +1308,52 @@
 
 [data-theme="dark"] .tab-button span {
   color: inherit;
+}
+
+/* Online status indicator improvements */
+[data-theme="dark"] .online-status {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="dark"] .participant-name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .participant-email {
+  color: var(--text-secondary);
+}
+
+/* Main content area improvements for dark mode */
+[data-theme="dark"] .main-content {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, rgba(37, 99, 235, 0.05) 100%);
+  position: relative;
+}
+
+[data-theme="dark"] .main-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="dark"] .chat-area {
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+[data-theme="dark"] .tab-content {
+  position: relative;
+  z-index: 2;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
 }
 
 /* High Contrast Mode */
