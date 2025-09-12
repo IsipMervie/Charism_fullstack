@@ -40,6 +40,25 @@ exports.sendMessageWithFiles = async (req, res) => {
     // Admin and Staff can access chat for all events
     if (userRole === 'Admin' || userRole === 'Staff') {
       canAccessChat = true;
+      
+      // Auto-add admin/staff to event attendance if not already registered
+      const isAlreadyRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId
+      );
+      
+      if (!isAlreadyRegistered) {
+        console.log(`📝 Auto-adding ${userRole} ${userId} to event ${eventId} attendance`);
+        event.attendance.push({
+          userId: userId,
+          status: 'Approved', // Admin/Staff are auto-approved
+          registeredAt: new Date(),
+          registrationApproved: true, // Auto-approve registration
+          approvedBy: userId, // Self-approved
+          approvedAt: new Date()
+        });
+        await event.save();
+        console.log(`✅ ${userRole} ${userId} added to event attendance`);
+      }
     } else {
       // Students can access chat if they are registered and either:
       // 1. Registration is approved (registrationApproved: true), OR
@@ -151,6 +170,25 @@ exports.sendMessage = async (req, res) => {
     // Admin and Staff can access chat for all events
     if (userRole === 'Admin' || userRole === 'Staff') {
       canAccessChat = true;
+      
+      // Auto-add admin/staff to event attendance if not already registered
+      const isAlreadyRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId
+      );
+      
+      if (!isAlreadyRegistered) {
+        console.log(`📝 Auto-adding ${userRole} ${userId} to event ${eventId} attendance`);
+        event.attendance.push({
+          userId: userId,
+          status: 'Approved', // Admin/Staff are auto-approved
+          registeredAt: new Date(),
+          registrationApproved: true, // Auto-approve registration
+          approvedBy: userId, // Self-approved
+          approvedAt: new Date()
+        });
+        await event.save();
+        console.log(`✅ ${userRole} ${userId} added to event attendance`);
+      }
     } else {
       // Students can access chat if they are registered and either:
       // 1. Registration is approved (registrationApproved: true), OR
@@ -216,6 +254,25 @@ exports.getMessages = async (req, res) => {
     // Admin and Staff can access chat for all events
     if (userRole === 'Admin' || userRole === 'Staff') {
       canAccessChat = true;
+      
+      // Auto-add admin/staff to event attendance if not already registered
+      const isAlreadyRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId
+      );
+      
+      if (!isAlreadyRegistered) {
+        console.log(`📝 Auto-adding ${userRole} ${userId} to event ${eventId} attendance`);
+        event.attendance.push({
+          userId: userId,
+          status: 'Approved', // Admin/Staff are auto-approved
+          registeredAt: new Date(),
+          registrationApproved: true, // Auto-approve registration
+          approvedBy: userId, // Self-approved
+          approvedAt: new Date()
+        });
+        await event.save();
+        console.log(`✅ ${userRole} ${userId} added to event attendance`);
+      }
     } else {
       // Students can access chat if they are registered and either:
       // 1. Registration is approved (registrationApproved: true), OR
