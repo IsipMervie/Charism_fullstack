@@ -493,25 +493,18 @@ const EventChatPage = () => {
     try {
       console.log('Viewing profile for participant:', participant);
       
-      // Always fetch fresh user data to ensure accuracy
-      const { getUserProfile } = await import('../api/api');
-      const userData = await getUserProfile(participant._id);
-      
-      console.log('Fetched user data:', userData);
-      
-      // Merge participant data with fresh user data
+      // Use the participant data directly since it already has all the information we need
       const completeProfile = {
         ...participant,
-        ...userData,
-        // Ensure we have the most up-to-date information
-        name: userData.name || participant.name,
-        email: userData.email || participant.email,
-        role: userData.role || participant.role || 'Student',
-        department: userData.department || participant.department,
-        academicYear: userData.academicYear || participant.academicYear,
-        section: userData.section || participant.section,
-        year: userData.year || participant.year,
-        profilePicture: userData.profilePicture || participant.profilePicture
+        // Ensure we have fallbacks for missing data
+        name: participant.name || 'Unknown User',
+        email: participant.email || 'No email provided',
+        role: participant.role || 'Student',
+        department: participant.department || (participant.role === 'Student' ? 'Not specified' : 'Staff'),
+        academicYear: participant.academicYear || (participant.role === 'Student' ? 'Not specified' : null),
+        section: participant.section || (participant.role === 'Student' ? 'Not specified' : null),
+        year: participant.year || (participant.role === 'Student' ? 'Not specified' : null),
+        profilePicture: participant.profilePicture || null
       };
       
       console.log('Complete profile data:', completeProfile);
@@ -519,14 +512,14 @@ const EventChatPage = () => {
       setShowProfileModal(true);
     } catch (error) {
       console.error('Error loading user profile:', error);
-      // Fallback to participant data if API fails
+      // Fallback to participant data if anything fails
       setSelectedProfile({
         ...participant,
         role: participant.role || 'Student',
-        department: participant.department || 'Unknown',
-        academicYear: participant.academicYear || 'Unknown',
-        section: participant.section || 'Unknown',
-        year: participant.year || 'Unknown'
+        department: participant.department || 'Not specified',
+        academicYear: participant.academicYear || 'Not specified',
+        section: participant.section || 'Not specified',
+        year: participant.year || 'Not specified'
       });
       setShowProfileModal(true);
     }
