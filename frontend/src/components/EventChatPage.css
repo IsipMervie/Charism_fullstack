@@ -644,31 +644,6 @@
   color: var(--info);
 }
 
-.participant-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-button {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 8px;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.action-button:hover {
-  background: var(--primary);
-  color: var(--text-inverse);
-  transform: scale(1.1);
-}
 
 /* Event Info Container */
 .event-info-container {
@@ -1228,7 +1203,6 @@
 .fullscreen-toggle:focus,
 .sidebar-toggle:focus,
 .tab-button:focus,
-.action-button:focus,
 .close-profile-btn:focus,
 .exit-fullscreen:focus {
   outline: 2px solid var(--primary);

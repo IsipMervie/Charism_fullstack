@@ -30,7 +30,6 @@ import {
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
-  FaEye,
   FaEyeSlash
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -755,15 +754,6 @@ const EventChatPage = () => {
                                 {participant.role || 'Student'}
                               </span>
                             </div>
-                          </div>
-                          <div className="participant-actions">
-                            <button 
-                              className="action-button"
-                              onClick={() => viewProfile(participant)}
-                              title="View Profile"
-                            >
-                              <FaEye />
-                            </button>
                           </div>
                         </div>
                       ))
