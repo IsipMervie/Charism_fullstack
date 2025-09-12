@@ -50,7 +50,6 @@ const EventChatPage = () => {
   // UI state
   const [showChat, setShowChat] = useState(false);
   const [showFullscreenChat, setShowFullscreenChat] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('chat'); // 'chat', 'participants', 'info'
   
   // Participants and approvals
@@ -338,7 +337,7 @@ const EventChatPage = () => {
         .map(participant => ({
           ...participant,
           role: participant.role || 'Student',
-          department: participant.department || (participant.role === 'Student' ? 'Not specified' : 'Staff'),
+          department: participant.role === 'Student' ? (participant.department || 'Not specified') : null,
           academicYear: participant.academicYear || (participant.role === 'Student' ? 'Not specified' : null),
           section: participant.section || (participant.role === 'Student' ? 'Not specified' : null),
           year: participant.year || (participant.role === 'Student' ? 'Not specified' : null),
@@ -540,7 +539,7 @@ const EventChatPage = () => {
         name: participant.name || 'Unknown User',
         email: participant.email || 'No email provided',
         role: participant.role || 'Student',
-        department: participant.department || (participant.role === 'Student' ? 'Not specified' : 'Staff'),
+        department: participant.role === 'Student' ? (participant.department || 'Not specified') : null,
         academicYear: participant.academicYear || (participant.role === 'Student' ? 'Not specified' : null),
         section: participant.section || (participant.role === 'Student' ? 'Not specified' : null),
         year: participant.year || (participant.role === 'Student' ? 'Not specified' : null),
@@ -556,7 +555,7 @@ const EventChatPage = () => {
       setSelectedProfile({
         ...participant,
         role: participant.role || 'Student',
-        department: participant.department || 'Not specified',
+        department: participant.role === 'Student' ? (participant.department || 'Not specified') : null,
         academicYear: participant.academicYear || 'Not specified',
         section: participant.section || 'Not specified',
         year: participant.year || 'Not specified'
@@ -752,13 +751,6 @@ const EventChatPage = () => {
               <FaExpand />
             </button>
             
-            <button 
-              className="sidebar-toggle"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              title={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
-            >
-              {sidebarCollapsed ? <FaEye /> : <FaEyeSlash />}
-            </button>
           </div>
         </header>
 
@@ -867,7 +859,6 @@ const EventChatPage = () => {
                                 src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
                                 alt={participant.name}
                               />
-                              <div className="online-indicator"></div>
                             </div>
                             <div className="participant-info">
                               <h4 className="participant-name">{participant.name}</h4>
@@ -945,13 +936,6 @@ const EventChatPage = () => {
             </div>
           </div>
 
-          {/* Sidebar */}
-          {!sidebarCollapsed && (
-            <aside className="sidebar">
-              <div className="sidebar-content">
-              </div>
-            </aside>
-          )}
         </div>
       </div>
 
@@ -1022,10 +1006,12 @@ const EventChatPage = () => {
                     </span>
                   </div>
                   
-                  <div className="detail-row">
-                    <label>Department</label>
-                    <span>{selectedProfile.department || 'Not specified'}</span>
-                  </div>
+                  {selectedProfile.role === 'Student' && (
+                    <div className="detail-row">
+                      <label>Department</label>
+                      <span>{selectedProfile.department || 'Not specified'}</span>
+                    </div>
+                  )}
                   
                   {selectedProfile.role === 'Student' && (
                     <>

@@ -246,8 +246,7 @@
 }
 
 .notification-toggle,
-.fullscreen-toggle,
-.sidebar-toggle {
+.fullscreen-toggle {
   width: 44px;
   height: 44px;
   border: none;
@@ -263,8 +262,7 @@
 }
 
 .notification-toggle:hover,
-.fullscreen-toggle:hover,
-.sidebar-toggle:hover {
+.fullscreen-toggle:hover {
   background: var(--primary);
   color: var(--text-inverse);
   transform: translateY(-2px);
@@ -724,25 +722,6 @@
   color: var(--text-primary);
 }
 
-/* Sidebar */
-.sidebar {
-  width: 300px;
-  background: var(--bg-card);
-  border-radius: 20px;
-  border: 1px solid var(--border-primary);
-  box-shadow: 0 8px 25px var(--shadow-lg);
-  overflow: hidden;
-  outline: none;
-  position: relative;
-}
-
-.sidebar-content {
-  padding: 1.5rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
 
 
 
@@ -1028,15 +1007,6 @@
     flex-direction: column;
   }
   
-  .sidebar {
-    width: 100%;
-    order: -1;
-  }
-  
-  .sidebar-content {
-    flex-direction: row;
-    gap: 2rem;
-  }
   
 }
 
@@ -1103,9 +1073,6 @@
     grid-template-columns: 1fr;
   }
   
-  .sidebar-content {
-    flex-direction: column;
-  }
   
   
   .profile-modal {
@@ -1190,7 +1157,6 @@
   .back-button:hover,
   .notification-toggle:hover,
   .fullscreen-toggle:hover,
-  .sidebar-toggle:hover,
   .participant-card:hover,
   .detail-item:hover {
     transform: none;
@@ -1201,7 +1167,6 @@
 .back-button:focus,
 .notification-toggle:focus,
 .fullscreen-toggle:focus,
-.sidebar-toggle:focus,
 .tab-button:focus,
 .close-profile-btn:focus,
 .exit-fullscreen:focus {
@@ -1359,7 +1324,6 @@
 @media (prefers-contrast: high) {
   .event-chat-container,
   .tab-content,
-  .sidebar,
   .profile-modal {
     border-width: 2px;
   }

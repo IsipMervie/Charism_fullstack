@@ -104,6 +104,42 @@ const EventChat = ({
     return `${API_URL}${url}`;
   }, []);
 
+  // Enhanced download function with better error handling and progress indication
+  const downloadFile = useCallback(async (attachment) => {
+    try {
+      const fileUrl = getAttachmentUrl(attachment.url);
+      const fileName = attachment.originalName || `attachment_${Date.now()}`;
+      
+      // Check if the file exists first
+      const response = await fetch(fileUrl, { method: 'HEAD' });
+      if (!response.ok) {
+        throw new Error(`File not found: ${response.status}`);
+      }
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = fileName;
+      link.target = '_blank';
+      
+      // Add to DOM, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show success message
+      console.log(`Download started: ${fileName}`);
+      
+    } catch (error) {
+      console.error('Download failed:', error);
+      if (error.message.includes('not found')) {
+        alert(`File "${attachment.originalName || 'attachment'}" is not available for download. It may have been deleted from the server.`);
+      } else {
+        alert(`Failed to download ${attachment.originalName || 'file'}. Please try again.`);
+      }
+    }
+  }, [getAttachmentUrl]);
+
   // Helper function to check if file exists before loading
   const checkFileExists = useCallback(async (url) => {
     try {
@@ -775,18 +811,7 @@ const EventChat = ({
                                             className="download-btn"
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              try {
-                                                const fileUrl = getAttachmentUrl(attachment.url);
-                                                const link = document.createElement('a');
-                                                link.href = fileUrl;
-                                                link.download = attachment.originalName;
-                                                link.target = '_blank';
-                                                document.body.appendChild(link);
-                                                link.click();
-                                                document.body.removeChild(link);
-                                              } catch (error) {
-                                                alert('Failed to download image. Please try again.');
-                                              }
+                                              downloadFile(attachment);
                                             }}
                                             title="Download image"
                                           >
@@ -802,20 +827,7 @@ const EventChat = ({
                                           <span className="fallback-subtext">File may have been deleted or moved</span>
                                           <button 
                                             className="download-btn"
-                                            onClick={() => {
-                                              try {
-                                                const fileUrl = getAttachmentUrl(attachment.url);
-                                                const link = document.createElement('a');
-                                                link.href = fileUrl;
-                                                link.download = attachment.originalName;
-                                                link.target = '_blank';
-                                                document.body.appendChild(link);
-                                                link.click();
-                                                document.body.removeChild(link);
-                                              } catch (error) {
-                                                alert('File not available for download. The file may have been deleted from the server.');
-                                              }
-                                            }}
+                                            onClick={() => downloadFile(attachment)}
                                             title="Try to download image"
                                           >
                                             <FaDownload />
@@ -856,20 +868,7 @@ const EventChat = ({
                                           <span className="fallback-subtext">File may have been deleted or moved</span>
                                           <button 
                                             className="download-btn"
-                                            onClick={() => {
-                                              try {
-                                                const fileUrl = getAttachmentUrl(attachment.url);
-                                                const link = document.createElement('a');
-                                                link.href = fileUrl;
-                                                link.download = attachment.originalName;
-                                                link.target = '_blank';
-                                                document.body.appendChild(link);
-                                                link.click();
-                                                document.body.removeChild(link);
-                                              } catch (error) {
-                                                alert('File not available for download. The file may have been deleted from the server.');
-                                              }
-                                            }}
+                                            onClick={() => downloadFile(attachment)}
                                             title="Try to download audio"
                                           >
                                             <FaDownload />
@@ -889,20 +888,7 @@ const EventChat = ({
                                     </div>
                                     <button 
                                       className="download-btn"
-                                      onClick={() => {
-                                        try {
-                                          const fileUrl = getAttachmentUrl(attachment.url);
-                                          const link = document.createElement('a');
-                                          link.href = fileUrl;
-                                          link.download = attachment.originalName;
-                                          link.target = '_blank';
-                                          document.body.appendChild(link);
-                                          link.click();
-                                          document.body.removeChild(link);
-                                        } catch (error) {
-                                          alert('Failed to download file. Please try again.');
-                                        }
-                                      }}
+                                      onClick={() => downloadFile(attachment)}
                                       title="Download file"
                                     >
                                       <FaDownload />
