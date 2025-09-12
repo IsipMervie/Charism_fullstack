@@ -399,7 +399,7 @@ exports.getParticipants = async (req, res) => {
 
     // Get the event with populated attendance
     const event = await Event.findById(eventId)
-      .populate('attendance.userId', 'name email department academicYear year yearLevel section role profilePicture');
+      .populate('attendance.userId', 'name email department academicYear year year section role profilePicture');
 
     if (!event) {
       console.log(`❌ Event ${eventId} not found in chat participants`);
@@ -440,15 +440,14 @@ exports.getParticipants = async (req, res) => {
     // Return all event participants (not just those who have sent messages)
     const participants = validAttendanceRecords.map(att => ({
       _id: att.userId._id,
-      name: att.userId.name,
-      email: att.userId.email,
-      department: att.userId.department,
-      academicYear: att.userId.academicYear,
-      year: att.userId.year,
-      yearLevel: att.userId.yearLevel,
-      section: att.userId.section,
-      role: att.userId.role,
-      profilePicture: att.userId.profilePicture,
+      name: att.userId.name || 'Unknown User',
+      email: att.userId.email || 'No email provided',
+      department: att.userId.department || (att.userId.role === 'Student' ? 'Not specified' : 'Staff'),
+      academicYear: att.userId.academicYear || (att.userId.role === 'Student' ? 'Not specified' : null),
+      year: att.userId.year || (att.userId.role === 'Student' ? 'Not specified' : null),
+      section: att.userId.section || (att.userId.role === 'Student' ? 'Not specified' : null),
+      role: att.userId.role || 'Student',
+      profilePicture: att.userId.profilePicture || null,
       registrationApproved: att.registrationApproved,
       status: att.status
     }));

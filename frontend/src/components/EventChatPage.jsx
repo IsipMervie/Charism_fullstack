@@ -298,10 +298,10 @@ const EventChatPage = () => {
         .map(participant => ({
           ...participant,
           role: participant.role || 'Student',
-          department: participant.department || 'Unknown',
-          academicYear: participant.academicYear || 'Unknown',
-          section: participant.section || 'Unknown',
-          yearLevel: participant.yearLevel || 'Unknown',
+          department: participant.department || (participant.role === 'Student' ? 'Not specified' : 'Staff'),
+          academicYear: participant.academicYear || (participant.role === 'Student' ? 'Not specified' : null),
+          section: participant.section || (participant.role === 'Student' ? 'Not specified' : null),
+          year: participant.year || (participant.role === 'Student' ? 'Not specified' : null),
           name: participant.name || 'Unknown User',
           email: participant.email || 'No email provided',
           profilePicture: participant.profilePicture || null
@@ -510,7 +510,7 @@ const EventChatPage = () => {
         department: userData.department || participant.department,
         academicYear: userData.academicYear || participant.academicYear,
         section: userData.section || participant.section,
-        yearLevel: userData.yearLevel || participant.yearLevel,
+        year: userData.year || participant.year,
         profilePicture: userData.profilePicture || participant.profilePicture
       };
       
@@ -526,7 +526,7 @@ const EventChatPage = () => {
         department: participant.department || 'Unknown',
         academicYear: participant.academicYear || 'Unknown',
         section: participant.section || 'Unknown',
-        yearLevel: participant.yearLevel || 'Unknown'
+        year: participant.year || 'Unknown'
       });
       setShowProfileModal(true);
     }
@@ -971,26 +971,25 @@ const EventChatPage = () => {
                     </span>
                   </div>
                   
+                  <div className="detail-row">
+                    <label>Department</label>
+                    <span>{selectedProfile.department || 'Not specified'}</span>
+                  </div>
+                  
                   {selectedProfile.role === 'Student' && (
                     <>
-                      {selectedProfile.department && (
-                        <div className="detail-row">
-                          <label>Department</label>
-                          <span>{selectedProfile.department}</span>
-                        </div>
-                      )}
-                      {selectedProfile.section && (
-                        <div className="detail-row">
-                          <label>Section</label>
-                          <span>{selectedProfile.section}</span>
-                        </div>
-                      )}
-                      {selectedProfile.yearLevel && (
-                        <div className="detail-row">
-                          <label>Year Level</label>
-                          <span>{selectedProfile.yearLevel}</span>
-                        </div>
-                      )}
+                      <div className="detail-row">
+                        <label>Academic Year</label>
+                        <span>{selectedProfile.academicYear || 'Not specified'}</span>
+                      </div>
+                      <div className="detail-row">
+                        <label>Section</label>
+                        <span>{selectedProfile.section || 'Not specified'}</span>
+                      </div>
+                      <div className="detail-row">
+                        <label>Year Level</label>
+                        <span>{selectedProfile.year || 'Not specified'}</span>
+                      </div>
                     </>
                   )}
                 </div>
