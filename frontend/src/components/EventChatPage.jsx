@@ -247,6 +247,42 @@ const EventChatPage = () => {
     }
   };
 
+  // Remove participant from chat
+  const removeParticipant = async (participantId, participantName) => {
+    try {
+      const { removeEventChatParticipant } = await import('../api/api');
+      
+      const result = await Swal.fire({
+        title: 'Remove Participant',
+        text: `Are you sure you want to remove ${participantName} from this event chat?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, remove them',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        await removeEventChatParticipant(eventId, participantId);
+        
+        Swal.fire({
+          title: 'Participant Removed',
+          text: `${participantName} has been removed from the event chat.`,
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+        // Reload participants to update the list
+        await loadParticipants();
+      }
+    } catch (error) {
+      console.error('Error removing participant:', error);
+      Swal.fire('Error', 'Failed to remove participant. Please try again.', 'error');
+    }
+  };
+
   // Load participants with enhanced functionality
   const loadParticipants = useCallback(async () => {
     try {
@@ -816,25 +852,43 @@ const EventChatPage = () => {
                         <div 
                           key={participant._id} 
                           className="participant-card"
-                          onClick={() => viewProfile(participant)}
-                          style={{ cursor: 'pointer' }}
                         >
-                          <div className="participant-avatar">
-                            <img 
-                              src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
-                              alt={participant.name}
-                            />
-                            <div className="online-indicator"></div>
-                          </div>
-                          <div className="participant-info">
-                            <h4 className="participant-name">{participant.name}</h4>
-                            <p className="participant-email">{participant.email}</p>
-                            <div className="participant-role">
-                              <span className={`role-badge role-${participant.role?.toLowerCase() || 'unknown'}`}>
-                                {participant.role || 'Student'}
-                              </span>
+                          <div 
+                            className="participant-main"
+                            onClick={() => viewProfile(participant)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            <div className="participant-avatar">
+                              <img 
+                                src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
+                                alt={participant.name}
+                              />
+                              <div className="online-indicator"></div>
+                            </div>
+                            <div className="participant-info">
+                              <h4 className="participant-name">{participant.name}</h4>
+                              <p className="participant-email">{participant.email}</p>
+                              <div className="participant-role">
+                                <span className={`role-badge role-${participant.role?.toLowerCase() || 'unknown'}`}>
+                                  {participant.role || 'Student'}
+                                </span>
+                              </div>
                             </div>
                           </div>
+                          
+                          {/* Remove button for Admin/Staff */}
+                          {(role === 'Admin' || role === 'Staff') && (
+                            <button
+                              className="remove-participant-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeParticipant(participant._id, participant.name);
+                              }}
+                              title={`Remove ${participant.name} from chat`}
+                            >
+                              <FaTimes />
+                            </button>
+                          )}
                         </div>
                       ))
                     )}

@@ -1845,6 +1845,16 @@ export const getEventChatParticipants = async (eventId) => {
   }
 };
 
+export const removeEventChatParticipant = async (eventId, participantId) => {
+  try {
+    const response = await axiosInstance.delete(`/event-chat/${eventId}/participants/${participantId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error removing chat participant:', error);
+    throw new Error('Failed to remove participant. Please try again.');
+  }
+};
+
 export const requestEventChatAccess = async (eventId) => {
   try {
     const response = await axiosInstance.post(`/event-chat/${eventId}/request-access`);

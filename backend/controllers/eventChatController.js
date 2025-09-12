@@ -396,10 +396,11 @@ exports.removeReaction = async (req, res) => {
 exports.getParticipants = async (req, res) => {
   try {
     const { eventId } = req.params;
+    const userId = req.user?.id; // Get current user ID
 
     // Get the event with populated attendance
     const event = await Event.findById(eventId)
-      .populate('attendance.userId', 'name email department academicYear year year section role profilePicture');
+      .populate('attendance.userId', 'name email department academicYear year section role profilePicture');
 
     if (!event) {
       console.log(`❌ Event ${eventId} not found in chat participants`);
@@ -407,7 +408,47 @@ exports.getParticipants = async (req, res) => {
     }
 
     console.log(`📊 Event ${eventId} found with ${event.attendance.length} attendance records in chat participants`);
-    console.log('Raw attendance data:', event.attendance.map(att => ({
+
+    // Auto-register current user if they're not already registered and can access chat
+    if (userId) {
+      const userRole = req.user.role;
+      const isAlreadyRegistered = event.attendance.some(att => 
+        att.userId && att.userId.toString() === userId
+      );
+
+      if (!isAlreadyRegistered) {
+        console.log(`🔄 Auto-registering user ${userId} for chat access`);
+        
+        // Get user details
+        const user = await User.findById(userId);
+        if (user) {
+          // Auto-approve based on role
+          let registrationApproved = false;
+          if (userRole === 'Admin' || userRole === 'Staff') {
+            registrationApproved = true;
+          } else if (userRole === 'Student') {
+            // Students need approval unless event doesn't require it
+            registrationApproved = !event.requiresApproval;
+          }
+
+          // Add user to event attendance
+          event.attendance.push({
+            userId: userId,
+            status: registrationApproved ? 'Approved' : 'Pending',
+            registrationApproved: registrationApproved,
+            registeredAt: new Date()
+          });
+
+          await event.save();
+          console.log(`✅ User ${user.name} auto-registered for event chat`);
+        }
+      }
+    }
+
+    // Re-populate after potential new registration
+    const updatedEvent = await Event.findById(eventId)
+      .populate('attendance.userId', 'name email department academicYear year section role profilePicture');
+    console.log('Raw attendance data:', updatedEvent.attendance.map(att => ({
       userId: att.userId,
       hasUserId: !!att.userId,
       userIdType: typeof att.userId,
@@ -415,8 +456,8 @@ exports.getParticipants = async (req, res) => {
       status: att.status
     })));
 
-    // Filter out attendance records with invalid userId references first
-    const validAttendanceRecords = event.attendance.filter(att => {
+    // Filter out attendance records with invalid userId references AND only show approved participants
+    const validAttendanceRecords = updatedEvent.attendance.filter(att => {
       if (!att.userId) {
         console.log('⚠️ Attendance record has no userId in chat participants:', att._id);
         return false;
@@ -424,7 +465,14 @@ exports.getParticipants = async (req, res) => {
       
       // Check if userId is populated (has name property) or is a valid ObjectId
       if (typeof att.userId === 'object' && att.userId.name) {
-        return true; // Properly populated user
+        // Include if registration is approved OR if user is Staff/Admin (they don't need approval)
+        if (att.registrationApproved || att.userId.role === 'Staff' || att.userId.role === 'Admin') {
+          console.log(`✅ Approved chat participant: ${att.userId.name} (${att.userId.email}) - Role: ${att.userId.role}`);
+          return true;
+        } else {
+          console.log(`❌ Not approved for chat: ${att.userId.name} (${att.userId.email}) - registrationApproved: ${att.registrationApproved}, Role: ${att.userId.role}`);
+          return false;
+        }
       }
       
       if (typeof att.userId === 'string' && att.userId.length === 24) {
@@ -435,7 +483,7 @@ exports.getParticipants = async (req, res) => {
       return false;
     });
 
-    console.log(`📊 Valid attendance records in chat: ${validAttendanceRecords.length} out of ${event.attendance.length}`);
+    console.log(`📊 Valid attendance records in chat: ${validAttendanceRecords.length} out of ${updatedEvent.attendance.length}`);
 
     // Return all event participants (not just those who have sent messages)
     const participants = validAttendanceRecords.map(att => ({
@@ -452,13 +500,72 @@ exports.getParticipants = async (req, res) => {
       status: att.status
     }));
 
-    console.log(`Event ${eventId} has ${event.attendance.length} attendance records`);
+    console.log(`Event ${eventId} has ${updatedEvent.attendance.length} attendance records`);
     console.log(`Returning ${participants.length} participants:`, participants.map(p => ({ name: p.name, email: p.email, role: p.role })));
 
     res.json({ participants });
   } catch (err) {
     console.error('Error fetching participants:', err);
     res.status(500).json({ message: 'Error fetching participants.', error: err.message });
+  }
+};
+
+// Remove participant from event chat
+exports.removeParticipant = async (req, res) => {
+  try {
+    const { eventId, participantId } = req.params;
+    const currentUserId = req.user.id;
+    const currentUserRole = req.user.role;
+
+    // Validate eventId format
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: 'Invalid event ID format.' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(participantId)) {
+      return res.status(400).json({ message: 'Invalid participant ID format.' });
+    }
+
+    // Get the event
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Check permissions - only Admin/Staff can remove participants
+    if (currentUserRole !== 'Admin' && currentUserRole !== 'Staff') {
+      return res.status(403).json({ message: 'Only Admin and Staff can remove participants.' });
+    }
+
+    // Find the participant in attendance
+    const participantIndex = event.attendance.findIndex(att => 
+      att.userId && att.userId.toString() === participantId
+    );
+
+    if (participantIndex === -1) {
+      return res.status(404).json({ message: 'Participant not found in this event.' });
+    }
+
+    // Get participant details for logging
+    const participant = await User.findById(participantId);
+    const participantName = participant ? participant.name : 'Unknown User';
+
+    // Remove the participant from attendance
+    event.attendance.splice(participantIndex, 1);
+    await event.save();
+
+    console.log(`✅ Participant ${participantName} (${participantId}) removed from event ${eventId} by ${currentUserRole}`);
+
+    res.json({ 
+      message: `Participant ${participantName} has been removed from the event chat.`,
+      removedParticipant: {
+        id: participantId,
+        name: participantName
+      }
+    });
+  } catch (err) {
+    console.error('Error removing participant:', err);
+    res.status(500).json({ message: 'Error removing participant.', error: err.message });
   }
 };
 
