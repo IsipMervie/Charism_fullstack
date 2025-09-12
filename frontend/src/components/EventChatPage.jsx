@@ -30,6 +30,7 @@ import {
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
+  FaEye,
   FaEyeSlash
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
