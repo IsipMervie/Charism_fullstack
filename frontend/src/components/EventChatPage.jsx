@@ -264,8 +264,8 @@ const EventChatPage = () => {
       const chatParticipants = chatData.participants || [];
       const eventParticipants = eventData.participants || [];
       
-      console.log('Chat participants:', chatParticipants.length);
-      console.log('Event participants:', eventParticipants.length);
+      console.log('Chat participants:', chatParticipants);
+      console.log('Event participants:', eventParticipants);
       
       // Combine and deduplicate participants
       const allParticipants = [...chatParticipants];
@@ -275,13 +275,25 @@ const EventChatPage = () => {
         }
       });
       
+      // Ensure all participants have required fields with fallbacks
+      const processedParticipants = allParticipants.map(participant => ({
+        ...participant,
+        role: participant.role || 'Student',
+        department: participant.department || 'Unknown',
+        academicYear: participant.academicYear || 'Unknown',
+        section: participant.section || 'Unknown',
+        yearLevel: participant.yearLevel || 'Unknown',
+        name: participant.name || 'Unknown User',
+        email: participant.email || 'No email provided'
+      }));
+      
       // Sort participants by role (Admin/Staff first, then Students)
-      const sortedParticipants = allParticipants.sort((a, b) => {
+      const sortedParticipants = processedParticipants.sort((a, b) => {
         const roleOrder = { 'Admin': 0, 'Staff': 1, 'Student': 2 };
         return (roleOrder[a.role] || 3) - (roleOrder[b.role] || 3);
       });
       
-      console.log('Total participants after deduplication:', sortedParticipants.length);
+      console.log('Processed participants:', sortedParticipants);
       setParticipants(sortedParticipants);
     } catch (err) {
       console.error('Error loading participants:', err);
@@ -451,18 +463,43 @@ const EventChatPage = () => {
   // View user profile
   const viewProfile = async (participant) => {
     try {
-      // If participant doesn't have full user data, fetch it
-      if (!participant.role || !participant.department) {
-        const { getUserProfile } = await import('../api/api');
-        const userData = await getUserProfile(participant._id);
-        setSelectedProfile({ ...participant, ...userData });
-      } else {
-        setSelectedProfile(participant);
-      }
+      console.log('Viewing profile for participant:', participant);
+      
+      // Always fetch fresh user data to ensure accuracy
+      const { getUserProfile } = await import('../api/api');
+      const userData = await getUserProfile(participant._id);
+      
+      console.log('Fetched user data:', userData);
+      
+      // Merge participant data with fresh user data
+      const completeProfile = {
+        ...participant,
+        ...userData,
+        // Ensure we have the most up-to-date information
+        name: userData.name || participant.name,
+        email: userData.email || participant.email,
+        role: userData.role || participant.role || 'Student',
+        department: userData.department || participant.department,
+        academicYear: userData.academicYear || participant.academicYear,
+        section: userData.section || participant.section,
+        yearLevel: userData.yearLevel || participant.yearLevel,
+        profilePicture: userData.profilePicture || participant.profilePicture
+      };
+      
+      console.log('Complete profile data:', completeProfile);
+      setSelectedProfile(completeProfile);
       setShowProfileModal(true);
     } catch (error) {
       console.error('Error loading user profile:', error);
-      setSelectedProfile(participant);
+      // Fallback to participant data if API fails
+      setSelectedProfile({
+        ...participant,
+        role: participant.role || 'Student',
+        department: participant.department || 'Unknown',
+        academicYear: participant.academicYear || 'Unknown',
+        section: participant.section || 'Unknown',
+        yearLevel: participant.yearLevel || 'Unknown'
+      });
       setShowProfileModal(true);
     }
   };
@@ -738,12 +775,16 @@ const EventChatPage = () => {
                       </div>
                     ) : (
                       filteredParticipants.map((participant) => (
-                        <div key={participant._id} className="participant-card">
+                        <div 
+                          key={participant._id} 
+                          className="participant-card"
+                          onClick={() => viewProfile(participant)}
+                          style={{ cursor: 'pointer' }}
+                        >
                           <div className="participant-avatar">
                             <img 
                               src={getProfilePictureUrl(participant.profilePicture, participant._id)} 
                               alt={participant.name}
-                              onClick={() => viewProfile(participant)}
                             />
                             <div className="online-indicator"></div>
                           </div>
