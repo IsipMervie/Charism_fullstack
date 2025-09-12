@@ -251,12 +251,21 @@ const EventChatPage = () => {
       // Load both chat participants and event participants
       const { getEventChatParticipants, getEventParticipantsPublic } = await import('../api/api');
       const [chatData, eventData] = await Promise.all([
-        getEventChatParticipants(eventId).catch(() => ({ participants: [] })),
-        getEventParticipantsPublic(eventId).catch(() => ({ participants: [] }))
+        getEventChatParticipants(eventId).catch((error) => {
+          console.warn('Failed to load chat participants:', error);
+          return { participants: [] };
+        }),
+        getEventParticipantsPublic(eventId).catch((error) => {
+          console.warn('Failed to load event participants:', error);
+          return { participants: [] };
+        })
       ]);
       
       const chatParticipants = chatData.participants || [];
       const eventParticipants = eventData.participants || [];
+      
+      console.log('Chat participants:', chatParticipants.length);
+      console.log('Event participants:', eventParticipants.length);
       
       // Combine and deduplicate participants
       const allParticipants = [...chatParticipants];
@@ -272,6 +281,7 @@ const EventChatPage = () => {
         return (roleOrder[a.role] || 3) - (roleOrder[b.role] || 3);
       });
       
+      console.log('Total participants after deduplication:', sortedParticipants.length);
       setParticipants(sortedParticipants);
     } catch (err) {
       console.error('Error loading participants:', err);
@@ -671,7 +681,7 @@ const EventChatPage = () => {
                 onClick={() => setActiveTab('participants')}
               >
                 <FaUsers />
-                <span>Participants ({participants.length})</span>
+                <span>Participants <span className="participant-count">{participants.length || 0}</span></span>
               </button>
               <button 
                 className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
@@ -797,7 +807,7 @@ const EventChatPage = () => {
                         <FaUsers />
                         <div>
                           <label>Participants</label>
-                          <span>{participants.length} joined</span>
+                          <span>{participants.length || 0} joined</span>
                         </div>
                       </div>
                     </div>
