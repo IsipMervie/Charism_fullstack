@@ -1420,10 +1420,9 @@
   transform: scale(1.1);
 }
 
-/* Hide refresh and search buttons on desktop view, keep close button visible */
+/* Hide all header buttons on desktop view - mobile-specific functionality */
 @media (min-width: 1025px) {
-  .refresh-btn,
-  .search-toggle {
+  .header-right {
     display: none;
   }
 }
