@@ -1077,27 +1077,42 @@ exports.getEventParticipantsPublic = async (req, res) => {
     })));
 
     // Return only basic participant info for public access
-    const participants = event.attendance.map(att => {
+    // Filter out attendance records with invalid userId references first
+    const validAttendanceRecords = event.attendance.filter(att => {
       if (!att.userId) {
-        console.log('⚠️ Attendance record has no userId:', att);
-        return null;
+        console.log('⚠️ Attendance record has no userId:', att._id);
+        return false;
       }
       
-      return {
-        _id: att.userId._id,
-        name: att.userId.name,
-        email: att.userId.email,
-        department: att.userId.department,
-        academicYear: att.userId.academicYear,
-        year: att.userId.year,
-        yearLevel: att.userId.yearLevel,
-        section: att.userId.section,
-        role: att.userId.role,
-        profilePicture: att.userId.profilePicture,
-        registrationApproved: att.registrationApproved,
-        status: att.status
-      };
-    }).filter(Boolean); // Remove null entries
+      // Check if userId is populated (has name property) or is a valid ObjectId
+      if (typeof att.userId === 'object' && att.userId.name) {
+        return true; // Properly populated user
+      }
+      
+      if (typeof att.userId === 'string' && att.userId.length === 24) {
+        console.log('⚠️ Attendance record has unpopulated userId:', att._id, att.userId);
+        return false; // Unpopulated ObjectId string
+      }
+      
+      return false;
+    });
+
+    console.log(`📊 Valid attendance records: ${validAttendanceRecords.length} out of ${event.attendance.length}`);
+
+    const participants = validAttendanceRecords.map(att => ({
+      _id: att.userId._id,
+      name: att.userId.name,
+      email: att.userId.email,
+      department: att.userId.department,
+      academicYear: att.userId.academicYear,
+      year: att.userId.year,
+      yearLevel: att.userId.yearLevel,
+      section: att.userId.section,
+      role: att.userId.role,
+      profilePicture: att.userId.profilePicture,
+      registrationApproved: att.registrationApproved,
+      status: att.status
+    }));
 
     console.log(`Event ${req.params.eventId} public participants: ${participants.length} participants`);
     console.log('Public participants:', participants.map(p => ({ name: p.name, email: p.email, role: p.role })));

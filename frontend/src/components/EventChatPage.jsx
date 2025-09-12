@@ -58,6 +58,8 @@ const EventChatPage = () => {
   const [pendingApprovals, setPendingApprovals] = useState([]);
   const [participantSearch, setParticipantSearch] = useState('');
   const [showApprovals, setShowApprovals] = useState(false);
+  const [participantsLoading, setParticipantsLoading] = useState(false);
+  const [participantsError, setParticipantsError] = useState('');
   
   // Profile modal
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -248,6 +250,8 @@ const EventChatPage = () => {
   // Load participants with enhanced functionality
   const loadParticipants = useCallback(async () => {
     try {
+      setParticipantsLoading(true);
+      setParticipantsError('');
       console.log('🔄 Loading participants for event:', eventId);
       
       // Try to load event participants first (this should be the primary source)
@@ -281,17 +285,27 @@ const EventChatPage = () => {
       console.log('📊 Final participant count:', allParticipants.length);
       console.log('📊 Using data source:', eventParticipants.length > 0 ? 'event participants' : 'chat participants');
       
-      // Ensure all participants have required fields with fallbacks
-      const processedParticipants = allParticipants.map(participant => ({
-        ...participant,
-        role: participant.role || 'Student',
-        department: participant.department || 'Unknown',
-        academicYear: participant.academicYear || 'Unknown',
-        section: participant.section || 'Unknown',
-        yearLevel: participant.yearLevel || 'Unknown',
-        name: participant.name || 'Unknown User',
-        email: participant.email || 'No email provided'
-      }));
+      // Ensure all participants have required fields with fallbacks and validate data
+      const processedParticipants = allParticipants
+        .filter(participant => {
+          // Filter out participants with missing essential data
+          if (!participant._id || !participant.name || !participant.email) {
+            console.log('⚠️ Filtering out participant with missing data:', participant);
+            return false;
+          }
+          return true;
+        })
+        .map(participant => ({
+          ...participant,
+          role: participant.role || 'Student',
+          department: participant.department || 'Unknown',
+          academicYear: participant.academicYear || 'Unknown',
+          section: participant.section || 'Unknown',
+          yearLevel: participant.yearLevel || 'Unknown',
+          name: participant.name || 'Unknown User',
+          email: participant.email || 'No email provided',
+          profilePicture: participant.profilePicture || null
+        }));
       
       // Sort participants by role (Admin/Staff first, then Students)
       const sortedParticipants = processedParticipants.sort((a, b) => {
@@ -302,9 +316,16 @@ const EventChatPage = () => {
       console.log('✅ Final processed participants:', sortedParticipants.length);
       console.log('Participants:', sortedParticipants.map(p => ({ name: p.name, email: p.email, role: p.role })));
       setParticipants(sortedParticipants);
+      
+      if (sortedParticipants.length === 0) {
+        setParticipantsError('No participants found for this event. This might be due to data issues or the event not having any registered participants.');
+      }
     } catch (err) {
       console.error('❌ Error loading participants:', err);
       setParticipants([]);
+      setParticipantsError('Failed to load participants. Please try refreshing the page.');
+    } finally {
+      setParticipantsLoading(false);
     }
   }, [eventId]);
 
@@ -774,7 +795,24 @@ const EventChatPage = () => {
                   </div>
 
                   <div className="participants-list">
-                    {filteredParticipants.length === 0 ? (
+                    {participantsLoading ? (
+                      <div className="loading-state">
+                        <div className="loading-spinner"></div>
+                        <p>Loading participants...</p>
+                      </div>
+                    ) : participantsError ? (
+                      <div className="error-state">
+                        <div className="error-icon">⚠️</div>
+                        <h3>Error Loading Participants</h3>
+                        <p>{participantsError}</p>
+                        <button 
+                          className="retry-button"
+                          onClick={loadParticipants}
+                        >
+                          Try Again
+                        </button>
+                      </div>
+                    ) : filteredParticipants.length === 0 ? (
                       <div className="empty-state">
                         <div className="empty-icon">👥</div>
                         <h3>No participants found</h3>
