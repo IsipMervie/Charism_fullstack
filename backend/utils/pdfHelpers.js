@@ -13,9 +13,9 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     
     // Add logo on the LEFT side
     try {
-      const logoSize = 80;
+      const logoSize = 100;
       const logoX = 50;
-      const logoY = 50;
+      const logoY = 30;
       
       await doc.image(logoPath, logoX, logoY, { 
         width: logoSize, 
@@ -26,27 +26,27 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     }
     
     // Add ALL text on the RIGHT side - completely separate from logo
-    doc.y = 50;
+    doc.y = 30;
     
     // Institution name - positioned on the RIGHT side with MORE space from logo
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 200,
-         y: 50
+         x: 220,
+         y: 30
        });
     
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
-       .text('Service, and Mission', { 
-         x: 200,
-         y: 65
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Spirituality, and Mission', { 
+         x: 220,
+         y: 50
        });
     
     // Add main title - positioned on the RIGHT side with MORE space from logo
     if (title) {
-      doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
+      doc.fontSize(24).font('Helvetica-Bold').fillColor('#1e40af')
          .text(title, { 
-           x: 200,
-           y: 85
+           x: 220,
+           y: 80
          });
     }
     
@@ -54,32 +54,34 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     if (subtitle) {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text(subtitle, { 
-           x: 200,
-           y: 105
+           x: 220,
+           y: 110
          });
     }
     
     // Add generation date
     doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { 
-         x: 200,
-         y: 120
+         x: 220,
+         y: 130
        });
     
     // Move cursor down for content
-    doc.y = 140;
+    doc.y = 160;
     
   } catch (error) {
     console.error('Error adding logo and header:', error);
     // Fallback: just add text header
-    doc.fontSize(16).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', { align: 'center' });
-    doc.fontSize(14).font('Helvetica-Bold').fillColor('#34495e')
-       .text('CHARISM', { align: 'center' });
+    doc.fontSize(16).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Center for the Holistic Advancement of Religious Instruction,', { align: 'center' });
+    doc.fontSize(16).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Spirituality, and Mission', { align: 'center' });
     if (title) {
-      doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
+      doc.fontSize(24).font('Helvetica-Bold').fillColor('#1e40af')
          .text(title, { align: 'center' });
     }
+    doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
+       .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
     doc.moveDown(2);
   }
 };
