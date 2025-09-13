@@ -7,6 +7,7 @@ import { FaUser, FaSave, FaTimes, FaEye, FaEyeSlash, FaCamera, FaTrash, FaEnvelo
 
 import { updateUserProfile, getUserProfile, uploadProfilePicture, deleteProfilePicture, getPublicSettings } from '../api/api';
 import { getCurrentUserId } from '../utils/authUtils';
+import { getProfilePictureUrl } from '../utils/imageUtils';
 import Swal from 'sweetalert2';
 import './SettingsPage.css';
 
@@ -480,7 +481,7 @@ function SettingsPage() {
                     {/* Show temporary profile picture if available, otherwise show current */}
                     {(tempProfilePicture || profilePicture) ? (
                       <img
-                        src={`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/files/profile-picture/${getCurrentUserId()}`}
+                        src={getProfilePictureUrl(getCurrentUserId())}
                         alt="Profile"
                         className="rounded-circle"
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}

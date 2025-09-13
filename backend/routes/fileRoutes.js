@@ -6,6 +6,11 @@ const { hasFile } = require('../utils/mongoFileStorage');
 const { isValidObjectId } = require('mongoose');
 const { ensureDBConnection } = require('../middleware/dbMiddleware');
 
+// Serve default profile picture
+router.get('/profile-picture/default', (req, res) => {
+  res.status(404).json({ message: 'Default profile picture not implemented' });
+});
+
 // Serve profile picture
 router.get('/profile-picture/:userId', ensureDBConnection, async (req, res) => {
   try {

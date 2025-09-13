@@ -590,7 +590,7 @@ export const joinEvent = async (eventId) => {
 export const timeIn = async (eventId) => {
   try {
     const userId = getUserId();
-    const response = await axiosInstance.post(`/events/${eventId}/attendance/${userId}/time-in`);
+    const response = await axiosInstance.post(`/api/events/${eventId}/attendance/${userId}/time-in`);
     return response.data;
   } catch (error) {
     console.error('Error timing in:', error);
@@ -618,7 +618,7 @@ export const timeIn = async (eventId) => {
 export const timeOut = async (eventId) => {
   try {
     const userId = getUserId();
-    const response = await axiosInstance.post(`/events/${eventId}/attendance/${userId}/time-out`);
+    const response = await axiosInstance.post(`/api/events/${eventId}/attendance/${userId}/time-out`);
     return response.data;
   } catch (error) {
     console.error('Error timing out:', error);
@@ -645,7 +645,7 @@ export const timeOut = async (eventId) => {
 
 export const getEventParticipants = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}/participants`);
+    const response = await axiosInstance.get(`/api/events/${eventId}/participants`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event participants:', error);
@@ -655,7 +655,7 @@ export const getEventParticipants = async (eventId) => {
 
 export const getEventParticipantsPublic = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}/participants/public`);
+    const response = await axiosInstance.get(`/api/events/${eventId}/participants/public`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event participants:', error);
@@ -1039,7 +1039,7 @@ export const markNotificationAsRead = async (notificationId) => {
 // Attendance Management
 export const setParticipationStatus = async (eventId, userId, status) => {
   try {
-    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}`, { status });
+    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}`, { status });
     return response.data;
   } catch (error) {
     console.error('Error setting participation status:', error);
@@ -1049,7 +1049,7 @@ export const setParticipationStatus = async (eventId, userId, status) => {
 
 export const approveAttendance = async (eventId, userId) => {
   try {
-    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}/approve`);
+    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}/approve`);
     return response.data;
   } catch (error) {
     console.error('Error approving attendance:', error);
@@ -1076,7 +1076,7 @@ export const approveAttendance = async (eventId, userId) => {
 
 export const disapproveAttendance = async (eventId, userId, reason) => {
   try {
-    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}/disapprove`, {
+    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}/disapprove`, {
       reason: reason
     });
     return response.data;
@@ -1105,7 +1105,7 @@ export const disapproveAttendance = async (eventId, userId, reason) => {
 
 export const removeParticipant = async (eventId, userId) => {
   try {
-    const response = await axiosInstance.delete(`/events/${eventId}/participants/${userId}`);
+    const response = await axiosInstance.delete(`/api/events/${eventId}/participants/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error removing participant:', error);
@@ -1351,7 +1351,7 @@ export const verifyEmail = async (token) => {
 // Event Attendance
 export const getEventAttendance = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}/attendance`);
+    const response = await axiosInstance.get(`/api/events/${eventId}/attendance`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event attendance:', error);
@@ -1406,7 +1406,7 @@ export const getMyParticipationHistory = async () => {
 // Event Attendance Report
 export const getEventAttendanceReport = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}/attendance-report`);
+    const response = await axiosInstance.get(`/api/events/${eventId}/attendance-report`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event attendance report:', error);

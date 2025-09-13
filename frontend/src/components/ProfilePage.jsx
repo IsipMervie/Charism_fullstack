@@ -83,7 +83,7 @@ function ProfilePage() {
       
       // Set profile picture from localStorage first (for immediate display)
       if (user.profilePicture && user._id) {
-        const fullUrl = getProfilePictureUrlWithTimestamp(user.profilePicture, user._id);
+        const fullUrl = getProfilePictureUrl(user.profilePicture, user._id);
         console.log('ProfilePage - Setting profile picture from localStorage:', fullUrl);
         setProfilePictureUrl(fullUrl);
       }
@@ -92,7 +92,7 @@ function ProfilePage() {
       if (user._id) {
         const backendUser = await fetchUserProfile(user._id);
         if (backendUser && backendUser.profilePicture && backendUser._id) {
-          const fullUrl = getProfilePictureUrlWithTimestamp(backendUser.profilePicture, backendUser._id);
+          const fullUrl = getProfilePictureUrl(backendUser.profilePicture, backendUser._id);
           console.log('ProfilePage - Found profile picture from backend:', fullUrl);
           setProfilePictureUrl(fullUrl);
           
@@ -174,7 +174,7 @@ function ProfilePage() {
       if (profilePicture) {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
         if (currentUser._id) {
-          const fullUrl = getProfilePictureUrlWithTimestamp(profilePicture, currentUser._id);
+          const fullUrl = getProfilePictureUrl(profilePicture, currentUser._id);
           console.log('ProfilePage - Profile picture changed event received:', fullUrl);
           setProfilePictureUrl(fullUrl);
         }

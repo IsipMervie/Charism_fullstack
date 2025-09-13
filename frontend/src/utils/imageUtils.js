@@ -75,15 +75,13 @@ export const getImageUrl = (imageData, type = 'general') => {
 };
 
 export const getProfilePictureUrl = (imageData, userId = null) => {
-  if (!imageData) return null;
-  
   // Handle MongoDB binary data with user ID
-  if (imageData.data && imageData.contentType && userId) {
-    return `${BACKEND_URL}/api/files/profile-picture/${userId}`;
+  if (imageData && imageData.data && imageData.contentType && userId) {
+    return `${BACKEND_URL}/files/profile-picture/${userId}`;
   }
   
-  // Fallback to general image handling
-  return getImageUrl(imageData, 'profile');
+  // Return default profile picture URL if no image data
+  return `${BACKEND_URL}/files/profile-picture/default`;
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
