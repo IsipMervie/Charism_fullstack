@@ -299,12 +299,15 @@ function StudentsByYearPage() {
       if (pdfFilters.hoursMin && pdfFilters.hoursMin.trim() !== '') params.append('hoursMin', pdfFilters.hoursMin.trim());
       if (pdfFilters.hoursMax && pdfFilters.hoursMax.trim() !== '') params.append('hoursMax', pdfFilters.hoursMax.trim());
 
-      console.log('PDF Generation URL:', `${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/reports/students-by-year?${params}`);
+      const apiUrl = process.env.REACT_APP_API_URL || 
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:5000/api' 
+          : 'https://charism-api-xtw9.onrender.com/api');
+      console.log('PDF Generation URL:', `${apiUrl}/reports/students-by-year?${params}`);
       console.log('PDF Filters:', pdfFilters);
       console.log('Selected Year:', selectedYear);
       console.log('Filter Options:', filterOptions);
-
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/reports/students-by-year?${params}`, {
+      const response = await fetch(`${apiUrl}/reports/students-by-year?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -313,6 +316,9 @@ function StudentsByYearPage() {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('PDF Generation Error Response:', errorData);
+        console.error('Response Status:', response.status);
+        console.error('Response Status Text:', response.statusText);
+        console.error('Request URL:', response.url);
         throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
       }
 

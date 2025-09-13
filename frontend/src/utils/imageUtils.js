@@ -5,23 +5,21 @@ const getBackendUrl = () => {
     return process.env.REACT_APP_API_URL;
   }
   
-  // Detect production environment
+  // Detect environment based on hostname
   const hostname = window.location.hostname;
-  const protocol = window.location.protocol;
   
-  // Render production - use the correct backend URL
-  if (hostname === 'charism.onrender.com') {
+  // Production environment
+  if (hostname === 'charism-ucb4.onrender.com' || hostname === 'charism.onrender.com') {
     return 'https://charism-api-xtw9.onrender.com/api';
   }
-  
   
   // Local development
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:5000/api';
   }
   
-  // Fallback to current domain
-  return `${protocol}//${hostname}/api`;
+  // Default to production for any other case
+  return 'https://charism-api-xtw9.onrender.com/api';
 };
 
 const BACKEND_URL = getBackendUrl();
@@ -33,24 +31,24 @@ console.log('🖼️ Image Utils - STATIC_URL:', STATIC_URL);
 export const getImageUrl = (imageData, type = 'general') => {
   if (!imageData) return null;
   
-  // Handle MongoDB binary data (new system)
-  if (imageData.data && imageData.contentType) {
-    // This is a MongoDB-stored image, use the file API endpoint
-    switch (type) {
-      case 'logo':
-        return `${BACKEND_URL}/api/files/school-logo`;
-      case 'profile':
-        // For profile pictures, we need the user ID, not the image ID
-        // The imageData should contain the user ID or we need to pass it separately
-        return `${BACKEND_URL}/api/files/profile-picture/default`;
-      case 'event':
-        // For event images, we need the event ID, not the image ID
-        // The imageData should contain the event ID or we need to pass it separately
-        return `${BACKEND_URL}/api/files/event-image/default`;
-      default:
-        return `${BACKEND_URL}/api/files/${type}-image/default`;
+    // Handle MongoDB binary data (new system)
+    if (imageData.data && imageData.contentType) {
+      // This is a MongoDB-stored image, use the file API endpoint
+      switch (type) {
+        case 'logo':
+          return `${BACKEND_URL}/files/school-logo`;
+        case 'profile':
+          // For profile pictures, we need the user ID, not the image ID
+          // The imageData should contain the user ID or we need to pass it separately
+          return `${BACKEND_URL}/files/profile-picture/default`;
+        case 'event':
+          // For event images, we need the event ID, not the image ID
+          // The imageData should contain the event ID or we need to pass it separately
+          return `${BACKEND_URL}/files/event-image/default`;
+        default:
+          return `${BACKEND_URL}/files/${type}-image/default`;
+      }
     }
-  }
   
   // Handle static file paths (legacy system)
   if (typeof imageData === 'string') {
@@ -77,11 +75,11 @@ export const getImageUrl = (imageData, type = 'general') => {
 export const getProfilePictureUrl = (imageData, userId = null) => {
   // Handle MongoDB binary data with user ID
   if (imageData && imageData.data && imageData.contentType && userId) {
-    return `${BACKEND_URL}/api/files/profile-picture/${userId}`;
+    return `${BACKEND_URL}/files/profile-picture/${userId}`;
   }
   
   // Return default profile picture URL if no image data
-  return `${BACKEND_URL}/api/files/profile-picture/default`;
+  return `${BACKEND_URL}/files/profile-picture/default`;
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
@@ -89,7 +87,7 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   
   // Handle MongoDB binary data with event ID
   if (imageData.data && imageData.contentType && eventId) {
-    return `${BACKEND_URL}/api/files/event-image/${eventId}`;
+    return `${BACKEND_URL}/files/event-image/${eventId}`;
   }
   
   // Fallback to general image handling

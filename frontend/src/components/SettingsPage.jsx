@@ -481,7 +481,7 @@ function SettingsPage() {
                     {/* Show temporary profile picture if available, otherwise show current */}
                     {(tempProfilePicture || profilePicture) ? (
                       <img
-                        src={getProfilePictureUrl(getCurrentUserId())}
+                        src={getProfilePictureUrl(tempProfilePicture || profilePicture, getCurrentUserId())}
                         alt="Profile"
                         className="rounded-circle"
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}

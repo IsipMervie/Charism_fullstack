@@ -71,7 +71,11 @@ function Students40HoursPage() {
       if (search) params.append('search', search);
       
       const token = localStorage.getItem('token');
-              const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/reports/students-40-hours?${params.toString()}`, {
+      const apiUrl = process.env.REACT_APP_API_URL || 
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:5000/api' 
+          : 'https://charism-api-xtw9.onrender.com/api');
+      const response = await fetch(`${apiUrl}/reports/students-40-hours?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -80,7 +84,11 @@ function Students40HoursPage() {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to download PDF');
+        console.error('PDF Generation Error Response:', errorData);
+        console.error('Response Status:', response.status);
+        console.error('Response Status Text:', response.statusText);
+        console.error('Request URL:', response.url);
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
       }
       
       const blob = await response.blob();

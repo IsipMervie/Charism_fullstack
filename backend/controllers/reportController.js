@@ -637,11 +637,7 @@ const eventAttendancePDF = async (req, res) => {
     }
 
     // Add Narrative Report Section
-    doc.moveDown(3);
-    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('Narrative Report', { align: 'center' });
 
-    doc.moveDown(1);
 
     // Generate narrative content based on event data
     const totalParticipants = attendedParticipants.length;
@@ -651,7 +647,7 @@ const eventAttendancePDF = async (req, res) => {
     
     const narrativeContent = [
       `This report provides a detailed analysis of attendance for the event "${event.title}" held on ${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'} at ${event.location || 'N/A'}.`,
-      `The event successfully attracted ${totalParticipants} participants, with ${studentsCount} students and ${staffCount} staff members in attendance, demonstrating broad institutional engagement in community service activities.`,
+      `The event successfully attracted ${totalParticipants} participants, with ${studentsCount} students, demonstrating broad institutional engagement in community service activities.`,
       `Participants represented ${departments.length} different departments: ${departments.join(', ')}, indicating the event's appeal across various academic disciplines and administrative units.`,
       `The event offered ${event.hours || 0} hours of community service credit, providing participants with valuable opportunities to contribute to their community while fulfilling academic or professional development requirements.`,
       `The diverse participation across departments and roles reflects the institution's commitment to fostering a culture of community engagement that transcends traditional academic boundaries.`,
