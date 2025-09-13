@@ -14,11 +14,11 @@ services:
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
-        value: https://charism.onrender.com
+        value: https://charism-ucb4.onrender.com
       - key: FRONTEND_URL_PRODUCTION
-        value: https://charism.onrender.com
+        value: https://charism-ucb4.onrender.com
       - key: CORS_ORIGINS
-        value: https://charism.onrender.com
+        value: https://charism-ucb4.onrender.com
       - key: EMAIL_USER
         value: nexacore91@gmail.com
       - key: EMAIL_PASS
@@ -43,5 +43,5 @@ services:
     staticPublishPath: frontend/build
     envVars:
       - key: REACT_APP_API_URL
-        value: https://charism-api.onrender.com/api
+        value: https://charism-api-xtw9.onrender.com/api
 

@@ -2335,7 +2335,7 @@ exports.getEventDocumentation = async (req, res) => {
       files: doc.files.map(file => ({
         ...file,
         downloadUrl: `/api/files/documentation/${file.filename}`,
-        fullUrl: `${process.env.FRONTEND_URL_PRODUCTION || 'https://charism.onrender.com'}/api/files/documentation/${file.filename}`
+        fullUrl: `${process.env.FRONTEND_URL_PRODUCTION || 'https://charism-ucb4.onrender.com'}/api/files/documentation/${file.filename}`
       }))
     }));
     

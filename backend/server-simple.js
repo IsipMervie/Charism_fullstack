@@ -26,7 +26,7 @@ app.use(cors({
     
     const allowedOrigins = process.env.CORS_ORIGINS 
       ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-      : ['http://localhost:3000', 'https://charism.onrender.com'];
+      : ['http://localhost:3000', 'https://charism-ucb4.onrender.com'];
     
     if (allowedOrigins.includes(origin) || origin.includes('onrender.com')) {
       callback(null, true);

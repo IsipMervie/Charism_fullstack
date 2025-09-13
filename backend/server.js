@@ -46,8 +46,8 @@ app.use(cors({
       ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
       : [
           'http://localhost:3000',
-          'https://charism.onrender.com',
-          'https://charism-api.onrender.com',
+          'https://charism-ucb4.onrender.com',
+          'https://charism-api-xtw9.onrender.com',
         ];
     
     console.log('🔗 Allowed CORS origins:', allowedOrigins);
