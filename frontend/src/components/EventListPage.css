@@ -867,15 +867,35 @@
 }
 
 .success-button.disabled {
-  background: var(--secondary) !important;
-  color: var(--text-tertiary) !important;
+  background: var(--success-color) !important;
+  color: var(--white) !important;
   cursor: not-allowed !important;
-  opacity: 0.7 !important;
+  opacity: 0.9 !important;
+  font-weight: var(--font-bold) !important;
+  border: 2px solid var(--success-dark) !important;
 }
 
 .success-button.disabled:hover {
   transform: none !important;
   box-shadow: 0 4px 15px var(--secondary-shadow) !important;
+}
+
+/* Dark mode styling for disabled success buttons */
+[data-theme="dark"] .success-button.disabled {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border: 2px solid #059669 !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
+/* Light mode styling for disabled success buttons */
+[data-theme="light"] .success-button.disabled {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border: 2px solid #047857 !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
 }
 
 /* Student Actions */
