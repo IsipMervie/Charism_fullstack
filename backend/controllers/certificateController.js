@@ -87,56 +87,115 @@ exports.generateCertificate = async (req, res) => {
        .fill('#28a745');
 
     // Certificate border with colors
-    doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-       .lineWidth(4)
-       .stroke('#007bff');
-
+    // Elegant border design
+    // Outer border
+    doc.rect(40, 40, doc.page.width - 80, doc.page.height - 80)
+       .lineWidth(3)
+       .stroke('#2c3e50');
+    
     // Inner border
-    doc.rect(30, 30, doc.page.width - 60, doc.page.height - 60)
-       .lineWidth(2)
-       .stroke('#28a745');
+    doc.rect(50, 50, doc.page.width - 100, doc.page.height - 100)
+       .lineWidth(1)
+       .stroke('#bdc3c7');
 
-    // Corner decorations
-    const cornerSize = 15;
-    doc.rect(25, 25, cornerSize, cornerSize).fill('#007bff');
-    doc.rect(doc.page.width - 40, 25, cornerSize, cornerSize).fill('#007bff');
-    doc.rect(25, doc.page.height - 40, cornerSize, cornerSize).fill('#007bff');
-    doc.rect(doc.page.width - 40, doc.page.height - 40, cornerSize, cornerSize).fill('#007bff');
+    // Corner decorations - more elegant
+    const cornerSize = 20;
+    const cornerColor = '#3498db';
+    
+    // Top-left corner
+    doc.rect(40, 40, cornerSize, cornerSize)
+       .fill(cornerColor);
+    doc.rect(40, 40, cornerSize, cornerSize)
+       .lineWidth(2)
+       .stroke('#2c3e50');
+    
+    // Top-right corner
+    doc.rect(doc.page.width - 60, 40, cornerSize, cornerSize)
+       .fill(cornerColor);
+    doc.rect(doc.page.width - 60, 40, cornerSize, cornerSize)
+       .lineWidth(2)
+       .stroke('#2c3e50');
+    
+    // Bottom-left corner
+    doc.rect(40, doc.page.height - 60, cornerSize, cornerSize)
+       .fill(cornerColor);
+    doc.rect(40, doc.page.height - 60, cornerSize, cornerSize)
+       .lineWidth(2)
+       .stroke('#2c3e50');
+    
+    // Bottom-right corner
+    doc.rect(doc.page.width - 60, doc.page.height - 60, cornerSize, cornerSize)
+       .fill(cornerColor);
+    doc.rect(doc.page.width - 60, doc.page.height - 60, cornerSize, cornerSize)
+       .lineWidth(2)
+       .stroke('#2c3e50');
 
 
     // Add logo and certificate header
     await addCertificateHeader(doc, user.name, `${totalHours} hours of Community Service`, totalHours);
 
-    // Event details
+    // Event details section
     if (eventList.length > 0) {
-      doc.moveDown(2);
+      doc.moveDown(1);
+      
+      // Add a subtle line separator
+      doc.moveTo(100, doc.y)
+         .lineTo(doc.page.width - 100, doc.y)
+         .stroke('#e0e0e0');
+      
+      doc.moveDown(1);
+      
       doc.fontSize(18)
          .font('Helvetica-Bold')
          .fill('#495057')
          .text('Events Completed:', { align: 'center' });
 
-      doc.moveDown(0.5);
+      doc.moveDown(0.8);
+      
+      // Display events in a more organized way
       eventList.forEach((event, index) => {
+        const eventDate = new Date(event.date).toLocaleDateString();
+        doc.fontSize(14)
+           .font('Helvetica')
+           .fill('#2c3e50')
+           .text(`${index + 1}. ${event.name}`, { align: 'center' });
+        
         doc.fontSize(12)
            .font('Helvetica')
            .fill('#6c757d')
-           .text(`${index + 1}. ${event.name} - ${event.date} (${event.hours} hours)`, { align: 'center' });
+           .text(`${eventDate} • ${event.hours} hours`, { align: 'center' });
+        
+        doc.moveDown(0.5);
       });
     }
 
-    // Date and signature
-    doc.moveDown(3);
+    // Add spacing before signature area
+    doc.moveDown(2);
+    
+    // Add another subtle line separator
+    doc.moveTo(100, doc.y)
+       .lineTo(doc.page.width - 100, doc.y)
+       .stroke('#e0e0e0');
+    
+    doc.moveDown(1.5);
+    
+    // Date
     const currentDate = new Date().toLocaleDateString();
     doc.fontSize(14)
        .font('Helvetica')
        .fill('#6c757d')
        .text(`Date: ${currentDate}`, { align: 'center' });
 
+    // Signature area
     doc.moveDown(2);
-    doc.fontSize(16)
-       .font('Helvetica-Bold')
-       .fill('#007bff')
-       .text('_________________________', { align: 'center' });
+    
+    // Signature line
+    doc.moveTo(doc.page.width / 2 - 80, doc.y)
+       .lineTo(doc.page.width / 2 + 80, doc.y)
+       .stroke('#007bff');
+    
+    doc.moveDown(0.5);
+    
     doc.fontSize(12)
        .font('Helvetica')
        .fill('#6c757d')
