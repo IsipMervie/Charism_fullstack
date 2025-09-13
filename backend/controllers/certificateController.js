@@ -33,240 +33,320 @@ const calculateStudentsHours = async (userId) => {
   }
 };
 
-// Create a beautiful single-page certificate
+// Create a professional certificate design
 const createBeautifulCertificate = async (doc, user, eventList, totalHours) => {
   const pageWidth = doc.page.width;
   const pageHeight = doc.page.height;
-  const margin = 40;
+  const margin = 50;
 
-  // Beautiful gradient-like background
+  // Professional background with subtle pattern
   doc.rect(0, 0, pageWidth, pageHeight)
-     .fill('#f8fafc');
+     .fill('#fefefe');
 
-  // Main decorative border
+  // Main decorative border - triple border design
   doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin)
-     .stroke('#1e40af', 4);
+     .stroke('#2c3e50', 3);
   
-  // Inner gold border
-  doc.rect(margin + 10, margin + 10, pageWidth - 2 * margin - 20, pageHeight - 2 * margin - 20)
+  // Inner decorative border
+  doc.rect(margin + 15, margin + 15, pageWidth - 2 * margin - 30, pageHeight - 2 * margin - 30)
+     .stroke('#8b4513', 1);
+     
+  // Outermost decorative border
+  doc.rect(margin + 25, margin + 25, pageWidth - 2 * margin - 50, pageHeight - 2 * margin - 50)
      .stroke('#d4af37', 2);
 
-  // Header section with logo area
-  const headerHeight = 120;
-  doc.rect(margin + 20, margin + 20, pageWidth - 2 * margin - 40, headerHeight)
-     .fill('#1e40af');
-
-  // Logo placeholder (circular)
-  const logoX = pageWidth / 2;
-  const logoY = margin + 20 + headerHeight / 2;
-  doc.circle(logoX, logoY, 25)
+  // Professional header section
+  const headerY = margin + 40;
+  
+  // University seal/logo area (circular)
+  const sealX = pageWidth / 2;
+  const sealY = headerY + 40;
+  const sealRadius = 35;
+  
+  // Outer ring
+  doc.circle(sealX, sealY, sealRadius)
      .fill('#ffffff')
+     .stroke('#2c3e50', 3);
+     
+  // Inner ring
+  doc.circle(sealX, sealY, sealRadius - 8)
      .stroke('#d4af37', 2);
+     
+  // Center area
+  doc.circle(sealX, sealY, sealRadius - 15)
+     .fill('#f8f9fa');
 
-  // University text around logo
-  doc.fontSize(10)
-     .font('Helvetica-Bold')
-     .fill('#d4af37')
+  // University name around seal
+  doc.fontSize(11)
+     .font('Times-Bold')
+     .fill('#2c3e50')
      .text('UNIVERSITY OF THE ASSUMPTION', {
-       x: logoX,
-       y: logoY - 35,
+       x: sealX,
+       y: sealY - 25,
        align: 'center',
-       width: 200
+       width: 180
      });
 
-  // Center text
-  doc.fontSize(8)
-     .font('Helvetica')
-     .fill('#ffffff')
-     .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', {
-       x: logoX,
-       y: logoY + 15,
-       align: 'center',
-       width: 200
-     });
-
-  // CHARISM text
-  doc.fontSize(12)
-     .font('Helvetica-Bold')
-     .fill('#d4af37')
+  // Center text inside seal
+  doc.fontSize(7)
+     .font('Times-Roman')
+     .fill('#2c3e50')
      .text('CHARISM', {
-       x: logoX,
-       y: logoY + 35,
+       x: sealX,
+       y: sealY - 5,
+       align: 'center'
+     });
+     
+  doc.fontSize(6)
+     .font('Times-Roman')
+     .fill('#666666')
+     .text('Est. 1963', {
+       x: sealX,
+       y: sealY + 8,
        align: 'center'
      });
 
-  // Certificate title
-  doc.fontSize(28)
-     .font('Helvetica-Bold')
-     .fill('#1e40af')
-     .text('Certificate of Completion', {
+  // Official certificate title
+  doc.fontSize(32)
+     .font('Times-Bold')
+     .fill('#2c3e50')
+     .text('CERTIFICATE OF COMPLETION', {
        x: pageWidth / 2,
-       y: margin + headerHeight + 60,
+       y: headerY + 120,
        align: 'center'
      });
 
-  // Subtitle
-  doc.fontSize(14)
-     .font('Helvetica')
-     .fill('#64748b')
+  // Decorative line under title
+  doc.moveTo(pageWidth / 2 - 120, headerY + 155)
+     .lineTo(pageWidth / 2 + 120, headerY + 155)
+     .stroke('#d4af37', 3);
+
+  // Official certification text
+  doc.fontSize(16)
+     .font('Times-Roman')
+     .fill('#2c3e50')
      .text('This is to certify that', {
        x: pageWidth / 2,
-       y: margin + headerHeight + 100,
+       y: headerY + 180,
        align: 'center'
      });
 
-  // Student name
-  doc.fontSize(24)
-     .font('Helvetica-Bold')
-     .fill('#1e40af')
+  // Student name with decorative underline
+  doc.fontSize(28)
+     .font('Times-Bold')
+     .fill('#2c3e50')
      .text(sanitizeText(user.name), {
        x: pageWidth / 2,
-       y: margin + headerHeight + 130,
+       y: headerY + 220,
        align: 'center'
      });
 
   // Decorative line under name
-  doc.moveTo(pageWidth / 2 - 100, margin + headerHeight + 160)
-     .lineTo(pageWidth / 2 + 100, margin + headerHeight + 160)
+  doc.moveTo(pageWidth / 2 - 150, headerY + 250)
+     .lineTo(pageWidth / 2 + 150, headerY + 250)
      .stroke('#d4af37', 2);
 
   // Completion text
-  doc.fontSize(14)
-     .font('Helvetica')
-     .fill('#64748b')
+  doc.fontSize(16)
+     .font('Times-Roman')
+     .fill('#2c3e50')
      .text('has successfully completed', {
        x: pageWidth / 2,
-       y: margin + headerHeight + 180,
+       y: headerY + 270,
        align: 'center'
      });
 
-  // Hours highlight box
-  const hoursBoxY = margin + headerHeight + 210;
-  doc.rect(pageWidth / 2 - 120, hoursBoxY, 240, 40)
-     .fill('#fef3c7')
-     .stroke('#d4af37', 2);
+  // Hours achievement box - professional design
+  const achievementY = headerY + 310;
+  const boxWidth = 320;
+  const boxHeight = 50;
+  const boxX = (pageWidth - boxWidth) / 2;
+  
+  // Shadow effect
+  doc.rect(boxX + 3, achievementY + 3, boxWidth, boxHeight)
+     .fill('#e0e0e0');
+     
+  // Main box
+  doc.rect(boxX, achievementY, boxWidth, boxHeight)
+     .fill('#ffffff')
+     .stroke('#2c3e50', 2);
+     
+  // Inner highlight
+  doc.rect(boxX + 2, achievementY + 2, boxWidth - 4, boxHeight - 4)
+     .stroke('#d4af37', 1);
 
-  doc.fontSize(20)
-     .font('Helvetica-Bold')
-     .fill('#dc2626')
-     .text(`${totalHours} hours of Community Service`, {
+  doc.fontSize(22)
+     .font('Times-Bold')
+     .fill('#c41e3a')
+     .text(`${totalHours} HOURS OF COMMUNITY SERVICE`, {
        x: pageWidth / 2,
-       y: hoursBoxY + 10,
+       y: achievementY + 15,
        align: 'center'
      });
 
-  // Events section - compact design
-  const eventsStartY = hoursBoxY + 80;
-  doc.fontSize(16)
-     .font('Helvetica-Bold')
-     .fill('#1e40af')
-     .text('Events Completed', {
+  // Events section - professional table
+  const eventsStartY = achievementY + 90;
+  
+  // Section title
+  doc.fontSize(18)
+     .font('Times-Bold')
+     .fill('#2c3e50')
+     .text('COMMUNITY SERVICE EVENTS', {
        x: pageWidth / 2,
        y: eventsStartY,
        align: 'center'
      });
 
-  // Events list - compact table format
-  const eventsTableY = eventsStartY + 40;
-  const eventsTableHeight = Math.min(200, eventList.length * 25 + 40);
+  // Professional table
+  const tableY = eventsStartY + 40;
+  const tableWidth = pageWidth - 2 * margin - 40;
+  const tableX = margin + 20;
+  const rowHeight = 18;
+  const maxRows = 8;
   
-  // Table background
-  doc.rect(margin + 60, eventsTableY, pageWidth - 2 * margin - 120, eventsTableHeight)
-     .fill('#ffffff')
-     .stroke('#1e40af', 1);
-
   // Table header
-  doc.fontSize(12)
-     .font('Helvetica-Bold')
-     .fill('#1e40af');
-  
-  doc.text('#', margin + 70, eventsTableY + 10, { width: 30 });
-  doc.text('Event Name', margin + 110, eventsTableY + 10, { width: 300 });
-  doc.text('Date', margin + 420, eventsTableY + 10, { width: 100 });
-  doc.text('Hours', margin + 530, eventsTableY + 10, { width: 60 });
+  doc.rect(tableX, tableY, tableWidth, rowHeight + 10)
+     .fill('#2c3e50');
+     
+  doc.fontSize(11)
+     .font('Times-Bold')
+     .fill('#ffffff');
+     
+  doc.text('No.', tableX + 10, tableY + 8, { width: 30 });
+  doc.text('Event Name', tableX + 50, tableY + 8, { width: 280 });
+  doc.text('Date', tableX + 340, tableY + 8, { width: 80 });
+  doc.text('Hours', tableX + 430, tableY + 8, { width: 50 });
 
-  // Header line
-  doc.moveTo(margin + 60, eventsTableY + 30)
-     .lineTo(pageWidth - margin - 60, eventsTableY + 30)
-     .stroke('#d4af37', 1);
-
-  // Events rows
-  eventList.slice(0, 8).forEach((event, index) => { // Limit to 8 events to fit on page
-    const rowY = eventsTableY + 40 + (index * 20);
+  // Table rows
+  eventList.slice(0, maxRows).forEach((event, index) => {
+    const rowY = tableY + rowHeight + 10 + (index * rowHeight);
     
     // Alternating row colors
     if (index % 2 === 0) {
-      doc.rect(margin + 60, rowY - 5, pageWidth - 2 * margin - 120, 20)
-         .fill('#f8fafc');
+      doc.rect(tableX, rowY, tableWidth, rowHeight)
+         .fill('#f8f9fa');
     }
 
-    doc.fontSize(10)
-       .font('Helvetica')
-       .fill('#1f2937');
+    doc.fontSize(9)
+       .font('Times-Roman')
+       .fill('#2c3e50');
     
-    doc.text(`${index + 1}`, margin + 70, rowY, { width: 30 });
+    doc.text(`${index + 1}.`, tableX + 10, rowY + 3, { width: 30 });
     
-    const eventName = event.name.length > 35 ? event.name.substring(0, 35) + '...' : event.name;
-    doc.text(eventName, margin + 110, rowY, { width: 300 });
-    doc.text(event.date, margin + 420, rowY, { width: 100 });
-    doc.text(`${event.hours}`, margin + 530, rowY, { width: 60 });
+    const eventName = event.name.length > 40 ? event.name.substring(0, 40) + '...' : event.name;
+    doc.text(eventName, tableX + 50, rowY + 3, { width: 280 });
+    doc.text(event.date, tableX + 340, rowY + 3, { width: 80 });
+    doc.text(`${event.hours}`, tableX + 430, rowY + 3, { width: 50 });
   });
 
-  // Show "..." if more events
-  if (eventList.length > 8) {
-    doc.fontSize(10)
-       .font('Helvetica-Italic')
-       .fill('#64748b')
-       .text(`... and ${eventList.length - 8} more events`, {
+  // Show additional events count if more than 8
+  if (eventList.length > maxRows) {
+    const additionalY = tableY + rowHeight + 10 + (maxRows * rowHeight) + 5;
+    doc.fontSize(9)
+       .font('Times-Italic')
+       .fill('#666666')
+       .text(`... and ${eventList.length - maxRows} additional events`, {
          x: pageWidth / 2,
-         y: eventsTableY + eventsTableHeight - 20,
+         y: additionalY,
          align: 'center'
        });
   }
 
-  // Signature section
-  const signatureY = eventsTableY + eventsTableHeight + 40;
+  // Professional signature section
+  const signatureY = eventsStartY + 250;
   
-  // Date
-  doc.fontSize(14)
-     .font('Helvetica-Bold')
-     .fill('#1e40af')
-     .text(`Date: ${new Date().toLocaleDateString()}`, {
+  // Date section
+  doc.fontSize(12)
+     .font('Times-Bold')
+     .fill('#2c3e50')
+     .text(`Date of Issue: ${new Date().toLocaleDateString('en-US', { 
+       year: 'numeric', 
+       month: 'long', 
+       day: 'numeric' 
+     })}`, {
        x: pageWidth / 2,
        y: signatureY,
        align: 'center'
      });
 
+  // Signature area
+  const signatureAreaY = signatureY + 50;
+  const signatureWidth = 250;
+  const signatureX = pageWidth - margin - signatureWidth - 20;
+  
   // Signature line
-  const signatureLineY = signatureY + 40;
-  doc.moveTo(pageWidth / 2 - 150, signatureLineY)
-     .lineTo(pageWidth / 2 + 150, signatureLineY)
-     .stroke('#1e40af', 2);
+  doc.moveTo(signatureX, signatureAreaY)
+     .lineTo(signatureX + signatureWidth, signatureAreaY)
+     .stroke('#2c3e50', 2);
 
   // Signature label
-  doc.fontSize(12)
-     .font('Helvetica-Bold')
-     .fill('#1e40af')
+  doc.fontSize(11)
+     .font('Times-Bold')
+     .fill('#2c3e50')
      .text('Authorized Signature', {
-       x: pageWidth / 2,
-       y: signatureLineY + 10,
+       x: signatureX + signatureWidth / 2,
+       y: signatureAreaY + 8,
        align: 'center'
      });
 
-  // Decorative elements
-  // Corner decorations
-  const cornerSize = 20;
-  doc.polygon([margin + 20, margin + 20], [margin + 20 + cornerSize, margin + 20], [margin + 20, margin + 20 + cornerSize])
-     .fill('#d4af37');
+  // Official seal area (bottom left)
+  const officialSealY = signatureAreaY - 10;
+  const officialSealX = margin + 30;
   
-  doc.polygon([pageWidth - margin - 20, margin + 20], [pageWidth - margin - 20 - cornerSize, margin + 20], [pageWidth - margin - 20, margin + 20 + cornerSize])
-     .fill('#d4af37');
+  doc.circle(officialSealX, officialSealY, 25)
+     .fill('#ffffff')
+     .stroke('#d4af37', 2);
      
-  doc.polygon([margin + 20, pageHeight - margin - 20], [margin + 20 + cornerSize, pageHeight - margin - 20], [margin + 20, pageHeight - margin - 20 - cornerSize])
-     .fill('#d4af37');
+  doc.fontSize(8)
+     .font('Times-Bold')
+     .fill('#2c3e50')
+     .text('OFFICIAL', {
+       x: officialSealX,
+       y: officialSealY - 5,
+       align: 'center'
+     });
      
-  doc.polygon([pageWidth - margin - 20, pageHeight - margin - 20], [pageWidth - margin - 20 - cornerSize, pageHeight - margin - 20], [pageWidth - margin - 20, pageHeight - margin - 20 - cornerSize])
-     .fill('#d4af37');
+  doc.fontSize(7)
+     .font('Times-Roman')
+     .fill('#666666')
+     .text('SEAL', {
+       x: officialSealX,
+       y: officialSealY + 5,
+       align: 'center'
+     });
+
+  // Professional corner decorations
+  const cornerSize = 25;
+  const cornerColor = '#d4af37';
+  
+  // Top-left corner
+  doc.polygon([margin + 30, margin + 30], [margin + 30 + cornerSize, margin + 30], [margin + 30, margin + 30 + cornerSize])
+     .fill(cornerColor);
+     
+  // Top-right corner  
+  doc.polygon([pageWidth - margin - 30, margin + 30], [pageWidth - margin - 30 - cornerSize, margin + 30], [pageWidth - margin - 30, margin + 30 + cornerSize])
+     .fill(cornerColor);
+     
+  // Bottom-left corner
+  doc.polygon([margin + 30, pageHeight - margin - 30], [margin + 30 + cornerSize, pageHeight - margin - 30], [margin + 30, pageHeight - margin - 30 - cornerSize])
+     .fill(cornerColor);
+     
+  // Bottom-right corner
+  doc.polygon([pageWidth - margin - 30, pageHeight - margin - 30], [pageWidth - margin - 30 - cornerSize, pageHeight - margin - 30], [pageWidth - margin - 30, pageHeight - margin - 30 - cornerSize])
+     .fill(cornerColor);
+
+  // Professional border patterns
+  // Top border pattern
+  for (let i = margin + 50; i < pageWidth - margin - 50; i += 20) {
+    doc.circle(i, margin + 35, 2)
+       .fill(cornerColor);
+  }
+  
+  // Bottom border pattern
+  for (let i = margin + 50; i < pageWidth - margin - 50; i += 20) {
+    doc.circle(i, pageHeight - margin - 35, 2)
+       .fill(cornerColor);
+  }
 };
 
 // Generate Individual Certificate
