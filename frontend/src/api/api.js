@@ -367,7 +367,7 @@ export const deleteDepartment = async (id) => {
 // Academic Years
 export const getActiveAcademicYears = async () => {
   try {
-    const response = await axiosInstance.get('/academic-years/active');
+    const response = await axiosInstance.get('/api/academic-years/active');
     return response.data;
   } catch (error) {
     console.error('Error fetching active academic years:', error);
@@ -377,7 +377,7 @@ export const getActiveAcademicYears = async () => {
 
 export const getAcademicYears = async () => {
   try {
-    const response = await axiosInstance.get('/academic-years');
+    const response = await axiosInstance.get('/api/academic-years');
     return response.data;
   } catch (error) {
     console.error('Error fetching academic years:', error);
@@ -389,7 +389,7 @@ export const getAcademicYears = async () => {
 
 export const createAcademicYear = async (academicYearData) => {
   try {
-    const response = await axiosInstance.post('/academic-years', academicYearData);
+    const response = await axiosInstance.post('/api/academic-years', academicYearData);
     return response.data;
   } catch (error) {
     console.error('Error creating academic year:', error);
@@ -468,7 +468,7 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
 export const getEvents = async () => {
   try {
     console.log('🔄 Fetching events from API...');
-    const response = await axiosInstance.get('/events');
+    const response = await axiosInstance.get('/api/events');
     console.log('✅ Events API response received');
     console.log('📊 Full response:', {
       status: response.status,
@@ -872,7 +872,7 @@ export const getAnalytics = async () => {
       console.log(`🔄 Fetching analytics attempt ${attempt}/${maxRetries}`);
       
       // Use longer timeout for analytics (60 seconds)
-      const response = await axiosInstance.get('/analytics', {
+      const response = await axiosInstance.get('/api/analytics', {
         timeout: 60000
       });
       
@@ -987,7 +987,7 @@ export const deleteProfilePicture = async (userId) => {
 // Messages
 export const getMessages = async () => {
   try {
-    const response = await axiosInstance.get('/messages');
+    const response = await axiosInstance.get('/api/messages');
     return response.data;
   } catch (error) {
     console.error('Error fetching messages:', error);
@@ -997,7 +997,7 @@ export const getMessages = async () => {
 
 export const sendMessage = async (messageData) => {
   try {
-    const response = await axiosInstance.post('/messages', messageData);
+    const response = await axiosInstance.post('/api/messages', messageData);
     return response.data;
   } catch (error) {
     console.error('Error sending message:', error);
@@ -1018,7 +1018,7 @@ export const deleteMessage = async (messageId) => {
 // Notifications
 export const getNotifications = async () => {
   try {
-    const response = await axiosInstance.get('/notifications');
+    const response = await axiosInstance.get('/api/notifications');
     return response.data;
   } catch (error) {
     console.error('Error fetching notifications:', error);
@@ -1185,7 +1185,7 @@ export const generateStudentsListPDF = async (year) => {
 // Settings
 export const getSettings = async () => {
   try {
-    const response = await axiosInstance.get('/settings');
+    const response = await axiosInstance.get('/api/settings');
     return response.data;
   } catch (error) {
     console.error('Error fetching settings:', error);
@@ -1239,7 +1239,7 @@ export const getPublicSettings = async () => {
 
 export const updateSettings = async (settingsData) => {
   try {
-    const response = await axiosInstance.post('/settings', settingsData);
+    const response = await axiosInstance.post('/api/settings', settingsData);
     return response.data;
   } catch (error) {
     console.error('Error updating settings:', error);
@@ -1362,7 +1362,7 @@ export const getEventAttendance = async (eventId) => {
 // User Participation
 export const getUserParticipation = async () => {
   try {
-    const response = await axiosInstance.get('/user/participation');
+    const response = await axiosInstance.get('/api/user/participation');
     return response.data;
   } catch (error) {
     console.error('Error fetching user participation:', error);
@@ -1384,7 +1384,7 @@ export const getEventStatistics = async (eventId) => {
 // My Events
 export const getMyEvents = async () => {
   try {
-    const response = await axiosInstance.get('/user/my-events');
+    const response = await axiosInstance.get('/api/user/my-events');
     return response.data;
   } catch (error) {
     console.error('Error fetching my events:', error);
@@ -1395,7 +1395,7 @@ export const getMyEvents = async () => {
 // My Participation History
 export const getMyParticipationHistory = async () => {
   try {
-    const response = await axiosInstance.get('/user/participation-history');
+    const response = await axiosInstance.get('/api/user/participation-history');
     return response.data;
   } catch (error) {
     console.error('Error fetching participation history:', error);
@@ -1464,7 +1464,7 @@ export const generateBulkCertificates = async (userIds) => {
 // Contact Us
 export const submitContactForm = async (contactData) => {
   try {
-    const response = await axiosInstance.post('/contact', contactData);
+    const response = await axiosInstance.post('/api/contact', contactData);
     return response.data;
   } catch (error) {
     console.error('Error submitting contact form:', error);
@@ -1732,7 +1732,7 @@ export const registerForEventWithToken = async (token) => {
 
 export const submitFeedback = async (feedbackData) => {
   try {
-    const response = await axiosInstance.post('/feedback/submit', feedbackData);
+    const response = await axiosInstance.post('/api/feedback/submit', feedbackData);
     return response.data;
   } catch (error) {
     console.error('Error submitting feedback:', error);
@@ -1742,7 +1742,7 @@ export const submitFeedback = async (feedbackData) => {
 
 export const getUserFeedback = async () => {
   try {
-    const response = await axiosInstance.get('/feedback/my-feedback');
+    const response = await axiosInstance.get('/api/feedback/my-feedback');
     return response.data;
   } catch (error) {
     console.error('Error fetching user feedback:', error);
@@ -1774,7 +1774,7 @@ export const getAllFeedback = async (params = {}) => {
 
 export const getFeedbackStats = async () => {
   try {
-    const response = await axiosInstance.get('/feedback/admin/stats');
+    const response = await axiosInstance.get('/api/feedback/admin/stats');
     return response.data;
   } catch (error) {
     console.error('Error fetching feedback stats:', error);

@@ -68,7 +68,7 @@ function AdminManageFeedbackPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await axiosInstance.get('/feedback/admin/stats');
+      const response = await axiosInstance.get('/api/feedback/admin/stats');
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching stats:', error);
