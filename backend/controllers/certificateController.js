@@ -34,150 +34,76 @@ const calculateStudentsHours = async (userId) => {
   }
 };
 
-// Helper function to add simple events list like the example
+// Helper function to add ALL events on ONE PAGE ONLY
 const addEventsWithPagination = async (doc, eventList) => {
-  const eventsPerPage = 8; // More events per page for simple layout
-  const totalPages = Math.ceil(eventList.length / eventsPerPage);
+  // NO PAGINATION - ALL EVENTS ON ONE PAGE
   
-  for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
-    // Add new page if not the first page
-    if (pageIndex > 0) {
-      doc.addPage();
-      
-      // Simple page header for continuation pages
-      doc.fontSize(16)
-         .font('Helvetica-Bold')
-         .fill('#333333')
-         .text('Events Completed (continued)', { align: 'center', y: 50 });
-      
-      doc.moveDown(2);
-    }
-    
-    // Simple section title
-    const titleText = pageIndex === 0 ? 'Events Completed:' : `Events Completed (Page ${pageIndex + 1} of ${totalPages}):`;
-    doc.fontSize(16)
-       .font('Helvetica-Bold')
-       .fill('#333333')
-       .text(titleText, { align: 'center' });
-    
-    doc.moveDown(1);
-    
-    // Get events for this page
-    const startIndex = pageIndex * eventsPerPage;
-    const endIndex = Math.min(startIndex + eventsPerPage, eventList.length);
-    const pageEvents = eventList.slice(startIndex, endIndex);
-    
-    // Simple list of events
-    pageEvents.forEach((event, index) => {
-      const eventDate = new Date(event.date).toLocaleDateString();
-      const globalIndex = startIndex + index;
-      
-      // Simple event entry
-      doc.fontSize(14)
-         .font('Helvetica')
-         .fill('#333333')
-         .text(`${globalIndex + 1}. ${event.name} - ${eventDate} (${event.hours} hours)`, { 
-           align: 'center'
-         });
-      
-      doc.moveDown(0.5);
-    });
-    
-    // Add spacing after events
-    doc.moveDown(1);
-  }
-};
-
-// Helper function to add beautiful signature area
-const addSignatureArea = async (doc) => {
-  // Ensure we're on the last page
-  // If current page doesn't have enough space, add a new page
-  if (doc.y + 200 > doc.page.height - 50) {
-    doc.addPage();
-  }
-  
-  // Add elegant spacing before signature area
-  doc.moveDown(2);
-  
-  // Add beautiful decorative separator
-  doc.moveTo(80, doc.y)
-     .lineTo(doc.page.width - 80, doc.y)
-     .stroke('#d4af37', 3);
-  
-  doc.moveTo(100, doc.y + 3)
-     .lineTo(doc.page.width - 100, doc.y + 3)
-     .stroke('#1e40af', 1);
-  
-  doc.moveDown(2);
-  
-  // Beautiful date section
-  const currentDate = new Date().toLocaleDateString();
-  const dateText = `Date: ${currentDate}`;
-  const dateWidth = doc.widthOfString(dateText, { fontSize: 16 });
-  const dateBoxWidth = dateWidth + 50;
-  const dateBoxX = (doc.page.width - dateBoxWidth) / 2;
-  
-  // Draw beautiful date background
-  doc.rect(dateBoxX, doc.y - 8, dateBoxWidth, 35)
-     .fill('#f0f9ff')
-     .stroke('#1e40af', 2);
-  
-  // Inner highlight
-  doc.rect(dateBoxX + 3, doc.y - 5, dateBoxWidth - 6, 29)
-     .fill('#ffffff')
-     .stroke('#d4af37', 1);
-  
+  // Simple section title
   doc.fontSize(16)
      .font('Helvetica-Bold')
-     .fill('#1e40af')
-     .text(dateText, { align: 'center', y: doc.y });
+     .fill('#333333')
+     .text('Events Completed:', { align: 'center' });
   
-  doc.y += 35;
-  doc.moveDown(2);
-
-  // Beautiful signature area
-  const signatureBoxWidth = 300;
-  const signatureBoxHeight = 80;
-  const signatureBoxX = (doc.page.width - signatureBoxWidth) / 2;
+  doc.moveDown(0.5);
   
-  // Draw beautiful signature background
-  doc.rect(signatureBoxX, doc.y, signatureBoxWidth, signatureBoxHeight)
-     .fill('#f8fafc')
-     .stroke('#1e40af', 2);
+  // Calculate font size based on number of events to fit on one page
+  let fontSize = 12;
+  let lineSpacing = 0.3;
   
-  // Inner highlight
-  doc.rect(signatureBoxX + 3, doc.y + 3, signatureBoxWidth - 6, signatureBoxHeight - 6)
-     .fill('#ffffff')
-     .stroke('#d4af37', 1);
-  
-  // Signature line
-  doc.moveTo(signatureBoxX + 30, doc.y + 40)
-     .lineTo(signatureBoxX + signatureBoxWidth - 30, doc.y + 40)
-     .stroke('#1e40af', 2);
-  
-  // Decorative dots
-  const dotSpacing = 20;
-  const dotStartX = signatureBoxX + 40;
-  for (let i = 0; i < 5; i++) {
-    const dotX = dotStartX + (i * dotSpacing);
-    doc.circle(dotX, doc.y + 40, 2)
-       .fill('#d4af37');
+  // Adjust font size for many events
+  if (eventList.length > 20) {
+    fontSize = 8;
+    lineSpacing = 0.2;
+  } else if (eventList.length > 10) {
+    fontSize = 10;
+    lineSpacing = 0.25;
   }
   
-  // Signature label with beautiful styling
-  doc.fontSize(14)
-     .font('Helvetica-Bold')
-     .fill('#1e40af')
-     .text('Authorized Signature', { 
-       x: signatureBoxX, 
-       y: doc.y + 55,
-       width: signatureBoxWidth,
-       align: 'center'
-     });
+  // Add ALL events in compact format on ONE PAGE
+  eventList.forEach((event, index) => {
+    const eventDate = new Date(event.date).toLocaleDateString();
+    
+    // Very compact event entry
+    doc.fontSize(fontSize)
+       .font('Helvetica')
+       .fill('#333333')
+       .text(`${index + 1}. ${event.name} - ${eventDate} (${event.hours}h)`, { 
+         align: 'center'
+       });
+    
+    doc.moveDown(lineSpacing);
+  });
   
-  // Add decorative corner
-  doc.polygon([signatureBoxX + signatureBoxWidth - 20, doc.y], [signatureBoxX + signatureBoxWidth, doc.y], [signatureBoxX + signatureBoxWidth, doc.y + 20])
-     .fill('#d4af37');
+  // Add small spacing after events
+  doc.moveDown(0.5);
+};
+
+// Helper function to add simple signature line
+const addSignatureArea = async (doc) => {
+  // Add spacing before signature area
+  doc.moveDown(2);
+  
+  // Simple date
+  const currentDate = new Date().toLocaleDateString();
+  doc.fontSize(12)
+     .font('Helvetica')
+     .fill('#333333')
+     .text(`Date: ${currentDate}`, { align: 'center' });
+  
+  doc.moveDown(2);
+
+  // Just a simple line for signature
+  doc.moveTo(doc.page.width / 2 - 100, doc.y)
+     .lineTo(doc.page.width / 2 + 100, doc.y)
+     .stroke('#333333', 1);
+  
+  doc.moveDown(0.5);
+  
+  // Simple signature label
+  doc.fontSize(12)
+     .font('Helvetica')
+     .fill('#333333')
+     .text('Authorized Signature', { align: 'center' });
 };
 
 // Generate Individual Certificate
