@@ -32,6 +32,248 @@ const calculateStudentsHours = async (students) => {
   }
 };
 
+// Helper function to add events with proper pagination
+const addEventsWithPagination = async (doc, eventList) => {
+  const eventsPerPage = 8; // Optimal number of events per page
+  const totalPages = Math.ceil(eventList.length / eventsPerPage);
+  
+  for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+    // Add new page if not the first page
+    if (pageIndex > 0) {
+      doc.addPage();
+      
+      // Add page header for continuation pages
+      doc.fontSize(16)
+         .font('Helvetica-Bold')
+         .fill('#1e3a8a')
+         .text('Events Completed (continued)', { align: 'center', y: 50 });
+      
+      doc.moveDown(2);
+    }
+    
+    // Add section title with decorative background
+    const titleText = pageIndex === 0 ? 'Events Completed' : `Events Completed (Page ${pageIndex + 1} of ${totalPages})`;
+    const titleWidth = doc.widthOfString(titleText, { fontSize: 18 });
+    const titleBoxWidth = titleWidth + 40;
+    const titleBoxX = (doc.page.width - titleBoxWidth) / 2;
+    
+    // Draw title background
+    doc.rect(titleBoxX, doc.y - 8, titleBoxWidth, 35)
+       .fill('#f8fafc')
+       .stroke('#1e3a8a', 2);
+    
+    doc.fontSize(18)
+       .font('Helvetica-Bold')
+       .fill('#1e3a8a')
+       .text(titleText, { align: 'center', y: doc.y });
+    
+    doc.y += 35;
+    doc.moveDown(1);
+    
+    // Get events for this page
+    const startIndex = pageIndex * eventsPerPage;
+    const endIndex = Math.min(startIndex + eventsPerPage, eventList.length);
+    const pageEvents = eventList.slice(startIndex, endIndex);
+    
+    // Add decorative separator
+    doc.moveTo(100, doc.y)
+       .lineTo(doc.page.width - 100, doc.y)
+       .stroke('#1e3a8a', 2);
+    
+    doc.moveTo(120, doc.y + 2)
+       .lineTo(doc.page.width - 120, doc.y + 2)
+       .stroke('#3b82f6', 1);
+    
+    doc.moveDown(1.5);
+    
+    // Calculate optimal layout based on number of events
+    const eventsInThisPage = pageEvents.length;
+    let eventsPerRow, cardHeight, cardSpacing;
+    
+    if (eventsInThisPage <= 4) {
+      // Single column layout for few events
+      eventsPerRow = 1;
+      cardHeight = 50;
+      cardSpacing = 15;
+    } else if (eventsInThisPage <= 6) {
+      // Two column layout for medium number of events
+      eventsPerRow = 2;
+      cardHeight = 45;
+      cardSpacing = 12;
+    } else {
+      // Three column layout for many events
+      eventsPerRow = 3;
+      cardHeight = 40;
+      cardSpacing = 10;
+    }
+    
+    const cardWidth = (doc.page.width - 140 - (eventsPerRow - 1) * 20) / eventsPerRow;
+    
+    // Add events in grid layout
+    for (let i = 0; i < pageEvents.length; i += eventsPerRow) {
+      const rowEvents = pageEvents.slice(i, i + eventsPerRow);
+      
+      // Check if we need to move to next page
+      if (doc.y + cardHeight + 50 > doc.page.height - 100) {
+        // Add new page
+        doc.addPage();
+        
+        // Add page header
+        doc.fontSize(16)
+           .font('Helvetica-Bold')
+           .fill('#1e3a8a')
+           .text(`Events Completed (Page ${pageIndex + 1} continued)`, { align: 'center', y: 50 });
+        
+        doc.moveDown(2);
+      }
+      
+      rowEvents.forEach((event, index) => {
+        const eventX = 70 + (index * (cardWidth + 20));
+        const eventDate = new Date(event.date).toLocaleDateString();
+        const cardY = doc.y;
+        const globalIndex = startIndex + i + index;
+        
+        // Draw event card with improved styling
+        doc.rect(eventX, cardY, cardWidth, cardHeight)
+           .fill('#f8fafc')
+           .stroke('#e5e7eb', 1);
+        
+        // Add decorative left border
+        doc.rect(eventX, cardY, 5, cardHeight)
+           .fill('#1e3a8a');
+        
+        // Event number
+        doc.fontSize(12)
+           .font('Helvetica-Bold')
+           .fill('#1e3a8a')
+           .text(`${globalIndex + 1}.`, { 
+             x: eventX + 12, 
+             y: cardY + 8
+           });
+        
+        // Event name with better text wrapping
+        const maxNameLength = eventsPerRow === 1 ? 40 : eventsPerRow === 2 ? 25 : 20;
+        const displayName = event.name.length > maxNameLength ? 
+          event.name.substring(0, maxNameLength) + '...' : event.name;
+        
+        doc.fontSize(eventsPerRow === 1 ? 13 : 11)
+           .font('Helvetica-Bold')
+           .fill('#1f2937')
+           .text(displayName, { 
+             x: eventX + 25, 
+             y: cardY + 8,
+             width: cardWidth - 60,
+             align: 'left'
+           });
+        
+        // Event date
+        doc.fontSize(eventsPerRow === 1 ? 11 : 9)
+           .font('Helvetica')
+           .fill('#6b7280')
+           .text(eventDate, { 
+             x: eventX + 25, 
+             y: cardY + (eventsPerRow === 1 ? 25 : 22),
+             width: cardWidth - 60,
+             align: 'left'
+           });
+        
+        // Hours badge with better positioning
+        const badgeWidth = eventsPerRow === 1 ? 45 : 35;
+        const badgeHeight = eventsPerRow === 1 ? 18 : 15;
+        const badgeX = eventX + cardWidth - badgeWidth - 5;
+        const badgeY = cardY + 8;
+        
+        doc.rect(badgeX, badgeY, badgeWidth, badgeHeight)
+           .fill('#dc2626')
+           .stroke('#dc2626', 1);
+        
+        doc.fontSize(eventsPerRow === 1 ? 10 : 8)
+           .font('Helvetica-Bold')
+           .fill('#ffffff')
+           .text(`${event.hours}h`, { 
+             x: badgeX + badgeWidth / 2, 
+             y: badgeY + (badgeHeight / 2) - 3,
+             align: 'center'
+           });
+      });
+      
+      // Move to next row
+      doc.y += cardHeight + cardSpacing;
+    }
+    
+    // Add spacing after events
+    doc.moveDown(1);
+  }
+};
+
+// Helper function to add signature area
+const addSignatureArea = async (doc) => {
+  // Ensure we're on the last page
+  // If current page doesn't have enough space, add a new page
+  if (doc.y + 150 > doc.page.height - 50) {
+    doc.addPage();
+  }
+  
+  // Add spacing before signature area
+  doc.moveDown(1.5);
+  
+  // Add decorative separator
+  doc.moveTo(100, doc.y)
+     .lineTo(doc.page.width - 100, doc.y)
+     .stroke('#1e3a8a', 2);
+  
+  doc.moveTo(120, doc.y + 2)
+     .lineTo(doc.page.width - 120, doc.y + 2)
+     .stroke('#3b82f6', 1);
+  
+  doc.moveDown(1.5);
+  
+  // Date with decorative background
+  const currentDate = new Date().toLocaleDateString();
+  const dateText = `Date: ${currentDate}`;
+  const dateWidth = doc.widthOfString(dateText, { fontSize: 14 });
+  const dateBoxWidth = dateWidth + 30;
+  const dateBoxX = (doc.page.width - dateBoxWidth) / 2;
+  
+  // Draw date background
+  doc.rect(dateBoxX, doc.y - 5, dateBoxWidth, 25)
+     .fill('#f8fafc')
+     .stroke('#1e3a8a', 1);
+  
+  doc.fontSize(14)
+     .font('Helvetica-Bold')
+     .fill('#1e3a8a')
+     .text(dateText, { align: 'center', y: doc.y });
+  
+  doc.y += 25;
+  doc.moveDown(1.5);
+
+  // Signature area with elegant design
+  const signatureBoxWidth = 200;
+  const signatureBoxX = (doc.page.width - signatureBoxWidth) / 2;
+  
+  // Draw signature box
+  doc.rect(signatureBoxX, doc.y, signatureBoxWidth, 60)
+     .fill('#f8fafc')
+     .stroke('#1e3a8a', 2);
+  
+  // Signature line
+  doc.moveTo(signatureBoxX + 20, doc.y + 30)
+     .lineTo(signatureBoxX + signatureBoxWidth - 20, doc.y + 30)
+     .stroke('#1e3a8a', 2);
+  
+  // Signature label
+  doc.fontSize(12)
+     .font('Helvetica-Bold')
+     .fill('#1e3a8a')
+     .text('Authorized Signature', { 
+       x: signatureBoxX, 
+       y: doc.y + 45,
+       width: signatureBoxWidth,
+       align: 'center'
+     });
+};
+
 // Generate Individual Certificate
 exports.generateCertificate = async (req, res) => {
   try {
@@ -128,229 +370,14 @@ exports.generateCertificate = async (req, res) => {
     // Add logo and certificate header
     await addCertificateHeader(doc, user.name, `${totalHours} hours of Community Service`, totalHours);
 
-    // Event details section - beautifully designed
+    // Event details section with pagination support
     if (eventList.length > 0) {
-      doc.moveDown(1);
-      
-      // Add decorative separator with gradient
-      doc.moveTo(100, doc.y)
-         .lineTo(doc.page.width - 100, doc.y)
-         .stroke('#1e3a8a', 2);
-      
-      doc.moveTo(120, doc.y + 2)
-         .lineTo(doc.page.width - 120, doc.y + 2)
-         .stroke('#3b82f6', 1);
-      
-      doc.moveDown(1.5);
-      
-      // Add section title with decorative background
-      const titleText = 'Events Completed';
-      const titleWidth = doc.widthOfString(titleText, { fontSize: 18 });
-      const titleBoxWidth = titleWidth + 40;
-      const titleBoxX = (doc.page.width - titleBoxWidth) / 2;
-      
-      // Draw title background
-      doc.rect(titleBoxX, doc.y - 8, titleBoxWidth, 35)
-         .fill('#f8fafc')
-         .stroke('#1e3a8a', 2);
-      
-      doc.fontSize(18)
-         .font('Helvetica-Bold')
-         .fill('#1e3a8a')
-         .text(titleText, { align: 'center', y: doc.y });
-      
-      doc.y += 35;
-      doc.moveDown(1);
-      
-      // Handle different numbers of events with beautiful layouts
-      if (eventList.length <= 4) {
-        // For few events, use elegant single column with cards
-        eventList.forEach((event, index) => {
-          const eventDate = new Date(event.date).toLocaleDateString();
-          const cardY = doc.y;
-          const cardWidth = doc.page.width - 120;
-          const cardX = 60;
-          
-          // Draw event card
-          doc.rect(cardX, cardY, cardWidth, 45)
-             .fill('#f8fafc')
-             .stroke('#e5e7eb', 1);
-          
-          // Add decorative left border
-          doc.rect(cardX, cardY, 5, 45)
-             .fill('#1e3a8a');
-          
-          // Event number
-          doc.fontSize(14)
-             .font('Helvetica-Bold')
-             .fill('#1e3a8a')
-             .text(`${index + 1}.`, { 
-               x: cardX + 15, 
-               y: cardY + 8
-             });
-          
-          // Event name
-          doc.fontSize(14)
-             .font('Helvetica-Bold')
-             .fill('#1f2937')
-             .text(event.name, { 
-               x: cardX + 35, 
-               y: cardY + 8,
-               width: cardWidth - 100,
-               align: 'left'
-             });
-          
-          // Event details
-          doc.fontSize(12)
-             .font('Helvetica')
-             .fill('#6b7280')
-             .text(`${eventDate}`, { 
-               x: cardX + 35, 
-               y: cardY + 25,
-               width: cardWidth - 100,
-               align: 'left'
-             });
-          
-          // Hours badge
-          doc.rect(cardX + cardWidth - 60, cardY + 8, 50, 20)
-             .fill('#dc2626')
-             .stroke('#dc2626', 1);
-          
-          doc.fontSize(11)
-             .font('Helvetica-Bold')
-             .fill('#ffffff')
-             .text(`${event.hours}h`, { 
-               x: cardX + cardWidth - 35, 
-               y: cardY + 15,
-               align: 'center'
-             });
-          
-          doc.y += 55;
-        });
-      } else {
-        // For many events, use compact 2-column layout with cards
-        const eventsPerRow = 2;
-        const cardWidth = (doc.page.width - 140) / eventsPerRow;
-        
-        for (let i = 0; i < eventList.length; i += eventsPerRow) {
-          const rowEvents = eventList.slice(i, i + eventsPerRow);
-          
-          rowEvents.forEach((event, index) => {
-            const eventX = 70 + (index * (cardWidth + 20));
-            const eventDate = new Date(event.date).toLocaleDateString();
-            const cardY = doc.y;
-            
-            // Draw compact event card
-            doc.rect(eventX, cardY, cardWidth, 40)
-               .fill('#f8fafc')
-               .stroke('#e5e7eb', 1);
-            
-            // Add decorative left border
-            doc.rect(eventX, cardY, 4, 40)
-               .fill('#1e3a8a');
-            
-            // Event number and name
-            const shortName = event.name.length > 20 ? event.name.substring(0, 20) + '...' : event.name;
-            doc.fontSize(11)
-               .font('Helvetica-Bold')
-               .fill('#1f2937')
-               .text(`${i + index + 1}. ${shortName}`, { 
-                 x: eventX + 10, 
-                 y: cardY + 8,
-                 width: cardWidth - 50,
-                 align: 'left'
-               });
-            
-            // Event date
-            doc.fontSize(9)
-               .font('Helvetica')
-               .fill('#6b7280')
-               .text(eventDate, { 
-                 x: eventX + 10, 
-                 y: cardY + 22,
-                 width: cardWidth - 50,
-                 align: 'left'
-               });
-            
-            // Hours badge
-            doc.rect(eventX + cardWidth - 35, cardY + 8, 25, 15)
-               .fill('#dc2626')
-               .stroke('#dc2626', 1);
-            
-            doc.fontSize(9)
-               .font('Helvetica-Bold')
-               .fill('#ffffff')
-               .text(`${event.hours}h`, { 
-                 x: eventX + cardWidth - 22, 
-                 y: cardY + 13,
-                 align: 'center'
-               });
-          });
-          
-          // Move to next row
-          doc.y += 50;
-        }
-      }
+      // Add events with proper pagination
+      await addEventsWithPagination(doc, eventList);
     }
 
-    // Add spacing before signature area
-    doc.moveDown(1.5);
-    
-    // Add decorative separator
-    doc.moveTo(100, doc.y)
-       .lineTo(doc.page.width - 100, doc.y)
-       .stroke('#1e3a8a', 2);
-    
-    doc.moveTo(120, doc.y + 2)
-       .lineTo(doc.page.width - 120, doc.y + 2)
-       .stroke('#3b82f6', 1);
-    
-    doc.moveDown(1.5);
-    
-    // Date with decorative background
-    const currentDate = new Date().toLocaleDateString();
-    const dateText = `Date: ${currentDate}`;
-    const dateWidth = doc.widthOfString(dateText, { fontSize: 14 });
-    const dateBoxWidth = dateWidth + 30;
-    const dateBoxX = (doc.page.width - dateBoxWidth) / 2;
-    
-    // Draw date background
-    doc.rect(dateBoxX, doc.y - 5, dateBoxWidth, 25)
-       .fill('#f8fafc')
-       .stroke('#1e3a8a', 1);
-    
-    doc.fontSize(14)
-       .font('Helvetica-Bold')
-       .fill('#1e3a8a')
-       .text(dateText, { align: 'center', y: doc.y });
-    
-    doc.y += 25;
-    doc.moveDown(1.5);
-
-    // Signature area with elegant design
-    const signatureBoxWidth = 200;
-    const signatureBoxX = (doc.page.width - signatureBoxWidth) / 2;
-    
-    // Draw signature box
-    doc.rect(signatureBoxX, doc.y, signatureBoxWidth, 60)
-       .fill('#f8fafc')
-       .stroke('#1e3a8a', 2);
-    
-    // Signature line
-    doc.moveTo(signatureBoxX + 20, doc.y + 30)
-       .lineTo(signatureBoxX + signatureBoxWidth - 20, doc.y + 30)
-       .stroke('#1e3a8a', 2);
-    
-    // Signature label
-    doc.fontSize(12)
-       .font('Helvetica-Bold')
-       .fill('#1e3a8a')
-       .text('Authorized Signature', { 
-         x: signatureBoxX, 
-         y: doc.y + 45,
-         width: signatureBoxWidth,
-         align: 'center'
-       });
+    // Add signature area only on the last page
+    await addSignatureArea(doc);
 
     doc.end();
   } catch (err) {
