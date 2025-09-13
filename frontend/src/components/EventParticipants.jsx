@@ -485,14 +485,14 @@ function EventParticipantsPage() {
                 </div>
                 
                 <div className="info-row">
-                  <span className="label">Time In:</span>
+                  <span className="label time-label">Time In:</span>
                   <span className="value">
                     {participant.timeIn ? formatDateTimePhilippines(participant.timeIn) : 'Not timed in'}
                   </span>
                 </div>
                 
                 <div className="info-row">
-                  <span className="label">Time Out:</span>
+                  <span className="label time-label">Time Out:</span>
                   <span className="value">
                     {participant.timeOut ? formatDateTimePhilippines(participant.timeOut) : 'Not timed out'}
                   </span>
