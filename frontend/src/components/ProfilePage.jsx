@@ -313,7 +313,7 @@ function ProfilePage() {
                   onError={(e) => {
                     console.error('Profile picture failed to load:', e.target.src);
                     // Set a default profile picture or hide the image
-                    e.target.src = 'https://charism-api-xtw9.onrender.com/api/files/profile-picture/default';
+                    e.target.src = `${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/files/profile-picture/default`;
                     e.target.onerror = null; // Prevent infinite loop
                   }}
                   onLoad={() => {
