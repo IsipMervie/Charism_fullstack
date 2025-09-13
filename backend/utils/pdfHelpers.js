@@ -11,10 +11,10 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
   try {
     const logoPath = path.join(__dirname, '..', 'logo.png');
     
-    // Add logo on the LEFT side
+    // Add logo on the RIGHT side
     try {
       const logoSize = 100;
-      const logoX = 50;
+      const logoX = 450; // Move logo to right side
       const logoY = 30;
       
       await doc.image(logoPath, logoX, logoY, { 
@@ -25,27 +25,27 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
       console.log('Logo not found, continuing without logo:', logoError.message);
     }
     
-    // Add ALL text on the RIGHT side - completely separate from logo
+    // Add ALL text on the LEFT side - completely separate from logo
     doc.y = 30;
     
-    // Institution name - positioned on the RIGHT side with MORE space from logo
+    // Institution name - positioned on the LEFT side with MORE space from logo
     doc.fontSize(14).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 220,
+         x: 50,
          y: 30
        });
     
     doc.fontSize(14).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Spirituality, and Mission', { 
-         x: 220,
+         x: 50,
          y: 50
        });
     
-    // Add main title - positioned on the RIGHT side with MORE space from logo
+    // Add main title - positioned on the LEFT side with MORE space from logo
     if (title) {
       doc.fontSize(24).font('Helvetica-Bold').fillColor('#1e40af')
          .text(title, { 
-           x: 220,
+           x: 50,
            y: 80
          });
     }
@@ -54,7 +54,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     if (subtitle) {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text(subtitle, { 
-           x: 220,
+           x: 50,
            y: 110
          });
     }
@@ -62,7 +62,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     // Add generation date
     doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { 
-         x: 220,
+         x: 50,
          y: 130
        });
     
