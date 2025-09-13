@@ -207,7 +207,7 @@ exports.generateStudentsListPDF = async (req, res) => {
 
     // Create PDF document
     const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 50 });
-    
+
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=students-list-${year || 'all'}.pdf`);
     doc.pipe(res);

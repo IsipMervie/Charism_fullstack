@@ -11,33 +11,42 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
   try {
     const logoPath = path.join(__dirname, '..', 'logo.png');
     
-    // Add logo (if it exists)
+    // Add logo on the left side with proper spacing
     try {
-      await doc.image(logoPath, 50, 50, { 
-        width: 60, 
-        height: 60,
-        align: 'center'
+      const logoSize = 80;
+      const logoX = 50;
+      const logoY = 50;
+      
+      await doc.image(logoPath, logoX, logoY, { 
+        width: logoSize, 
+        height: logoSize
       });
     } catch (logoError) {
       console.log('Logo not found, continuing without logo:', logoError.message);
     }
     
-    // Add header text
-    const headerY = 70; // Position below logo
-    doc.fontSize(16).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', { 
-         align: 'center',
-         y: headerY
+    // Add header text - positioned to avoid overlap with logo
+    doc.y = 50;
+    
+    // Institution name - positioned to the right of logo
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Center for the Holistic Advancement of Religious Instruction,', { 
+         x: 180,
+         y: 50
        });
     
-    // Institution subtitle removed
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Spirituality, and Mission', { 
+         x: 180,
+         y: 65
+       });
     
     // Add main title
     if (title) {
       doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
          .text(title, { 
-           align: 'center',
-           y: headerY + 50
+           x: 180,
+           y: 85
          });
     }
     
@@ -45,20 +54,20 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     if (subtitle) {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text(subtitle, { 
-           align: 'center',
-           y: headerY + 75
+           x: 180,
+           y: 105
          });
     }
     
     // Add generation date
     doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { 
-         align: 'center',
-         y: headerY + 95
+         x: 180,
+         y: 120
        });
     
     // Move cursor down for content
-    doc.y = headerY + 120;
+    doc.y = 140;
     
   } catch (error) {
     console.error('Error adding logo and header:', error);
