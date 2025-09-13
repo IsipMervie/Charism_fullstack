@@ -28,24 +28,24 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     // Add ALL text on the RIGHT side - completely separate from logo
     doc.y = 50;
     
-    // Institution name - positioned on the RIGHT side with MUCH MORE space
+    // Institution name - positioned on the RIGHT side with MORE space from logo
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 300,
+         x: 200,
          y: 50
        });
     
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
-       .text('Spirituality, and Mission', { 
-         x: 300,
+       .text('Service, and Mission', { 
+         x: 200,
          y: 65
        });
     
-    // Add main title - positioned on the RIGHT side with MUCH MORE space
+    // Add main title - positioned on the RIGHT side with MORE space from logo
     if (title) {
       doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
          .text(title, { 
-           x: 300,
+           x: 200,
            y: 85
          });
     }
@@ -54,7 +54,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     if (subtitle) {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text(subtitle, { 
-           x: 300,
+           x: 200,
            y: 105
          });
     }
@@ -62,7 +62,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     // Add generation date
     doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { 
-         x: 300,
+         x: 200,
          y: 120
        });
     
