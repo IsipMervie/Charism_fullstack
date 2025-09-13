@@ -86,148 +86,209 @@ exports.generateCertificate = async (req, res) => {
     doc.rect(0, doc.page.height - 20, doc.page.width, 20)
        .fill('#28a745');
 
-    // Professional border design
-    // Outer border
-    doc.rect(50, 50, doc.page.width - 100, doc.page.height - 100)
-       .lineWidth(2)
-       .stroke('#2c3e50');
+    // Elegant border design with decorative elements
+    // Main border
+    doc.rect(40, 40, doc.page.width - 80, doc.page.height - 80)
+       .lineWidth(3)
+       .stroke('#1e3a8a');
     
-    // Inner border
-    doc.rect(60, 60, doc.page.width - 120, doc.page.height - 120)
+    // Inner decorative border
+    doc.rect(50, 50, doc.page.width - 100, doc.page.height - 100)
        .lineWidth(1)
-       .stroke('#bdc3c7');
+       .stroke('#3b82f6');
 
-    // Corner decorations
-    const cornerSize = 15;
-    const cornerColor = '#3498db';
+    // Corner decorations with gradient effect
+    const cornerSize = 20;
     
     // Top-left corner
-    doc.rect(50, 50, cornerSize, cornerSize)
-       .fill(cornerColor);
+    doc.rect(40, 40, cornerSize, cornerSize)
+       .fill('#1e3a8a');
+    doc.rect(45, 45, cornerSize - 10, cornerSize - 10)
+       .fill('#3b82f6');
     
     // Top-right corner
-    doc.rect(doc.page.width - 65, 50, cornerSize, cornerSize)
-       .fill(cornerColor);
+    doc.rect(doc.page.width - 60, 40, cornerSize, cornerSize)
+       .fill('#1e3a8a');
+    doc.rect(doc.page.width - 55, 45, cornerSize - 10, cornerSize - 10)
+       .fill('#3b82f6');
     
     // Bottom-left corner
-    doc.rect(50, doc.page.height - 65, cornerSize, cornerSize)
-       .fill(cornerColor);
+    doc.rect(40, doc.page.height - 60, cornerSize, cornerSize)
+       .fill('#1e3a8a');
+    doc.rect(45, doc.page.height - 55, cornerSize - 10, cornerSize - 10)
+       .fill('#3b82f6');
     
     // Bottom-right corner
-    doc.rect(doc.page.width - 65, doc.page.height - 65, cornerSize, cornerSize)
-       .fill(cornerColor);
+    doc.rect(doc.page.width - 60, doc.page.height - 60, cornerSize, cornerSize)
+       .fill('#1e3a8a');
+    doc.rect(doc.page.width - 55, doc.page.height - 55, cornerSize - 10, cornerSize - 10)
+       .fill('#3b82f6');
 
 
     // Add logo and certificate header
     await addCertificateHeader(doc, user.name, `${totalHours} hours of Community Service`, totalHours);
 
-    // Event details section - handle multiple events properly
+    // Event details section - beautifully designed
     if (eventList.length > 0) {
       doc.moveDown(1);
       
-      // Add a subtle line separator
-      doc.moveTo(120, doc.y)
-         .lineTo(doc.page.width - 120, doc.y)
-         .stroke('#e0e0e0');
+      // Add decorative separator with gradient
+      doc.moveTo(100, doc.y)
+         .lineTo(doc.page.width - 100, doc.y)
+         .stroke('#1e3a8a', 2);
       
+      doc.moveTo(120, doc.y + 2)
+         .lineTo(doc.page.width - 120, doc.y + 2)
+         .stroke('#3b82f6', 1);
+      
+      doc.moveDown(1.5);
+      
+      // Add section title with decorative background
+      const titleText = 'Events Completed';
+      const titleWidth = doc.widthOfString(titleText, { fontSize: 18 });
+      const titleBoxWidth = titleWidth + 40;
+      const titleBoxX = (doc.page.width - titleBoxWidth) / 2;
+      
+      // Draw title background
+      doc.rect(titleBoxX, doc.y - 8, titleBoxWidth, 35)
+         .fill('#f8fafc')
+         .stroke('#1e3a8a', 2);
+      
+      doc.fontSize(18)
+         .font('Helvetica-Bold')
+         .fill('#1e3a8a')
+         .text(titleText, { align: 'center', y: doc.y });
+      
+      doc.y += 35;
       doc.moveDown(1);
       
-      doc.fontSize(16)
-         .font('Helvetica-Bold')
-         .fill('#495057')
-         .text('Events Completed:', { align: 'center' });
-
-      doc.moveDown(0.8);
-      
-      // Handle different numbers of events with appropriate layouts
-      if (eventList.length <= 6) {
-        // For few events, use 2-column layout
-        const eventsPerRow = 2;
-        const startX = 120;
-        const eventWidth = (doc.page.width - 240) / eventsPerRow;
-        
-        for (let i = 0; i < eventList.length; i += eventsPerRow) {
-          const rowEvents = eventList.slice(i, i + eventsPerRow);
+      // Handle different numbers of events with beautiful layouts
+      if (eventList.length <= 4) {
+        // For few events, use elegant single column with cards
+        eventList.forEach((event, index) => {
+          const eventDate = new Date(event.date).toLocaleDateString();
+          const cardY = doc.y;
+          const cardWidth = doc.page.width - 120;
+          const cardX = 60;
           
-          rowEvents.forEach((event, index) => {
-            const eventX = startX + (index * eventWidth);
-            const eventDate = new Date(event.date).toLocaleDateString();
-            
-            // Event name
-            doc.fontSize(12)
-               .font('Helvetica-Bold')
-               .fill('#2c3e50')
-               .text(`${i + index + 1}. ${event.name}`, { 
-                 x: eventX, 
-                 y: doc.y,
-                 width: eventWidth - 10,
-                 align: 'left'
-               });
-            
-            // Event details
-            doc.fontSize(10)
-               .font('Helvetica')
-               .fill('#6c757d')
-               .text(`${eventDate} • ${event.hours} hours`, { 
-                 x: eventX, 
-                 y: doc.y + 15,
-                 width: eventWidth - 10,
-                 align: 'left'
-               });
-          });
+          // Draw event card
+          doc.rect(cardX, cardY, cardWidth, 45)
+             .fill('#f8fafc')
+             .stroke('#e5e7eb', 1);
           
-          // Move to next row
-          doc.y += 35;
-        }
+          // Add decorative left border
+          doc.rect(cardX, cardY, 5, 45)
+             .fill('#1e3a8a');
+          
+          // Event number
+          doc.fontSize(14)
+             .font('Helvetica-Bold')
+             .fill('#1e3a8a')
+             .text(`${index + 1}.`, { 
+               x: cardX + 15, 
+               y: cardY + 8
+             });
+          
+          // Event name
+          doc.fontSize(14)
+             .font('Helvetica-Bold')
+             .fill('#1f2937')
+             .text(event.name, { 
+               x: cardX + 35, 
+               y: cardY + 8,
+               width: cardWidth - 100,
+               align: 'left'
+             });
+          
+          // Event details
+          doc.fontSize(12)
+             .font('Helvetica')
+             .fill('#6b7280')
+             .text(`${eventDate}`, { 
+               x: cardX + 35, 
+               y: cardY + 25,
+               width: cardWidth - 100,
+               align: 'left'
+             });
+          
+          // Hours badge
+          doc.rect(cardX + cardWidth - 60, cardY + 8, 50, 20)
+             .fill('#dc2626')
+             .stroke('#dc2626', 1);
+          
+          doc.fontSize(11)
+             .font('Helvetica-Bold')
+             .fill('#ffffff')
+             .text(`${event.hours}h`, { 
+               x: cardX + cardWidth - 35, 
+               y: cardY + 15,
+               align: 'center'
+             });
+          
+          doc.y += 55;
+        });
       } else {
-        // For many events, use compact 3-column layout
-        const eventsPerRow = 3;
-        const startX = 100;
-        const eventWidth = (doc.page.width - 200) / eventsPerRow;
+        // For many events, use compact 2-column layout with cards
+        const eventsPerRow = 2;
+        const cardWidth = (doc.page.width - 140) / eventsPerRow;
         
         for (let i = 0; i < eventList.length; i += eventsPerRow) {
           const rowEvents = eventList.slice(i, i + eventsPerRow);
           
           rowEvents.forEach((event, index) => {
-            const eventX = startX + (index * eventWidth);
+            const eventX = 70 + (index * (cardWidth + 20));
             const eventDate = new Date(event.date).toLocaleDateString();
+            const cardY = doc.y;
             
-            // Event name (shorter)
-            const shortName = event.name.length > 25 ? event.name.substring(0, 25) + '...' : event.name;
-            doc.fontSize(10)
+            // Draw compact event card
+            doc.rect(eventX, cardY, cardWidth, 40)
+               .fill('#f8fafc')
+               .stroke('#e5e7eb', 1);
+            
+            // Add decorative left border
+            doc.rect(eventX, cardY, 4, 40)
+               .fill('#1e3a8a');
+            
+            // Event number and name
+            const shortName = event.name.length > 20 ? event.name.substring(0, 20) + '...' : event.name;
+            doc.fontSize(11)
                .font('Helvetica-Bold')
-               .fill('#2c3e50')
+               .fill('#1f2937')
                .text(`${i + index + 1}. ${shortName}`, { 
-                 x: eventX, 
-                 y: doc.y,
-                 width: eventWidth - 5,
+                 x: eventX + 10, 
+                 y: cardY + 8,
+                 width: cardWidth - 50,
                  align: 'left'
                });
             
-            // Event details (compact)
+            // Event date
             doc.fontSize(9)
                .font('Helvetica')
-               .fill('#6c757d')
-               .text(`${eventDate}`, { 
-                 x: eventX, 
-                 y: doc.y + 12,
-                 width: eventWidth - 5,
+               .fill('#6b7280')
+               .text(eventDate, { 
+                 x: eventX + 10, 
+                 y: cardY + 22,
+                 width: cardWidth - 50,
                  align: 'left'
                });
             
+            // Hours badge
+            doc.rect(eventX + cardWidth - 35, cardY + 8, 25, 15)
+               .fill('#dc2626')
+               .stroke('#dc2626', 1);
+            
             doc.fontSize(9)
-               .font('Helvetica')
-               .fill('#6c757d')
+               .font('Helvetica-Bold')
+               .fill('#ffffff')
                .text(`${event.hours}h`, { 
-                 x: eventX, 
-                 y: doc.y + 22,
-                 width: eventWidth - 5,
-                 align: 'left'
+                 x: eventX + cardWidth - 22, 
+                 y: cardY + 13,
+                 align: 'center'
                });
           });
           
           // Move to next row
-          doc.y += 35;
+          doc.y += 50;
         }
       }
     }
@@ -235,34 +296,61 @@ exports.generateCertificate = async (req, res) => {
     // Add spacing before signature area
     doc.moveDown(1.5);
     
-    // Add another subtle line separator
-    doc.moveTo(120, doc.y)
-       .lineTo(doc.page.width - 120, doc.y)
-       .stroke('#e0e0e0');
+    // Add decorative separator
+    doc.moveTo(100, doc.y)
+       .lineTo(doc.page.width - 100, doc.y)
+       .stroke('#1e3a8a', 2);
     
-    doc.moveDown(1);
+    doc.moveTo(120, doc.y + 2)
+       .lineTo(doc.page.width - 120, doc.y + 2)
+       .stroke('#3b82f6', 1);
     
-    // Date
-    const currentDate = new Date().toLocaleDateString();
-    doc.fontSize(12)
-       .font('Helvetica')
-       .fill('#6c757d')
-       .text(`Date: ${currentDate}`, { align: 'center' });
-
-    // Signature area
     doc.moveDown(1.5);
     
+    // Date with decorative background
+    const currentDate = new Date().toLocaleDateString();
+    const dateText = `Date: ${currentDate}`;
+    const dateWidth = doc.widthOfString(dateText, { fontSize: 14 });
+    const dateBoxWidth = dateWidth + 30;
+    const dateBoxX = (doc.page.width - dateBoxWidth) / 2;
+    
+    // Draw date background
+    doc.rect(dateBoxX, doc.y - 5, dateBoxWidth, 25)
+       .fill('#f8fafc')
+       .stroke('#1e3a8a', 1);
+    
+    doc.fontSize(14)
+       .font('Helvetica-Bold')
+       .fill('#1e3a8a')
+       .text(dateText, { align: 'center', y: doc.y });
+    
+    doc.y += 25;
+    doc.moveDown(1.5);
+
+    // Signature area with elegant design
+    const signatureBoxWidth = 200;
+    const signatureBoxX = (doc.page.width - signatureBoxWidth) / 2;
+    
+    // Draw signature box
+    doc.rect(signatureBoxX, doc.y, signatureBoxWidth, 60)
+       .fill('#f8fafc')
+       .stroke('#1e3a8a', 2);
+    
     // Signature line
-    doc.moveTo(doc.page.width / 2 - 60, doc.y)
-       .lineTo(doc.page.width / 2 + 60, doc.y)
-       .stroke('#007bff');
+    doc.moveTo(signatureBoxX + 20, doc.y + 30)
+       .lineTo(signatureBoxX + signatureBoxWidth - 20, doc.y + 30)
+       .stroke('#1e3a8a', 2);
     
-    doc.moveDown(0.3);
-    
-    doc.fontSize(10)
-       .font('Helvetica')
-       .fill('#6c757d')
-       .text('Authorized Signature', { align: 'center' });
+    // Signature label
+    doc.fontSize(12)
+       .font('Helvetica-Bold')
+       .fill('#1e3a8a')
+       .text('Authorized Signature', { 
+         x: signatureBoxX, 
+         y: doc.y + 45,
+         width: signatureBoxWidth,
+         align: 'center'
+       });
 
     doc.end();
   } catch (err) {
