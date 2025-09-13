@@ -34,9 +34,9 @@ const calculateStudentsHours = async (userId) => {
   }
 };
 
-// Helper function to add beautiful events with pagination
+// Helper function to add simple events list like the example
 const addEventsWithPagination = async (doc, eventList) => {
-  const eventsPerPage = 6; // Optimal number of events per page for beautiful layout
+  const eventsPerPage = 8; // More events per page for simple layout
   const totalPages = Math.ceil(eventList.length / eventsPerPage);
   
   for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
@@ -44,157 +44,47 @@ const addEventsWithPagination = async (doc, eventList) => {
     if (pageIndex > 0) {
       doc.addPage();
       
-      // Add beautiful page header for continuation pages
-      doc.fontSize(18)
+      // Simple page header for continuation pages
+      doc.fontSize(16)
          .font('Helvetica-Bold')
-         .fill('#1e40af')
-         .text('Events Completed (continued)', { align: 'center', y: 60 });
+         .fill('#333333')
+         .text('Events Completed (continued)', { align: 'center', y: 50 });
       
       doc.moveDown(2);
     }
     
-    // Add beautiful section title
-    const titleText = pageIndex === 0 ? 'Events Completed' : `Events Completed (Page ${pageIndex + 1} of ${totalPages})`;
-    const titleWidth = doc.widthOfString(titleText, { fontSize: 22 });
-    const titleBoxWidth = titleWidth + 60;
-    const titleBoxX = (doc.page.width - titleBoxWidth) / 2;
-    
-    // Draw beautiful title background with gradient effect
-    doc.rect(titleBoxX, doc.y - 12, titleBoxWidth, 45)
-       .fill('#f0f9ff')
-       .stroke('#1e40af', 3);
-    
-    // Inner highlight
-    doc.rect(titleBoxX + 3, doc.y - 9, titleBoxWidth - 6, 39)
-       .fill('#ffffff')
-       .stroke('#d4af37', 1);
-    
-    doc.fontSize(22)
+    // Simple section title
+    const titleText = pageIndex === 0 ? 'Events Completed:' : `Events Completed (Page ${pageIndex + 1} of ${totalPages}):`;
+    doc.fontSize(16)
        .font('Helvetica-Bold')
-       .fill('#1e40af')
-       .text(titleText, { align: 'center', y: doc.y });
+       .fill('#333333')
+       .text(titleText, { align: 'center' });
     
-    doc.y += 45;
-    doc.moveDown(1.5);
+    doc.moveDown(1);
     
     // Get events for this page
     const startIndex = pageIndex * eventsPerPage;
     const endIndex = Math.min(startIndex + eventsPerPage, eventList.length);
     const pageEvents = eventList.slice(startIndex, endIndex);
     
-    // Add elegant decorative separator
-    doc.moveTo(80, doc.y)
-       .lineTo(doc.page.width - 80, doc.y)
-       .stroke('#d4af37', 3);
-    
-    doc.moveTo(100, doc.y + 3)
-       .lineTo(doc.page.width - 100, doc.y + 3)
-       .stroke('#1e40af', 1);
-    
-    doc.moveDown(2);
-    
-    // Beautiful 2-column layout for all events
-    const eventsPerRow = 2;
-    const cardWidth = (doc.page.width - 120 - 30) / eventsPerRow;
-    const cardHeight = 65;
-    const cardSpacing = 20;
-    
-    // Add events in beautiful grid layout
-    for (let i = 0; i < pageEvents.length; i += eventsPerRow) {
-      const rowEvents = pageEvents.slice(i, i + eventsPerRow);
+    // Simple list of events
+    pageEvents.forEach((event, index) => {
+      const eventDate = new Date(event.date).toLocaleDateString();
+      const globalIndex = startIndex + index;
       
-      // Check if we need to move to next page
-      if (doc.y + cardHeight + 80 > doc.page.height - 100) {
-        // Add new page
-        doc.addPage();
-        
-        // Add page header
-        doc.fontSize(18)
-           .font('Helvetica-Bold')
-           .fill('#1e40af')
-           .text(`Events Completed (Page ${pageIndex + 1} continued)`, { align: 'center', y: 60 });
-        
-        doc.moveDown(2);
-      }
+      // Simple event entry
+      doc.fontSize(14)
+         .font('Helvetica')
+         .fill('#333333')
+         .text(`${globalIndex + 1}. ${event.name} - ${eventDate} (${event.hours} hours)`, { 
+           align: 'center'
+         });
       
-      rowEvents.forEach((event, index) => {
-        const eventX = 60 + (index * (cardWidth + 30));
-        const eventDate = new Date(event.date).toLocaleDateString();
-        const cardY = doc.y;
-        const globalIndex = startIndex + i + index;
-        
-        // Draw beautiful event card with shadow effect
-        // Shadow
-        doc.rect(eventX + 2, cardY + 2, cardWidth, cardHeight)
-           .fill('#e5e7eb');
-        
-        // Main card
-        doc.rect(eventX, cardY, cardWidth, cardHeight)
-           .fill('#ffffff')
-           .stroke('#1e40af', 2);
-        
-        // Inner border
-        doc.rect(eventX + 3, cardY + 3, cardWidth - 6, cardHeight - 6)
-           .stroke('#d4af37', 1);
-        
-        // Left accent border
-        doc.rect(eventX, cardY, 8, cardHeight)
-           .fill('#1e40af');
-        
-        // Event number with beautiful styling
-        doc.fontSize(16)
-           .font('Helvetica-Bold')
-           .fill('#ffffff')
-           .text(`${globalIndex + 1}`, { 
-             x: eventX + 2, 
-             y: cardY + 8,
-             width: 8,
-             align: 'center'
-           });
-        
-        // Event name with beautiful styling
-        const displayName = event.name.length > 35 ? 
-          event.name.substring(0, 35) + '...' : event.name;
-        
-        doc.fontSize(14)
-           .font('Helvetica-Bold')
-           .fill('#1e40af')
-           .text(displayName, { 
-             x: eventX + 15, 
-             y: cardY + 10,
-             width: cardWidth - 20,
-             align: 'left'
-           });
-        
-        // Event date with beautiful styling
-        doc.fontSize(11)
-           .font('Helvetica')
-           .fill('#6b7280')
-           .text(eventDate, { 
-             x: eventX + 15, 
-             y: cardY + 30,
-             width: cardWidth - 20,
-             align: 'left'
-           });
-        
-        // Event hours with beautiful styling
-        doc.fontSize(12)
-           .font('Helvetica-Bold')
-           .fill('#059669')
-           .text(`${event.hours} hours`, { 
-             x: eventX + 15, 
-             y: cardY + 45,
-             width: cardWidth - 20,
-             align: 'left'
-           });
-      });
-      
-      // Move to next row
-      doc.y += cardHeight + cardSpacing;
-    }
+      doc.moveDown(0.5);
+    });
     
-    // Add elegant spacing after events
-    doc.moveDown(1.5);
+    // Add spacing after events
+    doc.moveDown(1);
   }
 };
 
