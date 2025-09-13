@@ -218,7 +218,7 @@ export const getUsers = async (params = {}) => {
     try {
       console.log(`🔄 Fetching users attempt ${attempt}/${maxRetries}`);
       const query = new URLSearchParams(params).toString();
-      const response = await axiosInstance.get(`/admin/users${query ? `?${query}` : ''}`);
+      const response = await axiosInstance.get(`/api/admin/users${query ? `?${query}` : ''}`);
       console.log(`✅ Users fetched successfully on attempt ${attempt}`);
       return response.data;
     } catch (error) {
@@ -247,7 +247,7 @@ export const getUsers = async (params = {}) => {
 
 export const deleteUser = async (userId) => {
   try {
-    const response = await axiosInstance.delete(`/admin/users/${userId}`);
+    const response = await axiosInstance.delete(`/api/admin/users/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting user:', error);
@@ -257,7 +257,7 @@ export const deleteUser = async (userId) => {
 
 export const updateUser = async (userId, userData) => {
   try {
-    const response = await axiosInstance.put(`/admin/users/${userId}`, userData);
+    const response = await axiosInstance.put(`/api/admin/users/${userId}`, userData);
     return response.data;
   } catch (error) {
     console.error('Error updating user:', error);
@@ -280,7 +280,7 @@ export const addSection = async (name) => {
 
 export const updateSection = async (id, data) => {
   try {
-    const response = await axiosInstance.put(`/settings/sections/${id}`, data);
+    const response = await axiosInstance.put(`/api/settings/sections/${id}`, data);
     return response.data;
   } catch (error) {
     console.error('Error updating section:', error);
@@ -290,7 +290,7 @@ export const updateSection = async (id, data) => {
 
 export const deleteSection = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/settings/sections/${id}`);
+    const response = await axiosInstance.delete(`/api/settings/sections/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting section:', error);
@@ -313,7 +313,7 @@ export const addYearLevel = async (name) => {
 
 export const updateYearLevel = async (id, data) => {
   try {
-    const response = await axiosInstance.put(`/settings/year-levels/${id}`, data);
+    const response = await axiosInstance.put(`/api/settings/year-levels/${id}`, data);
     return response.data;
   } catch (error) {
     console.error('Error updating year level:', error);
@@ -323,7 +323,7 @@ export const updateYearLevel = async (id, data) => {
 
 export const deleteYearLevel = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/settings/year-levels/${id}`);
+    const response = await axiosInstance.delete(`/api/settings/year-levels/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting year level:', error);
@@ -346,7 +346,7 @@ export const addDepartment = async (name) => {
 
 export const updateDepartment = async (id, data) => {
   try {
-    const response = await axiosInstance.put(`/settings/departments/${id}`, data);
+    const response = await axiosInstance.put(`/api/settings/departments/${id}`, data);
     return response.data;
   } catch (error) {
     console.error('Error updating department:', error);
@@ -356,7 +356,7 @@ export const updateDepartment = async (id, data) => {
 
 export const deleteDepartment = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/settings/departments/${id}`);
+    const response = await axiosInstance.delete(`/api/settings/departments/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting department:', error);
@@ -401,7 +401,7 @@ export const createAcademicYear = async (academicYearData) => {
 
 export const updateAcademicYear = async (id, academicYearData) => {
   try {
-    const response = await axiosInstance.put(`/academic-years/${id}`, academicYearData);
+    const response = await axiosInstance.put(`/api/academic-years/${id}`, academicYearData);
     return response.data;
   } catch (error) {
     console.error('Error updating academic year:', error);
@@ -411,7 +411,7 @@ export const updateAcademicYear = async (id, academicYearData) => {
 
 export const deleteAcademicYear = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/academic-years/${id}`);
+    const response = await axiosInstance.delete(`/api/academic-years/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting academic year:', error);
@@ -421,7 +421,7 @@ export const deleteAcademicYear = async (id) => {
 
 export const toggleAcademicYearStatus = async (id) => {
   try {
-    const response = await axiosInstance.patch(`/academic-years/${id}/toggle`);
+    const response = await axiosInstance.patch(`/api/academic-years/${id}/toggle`);
     return response.data;
   } catch (error) {
     console.error('Error toggling academic year status:', error);
@@ -442,7 +442,7 @@ export const getPendingStaffApprovals = async () => {
 
 export const approveStaff = async (userId, approvalNotes = '') => {
   try {
-    const response = await axiosInstance.post(`/admin/staff-approvals/${userId}/approve`, {
+    const response = await axiosInstance.post(`/api/admin/staff-approvals/${userId}/approve`, {
       approvalNotes
     });
     return response.data;
@@ -454,7 +454,7 @@ export const approveStaff = async (userId, approvalNotes = '') => {
 
 export const rejectStaff = async (userId, approvalNotes = '') => {
   try {
-    const response = await axiosInstance.post(`/admin/staff-approvals/${userId}/reject`, {
+    const response = await axiosInstance.post(`/api/admin/staff-approvals/${userId}/reject`, {
       approvalNotes
     });
     return response.data;
@@ -559,7 +559,7 @@ export const getEventsWithUserData = async () => {
 // Public event details (no authentication required)
 export const getPublicEventDetails = async (eventId) => {
   try {
-    const response = await axios.get(`${API_URL}/events/${eventId}`);
+    const response = await axios.get(`${API_URL}/api/events/${eventId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching public event details:', error);
@@ -569,7 +569,7 @@ export const getPublicEventDetails = async (eventId) => {
 
 export const getEventDetails = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}`);
+    const response = await axiosInstance.get(`/api/events/${eventId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event details:', error);
@@ -579,7 +579,7 @@ export const getEventDetails = async (eventId) => {
 
 export const joinEvent = async (eventId) => {
   try {
-    const response = await axiosInstance.post(`/events/${eventId}/join`);
+    const response = await axiosInstance.post(`/api/events/${eventId}/join`);
     return response.data;
   } catch (error) {
     console.error('Error joining event:', error);
