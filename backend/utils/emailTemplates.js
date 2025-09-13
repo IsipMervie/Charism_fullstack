@@ -167,7 +167,7 @@ const getStaffApprovalTemplate = (userName, isApproved) => {
     <div style="margin-top: 20px;">
       <p style="margin: 0; font-size: 14px;">
         You can now access the system at: 
-        <a href="https://charism.onrender.com" style="color: #3498db;">https://charism.onrender.com</a>
+        <a href="https://charism-ucb4.onrender.com" style="color: #3498db;">https://charism-ucb4.onrender.com</a>
       </p>
     </div>
     ` : ''}

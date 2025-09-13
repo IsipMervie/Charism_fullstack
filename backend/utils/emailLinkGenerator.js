@@ -6,7 +6,7 @@ const getFrontendUrl = () => {
   const urls = [
     process.env.FRONTEND_URL_PRODUCTION,
     process.env.FRONTEND_URL,
-    'https://charism.onrender.com', // Fallback for production
+    'https://charism-ucb4.onrender.com', // Fallback for production
     'http://localhost:3000' // Fallback for development
   ];
   
