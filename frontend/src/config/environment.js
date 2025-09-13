@@ -6,10 +6,19 @@ const config = {
     NODE_ENV: 'development'
   },
   production: {
-    API_URL: process.env.REACT_APP_API_URL || 
-      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:5000/api' 
-        : 'https://charism-api-xtw9.onrender.com/api'),
+    API_URL: (() => {
+      let apiUrl = process.env.REACT_APP_API_URL || 
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:5000/api' 
+          : 'https://charism-api-xtw9.onrender.com/api');
+      
+      // Ensure API URL always ends with /api
+      if (!apiUrl.endsWith('/api')) {
+        apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api` : `${apiUrl}/api`;
+      }
+      
+      return apiUrl;
+    })(),
     FRONTEND_URL:'https://charism-ucb4.onrender.com',
     NODE_ENV: 'production'
   }

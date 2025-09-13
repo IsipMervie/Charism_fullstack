@@ -26,7 +26,7 @@ function ContactUsPage() {
     }
     setLoading(true);
     try {
-      await axiosInstance.post('/api/contact-us', { name, email, message });
+      await axiosInstance.post('/contact-us', { name, email, message });
       showSuccess('Message Sent Successfully!', 'Thank you for contacting us!', {
         confirmButtonText: 'Great!'
       });

@@ -13,7 +13,7 @@ const DatabaseStatus = () => {
     setError(null);
     
     try {
-      const response = await axiosInstance.get('/api/db-status');
+      const response = await axiosInstance.get('/db-status');
       const { database } = response.data;
       
       if (database.status === 'connected') {
