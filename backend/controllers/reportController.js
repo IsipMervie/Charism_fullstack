@@ -639,7 +639,7 @@ const eventAttendancePDF = async (req, res) => {
     // Add Narrative Report Section
     doc.moveDown(3);
     doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('Narrative Report', { align: 'center' });
+       .text('', { align: 'center' });
 
     doc.moveDown(1);
 
