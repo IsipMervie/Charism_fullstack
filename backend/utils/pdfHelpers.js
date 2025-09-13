@@ -11,7 +11,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
   try {
     const logoPath = path.join(__dirname, '..', 'logo.png');
     
-    // Add logo on the left side with proper spacing
+    // Add logo on the LEFT side
     try {
       const logoSize = 80;
       const logoX = 50;
@@ -25,27 +25,27 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
       console.log('Logo not found, continuing without logo:', logoError.message);
     }
     
-    // Add header text - positioned to avoid overlap with logo
+    // Add ALL text on the RIGHT side - completely separate from logo
     doc.y = 50;
     
-    // Institution name - positioned to the right of logo with MORE space
+    // Institution name - positioned on the RIGHT side
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 200,
+         x: 250,
          y: 50
        });
     
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Spirituality, and Mission', { 
-         x: 200,
+         x: 250,
          y: 65
        });
     
-    // Add main title - positioned further right
+    // Add main title - positioned on the RIGHT side
     if (title) {
       doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
          .text(title, { 
-           x: 200,
+           x: 250,
            y: 85
          });
     }
@@ -54,7 +54,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     if (subtitle) {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text(subtitle, { 
-           x: 200,
+           x: 250,
            y: 105
          });
     }
@@ -62,7 +62,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     // Add generation date
     doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { 
-         x: 200,
+         x: 250,
          y: 120
        });
     
