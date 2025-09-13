@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Pagination } from 'react-bootstrap';
 import { FaComments, FaEye, FaReply, FaTrash, FaUser, FaCalendar, FaTag, FaSpinner, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
-import { axiosInstance } from '../api/api';
+import { axiosInstance, getAllFeedback } from '../api/api';
 import { showQuestion, showSuccess, showError } from '../utils/sweetAlertUtils';
 import './AdminManageFeedbackPage.css';
 
@@ -82,27 +82,25 @@ function AdminManageFeedbackPage() {
     try {
       const token = localStorage.getItem('token');
       
-      const params = new URLSearchParams({
+      const params = {
         page: pagination.currentPage || 1,
         limit: pagination.itemsPerPage || 20,
         ...filters
-      });
+      };
 
-      const response = await axiosInstance.get(`/feedback/admin/all?${params}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await getAllFeedback(params);
 
-      // Ensure response.data.feedback is an array
-      const feedbackData = Array.isArray(response.data.feedback) ? response.data.feedback : [];
+      // Ensure response.feedback is an array
+      const feedbackData = Array.isArray(response.feedback) ? response.feedback : [];
       setFeedback(feedbackData);
       
       // Update pagination if response has pagination data
-      if (response.data && response.data.pagination && typeof response.data.pagination === 'object') {
+      if (response.pagination && typeof response.pagination === 'object') {
         const newPagination = {
-          currentPage: response.data.pagination.currentPage || 1,
-          totalPages: response.data.pagination.totalPages || 1,
-          totalItems: response.data.pagination.totalItems || 0,
-          itemsPerPage: response.data.pagination.itemsPerPage || 20
+          currentPage: response.pagination.currentPage || 1,
+          totalPages: response.pagination.totalPages || 1,
+          totalItems: response.pagination.totalItems || 0,
+          itemsPerPage: response.pagination.itemsPerPage || 20
         };
         
         setPagination(newPagination);
@@ -165,7 +163,7 @@ function AdminManageFeedbackPage() {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('token');
-        await axiosInstance.delete(`/feedback/admin/${feedbackId}`, {
+        await axiosInstance.delete(`/api/feedback/admin/${feedbackId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -189,7 +187,7 @@ function AdminManageFeedbackPage() {
 
     try {
       const token = localStorage.getItem('token');
-      await axiosInstance.put(`/feedback/admin/${selectedFeedback._id}`, responseData, {
+      await axiosInstance.put(`/api/feedback/admin/${selectedFeedback._id}`, responseData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
