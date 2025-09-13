@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit');
 const User = require('../models/User');
 const Event = require('../models/Event');
+const { addLogoAndHeader } = require('../utils/pdfHelpers');
 
 // Helper function to create a simple, aligned table with box borders
 const createSimpleTable = (doc, headers, data, startY) => {
@@ -184,18 +185,8 @@ const studentsByYearPDF = async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename=students-by-year-${year}.pdf`);
     doc.pipe(res);
 
-    // Header
-    doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('CHARISM', { align: 'center' });
-    
-    doc.moveDown(1);
-
-    // Title
-    doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text(`Students Report - Academic Year ${year}`, { align: 'center' });
-
-    doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
-       .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
+    // Add logo and header
+    await addLogoAndHeader(doc, `Students Report - Academic Year ${year}`);
 
     // Add filter information
     const filters = [];
@@ -326,18 +317,8 @@ const students40HoursPDF = async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename=students-40-plus-hours.pdf`);
     doc.pipe(res);
 
-    // Header
-    doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('CHARISM', { align: 'center' });
-    
-    doc.moveDown(1);
-
-    // Title
-    doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('Students Report (Completed)', { align: 'center' });
-
-    doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
-       .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
+    // Add logo and header
+    await addLogoAndHeader(doc, 'Students Report (Completed)');
 
     // Add filter information
     const filters = [];
@@ -482,16 +463,8 @@ const eventAttendancePDF = async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename=event-attendance-${eventId}.pdf`);
     doc.pipe(res);
 
-    // Header
-    doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('CHARISM', { align: 'center' });
-    
-
-    doc.moveDown(1);
-
-    // Event details
-    doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
-       .text('Event Attendance Report', { align: 'center' });
+    // Add logo and header
+    await addLogoAndHeader(doc, 'Event Attendance Report');
 
     doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
@@ -742,16 +715,8 @@ const eventListPDF = async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename=event-list.pdf`);
     doc.pipe(res);
 
-    // Header
-    doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
-      .text('CHARISM', { align: 'center' });
-    doc.moveDown(1);
-
-    // Title
-    doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
-      .text('Event List', { align: 'center' });
-    doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
-      .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
+    // Add logo and header
+    await addLogoAndHeader(doc, 'Event List');
 
     // Add filter information
     const filters = [];

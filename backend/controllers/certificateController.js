@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit');
 const User = require('../models/User');
 const Event = require('../models/Event');
+const { addCertificateHeader, addLogoAndHeader } = require('../utils/pdfHelpers');
 
 // Helper to sanitize text for PDF output
 const sanitizeText = (text) => {
@@ -103,41 +104,8 @@ exports.generateCertificate = async (req, res) => {
     doc.rect(doc.page.width - 40, doc.page.height - 40, cornerSize, cornerSize).fill('#007bff');
 
 
-    // Certificate content
-    doc.fontSize(32)
-       .font('Helvetica-Bold')
-       .fill('#2c3e50')
-       .text('Certificate of Completion', { align: 'center' });
-
-    doc.moveDown(1);
-    doc.fontSize(18)
-       .font('Helvetica')
-       .fill('#6c757d')
-       .text('This is to certify that', { align: 'center' });
-
-    doc.moveDown(0.5);
-    doc.fontSize(28)
-       .font('Helvetica-Bold')
-       .fill('#007bff')
-       .text(user.name, { align: 'center', underline: true });
-
-    doc.moveDown(0.5);
-    doc.fontSize(18)
-       .font('Helvetica')
-       .fill('#6c757d')
-       .text('has successfully completed', { align: 'center' });
-
-    doc.moveDown(0.5);
-    doc.fontSize(24)
-       .font('Helvetica-Bold')
-       .fill('#28a745')
-       .text(`${totalHours} hours of Community Service`, { align: 'center' });
-
-    doc.moveDown(1);
-    doc.fontSize(16)
-       .font('Helvetica')
-       .fill('#6c757d')
-       .text(`through participation in ${approvedEvents} approved events.`, { align: 'center' });
+    // Add logo and certificate header
+    await addCertificateHeader(doc, user.name, `${totalHours} hours of Community Service`, totalHours);
 
     // Event details
     if (eventList.length > 0) {
@@ -234,13 +202,8 @@ exports.generateStudentsListPDF = async (req, res) => {
     );
     doc.pipe(res);
 
-    // Document title
-    doc.fontSize(18).font('Helvetica-Bold').fill('#000')
-              .text('CHARISM Students List', { align: 'center' });
-    doc.fontSize(12).font('Helvetica').fill('#000')
-      .text(`Academic Year: ${year || 'All Years'}`, { align: 'center' });
-    doc.fontSize(10).font('Helvetica').fill('#000')
-      .text(`Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
+    // Add logo and header
+    await addLogoAndHeader(doc, 'CHARISM Students List', `Academic Year: ${year || 'All Years'}`);
 
     // Summary information
     doc.moveDown(1);
