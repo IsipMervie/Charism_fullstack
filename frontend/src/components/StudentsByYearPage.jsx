@@ -299,10 +299,15 @@ function StudentsByYearPage() {
       if (pdfFilters.hoursMin && pdfFilters.hoursMin.trim() !== '') params.append('hoursMin', pdfFilters.hoursMin.trim());
       if (pdfFilters.hoursMax && pdfFilters.hoursMax.trim() !== '') params.append('hoursMax', pdfFilters.hoursMax.trim());
 
-      const apiUrl = process.env.REACT_APP_API_URL || 
+      let apiUrl = process.env.REACT_APP_API_URL || 
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
           ? 'http://localhost:5000/api' 
           : 'https://charism-api-xtw9.onrender.com/api');
+      
+      // Ensure API URL always ends with /api
+      if (!apiUrl.endsWith('/api')) {
+        apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api` : `${apiUrl}/api`;
+      }
       console.log('PDF Generation URL:', `${apiUrl}/reports/students-by-year?${params}`);
       console.log('PDF Filters:', pdfFilters);
       console.log('Selected Year:', selectedYear);

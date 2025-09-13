@@ -1,25 +1,34 @@
 // Image URL utility for consistent image handling
 const getBackendUrl = () => {
+  let apiUrl;
+  
   // If environment variable is set, use it
   if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
+    apiUrl = process.env.REACT_APP_API_URL;
+  } else {
+    // Detect environment based on hostname
+    const hostname = window.location.hostname;
+    
+    // Production environment
+    if (hostname === 'charism-ucb4.onrender.com' || hostname === 'charism.onrender.com') {
+      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
+    }
+    // Local development
+    else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      apiUrl = 'http://localhost:5000/api';
+    }
+    // Default to production for any other case
+    else {
+      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
+    }
   }
   
-  // Detect environment based on hostname
-  const hostname = window.location.hostname;
-  
-  // Production environment
-  if (hostname === 'charism-ucb4.onrender.com' || hostname === 'charism.onrender.com') {
-    return 'https://charism-api-xtw9.onrender.com/api';
+  // Ensure API URL always ends with /api
+  if (!apiUrl.endsWith('/api')) {
+    apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api` : `${apiUrl}/api`;
   }
   
-  // Local development
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:5000/api';
-  }
-  
-  // Default to production for any other case
-  return 'https://charism-api-xtw9.onrender.com/api';
+  return apiUrl;
 };
 
 const BACKEND_URL = getBackendUrl();

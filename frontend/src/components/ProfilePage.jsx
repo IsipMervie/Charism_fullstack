@@ -313,10 +313,15 @@ function ProfilePage() {
                   onError={(e) => {
                     console.error('Profile picture failed to load:', e.target.src);
                     // Set a default profile picture or hide the image
-                    const apiUrl = process.env.REACT_APP_API_URL || 
+                    let apiUrl = process.env.REACT_APP_API_URL || 
                       (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
                         ? 'http://localhost:5000/api' 
                         : 'https://charism-api-xtw9.onrender.com/api');
+                    
+                    // Ensure API URL always ends with /api
+                    if (!apiUrl.endsWith('/api')) {
+                      apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api` : `${apiUrl}/api`;
+                    }
                     e.target.src = `${apiUrl}/files/profile-picture/default`;
                     e.target.onerror = null; // Prevent infinite loop
                   }}

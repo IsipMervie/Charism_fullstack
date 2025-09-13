@@ -637,7 +637,11 @@ const eventAttendancePDF = async (req, res) => {
     }
 
     // Add Narrative Report Section
+    doc.moveDown(3);
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Narrative Report', { align: 'center' });
 
+    doc.moveDown(1);
 
     // Generate narrative content based on event data
     const totalParticipants = attendedParticipants.length;

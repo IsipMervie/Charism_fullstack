@@ -71,10 +71,16 @@ function Students40HoursPage() {
       if (search) params.append('search', search);
       
       const token = localStorage.getItem('token');
-      const apiUrl = process.env.REACT_APP_API_URL || 
+      let apiUrl = process.env.REACT_APP_API_URL || 
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
           ? 'http://localhost:5000/api' 
           : 'https://charism-api-xtw9.onrender.com/api');
+      
+      // Ensure API URL always ends with /api
+      if (!apiUrl.endsWith('/api')) {
+        apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api` : `${apiUrl}/api`;
+      }
+      console.log('PDF Generation URL:', `${apiUrl}/reports/students-40-hours?${params.toString()}`);
       const response = await fetch(`${apiUrl}/reports/students-40-hours?${params.toString()}`, {
         method: 'GET',
         headers: {

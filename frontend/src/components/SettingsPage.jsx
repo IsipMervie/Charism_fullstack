@@ -478,24 +478,31 @@ function SettingsPage() {
                 <div className="current-profile-picture-display">
                   <h3 className="display-title">Current Profile Picture</h3>
                   <div className="profile-picture-preview">
-                    {/* Show temporary profile picture if available, otherwise show current */}
-                    {(tempProfilePicture || profilePicture) ? (
-                      <img
-                        src={getProfilePictureUrl(tempProfilePicture || profilePicture, getCurrentUserId())}
-                        alt="Profile"
-                        className="rounded-circle"
-                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                        onError={(e) => {
-                          console.error('Profile picture failed to load:', e.target.src);
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : null}
-                    
-                    <div className={`profile-picture-placeholder ${(tempProfilePicture || profilePicture) ? 'hidden' : ''}`}>
-                      <FaUser />
-                      <span>No profile picture set</span>
-                    </div>
+                    {/* Always show profile picture - either custom or default */}
+                    <img
+                      src={getProfilePictureUrl(tempProfilePicture || profilePicture, getCurrentUserId())}
+                      alt="Profile"
+                      className="rounded-circle"
+                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        console.error('Profile picture failed to load:', e.target.src);
+                        // Fallback to default profile picture
+                        let apiUrl = process.env.REACT_APP_API_URL || 
+                          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                            ? 'http://localhost:5000/api' 
+                            : 'https://charism-api-xtw9.onrender.com/api');
+                        
+                        // Ensure API URL always ends with /api
+                        if (!apiUrl.endsWith('/api')) {
+                          apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api` : `${apiUrl}/api`;
+                        }
+                        e.target.src = `${apiUrl}/files/profile-picture/default`;
+                        e.target.onerror = null; // Prevent infinite loop
+                      }}
+                      onLoad={() => {
+                        console.log('Profile picture loaded successfully');
+                      }}
+                    />
                   </div>
                   
                   {/* Show preview indicator if there are temporary changes */}
