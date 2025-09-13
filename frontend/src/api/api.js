@@ -201,7 +201,7 @@ export default {
 // Generate registration tokens for existing events (admin utility)
 export const generateTokensForExistingEvents = async () => {
   try {
-    const response = await axiosInstance.post('/events/generate-tokens');
+    const response = await axiosInstance.post('/api/events/generate-tokens');
     return response.data;
   } catch (error) {
     console.error('Error generating tokens for existing events:', error);
@@ -268,7 +268,7 @@ export const updateUser = async (userId, userData) => {
 // Settings Management Functions
 export const addSection = async (name) => {
   try {
-    const response = await axiosInstance.post('/settings/sections', { name });
+    const response = await axiosInstance.post('/api/settings/sections', { name });
     return response.data;
   } catch (error) {
     console.error('Error adding section:', error);
@@ -301,7 +301,7 @@ export const deleteSection = async (id) => {
 // Year Levels Management
 export const addYearLevel = async (name) => {
   try {
-    const response = await axiosInstance.post('/settings/year-levels', { name });
+    const response = await axiosInstance.post('/api/settings/year-levels', { name });
     return response.data;
   } catch (error) {
     console.error('Error adding year level:', error);
@@ -334,7 +334,7 @@ export const deleteYearLevel = async (id) => {
 // Departments Management
 export const addDepartment = async (name) => {
   try {
-    const response = await axiosInstance.post('/settings/departments', { name });
+    const response = await axiosInstance.post('/api/settings/departments', { name });
     return response.data;
   } catch (error) {
     console.error('Error adding department:', error);
@@ -432,7 +432,7 @@ export const toggleAcademicYearStatus = async (id) => {
 // Staff Approval Management
 export const getPendingStaffApprovals = async () => {
   try {
-    const response = await axiosInstance.get('/admin/staff-approvals');
+    const response = await axiosInstance.get('/api/admin/staff-approvals');
     return response.data;
   } catch (error) {
     console.error('Error fetching pending staff approvals:', error);
@@ -518,9 +518,9 @@ export const getEventsWithUserData = async () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const userRole = user.role;
     
-    let endpoint = '/admin/events-with-user-data';
+    let endpoint = '/api/admin/events-with-user-data';
     if (userRole === 'Staff') {
-      endpoint = '/staff/events-with-user-data';
+      endpoint = '/api/staff/events-with-user-data';
       console.log('👤 Staff user detected, using staff endpoint');
     } else {
       console.log('👤 Admin user detected, using admin endpoint');
@@ -665,7 +665,7 @@ export const getEventParticipantsPublic = async (eventId) => {
 
 export const getStudentsByYear = async () => {
   try {
-    const response = await axiosInstance.get('/admin/students-by-year');
+    const response = await axiosInstance.get('/api/admin/students-by-year');
     return response.data;
   } catch (error) {
     console.error('Error fetching students by year:', error);
@@ -675,7 +675,7 @@ export const getStudentsByYear = async () => {
 
 export const getStudentsByYearFilterOptions = async () => {
   try {
-    const response = await axiosInstance.get('/admin/students-by-year-filter-options');
+    const response = await axiosInstance.get('/api/admin/students-by-year-filter-options');
     return response.data;
   } catch (error) {
     console.error('Error fetching filter options:', error);
@@ -685,7 +685,7 @@ export const getStudentsByYearFilterOptions = async () => {
 
 export const getStudents40Hours = async () => {
   try {
-    const response = await axiosInstance.get('/admin/students-40-hours');
+    const response = await axiosInstance.get('/api/admin/students-40-hours');
     return response.data;
   } catch (error) {
     console.error('Error fetching students with 40+ hours:', error);
@@ -726,7 +726,7 @@ export const loginUser = async (email, password) => {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔄 Login attempt ${attempt}/${maxRetries} to: ${axiosInstance.defaults.baseURL}/auth/login`);
+      console.log(`🔄 Login attempt ${attempt}/${maxRetries} to: ${axiosInstance.defaults.baseURL}/api/auth/login`);
       
       // Test connection first on first attempt
       if (attempt === 1) {
@@ -736,7 +736,7 @@ export const loginUser = async (email, password) => {
         }
       }
       
-      const response = await axiosInstance.post('/auth/login', { email, password });
+      const response = await axiosInstance.post('/api/auth/login', { email, password });
       console.log('✅ Login successful');
       return response.data;
     } catch (error) {
@@ -744,7 +744,7 @@ export const loginUser = async (email, password) => {
         message: error.message,
         code: error.code,
         status: error.response?.status,
-        url: axiosInstance.defaults.baseURL + '/auth/login'
+        url: axiosInstance.defaults.baseURL + '/api/auth/login'
       });
       lastError = error;
       
@@ -816,7 +816,7 @@ export const registerUser = async (name, email, password, userId, academicYear, 
       payload.section = section;
       payload.department = department;
     }
-    const response = await axiosInstance.post('/auth/register', payload);
+    const response = await axiosInstance.post('/api/auth/register', payload);
     return response.data;
   } catch (error) {
     console.error('Error registering user:', error);
@@ -834,7 +834,7 @@ export const registerUser = async (name, email, password, userId, academicYear, 
 export const createEvent = async (formData) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axiosInstance.post('/events/', formData, {
+    const response = await axiosInstance.post('/api/events/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -896,7 +896,7 @@ export const getAnalytics = async () => {
         if (error?.response?.status === 404) {
           try {
             console.log('🔄 Trying legacy analytics endpoint...');
-            const legacy = await axiosInstance.get('/events/analytics', {
+            const legacy = await axiosInstance.get('/api/events/analytics', {
               timeout: 60000
             });
             return legacy.data;
@@ -916,7 +916,7 @@ export const getAnalytics = async () => {
 // Change Password
 export const changePassword = async (oldPassword, newPassword) => {
   try {
-    const response = await axiosInstance.post('/auth/change-password', { oldPassword, newPassword });
+    const response = await axiosInstance.post('/api/auth/change-password', { oldPassword, newPassword });
     return response.data;
   } catch (error) {
     console.error('Error changing password:', error);
@@ -930,7 +930,7 @@ export const changePassword = async (oldPassword, newPassword) => {
 // User Profile
 export const getUserProfile = async () => {
   try {
-    const response = await axiosInstance.get('/settings/profile');
+    const response = await axiosInstance.get('/api/settings/profile');
     return response.data;
   } catch (error) {
     console.error('Error fetching user profile:', error);
@@ -940,7 +940,7 @@ export const getUserProfile = async () => {
 
 export const updateUserProfile = async (profileData) => {
   try {
-    const response = await axiosInstance.post('/settings/profile', profileData);
+    const response = await axiosInstance.post('/api/settings/profile', profileData);
     return response.data;
   } catch (error) {
     console.error('Error updating user profile:', error);
@@ -1200,7 +1200,7 @@ export const getPublicSettings = async () => {
     console.log('🔄 Fetching public settings from API...');
     
     // Use retry mechanism for critical settings
-    const response = await retryApiCall(() => axiosInstance.get('/settings/public'));
+    const response = await retryApiCall(() => axiosInstance.get('/api/settings/public'));
     console.log('✅ Public settings API response received');
     
     const data = response.data;
@@ -1250,7 +1250,7 @@ export const updateSettings = async (settingsData) => {
 // Get school settings (Admin only)
 export const getSchoolSettings = async () => {
   try {
-    const response = await axiosInstance.get('/settings/school');
+    const response = await axiosInstance.get('/api/settings/school');
     return response.data;
   } catch (error) {
     console.error('Error fetching school settings:', error);
@@ -1310,7 +1310,7 @@ export const generateReport = async (reportType, params = {}) => {
 // Password Reset
 export const forgotPassword = async (email) => {
   try {
-    const response = await axiosInstance.post('/auth/forgot-password', { email });
+    const response = await axiosInstance.post('/api/auth/forgot-password', { email });
     return response.data;
   } catch (error) {
     console.error('Error sending password reset email:', error);
@@ -1323,7 +1323,7 @@ export const forgotPassword = async (email) => {
 
 export const resetPassword = async (token, newPassword) => {
   try {
-    const response = await axiosInstance.post(`/auth/reset-password/${token}`, { newPassword });
+    const response = await axiosInstance.post(`/api/auth/reset-password/${token}`, { newPassword });
     return response.data;
   } catch (error) {
     console.error('Error resetting password:', error);
@@ -1439,7 +1439,7 @@ export const getYearlyStatistics = async (year) => {
 // Bulk Certificate Generation
 export const generateBulkCertificates = async (userIds) => {
   try {
-    const response = await axiosInstance.post('/certificates/bulk', { userIds }, {
+    const response = await axiosInstance.post('/api/certificates/bulk', { userIds }, {
       responseType: 'blob',
     });
     
@@ -1507,7 +1507,7 @@ export const getAllEventAttachments = async (eventId) => {
 export const getPendingRegistrations = async () => {
   try {
     console.log('🔍 Fetching pending registrations...');
-    const response = await axiosInstance.get('/events/pending-registrations');
+    const response = await axiosInstance.get('/api/events/pending-registrations');
     console.log('✅ Pending registrations fetched:', response.data);
     return response.data;
   } catch (error) {
