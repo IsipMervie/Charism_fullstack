@@ -383,10 +383,10 @@ function EventParticipantsPage() {
                   <td>
                     <div className="time-status">
                       <div className="time-in">
-                        <strong>Time In:</strong> {participant.timeIn ? formatDateTimePhilippines(participant.timeIn) : 'Not timed in'}
+                        <strong>Time In:</strong> <span className="time-value">{participant.timeIn ? formatDateTimePhilippines(participant.timeIn) : 'Not timed in'}</span>
                       </div>
                       <div className="time-out">
-                        <strong>Time Out:</strong> {participant.timeOut ? formatDateTimePhilippines(participant.timeOut) : 'Not timed out'}
+                        <strong>Time Out:</strong> <span className="time-value">{participant.timeOut ? formatDateTimePhilippines(participant.timeOut) : 'Not timed out'}</span>
                       </div>
                     </div>
                   </td>
@@ -486,14 +486,14 @@ function EventParticipantsPage() {
                 
                 <div className="info-row">
                   <span className="label time-label">Time In:</span>
-                  <span className="value">
+                  <span className="value time-value">
                     {participant.timeIn ? formatDateTimePhilippines(participant.timeIn) : 'Not timed in'}
                   </span>
                 </div>
                 
                 <div className="info-row">
                   <span className="label time-label">Time Out:</span>
-                  <span className="value">
+                  <span className="value time-value">
                     {participant.timeOut ? formatDateTimePhilippines(participant.timeOut) : 'Not timed out'}
                   </span>
                 </div>

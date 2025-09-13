@@ -117,20 +117,59 @@
 /* Desktop Table View */
 .desktop-table {
   display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+/* Scroll indicator for horizontal scroll */
+.desktop-table::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to left, rgba(0,0,0,0.1), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.desktop-table:hover::after {
+  opacity: 1;
 }
 
 .desktop-table table {
   width: 100%;
+  min-width: 1000px;
   border-collapse: collapse;
   background-color: var(--white);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
 }
 
-/* Mobile Card View */
+/* Column widths for better responsive layout */
+.desktop-table th:nth-child(1),
+.desktop-table td:nth-child(1) { min-width: 150px; } /* Name */
+.desktop-table th:nth-child(2),
+.desktop-table td:nth-child(2) { min-width: 200px; } /* Email */
+.desktop-table th:nth-child(3),
+.desktop-table td:nth-child(3) { min-width: 120px; } /* Department */
+.desktop-table th:nth-child(4),
+.desktop-table td:nth-child(4) { min-width: 140px; } /* Registration */
+.desktop-table th:nth-child(5),
+.desktop-table td:nth-child(5) { min-width: 200px; } /* Time In/Out */
+.desktop-table th:nth-child(6),
+.desktop-table td:nth-child(6) { min-width: 160px; } /* Status */
+.desktop-table th:nth-child(7),
+.desktop-table td:nth-child(7) { min-width: 180px; } /* Actions */
+
+/* Mobile Card View - Hidden, using scrollable table instead */
 .mobile-cards {
-  display: none;
+  display: none !important;
 }
 
 .participant-card {
@@ -373,6 +412,13 @@
   display: inline-block;
 }
 
+.time-value {
+  color: var(--text-primary);
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  margin-left: 4px;
+}
+
 /* Reflection status styles */
 .reflection-status { display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
 
@@ -445,14 +491,36 @@
     padding: var(--space-4);
   }
   
-  /* Hide desktop table on mobile */
+  /* Keep desktop table visible with horizontal scroll */
   .desktop-table {
-    display: none;
+    display: block;
+    overflow-x: auto;
+    margin: 0 -16px;
+    padding: 0 16px;
   }
   
-  /* Show mobile cards on mobile */
+  .desktop-table table {
+    min-width: 1000px;
+  }
+  
+  /* Improve time status readability on mobile */
+  .time-status {
+    font-size: var(--text-sm);
+  }
+  
+  .time-in strong, .time-out strong {
+    font-size: var(--text-sm);
+    padding: 3px 8px;
+  }
+  
+  .time-value {
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  
+  /* Ensure mobile cards stay hidden */
   .mobile-cards {
-    display: block;
+    display: none !important;
   }
   
   .summary-stats {
@@ -807,6 +875,12 @@
   border: 1px solid #d1d5db !important;
 }
 
+[data-theme="light"] .time-value {
+  color: #111827 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
 
 [data-theme="dark"] .table-row {
   background: #1e293b;
@@ -949,6 +1023,12 @@
 [data-theme="dark"] .time-out strong {
   background-color: #475569 !important;
   border: 1px solid #64748b !important;
+}
+
+[data-theme="dark"] .time-value {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
 }
 
 /* Force dark mode for all card elements - HIGHER SPECIFICITY */
