@@ -93,65 +93,65 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
     
     // Add logo (if it exists) - positioned at top left
     try {
-      await doc.image(logoPath, 50, 50, { 
-        width: 100, 
-        height: 100
+      await doc.image(logoPath, 60, 60, { 
+        width: 80, 
+        height: 80
       });
     } catch (logoError) {
       console.log('Logo not found, continuing without logo:', logoError.message);
     }
     
     // Add header text - positioned to the right of logo
-    const headerY = 60;
-    const headerX = 200; // Start after logo
+    const headerY = 70;
+    const headerX = 180; // Start after logo
     
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#2c3e50')
+    doc.fontSize(11).font('Helvetica-Bold').fillColor('#2c3e50')
        .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', { 
          x: headerX,
          y: headerY,
-         width: 300,
+         width: 320,
          align: 'left'
        });
     
     // Add CHARISM subtitle
-    doc.fontSize(16).font('Helvetica-Bold').fillColor('#34495e')
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#34495e')
        .text('CHARISM', { 
          x: headerX,
-         y: headerY + 25,
-         width: 300,
+         y: headerY + 20,
+         width: 320,
          align: 'left'
        });
     
     // Move down for main certificate content
-    doc.y = 200;
+    doc.y = 180;
     
     // Add certificate title - centered
-    doc.fontSize(32).font('Helvetica-Bold').fillColor('#2c3e50')
+    doc.fontSize(28).font('Helvetica-Bold').fillColor('#2c3e50')
        .text('Certificate of Completion', { 
          align: 'center'
        });
     
     // Add spacing
-    doc.moveDown(1.5);
+    doc.moveDown(1.2);
     
     // Add certification text
-    doc.fontSize(18).font('Helvetica').fillColor('#e74c3c')
+    doc.fontSize(16).font('Helvetica').fillColor('#e74c3c')
        .text('This is to certify that', { 
          align: 'center'
        });
     
-    doc.moveDown(1);
+    doc.moveDown(0.8);
     
     // Add student name - prominent
-    doc.fontSize(28).font('Helvetica-Bold').fillColor('#2c3e50')
+    doc.fontSize(24).font('Helvetica-Bold').fillColor('#2c3e50')
        .text(studentName, { 
          align: 'center'
        });
     
-    doc.moveDown(1);
+    doc.moveDown(0.8);
     
     // Add completion text
-    doc.fontSize(18).font('Helvetica').fillColor('#34495e')
+    doc.fontSize(16).font('Helvetica').fillColor('#34495e')
        .text('has successfully completed', { 
          align: 'center'
        });
@@ -159,21 +159,21 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
     doc.moveDown(0.5);
     
     // Add hours - highlighted
-    doc.fontSize(24).font('Helvetica-Bold').fillColor('#e74c3c')
+    doc.fontSize(20).font('Helvetica-Bold').fillColor('#e74c3c')
        .text(`${hours} hours of Community Service`, { 
          align: 'center'
        });
     
-    doc.moveDown(1);
+    doc.moveDown(0.8);
     
     // Add additional text
-    doc.fontSize(16).font('Helvetica').fillColor('#6c757d')
+    doc.fontSize(14).font('Helvetica').fillColor('#6c757d')
        .text(`through participation in approved events.`, { 
          align: 'center'
        });
     
     // Move cursor down for event details
-    doc.moveDown(2);
+    doc.moveDown(1.5);
     
   } catch (error) {
     console.error('Error adding certificate header:', error);
