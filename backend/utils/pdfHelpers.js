@@ -106,11 +106,11 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
        .lineWidth(2)
        .stroke('#28a745');
     
-    // Add logo on the left side
+    // Add logo on the left side with proper spacing
     try {
-      const logoSize = 60;
-      const logoX = 50;
-      const logoY = 80;
+      const logoSize = 80;
+      const logoX = 60;
+      const logoY = 70;
       
       await doc.image(logoPath, logoX, logoY, { 
         width: logoSize, 
@@ -120,8 +120,30 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
       console.log('Logo not found, continuing without logo:', logoError.message);
     }
     
-    // Add header text - centered
-    doc.y = 100;
+    // Add header text - positioned to avoid overlap with logo
+    doc.y = 80;
+    
+    // Institution name - positioned to the right of logo
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Center for the Holistic Advancement of Religious Instruction,', { 
+         x: 160,
+         y: 80
+       });
+    
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('Spirituality, and Mission', { 
+         x: 160,
+         y: 95
+       });
+    
+    doc.fontSize(16).font('Helvetica-Bold').fillColor('#d4af37')
+       .text('CHARISM', { 
+         x: 160,
+         y: 115
+       });
+    
+    // Move down for certificate title
+    doc.y = 160;
     
     // Certificate title - large and bold
     doc.fontSize(28).font('Helvetica-Bold').fillColor('#333333')
