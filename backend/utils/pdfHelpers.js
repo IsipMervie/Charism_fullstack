@@ -28,24 +28,24 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     // Add header text - positioned to avoid overlap with logo
     doc.y = 50;
     
-    // Institution name - positioned to the right of logo
+    // Institution name - positioned to the right of logo with MORE space
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 180,
+         x: 200,
          y: 50
        });
     
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Spirituality, and Mission', { 
-         x: 180,
+         x: 200,
          y: 65
        });
     
-    // Add main title
+    // Add main title - positioned further right
     if (title) {
       doc.fontSize(18).font('Helvetica-Bold').fillColor('#2c3e50')
          .text(title, { 
-           x: 180,
+           x: 200,
            y: 85
          });
     }
@@ -54,7 +54,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     if (subtitle) {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text(subtitle, { 
-           x: 180,
+           x: 200,
            y: 105
          });
     }
@@ -62,7 +62,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
     // Add generation date
     doc.fontSize(10).font('Helvetica').fillColor('#95a5a6')
        .text(`Generated: ${new Date().toLocaleDateString()}`, { 
-         x: 180,
+         x: 200,
          y: 120
        });
     
