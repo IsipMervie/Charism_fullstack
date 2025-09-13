@@ -163,7 +163,7 @@ function AdminManageFeedbackPage() {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('token');
-        await axiosInstance.delete(`/api/feedback/admin/${feedbackId}`, {
+        await axiosInstance.delete(`/feedback/admin/${feedbackId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -187,7 +187,7 @@ function AdminManageFeedbackPage() {
 
     try {
       const token = localStorage.getItem('token');
-      await axiosInstance.put(`/api/feedback/admin/${selectedFeedback._id}`, responseData, {
+      await axiosInstance.put(`/feedback/admin/${selectedFeedback._id}`, responseData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
