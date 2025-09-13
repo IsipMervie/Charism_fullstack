@@ -17,10 +17,10 @@
   align-items: flex-start;
   margin-bottom: 2rem;
   padding: 2rem;
-  background: var(--bg-primary);
+  background: var(--bg-card) !important;
   border-radius: 16px;
   box-shadow: var(--shadow-md);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-primary) !important;
 }
 
 .header-content {
@@ -57,9 +57,9 @@
 .stat-item {
   text-align: center;
   padding: 1rem;
-  background: var(--bg-secondary);
+  background: var(--bg-secondary) !important;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary) !important;
   min-width: 100px;
 }
 
@@ -82,9 +82,10 @@
 /* Search and Filters */
 .search-filters-card {
   margin-bottom: 2rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--shadow-sm);
+  background: var(--bg-card) !important;
 }
 
 .search-filters-row {
@@ -111,11 +112,11 @@
   width: 100%;
   padding: 1rem 1.25rem;
   font-size: 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--border-primary) !important;
   border-radius: 12px;
-  background: var(--bg-primary);
+  background: var(--bg-input) !important;
   transition: all 0.3s ease;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
 }
 
 .search-input:focus {
@@ -137,10 +138,12 @@
 }
 
 .filter-select {
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-primary) !important;
   border-radius: 8px;
   padding: 0.5rem;
   transition: all 0.3s ease;
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
 }
 
 .filter-select:focus {
@@ -159,9 +162,10 @@
 /* No Documentation State */
 .no-documentation-card {
   text-align: center;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--shadow-sm);
+  background: var(--bg-card) !important;
 }
 
 .no-docs-icon {
@@ -191,11 +195,12 @@
 }
 
 .documentation-card {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 12px;
   box-shadow: 0 2px 8px var(--shadow-sm);
   transition: all 0.3s ease;
   overflow: hidden;
+  background: var(--bg-card) !important;
 }
 
 .documentation-card:hover {
@@ -204,8 +209,8 @@
 }
 
 .card-header {
-  background: var(--bg-secondary);
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
   padding: 1.5rem;
 }
 
@@ -273,8 +278,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-secondary);
-  border: 1px solid #e5e7eb;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 8px;
   padding: 1rem;
   transition: all 0.3s ease;
@@ -358,10 +363,11 @@
 }
 
 .event-selection {
-  background: var(--bg-secondary);
+  background: var(--bg-secondary) !important;
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
 }
 
 .event-selection-form {
@@ -382,10 +388,11 @@
 }
 
 .selected-files {
-  background: var(--bg-secondary);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
   border-radius: 8px;
   padding: 1rem;
+  color: var(--text-primary) !important;
 }
 
 .file-list {
@@ -396,9 +403,10 @@
 }
 
 .file-list .file-item {
-  background: var(--bg-primary);
+  background: var(--bg-primary) !important;
   padding: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
 }
 
 .file-list .file-icon {
@@ -595,11 +603,85 @@
   }
 }
 
+/* Modal Dark Mode Support */
+.modal-content {
+  background: var(--bg-modal) !important;
+  border: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-header {
+  background: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-body {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-title {
+  color: var(--text-primary) !important;
+}
+
+.modal-footer {
+  background: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border-primary) !important;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+[data-theme="dark"] .modal-header .btn-close {
+  filter: invert(0);
+}
+
+/* Form Elements Dark Mode */
+.form-control {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+.form-control:focus {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+.form-control::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+.form-select {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+.form-select:focus {
+  background: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+.form-label {
+  color: var(--text-primary) !important;
+}
+
+.form-text {
+  color: var(--text-tertiary) !important;
+}
+
 /* Focus States for Accessibility */
 .form-control:focus,
 .form-select:focus,
 .btn:focus {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -656,4 +738,73 @@
 
 .bg-secondary {
   background-color: var(--text-tertiary) !important;
+}
+
+/* Additional Dark Mode Text Fixes */
+.student-documentation-page h1,
+.student-documentation-page h2,
+.student-documentation-page h3,
+.student-documentation-page h4,
+.student-documentation-page h5,
+.student-documentation-page h6 {
+  color: var(--text-primary) !important;
+}
+
+.student-documentation-page p,
+.student-documentation-page span,
+.student-documentation-page div,
+.student-documentation-page label,
+.student-documentation-page small,
+.student-documentation-page strong,
+.student-documentation-page em,
+.student-documentation-page b,
+.student-documentation-page i {
+  color: var(--text-primary) !important;
+}
+
+.student-documentation-page .text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.student-documentation-page .text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+.student-documentation-page .text-muted {
+  color: var(--text-tertiary) !important;
+}
+
+/* Button Dark Mode Fixes */
+.student-documentation-page .btn {
+  color: var(--text-primary) !important;
+}
+
+.student-documentation-page .btn-outline-primary {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+.student-documentation-page .btn-outline-primary:hover {
+  background-color: var(--primary) !important;
+  color: var(--text-inverse) !important;
+}
+
+.student-documentation-page .btn-outline-secondary {
+  color: var(--text-secondary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.student-documentation-page .btn-outline-secondary:hover {
+  background-color: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.student-documentation-page .btn-outline-danger {
+  color: var(--error) !important;
+  border-color: var(--error) !important;
+}
+
+.student-documentation-page .btn-outline-danger:hover {
+  background-color: var(--error) !important;
+  color: var(--text-inverse) !important;
 }

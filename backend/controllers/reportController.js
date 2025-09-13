@@ -240,10 +240,59 @@ const studentsByYearPDF = async (req, res) => {
 
     createSimpleList(doc, summaryItems, doc.y);
 
+    // Add Narrative Report Section
+    doc.moveDown(3);
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Narrative Report', { align: 'center' });
+
+    doc.moveDown(1);
+
+    // Generate narrative content based on data
+    const completionRate = totalStudents > 0 ? ((studentsWith40Hours / totalStudents) * 100).toFixed(1) : 0;
+    const narrativeContent = [
+      `This report presents a comprehensive analysis of student participation in community service activities for Academic Year ${year}.`,
+      `The data reveals that ${totalStudents} students have actively participated in various community service events, accumulating a total of ${totalHours} hours of service.`,
+      `Among the participating students, ${studentsWith40Hours} students (${completionRate}%) have successfully completed the required 40 hours of community service, demonstrating their commitment to community engagement and social responsibility.`,
+      `The average participation rate of ${averageHours} hours per student indicates a strong culture of volunteerism and community involvement within the student body.`,
+      `This level of engagement reflects positively on the institution's mission to develop well-rounded individuals who contribute meaningfully to society.`,
+      `The completion rate of ${completionRate}% suggests that the majority of students are successfully meeting their community service requirements, which is essential for their academic and personal development.`,
+      `Recommendations for future improvement include continued encouragement of student participation, recognition of outstanding volunteers, and expansion of community service opportunities to further enhance student engagement.`
+    ];
+
+    // Add narrative content with proper formatting
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e');
+    narrativeContent.forEach((paragraph, index) => {
+      // Check if we need a new page
+      if (doc.y > doc.page.height - 100) {
+        doc.addPage();
+      }
+      
+      doc.text(paragraph, 60, doc.y, { 
+        width: doc.page.width - 120, 
+        align: 'justify',
+        lineGap: 2
+      });
+      doc.moveDown(1);
+    });
+
+    // Add conclusion
+    doc.moveDown(1);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Conclusion', { align: 'center' });
+    
+    doc.moveDown(0.5);
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e')
+       .text(`This report demonstrates the institution's success in fostering a culture of community service among students. The data shows strong participation rates and completion percentages, indicating effective implementation of community service programs. Continued support and recognition of student volunteers will help maintain and improve these positive outcomes.`, 
+       60, doc.y, { 
+         width: doc.page.width - 120, 
+         align: 'justify',
+         lineGap: 2
+       });
+
     // Footer
-    doc.moveDown(2);
+    doc.moveDown(3);
     doc.fontSize(8).font('Helvetica').fillColor('#95a5a6')
-       .text('', { align: 'center' });
+       .text(`Report generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, { align: 'center' });
 
     doc.end();
 
@@ -361,6 +410,70 @@ const students40HoursPDF = async (req, res) => {
     const totalHours = students40Plus.reduce((sum, s) => sum + s.totalHours, 0);
     const averageHours = students40Plus.length > 0 ? (totalHours / students40Plus.length).toFixed(1) : 0;
     const percentage = totalStudents > 0 ? ((students40Plus.length / totalStudents) * 100).toFixed(1) : 0;
+
+    // Add Summary Statistics
+    const summaryItems = [
+      `Total Students Analyzed: ${totalStudents}`,
+      `Students with 40+ Hours: ${students40Plus.length}`,
+      `Completion Rate: ${percentage}%`,
+      `Total Hours Completed: ${totalHours}`,
+      `Average Hours (40+ Group): ${averageHours}`
+    ];
+
+    createSimpleList(doc, summaryItems, doc.y);
+
+    // Add Narrative Report Section
+    doc.moveDown(3);
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Narrative Report', { align: 'center' });
+
+    doc.moveDown(1);
+
+    // Generate narrative content based on data
+    const narrativeContent = [
+      `This report focuses on students who have successfully completed the required 40 hours of community service, representing the highest level of commitment to community engagement.`,
+      `Out of ${totalStudents} total students analyzed, ${students40Plus.length} students (${percentage}%) have achieved the milestone of completing 40 or more hours of community service.`,
+      `These students have collectively contributed ${totalHours} hours of service to their communities, demonstrating exceptional dedication to social responsibility and civic engagement.`,
+      `The average of ${averageHours} hours per student in this group significantly exceeds the minimum requirement, indicating a strong commitment to going above and beyond expectations.`,
+      `Students who complete 40+ hours of community service demonstrate leadership qualities, time management skills, and a genuine passion for making a positive impact in their communities.`,
+      `This achievement reflects not only individual dedication but also the effectiveness of the institution's community service programs in inspiring and supporting student volunteerism.`,
+      `Recognition of these high-achieving students serves as motivation for others and reinforces the value of community service in personal and academic development.`
+    ];
+
+    // Add narrative content with proper formatting
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e');
+    narrativeContent.forEach((paragraph, index) => {
+      // Check if we need a new page
+      if (doc.y > doc.page.height - 100) {
+        doc.addPage();
+      }
+      
+      doc.text(paragraph, 60, doc.y, { 
+        width: doc.page.width - 120, 
+        align: 'justify',
+        lineGap: 2
+      });
+      doc.moveDown(1);
+    });
+
+    // Add conclusion
+    doc.moveDown(1);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Conclusion', { align: 'center' });
+    
+    doc.moveDown(0.5);
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e')
+       .text(`The students featured in this report exemplify the institution's mission of developing socially responsible leaders. Their commitment to community service sets a positive example for their peers and contributes significantly to the betterment of society. Continued recognition and support of these outstanding volunteers will help maintain the high standards of community engagement that define our institution.`, 
+       60, doc.y, { 
+         width: doc.page.width - 120, 
+         align: 'justify',
+         lineGap: 2
+       });
+
+    // Footer
+    doc.moveDown(3);
+    doc.fontSize(8).font('Helvetica').fillColor('#95a5a6')
+       .text(`Report generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, { align: 'center' });
 
     doc.end();
 
@@ -522,6 +635,64 @@ const eventAttendancePDF = async (req, res) => {
       doc.fontSize(12).font('Helvetica').fillColor('#7f8c8d')
          .text('No attended participants found for this event.');
     }
+
+    // Add Narrative Report Section
+    doc.moveDown(3);
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Narrative Report', { align: 'center' });
+
+    doc.moveDown(1);
+
+    // Generate narrative content based on event data
+    const totalParticipants = attendedParticipants.length;
+    const studentsCount = attendedParticipants.filter(a => a.userId?.role === 'Student').length;
+    const staffCount = totalParticipants - studentsCount;
+    const departments = [...new Set(attendedParticipants.map(a => a.userId?.department).filter(Boolean))];
+    
+    const narrativeContent = [
+      `This report provides a detailed analysis of attendance for the event "${event.title}" held on ${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'} at ${event.location || 'N/A'}.`,
+      `The event successfully attracted ${totalParticipants} participants, with ${studentsCount} students and ${staffCount} staff members in attendance, demonstrating broad institutional engagement in community service activities.`,
+      `Participants represented ${departments.length} different departments: ${departments.join(', ')}, indicating the event's appeal across various academic disciplines and administrative units.`,
+      `The event offered ${event.hours || 0} hours of community service credit, providing participants with valuable opportunities to contribute to their community while fulfilling academic or professional development requirements.`,
+      `The diverse participation across departments and roles reflects the institution's commitment to fostering a culture of community engagement that transcends traditional academic boundaries.`,
+      `This level of participation demonstrates the effectiveness of the event's planning, promotion, and execution in attracting a broad cross-section of the institutional community.`,
+      `The successful completion of this event contributes to the institution's overall mission of developing socially responsible individuals who actively engage with their communities.`
+    ];
+
+    // Add narrative content with proper formatting
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e');
+    narrativeContent.forEach((paragraph, index) => {
+      // Check if we need a new page
+      if (doc.y > doc.page.height - 100) {
+        doc.addPage();
+      }
+      
+      doc.text(paragraph, 60, doc.y, { 
+        width: doc.page.width - 120, 
+        align: 'justify',
+        lineGap: 2
+      });
+      doc.moveDown(1);
+    });
+
+    // Add conclusion
+    doc.moveDown(1);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Conclusion', { align: 'center' });
+    
+    doc.moveDown(0.5);
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e')
+       .text(`The successful execution of this event demonstrates the institution's ability to organize meaningful community service opportunities that attract diverse participation. The strong turnout and engagement levels indicate effective event management and the value that participants place on community service activities. Continued support for such events will help maintain the institution's reputation for fostering civic engagement and social responsibility.`, 
+       60, doc.y, { 
+         width: doc.page.width - 120, 
+         align: 'justify',
+         lineGap: 2
+       });
+
+    // Footer
+    doc.moveDown(3);
+    doc.fontSize(8).font('Helvetica').fillColor('#95a5a6')
+       .text(`Report generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, { align: 'center' });
 
     doc.end();
 
@@ -736,6 +907,84 @@ const eventListPDF = async (req, res) => {
 
     // Table
     createSimpleTable(doc, tableHeaders, tableData, doc.y);
+
+    // Add Summary Statistics
+    doc.moveDown(2);
+    const totalEvents = filteredEvents.length;
+    const completedEvents = filteredEvents.filter(event => getEventStatus(event) === 'completed').length;
+    const upcomingEvents = filteredEvents.filter(event => getEventStatus(event) === 'upcoming').length;
+    const ongoingEvents = filteredEvents.filter(event => getEventStatus(event) === 'ongoing').length;
+    const totalHours = filteredEvents.reduce((sum, event) => sum + (event.hours || 0), 0);
+    const averageHours = totalEvents > 0 ? (totalHours / totalEvents).toFixed(1) : 0;
+
+    const summaryItems = [
+      `Total Events: ${totalEvents}`,
+      `Completed Events: ${completedEvents}`,
+      `Upcoming Events: ${upcomingEvents}`,
+      `Ongoing Events: ${ongoingEvents}`,
+      `Total Hours Available: ${totalHours}`,
+      `Average Hours per Event: ${averageHours}`
+    ];
+
+    createSimpleList(doc, summaryItems, doc.y);
+
+    // Add Narrative Report Section
+    doc.moveDown(3);
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Narrative Report', { align: 'center' });
+
+    doc.moveDown(1);
+
+    // Generate narrative content based on event data
+    const locations = [...new Set(filteredEvents.map(event => event.location).filter(Boolean))];
+    const departments = [...new Set(filteredEvents.flatMap(event => 
+      event.departments || (event.department ? [event.department] : [])
+    ).filter(Boolean))];
+    
+    const narrativeContent = [
+      `This comprehensive report provides an overview of all community service events organized by the institution, showcasing the breadth and diversity of community engagement opportunities available to students and staff.`,
+      `The analysis covers ${totalEvents} events, with ${completedEvents} events successfully completed, ${upcomingEvents} events scheduled for the future, and ${ongoingEvents} events currently in progress.`,
+      `These events span across ${locations.length} different locations: ${locations.join(', ')}, demonstrating the institution's commitment to serving diverse communities and addressing various community needs.`,
+      `The events represent ${departments.length} different departments and academic areas: ${departments.join(', ')}, reflecting the interdisciplinary nature of community service and its integration across the institution's academic programs.`,
+      `Collectively, these events offer ${totalHours} hours of community service opportunities, with an average of ${averageHours} hours per event, providing participants with substantial opportunities for meaningful community engagement.`,
+      `The distribution of event statuses indicates effective event planning and management, with a healthy mix of completed, ongoing, and upcoming activities that ensures continuous community engagement throughout the academic year.`,
+      `This comprehensive portfolio of community service events demonstrates the institution's strong commitment to fostering civic engagement and social responsibility among its community members.`
+    ];
+
+    // Add narrative content with proper formatting
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e');
+    narrativeContent.forEach((paragraph, index) => {
+      // Check if we need a new page
+      if (doc.y > doc.page.height - 100) {
+        doc.addPage();
+      }
+      
+      doc.text(paragraph, 60, doc.y, { 
+        width: doc.page.width - 120, 
+        align: 'justify',
+        lineGap: 2
+      });
+      doc.moveDown(1);
+    });
+
+    // Add conclusion
+    doc.moveDown(1);
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Conclusion', { align: 'center' });
+    
+    doc.moveDown(0.5);
+    doc.fontSize(11).font('Helvetica').fillColor('#34495e')
+       .text(`The comprehensive nature of the institution's community service program, as evidenced by this report, demonstrates a strong foundation for civic engagement and social responsibility. The diverse range of events, locations, and departments involved creates multiple pathways for community participation. Continued investment in expanding and improving these programs will further enhance the institution's impact on both student development and community welfare.`, 
+       60, doc.y, { 
+         width: doc.page.width - 120, 
+         align: 'justify',
+         lineGap: 2
+       });
+
+    // Footer
+    doc.moveDown(3);
+    doc.fontSize(8).font('Helvetica').fillColor('#95a5a6')
+       .text(`Report generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, { align: 'center' });
 
     doc.end();
   } catch (err) {
