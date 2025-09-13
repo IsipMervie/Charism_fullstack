@@ -6,7 +6,7 @@ const config = {
     NODE_ENV: 'development'
   },
   production: {
-    API_URL: process.env.REACT_APP_API_URL ||'https://charism-api-xtw9.onrender.com',
+    API_URL: process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api',
     FRONTEND_URL:'https://charism-ucb4.onrender.com',
     NODE_ENV: 'production'
   }
