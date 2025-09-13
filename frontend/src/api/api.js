@@ -218,7 +218,7 @@ export const getUsers = async (params = {}) => {
     try {
       console.log(`🔄 Fetching users attempt ${attempt}/${maxRetries}`);
       const query = new URLSearchParams(params).toString();
-      const response = await axiosInstance.get(`/api/admin/users${query ? `?${query}` : ''}`);
+      const response = await axiosInstance.get(`/admin/users${query ? `?${query}` : ''}`);
       console.log(`✅ Users fetched successfully on attempt ${attempt}`);
       return response.data;
     } catch (error) {
@@ -726,7 +726,7 @@ export const loginUser = async (email, password) => {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔄 Login attempt ${attempt}/${maxRetries} to: ${axiosInstance.defaults.baseURL}/api/auth/login`);
+      console.log(`🔄 Login attempt ${attempt}/${maxRetries} to: ${axiosInstance.defaults.baseURL}/auth/login`);
       
       // Test connection first on first attempt
       if (attempt === 1) {
