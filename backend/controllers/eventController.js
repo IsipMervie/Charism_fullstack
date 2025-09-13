@@ -1364,6 +1364,47 @@ exports.disapproveAttendance = async (req, res) => {
   }
 };
 
+// Remove Participant (Admin/Staff)
+exports.removeParticipant = async (req, res) => {
+  try {
+    const { eventId, userId } = req.params;
+    
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Find the participant in the attendance array
+    const attendanceIndex = event.attendance.findIndex(a => 
+      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
+    );
+
+    if (attendanceIndex === -1) {
+      return res.status(404).json({ message: 'Participant not found in this event.' });
+    }
+
+    // Remove the participant from the attendance array
+    const removedParticipant = event.attendance[attendanceIndex];
+    event.attendance.splice(attendanceIndex, 1);
+
+    // Save the updated event
+    await event.save();
+
+    res.json({ 
+      message: 'Participant removed successfully.',
+      removedParticipant: {
+        userId: removedParticipant.userId,
+        name: removedParticipant.userId?.name || 'Unknown',
+        email: removedParticipant.userId?.email || 'Unknown'
+      }
+    });
+  } catch (err) {
+    console.error('Error in removeParticipant:', err);
+    res.status(500).json({ message: 'Error removing participant.', error: err.message });
+  }
+};
+
 // Get All Attachments for an Event (Admin/Staff)
 exports.getAllEventAttachments = async (req, res) => {
   try {

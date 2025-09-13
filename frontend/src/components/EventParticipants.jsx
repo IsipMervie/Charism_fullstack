@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getEventParticipants, approveAttendance, disapproveAttendance, generateReport } from '../api/api';
+import { getEventParticipants, approveAttendance, disapproveAttendance, removeParticipant, generateReport } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaCheck, FaTimes, FaDownload } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaDownload, FaTrash } from 'react-icons/fa';
 import LoadingSpinner from './LoadingSpinner';
 import { formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import './EventParticipantsPage.css';
@@ -221,6 +221,50 @@ function EventParticipantsPage() {
     }
   };
 
+  const handleRemove = async (userId) => {
+    const participant = participants.find(p => {
+      const pUserId = p.userId._id || p.userId;
+      return pUserId === userId;
+    });
+    
+    if (!participant) {
+      Swal.fire('Error', 'Participant not found.', 'error');
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to remove ${participant.userId.name} from this event? This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, remove them!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6c757d'
+    });
+
+    if (result.isConfirmed) {
+      setActionLoading(prev => ({ ...prev, [`remove_${userId}`]: true }));
+      try {
+        await removeParticipant(eventId, userId);
+        Swal.fire({
+          icon: 'success',
+          title: 'Participant Removed!',
+          text: `${participant.userId.name} has been successfully removed from the event.`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+        // Refresh participants list
+        const data = await getEventParticipants(eventId);
+        setParticipants(data);
+      } catch (err) {
+        Swal.fire('Error', err.message || 'Failed to remove participant.', 'error');
+      } finally {
+        setActionLoading(prev => ({ ...prev, [`remove_${userId}`]: false }));
+      }
+    }
+  };
+
   const handleDownloadPDF = async () => {
     // Show filter options dialog
     const { value: filters } = await Swal.fire({
@@ -422,6 +466,15 @@ function EventParticipantsPage() {
                             <FaTimes />
                             <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
                           </button>
+                          <button 
+                            className="remove-btn"
+                            onClick={() => handleRemove(participant.userId._id || participant.userId)}
+                            title="Remove Participant"
+                            disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
+                          >
+                            <FaTrash />
+                            <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
+                          </button>
                         </>
                       )}
                       {(participant.status === 'Approved' || participant.status === 'Disapproved' || participant.status === 'Attended') && (
@@ -443,6 +496,15 @@ function EventParticipantsPage() {
                           >
                             <FaTimes />
                             <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
+                          </button>
+                          <button 
+                            className="remove-btn"
+                            onClick={() => handleRemove(participant.userId._id || participant.userId)}
+                            title="Remove Participant"
+                            disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
+                          >
+                            <FaTrash />
+                            <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
                           </button>
                         </>
                       )}
@@ -528,6 +590,15 @@ function EventParticipantsPage() {
                         <FaTimes />
                         <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
                       </button>
+                      <button 
+                        className="remove-btn"
+                        onClick={() => handleRemove(participant.userId._id || participant.userId)}
+                        title="Remove Participant"
+                        disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
+                      >
+                        <FaTrash />
+                        <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
+                      </button>
                     </>
                   )}
                   {(participant.status === 'Approved' || participant.status === 'Disapproved' || participant.status === 'Attended') && (
@@ -549,6 +620,15 @@ function EventParticipantsPage() {
                       >
                         <FaTimes />
                         <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
+                      </button>
+                      <button 
+                        className="remove-btn"
+                        onClick={() => handleRemove(participant.userId._id || participant.userId)}
+                        title="Remove Participant"
+                        disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
+                      >
+                        <FaTrash />
+                        <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
                       </button>
                     </>
                   )}

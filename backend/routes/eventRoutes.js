@@ -235,6 +235,14 @@ router.patch(
   eventController.disapproveAttendance
 );
 
+// Remove participant (Admin/Staff)
+router.delete(
+  '/:eventId/participants/:userId',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.removeParticipant
+);
+
 // Get all attachments for an event (Admin/Staff)
 router.get(
   '/:eventId/attachments',

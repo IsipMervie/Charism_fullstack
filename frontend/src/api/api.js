@@ -1103,6 +1103,33 @@ export const disapproveAttendance = async (eventId, userId, reason) => {
   }
 };
 
+export const removeParticipant = async (eventId, userId) => {
+  try {
+    const response = await axiosInstance.delete(`/events/${eventId}/participants/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error removing participant:', error);
+    
+    // Handle specific error messages from backend
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    
+    // Handle different error types
+    if (error.response?.status === 403) {
+      throw new Error('You do not have permission to remove participants.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Event or participant not found.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Invalid removal request.');
+    } else if (error.response?.status === 401) {
+      throw new Error('Please log in to remove participants.');
+    }
+    
+    throw new Error('Failed to remove participant. Please try again.');
+  }
+};
+
 // Reflection functions removed - no longer needed
 
 // Certificate Generation
