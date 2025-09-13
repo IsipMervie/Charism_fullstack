@@ -30,12 +30,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
          y: headerY
        });
     
-    // Add CHARISM subtitle
-    doc.fontSize(14).font('Helvetica-Bold').fillColor('#34495e')
-       .text('CHARISM', { 
-         align: 'center',
-         y: headerY + 25
-       });
+    // Institution subtitle removed
     
     // Add main title
     if (title) {
@@ -81,7 +76,7 @@ const addLogoAndHeader = async (doc, title, subtitle = '', options = {}) => {
 };
 
 /**
- * Add simple, clean certificate header like the example
+ * Add logo and header to certificate PDF
  * @param {PDFDocument} doc - The PDF document instance
  * @param {string} studentName - Student name for the certificate
  * @param {string} eventTitle - Event title
@@ -91,105 +86,110 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
   try {
     const logoPath = path.join(__dirname, '..', 'logo.png');
     
-    // Simple white background
-    doc.rect(0, 0, doc.page.width, doc.page.height)
-       .fill('#ffffff');
+    // Add decorative background elements
+    // Top decorative line
+    doc.rect(0, 0, doc.page.width, 8)
+       .fill('#1e3a8a');
     
-    // Simple double border like the example
-    // Outer blue border
-    doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-       .lineWidth(3)
-       .stroke('#007bff');
+    // Bottom decorative line
+    doc.rect(0, doc.page.height - 8, doc.page.width, 8)
+       .fill('#1e3a8a');
     
-    // Inner green border
-    doc.rect(30, 30, doc.page.width - 60, doc.page.height - 60)
-       .lineWidth(2)
-       .stroke('#28a745');
-    
-    // Add logo on the left side with proper spacing
+    // Add logo (if it exists) - centered at top
     try {
-      const logoSize = 80;
-      const logoX = 50;
-      const logoY = 70;
-      
-      await doc.image(logoPath, logoX, logoY, { 
-        width: logoSize, 
-        height: logoSize
+      await doc.image(logoPath, doc.page.width / 2 - 50, 30, { 
+        width: 100, 
+        height: 100
       });
     } catch (logoError) {
       console.log('Logo not found, continuing without logo:', logoError.message);
     }
     
-    // Add header text - positioned to avoid overlap with logo
-    doc.y = 80;
+    // Add header text - centered below logo
+    doc.y = 150;
     
-    // Institution name - positioned to the right of logo with MUCH more space
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
-       .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 200,
-         y: 80
+    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e3a8a')
+       .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', { 
+         align: 'center'
        });
     
-    doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
-       .text('Spirituality, and Mission', { 
-         x: 200,
-         y: 95
+    // Add CHARISM subtitle
+    doc.fontSize(16).font('Helvetica-Bold').fillColor('#1e40af')
+       .text('CHARISM', { 
+         align: 'center'
        });
     
-    // Move down for certificate title
-    doc.y = 160;
+    // Move down for main certificate content
+    doc.moveDown(1.5);
     
-    // Certificate title - large and bold
-    doc.fontSize(28).font('Helvetica-Bold').fillColor('#333333')
+    // Add decorative line
+    doc.moveTo(doc.page.width / 2 - 100, doc.y)
+       .lineTo(doc.page.width / 2 + 100, doc.y)
+       .stroke('#1e3a8a', 2);
+    
+    doc.moveDown(1);
+    
+    // Add certificate title - centered
+    doc.fontSize(32).font('Helvetica-Bold').fillColor('#1e3a8a')
        .text('Certificate of Completion', { 
          align: 'center'
        });
     
-    doc.moveDown(2);
+    // Add spacing
+    doc.moveDown(1.5);
     
-    // Certification text
-    doc.fontSize(16).font('Helvetica').fillColor('#333333')
+    // Add certification text
+    doc.fontSize(18).font('Helvetica').fillColor('#dc2626')
        .text('This is to certify that', { 
          align: 'center'
        });
     
     doc.moveDown(1);
     
-    // Student name - prominent and underlined
-    doc.fontSize(20).font('Helvetica-Bold').fillColor('#007bff')
+    // Add student name - prominent with decorative underline
+    doc.fontSize(28).font('Helvetica-Bold').fillColor('#1e3a8a')
        .text(studentName, { 
          align: 'center'
        });
     
-    // Simple underline
-    const nameWidth = doc.widthOfString(studentName, { fontSize: 20 });
-    const underlineX = (doc.page.width - nameWidth) / 2;
-    doc.moveTo(underlineX, doc.y + 5)
-       .lineTo(underlineX + nameWidth, doc.y + 5)
-       .stroke('#007bff', 2);
+    // Add decorative underline
+    doc.moveTo(doc.page.width / 2 - 120, doc.y + 5)
+       .lineTo(doc.page.width / 2 + 120, doc.y + 5)
+       .stroke('#dc2626', 2);
     
-    doc.moveDown(1.5);
+    doc.moveDown(1.2);
     
-    // Completion text
-    doc.fontSize(16).font('Helvetica').fillColor('#333333')
+    // Add completion text
+    doc.fontSize(18).font('Helvetica').fillColor('#374151')
        .text('has successfully completed', { 
          align: 'center'
        });
     
-    doc.moveDown(1);
+    doc.moveDown(0.8);
     
-    // Hours - highlighted in green
+    // Add hours - highlighted in a decorative box
     const hoursText = `${hours} hours of Community Service`;
-    doc.fontSize(18).font('Helvetica-Bold').fillColor('#28a745')
+    const textWidth = doc.widthOfString(hoursText, { fontSize: 24 });
+    const boxWidth = textWidth + 40;
+    const boxX = (doc.page.width - boxWidth) / 2;
+    
+    // Draw decorative box
+    doc.rect(boxX, doc.y - 10, boxWidth, 50)
+       .fill('#fef3c7')
+       .stroke('#f59e0b', 2);
+    
+    doc.fontSize(24).font('Helvetica-Bold').fillColor('#dc2626')
        .text(hoursText, { 
-         align: 'center'
+         align: 'center',
+         y: doc.y
        });
     
-    doc.moveDown(1);
+    doc.y += 50;
+    doc.moveDown(0.8);
     
-    // Additional text
-    doc.fontSize(14).font('Helvetica').fillColor('#333333')
-       .text('through participation in approved events.', { 
+    // Add additional text
+    doc.fontSize(16).font('Helvetica').fillColor('#6b7280')
+       .text(`through participation in approved events.`, { 
          align: 'center'
        });
     
@@ -198,8 +198,12 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
     
   } catch (error) {
     console.error('Error adding certificate header:', error);
-    // Fallback: simple header
-    doc.fontSize(24).font('Helvetica-Bold').fillColor('#333333')
+    // Fallback: just add text header
+    doc.fontSize(14).font('Helvetica-Bold').fillColor('#2c3e50')
+       .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', { align: 'center' });
+    doc.fontSize(16).font('Helvetica-Bold').fillColor('#34495e')
+       .text('CHARISM', { align: 'center' });
+    doc.fontSize(20).font('Helvetica-Bold').fillColor('#2c3e50')
        .text('Certificate of Completion', { align: 'center' });
     doc.moveDown(2);
   }
