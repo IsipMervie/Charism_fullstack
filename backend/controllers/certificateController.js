@@ -33,320 +33,187 @@ const calculateStudentsHours = async (userId) => {
   }
 };
 
-// Create a professional certificate design
+// Create a simple, clean certificate design
 const createBeautifulCertificate = async (doc, user, eventList, totalHours) => {
   const pageWidth = doc.page.width;
   const pageHeight = doc.page.height;
-  const margin = 50;
+  const margin = 60;
 
-  // Professional background with subtle pattern
+  // Clean white background
   doc.rect(0, 0, pageWidth, pageHeight)
-     .fill('#fefefe');
+     .fill('#ffffff');
 
-  // Main decorative border - triple border design
+  // Simple border
   doc.rect(margin, margin, pageWidth - 2 * margin, pageHeight - 2 * margin)
-     .stroke('#2c3e50', 3);
-  
-  // Inner decorative border
-  doc.rect(margin + 15, margin + 15, pageWidth - 2 * margin - 30, pageHeight - 2 * margin - 30)
-     .stroke('#8b4513', 1);
-     
-  // Outermost decorative border
-  doc.rect(margin + 25, margin + 25, pageWidth - 2 * margin - 50, pageHeight - 2 * margin - 50)
-     .stroke('#d4af37', 2);
+     .stroke('#000000', 2);
 
-  // Professional header section
-  const headerY = margin + 40;
-  
-  // University seal/logo area (circular)
-  const sealX = pageWidth / 2;
-  const sealY = headerY + 40;
-  const sealRadius = 35;
-  
-  // Outer ring
-  doc.circle(sealX, sealY, sealRadius)
-     .fill('#ffffff')
-     .stroke('#2c3e50', 3);
-     
-  // Inner ring
-  doc.circle(sealX, sealY, sealRadius - 8)
-     .stroke('#d4af37', 2);
-     
-  // Center area
-  doc.circle(sealX, sealY, sealRadius - 15)
-     .fill('#f8f9fa');
-
-  // University name around seal
-  doc.fontSize(11)
-     .font('Times-Bold')
-     .fill('#2c3e50')
+  // Header - University name
+  doc.fontSize(18)
+     .font('Helvetica-Bold')
+     .fill('#000000')
      .text('UNIVERSITY OF THE ASSUMPTION', {
-       x: sealX,
-       y: sealY - 25,
-       align: 'center',
-       width: 180
-     });
-
-  // Center text inside seal
-  doc.fontSize(7)
-     .font('Times-Roman')
-     .fill('#2c3e50')
-     .text('CHARISM', {
-       x: sealX,
-       y: sealY - 5,
-       align: 'center'
-     });
-     
-  doc.fontSize(6)
-     .font('Times-Roman')
-     .fill('#666666')
-     .text('Est. 1963', {
-       x: sealX,
-       y: sealY + 8,
-       align: 'center'
-     });
-
-  // Official certificate title
-  doc.fontSize(32)
-     .font('Times-Bold')
-     .fill('#2c3e50')
-     .text('CERTIFICATE OF COMPLETION', {
        x: pageWidth / 2,
-       y: headerY + 120,
+       y: margin + 30,
        align: 'center'
      });
 
-  // Decorative line under title
-  doc.moveTo(pageWidth / 2 - 120, headerY + 155)
-     .lineTo(pageWidth / 2 + 120, headerY + 155)
-     .stroke('#d4af37', 3);
+  doc.fontSize(12)
+     .font('Helvetica')
+     .fill('#666666')
+     .text('Center for the Holistic Advancement of Religious Instruction, Spirituality, and Mission', {
+       x: pageWidth / 2,
+       y: margin + 55,
+       align: 'center'
+     });
 
-  // Official certification text
-  doc.fontSize(16)
-     .font('Times-Roman')
-     .fill('#2c3e50')
+  doc.fontSize(14)
+     .font('Helvetica-Bold')
+     .fill('#000000')
+     .text('CHARISM', {
+       x: pageWidth / 2,
+       y: margin + 80,
+       align: 'center'
+     });
+
+  // Certificate title
+  doc.fontSize(24)
+     .font('Helvetica-Bold')
+     .fill('#000000')
+     .text('Certificate of Completion', {
+       x: pageWidth / 2,
+       y: margin + 120,
+       align: 'center'
+     });
+
+  // Simple line
+  doc.moveTo(pageWidth / 2 - 100, margin + 150)
+     .lineTo(pageWidth / 2 + 100, margin + 150)
+     .stroke('#000000', 1);
+
+  // Certificate text
+  doc.fontSize(14)
+     .font('Helvetica')
+     .fill('#000000')
      .text('This is to certify that', {
        x: pageWidth / 2,
-       y: headerY + 180,
+       y: margin + 180,
        align: 'center'
      });
 
-  // Student name with decorative underline
-  doc.fontSize(28)
-     .font('Times-Bold')
-     .fill('#2c3e50')
+  // Student name
+  doc.fontSize(20)
+     .font('Helvetica-Bold')
+     .fill('#000000')
      .text(sanitizeText(user.name), {
        x: pageWidth / 2,
-       y: headerY + 220,
+       y: margin + 210,
        align: 'center'
      });
 
-  // Decorative line under name
-  doc.moveTo(pageWidth / 2 - 150, headerY + 250)
-     .lineTo(pageWidth / 2 + 150, headerY + 250)
-     .stroke('#d4af37', 2);
+  // Simple line under name
+  doc.moveTo(pageWidth / 2 - 120, margin + 240)
+     .lineTo(pageWidth / 2 + 120, margin + 240)
+     .stroke('#000000', 1);
 
   // Completion text
-  doc.fontSize(16)
-     .font('Times-Roman')
-     .fill('#2c3e50')
+  doc.fontSize(14)
+     .font('Helvetica')
+     .fill('#000000')
      .text('has successfully completed', {
        x: pageWidth / 2,
-       y: headerY + 270,
+       y: margin + 260,
        align: 'center'
      });
 
-  // Hours achievement box - professional design
-  const achievementY = headerY + 310;
-  const boxWidth = 320;
-  const boxHeight = 50;
-  const boxX = (pageWidth - boxWidth) / 2;
-  
-  // Shadow effect
-  doc.rect(boxX + 3, achievementY + 3, boxWidth, boxHeight)
-     .fill('#e0e0e0');
-     
-  // Main box
-  doc.rect(boxX, achievementY, boxWidth, boxHeight)
-     .fill('#ffffff')
-     .stroke('#2c3e50', 2);
-     
-  // Inner highlight
-  doc.rect(boxX + 2, achievementY + 2, boxWidth - 4, boxHeight - 4)
-     .stroke('#d4af37', 1);
-
-  doc.fontSize(22)
-     .font('Times-Bold')
-     .fill('#c41e3a')
-     .text(`${totalHours} HOURS OF COMMUNITY SERVICE`, {
-       x: pageWidth / 2,
-       y: achievementY + 15,
-       align: 'center'
-     });
-
-  // Events section - professional table
-  const eventsStartY = achievementY + 90;
-  
-  // Section title
+  // Hours
   doc.fontSize(18)
-     .font('Times-Bold')
-     .fill('#2c3e50')
-     .text('COMMUNITY SERVICE EVENTS', {
+     .font('Helvetica-Bold')
+     .fill('#000000')
+     .text(`${totalHours} hours of Community Service`, {
        x: pageWidth / 2,
-       y: eventsStartY,
+       y: margin + 290,
        align: 'center'
      });
 
-  // Professional table
-  const tableY = eventsStartY + 40;
-  const tableWidth = pageWidth - 2 * margin - 40;
-  const tableX = margin + 20;
-  const rowHeight = 18;
-  const maxRows = 8;
-  
-  // Table header
-  doc.rect(tableX, tableY, tableWidth, rowHeight + 10)
-     .fill('#2c3e50');
-     
-  doc.fontSize(11)
-     .font('Times-Bold')
-     .fill('#ffffff');
-     
-  doc.text('No.', tableX + 10, tableY + 8, { width: 30 });
-  doc.text('Event Name', tableX + 50, tableY + 8, { width: 280 });
-  doc.text('Date', tableX + 340, tableY + 8, { width: 80 });
-  doc.text('Hours', tableX + 430, tableY + 8, { width: 50 });
+  // Events section
+  doc.fontSize(16)
+     .font('Helvetica-Bold')
+     .fill('#000000')
+     .text('Events Completed:', {
+       x: pageWidth / 2,
+       y: margin + 330,
+       align: 'center'
+     });
 
-  // Table rows
-  eventList.slice(0, maxRows).forEach((event, index) => {
-    const rowY = tableY + rowHeight + 10 + (index * rowHeight);
+  // Events list - simple format
+  let currentY = margin + 360;
+  eventList.slice(0, 10).forEach((event, index) => {
+    const eventText = `${index + 1}. ${event.name} - ${event.date} (${event.hours} hours)`;
     
-    // Alternating row colors
-    if (index % 2 === 0) {
-      doc.rect(tableX, rowY, tableWidth, rowHeight)
-         .fill('#f8f9fa');
+    // Check if we need to wrap text
+    const textWidth = doc.widthOfString(eventText, { fontSize: 10 });
+    if (textWidth > pageWidth - 2 * margin - 40) {
+      // Split long event names
+      const eventName = event.name.length > 50 ? event.name.substring(0, 50) + '...' : event.name;
+      const shortEventText = `${index + 1}. ${eventName} - ${event.date} (${event.hours} hours)`;
+      
+      doc.fontSize(10)
+         .font('Helvetica')
+         .fill('#000000')
+         .text(shortEventText, {
+           x: margin + 30,
+           y: currentY,
+           width: pageWidth - 2 * margin - 60
+         });
+    } else {
+      doc.fontSize(10)
+         .font('Helvetica')
+         .fill('#000000')
+         .text(eventText, {
+           x: margin + 30,
+           y: currentY,
+           width: pageWidth - 2 * margin - 60
+         });
     }
-
-    doc.fontSize(9)
-       .font('Times-Roman')
-       .fill('#2c3e50');
     
-    doc.text(`${index + 1}.`, tableX + 10, rowY + 3, { width: 30 });
-    
-    const eventName = event.name.length > 40 ? event.name.substring(0, 40) + '...' : event.name;
-    doc.text(eventName, tableX + 50, rowY + 3, { width: 280 });
-    doc.text(event.date, tableX + 340, rowY + 3, { width: 80 });
-    doc.text(`${event.hours}`, tableX + 430, rowY + 3, { width: 50 });
+    currentY += 15;
   });
 
-  // Show additional events count if more than 8
-  if (eventList.length > maxRows) {
-    const additionalY = tableY + rowHeight + 10 + (maxRows * rowHeight) + 5;
-    doc.fontSize(9)
-       .font('Times-Italic')
+  // Show more events if needed
+  if (eventList.length > 10) {
+    doc.fontSize(10)
+       .font('Helvetica-Italic')
        .fill('#666666')
-       .text(`... and ${eventList.length - maxRows} additional events`, {
-         x: pageWidth / 2,
-         y: additionalY,
-         align: 'center'
+       .text(`... and ${eventList.length - 10} more events`, {
+         x: margin + 30,
+         y: currentY + 10
        });
   }
 
-  // Professional signature section
-  const signatureY = eventsStartY + 250;
-  
-  // Date section
+  // Date
   doc.fontSize(12)
-     .font('Times-Bold')
-     .fill('#2c3e50')
-     .text(`Date of Issue: ${new Date().toLocaleDateString('en-US', { 
-       year: 'numeric', 
-       month: 'long', 
-       day: 'numeric' 
-     })}`, {
+     .font('Helvetica-Bold')
+     .fill('#000000')
+     .text(`Date: ${new Date().toLocaleDateString()}`, {
        x: pageWidth / 2,
-       y: signatureY,
+       y: pageHeight - margin - 80,
        align: 'center'
      });
 
-  // Signature area
-  const signatureAreaY = signatureY + 50;
-  const signatureWidth = 250;
-  const signatureX = pageWidth - margin - signatureWidth - 20;
-  
   // Signature line
-  doc.moveTo(signatureX, signatureAreaY)
-     .lineTo(signatureX + signatureWidth, signatureAreaY)
-     .stroke('#2c3e50', 2);
+  doc.moveTo(pageWidth / 2 - 100, pageHeight - margin - 50)
+     .lineTo(pageWidth / 2 + 100, pageHeight - margin - 50)
+     .stroke('#000000', 1);
 
   // Signature label
-  doc.fontSize(11)
-     .font('Times-Bold')
-     .fill('#2c3e50')
+  doc.fontSize(12)
+     .font('Helvetica-Bold')
+     .fill('#000000')
      .text('Authorized Signature', {
-       x: signatureX + signatureWidth / 2,
-       y: signatureAreaY + 8,
+       x: pageWidth / 2,
+       y: pageHeight - margin - 30,
        align: 'center'
      });
-
-  // Official seal area (bottom left)
-  const officialSealY = signatureAreaY - 10;
-  const officialSealX = margin + 30;
-  
-  doc.circle(officialSealX, officialSealY, 25)
-     .fill('#ffffff')
-     .stroke('#d4af37', 2);
-     
-  doc.fontSize(8)
-     .font('Times-Bold')
-     .fill('#2c3e50')
-     .text('OFFICIAL', {
-       x: officialSealX,
-       y: officialSealY - 5,
-       align: 'center'
-     });
-     
-  doc.fontSize(7)
-     .font('Times-Roman')
-     .fill('#666666')
-     .text('SEAL', {
-       x: officialSealX,
-       y: officialSealY + 5,
-       align: 'center'
-     });
-
-  // Professional corner decorations
-  const cornerSize = 25;
-  const cornerColor = '#d4af37';
-  
-  // Top-left corner
-  doc.polygon([margin + 30, margin + 30], [margin + 30 + cornerSize, margin + 30], [margin + 30, margin + 30 + cornerSize])
-     .fill(cornerColor);
-     
-  // Top-right corner  
-  doc.polygon([pageWidth - margin - 30, margin + 30], [pageWidth - margin - 30 - cornerSize, margin + 30], [pageWidth - margin - 30, margin + 30 + cornerSize])
-     .fill(cornerColor);
-     
-  // Bottom-left corner
-  doc.polygon([margin + 30, pageHeight - margin - 30], [margin + 30 + cornerSize, pageHeight - margin - 30], [margin + 30, pageHeight - margin - 30 - cornerSize])
-     .fill(cornerColor);
-     
-  // Bottom-right corner
-  doc.polygon([pageWidth - margin - 30, pageHeight - margin - 30], [pageWidth - margin - 30 - cornerSize, pageHeight - margin - 30], [pageWidth - margin - 30, pageHeight - margin - 30 - cornerSize])
-     .fill(cornerColor);
-
-  // Professional border patterns
-  // Top border pattern
-  for (let i = margin + 50; i < pageWidth - margin - 50; i += 20) {
-    doc.circle(i, margin + 35, 2)
-       .fill(cornerColor);
-  }
-  
-  // Bottom border pattern
-  for (let i = margin + 50; i < pageWidth - margin - 50; i += 20) {
-    doc.circle(i, pageHeight - margin - 35, 2)
-       .fill(cornerColor);
-  }
 };
 
 // Generate Individual Certificate
