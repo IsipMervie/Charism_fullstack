@@ -82,16 +82,14 @@ function ProfilePage() {
       setSection(user.section || '');
       
       // Set profile picture from localStorage first (for immediate display)
-      if (user.profilePicture && user._id) {
-        const fullUrl = getProfilePictureUrl(user.profilePicture, user._id);
-        console.log('ProfilePage - Setting profile picture from localStorage:', fullUrl);
-        setProfilePictureUrl(fullUrl);
-      }
+      const fullUrl = getProfilePictureUrl(user.profilePicture, user._id);
+      console.log('ProfilePage - Setting profile picture from localStorage:', fullUrl);
+      setProfilePictureUrl(fullUrl);
       
       // Fetch latest user profile from backend to get updated profile picture
       if (user._id) {
         const backendUser = await fetchUserProfile(user._id);
-        if (backendUser && backendUser.profilePicture && backendUser._id) {
+        if (backendUser && backendUser._id) {
           const fullUrl = getProfilePictureUrl(backendUser.profilePicture, backendUser._id);
           console.log('ProfilePage - Found profile picture from backend:', fullUrl);
           setProfilePictureUrl(fullUrl);
@@ -315,7 +313,7 @@ function ProfilePage() {
                   onError={(e) => {
                     console.error('Profile picture failed to load:', e.target.src);
                     // Set a default profile picture or hide the image
-                    e.target.src = '/default-avatar.png';
+                    e.target.src = 'https://charism-api-xtw9.onrender.com/api/files/profile-picture/default';
                     e.target.onerror = null; // Prevent infinite loop
                   }}
                   onLoad={() => {

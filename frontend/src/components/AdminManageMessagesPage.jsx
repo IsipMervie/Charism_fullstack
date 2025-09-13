@@ -2,7 +2,7 @@
 // Simple but Creative Manage Messages Page Design
 
 import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../api/api';
+import { axiosInstance, getAllContactMessages } from '../api/api';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FaEnvelope, FaEnvelopeOpen, FaCalendar, FaTrash, FaCheck, FaSpinner, FaExclamationTriangle, FaEye, FaReply } from 'react-icons/fa';
@@ -40,14 +40,10 @@ function AdminManageMessagesPage() {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
-      const res = await axiosInstance.get(
-        `/contact-us${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      // Ensure res.data is an array
-      const messagesData = Array.isArray(res.data) ? res.data : [];
-      setMessages(messagesData);
+      const messagesData = await getAllContactMessages(searchTerm);
+      // Ensure messagesData is an array
+      const messagesArray = Array.isArray(messagesData) ? messagesData : [];
+      setMessages(messagesArray);
     } catch (err) {
       console.error('Error fetching messages:', err);
       setError('Failed to load messages. Please try again.');

@@ -1472,6 +1472,17 @@ export const submitContactForm = async (contactData) => {
   }
 };
 
+export const getAllContactMessages = async (searchTerm = '') => {
+  try {
+    const url = `/api/contact-us${searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : ''}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contact messages:', error);
+    throw new Error('Failed to fetch contact messages. Please try again.');
+  }
+};
+
 // Event Management Functions
 export const toggleEventVisibility = async (eventId) => {
   try {

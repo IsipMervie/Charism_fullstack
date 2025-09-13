@@ -1,6 +1,36 @@
 /* Import theme variables */
 @import '../styles/themes.css';
 
+/* Dark Theme Modal Overrides */
+.modal-content {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-header {
+  background: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+}
+
+.modal-title {
+  color: var(--text-primary) !important;
+}
+
+.modal-body {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-footer {
+  background: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border-primary) !important;
+}
+
+.btn-close {
+  filter: invert(1) !important;
+}
+
 /* Event Documentation Upload Component Styles */
 
 .event-documentation-upload {
@@ -48,10 +78,16 @@
 }
 
 .form-control {
-  border: 2px solid #e5e7eb;
+  background: var(--bg-secondary) !important;
+  border: 2px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
   border-radius: 8px;
   padding: 0.75rem;
   transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+  color: var(--text-tertiary) !important;
 }
 
 .form-control:focus {
@@ -112,13 +148,20 @@
 
 /* Upload Button */
 .upload-button {
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
+  border: none !important;
+  color: white !important;
   border-radius: 8px;
   padding: 0.75rem 2rem;
   font-weight: 600;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px var(--primary-shadow-lg);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
+  color: var(--text-primary) !important;
 }
 
 .upload-button:hover {

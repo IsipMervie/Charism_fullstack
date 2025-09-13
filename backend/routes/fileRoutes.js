@@ -8,7 +8,19 @@ const { ensureDBConnection } = require('../middleware/dbMiddleware');
 
 // Serve default profile picture
 router.get('/profile-picture/default', (req, res) => {
-  res.status(404).json({ message: 'Default profile picture not implemented' });
+  // Return a simple SVG default avatar
+  const defaultAvatar = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="50" fill="#e0e0e0"/>
+    <circle cx="50" cy="35" r="15" fill="#999"/>
+    <path d="M20 80 Q50 60 80 80 L80 100 L20 100 Z" fill="#999"/>
+  </svg>`;
+  
+  res.set({
+    'Content-Type': 'image/svg+xml',
+    'Cache-Control': 'public, max-age=31536000'
+  });
+  
+  res.send(defaultAvatar);
 });
 
 // Serve profile picture
