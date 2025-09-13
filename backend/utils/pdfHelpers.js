@@ -109,7 +109,7 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
     // Add logo on the left side with proper spacing
     try {
       const logoSize = 80;
-      const logoX = 60;
+      const logoX = 50;
       const logoY = 70;
       
       await doc.image(logoPath, logoX, logoY, { 
@@ -123,23 +123,17 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
     // Add header text - positioned to avoid overlap with logo
     doc.y = 80;
     
-    // Institution name - positioned to the right of logo
+    // Institution name - positioned to the right of logo with MUCH more space
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Center for the Holistic Advancement of Religious Instruction,', { 
-         x: 160,
+         x: 200,
          y: 80
        });
     
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#1e40af')
        .text('Spirituality, and Mission', { 
-         x: 160,
+         x: 200,
          y: 95
-       });
-    
-    doc.fontSize(16).font('Helvetica-Bold').fillColor('#d4af37')
-       .text('CHARISM', { 
-         x: 160,
-         y: 115
        });
     
     // Move down for certificate title
