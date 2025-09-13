@@ -11,7 +11,7 @@ const getBackendUrl = () => {
   
   // Render production - use the correct backend URL
   if (hostname === 'charism.onrender.com') {
-    return 'https://charism-api.onrender.com/api';
+    return 'https://charism-api-xtw9.onrender.com/api';
   }
   
   

@@ -480,7 +480,7 @@ function SettingsPage() {
                     {/* Show temporary profile picture if available, otherwise show current */}
                     {(tempProfilePicture || profilePicture) ? (
                       <img
-                        src={`${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com'}/files/profile-picture/${getCurrentUserId()}`}
+                        src={`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/files/profile-picture/${getCurrentUserId()}`}
                         alt="Profile"
                         className="rounded-circle"
                         style={{ width: '100px', height: '100px', objectFit: 'cover' }}

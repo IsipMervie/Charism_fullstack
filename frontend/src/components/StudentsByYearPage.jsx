@@ -299,12 +299,12 @@ function StudentsByYearPage() {
       if (pdfFilters.hoursMin && pdfFilters.hoursMin.trim() !== '') params.append('hoursMin', pdfFilters.hoursMin.trim());
       if (pdfFilters.hoursMax && pdfFilters.hoursMax.trim() !== '') params.append('hoursMax', pdfFilters.hoursMax.trim());
 
-      console.log('PDF Generation URL:', `${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com/api'}/reports/students-by-year?${params}`);
+      console.log('PDF Generation URL:', `${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/reports/students-by-year?${params}`);
       console.log('PDF Filters:', pdfFilters);
       console.log('Selected Year:', selectedYear);
       console.log('Filter Options:', filterOptions);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com/api'}/reports/students-by-year?${params}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api'}/reports/students-by-year?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
