@@ -963,7 +963,7 @@ export const uploadProfilePicture = async (userId, formData) => {
       }
     }
     
-    const response = await axiosInstance.post(`/users/${userId}/profile-picture`, formData);
+    const response = await axiosInstance.post(`/api/users/${userId}/profile-picture`, formData);
     return response.data;
   } catch (error) {
     console.error('Error uploading profile picture:', error);
@@ -976,7 +976,7 @@ export const uploadProfilePicture = async (userId, formData) => {
 
 export const deleteProfilePicture = async (userId) => {
   try {
-    const response = await axiosInstance.delete(`/users/${userId}/profile-picture`);
+    const response = await axiosInstance.delete(`/api/users/${userId}/profile-picture`);
     return response.data;
   } catch (error) {
     console.error('Error deleting profile picture:', error);
@@ -1007,7 +1007,7 @@ export const sendMessage = async (messageData) => {
 
 export const deleteMessage = async (messageId) => {
   try {
-    const response = await axiosInstance.delete(`/messages/${messageId}`);
+    const response = await axiosInstance.delete(`/api/messages/${messageId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting message:', error);
@@ -1028,7 +1028,7 @@ export const getNotifications = async () => {
 
 export const markNotificationAsRead = async (notificationId) => {
   try {
-    const response = await axiosInstance.patch(`/notifications/${notificationId}/read`);
+    const response = await axiosInstance.patch(`/api/notifications/${notificationId}/read`);
     return response.data;
   } catch (error) {
     console.error('Error marking notification as read:', error);
@@ -1135,7 +1135,7 @@ export const removeParticipant = async (eventId, userId) => {
 // Certificate Generation
 export const generateCertificate = async (userId) => {
   try {
-    const response = await axiosInstance.get(`/certificates/generate/${userId}`, {
+    const response = await axiosInstance.get(`/api/certificates/generate/${userId}`, {
       responseType: 'blob',
     });
     
@@ -1160,7 +1160,7 @@ export const generateCertificate = async (userId) => {
 // PDF Reports
 export const generateStudentsListPDF = async (year) => {
   try {
-    const response = await axiosInstance.get(`/reports/students-by-year?year=${year}`, {
+    const response = await axiosInstance.get(`/api/reports/students-by-year?year=${year}`, {
       responseType: 'blob',
     });
     
@@ -1587,7 +1587,7 @@ export const uploadEventDocumentation = async (eventId, files, description = '')
       formData.append('description', description);
     }
     
-    const response = await axiosInstance.post(`/events/${eventId}/documentation/upload`, formData, {
+    const response = await axiosInstance.post(`/api/events/${eventId}/documentation/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -1607,7 +1607,7 @@ export const uploadEventDocumentation = async (eventId, files, description = '')
 
 export const getEventDocumentation = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}/documentation`);
+    const response = await axiosInstance.get(`/api/events/${eventId}/documentation`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event documentation:', error);
@@ -1617,7 +1617,7 @@ export const getEventDocumentation = async (eventId) => {
 
 export const downloadDocumentationFile = async (eventId, filename, originalName) => {
   try {
-    const response = await axiosInstance.get(`/events/${eventId}/documentation/download/${filename}`, {
+    const response = await axiosInstance.get(`/api/events/${eventId}/documentation/download/${filename}`, {
       responseType: 'blob',
     });
     
@@ -1640,7 +1640,7 @@ export const downloadDocumentationFile = async (eventId, filename, originalName)
 
 export const deleteDocumentationFile = async (eventId, filename) => {
   try {
-    const response = await axiosInstance.delete(`/events/${eventId}/documentation/${filename}`);
+    const response = await axiosInstance.delete(`/api/events/${eventId}/documentation/${filename}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting documentation file:', error);
@@ -1764,7 +1764,7 @@ export const getFeedbackById = async (feedbackId) => {
 export const getAllFeedback = async (params = {}) => {
   try {
     const query = new URLSearchParams(params).toString();
-    const response = await axiosInstance.get(`/feedback/admin/all${query ? `?${query}` : ''}`);
+    const response = await axiosInstance.get(`/api/feedback/admin/all${query ? `?${query}` : ''}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching all feedback:', error);
@@ -1920,7 +1920,7 @@ export const requestEventChatAccess = async (eventId) => {
 
 export const updateFeedback = async (feedbackId, updateData) => {
   try {
-    const response = await axiosInstance.put(`/feedback/admin/${feedbackId}`, updateData);
+    const response = await axiosInstance.put(`/api/feedback/admin/${feedbackId}`, updateData);
     return response.data;
   } catch (error) {
     console.error('Error updating feedback:', error);
@@ -1930,7 +1930,7 @@ export const updateFeedback = async (feedbackId, updateData) => {
 
 export const deleteFeedback = async (feedbackId) => {
   try {
-    const response = await axiosInstance.delete(`/feedback/admin/${feedbackId}`);
+    const response = await axiosInstance.delete(`/api/feedback/admin/${feedbackId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting feedback:', error);

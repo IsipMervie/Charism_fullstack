@@ -38,17 +38,17 @@ export const getImageUrl = (imageData, type = 'general') => {
     // This is a MongoDB-stored image, use the file API endpoint
     switch (type) {
       case 'logo':
-        return `${BACKEND_URL}/files/school-logo`;
+        return `${BACKEND_URL}/api/files/school-logo`;
       case 'profile':
         // For profile pictures, we need the user ID, not the image ID
         // The imageData should contain the user ID or we need to pass it separately
-        return `${BACKEND_URL}/files/profile-picture/default`;
+        return `${BACKEND_URL}/api/files/profile-picture/default`;
       case 'event':
         // For event images, we need the event ID, not the image ID
         // The imageData should contain the event ID or we need to pass it separately
         return `${BACKEND_URL}/api/files/event-image/default`;
       default:
-        return `${BACKEND_URL}/files/${type}-image/default`;
+        return `${BACKEND_URL}/api/files/${type}-image/default`;
     }
   }
   
@@ -79,7 +79,7 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
   
   // Handle MongoDB binary data with user ID
   if (imageData.data && imageData.contentType && userId) {
-    return `${BACKEND_URL}/files/profile-picture/${userId}`;
+    return `${BACKEND_URL}/api/files/profile-picture/${userId}`;
   }
   
   // Fallback to general image handling
