@@ -327,42 +327,60 @@
 
 /* Ensure cancel button is visible in dark mode */
 .dark .swal2-cancel {
-  background: var(--text-tertiary) !important;
-  color: var(--text-inverse) !important;
-  border: 1px solid var(--border-primary) !important;
+  background: #475569 !important;
+  color: #ffffff !important;
+  border: 1px solid #64748b !important;
 }
 
 .dark .swal2-cancel:hover {
-  background: var(--text-secondary) !important;
-  color: var(--text-inverse) !important;
-  border-color: var(--border-secondary) !important;
+  background: #64748b !important;
+  color: #ffffff !important;
+  border-color: #94a3b8 !important;
 }
 
 /* Theme-aware cancel button styling */
 .dark .swal-theme-cancel {
-  background: var(--text-tertiary) !important;
-  color: var(--text-inverse) !important;
-  border: 1px solid var(--border-primary) !important;
+  background: #475569 !important;
+  color: #ffffff !important;
+  border: 1px solid #64748b !important;
 }
 
 .dark .swal-theme-cancel:hover {
-  background: var(--text-secondary) !important;
-  color: var(--text-inverse) !important;
-  border-color: var(--border-secondary) !important;
+  background: #64748b !important;
+  color: #ffffff !important;
+  border-color: #94a3b8 !important;
 }
 
 /* Additional dark mode cancel button text visibility */
 .dark .swal2-cancel,
 .dark .swal-theme-cancel {
-  color: var(--text-inverse) !important;
+  color: #ffffff !important;
   font-weight: 600 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
 
 .dark .swal2-cancel:hover,
 .dark .swal-theme-cancel:hover {
-  color: var(--text-inverse) !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Enhanced cancel button visibility for dark mode */
+[data-theme="dark"] .swal2-cancel,
+[data-theme="dark"] .swal-theme-cancel {
+  background: #475569 !important;
+  color: #ffffff !important;
+  border: 1px solid #64748b !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .swal2-cancel:hover,
+[data-theme="dark"] .swal-theme-cancel:hover {
+  background: #64748b !important;
+  color: #ffffff !important;
+  border-color: #94a3b8 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
 }
 
 .dark .swal2-input,

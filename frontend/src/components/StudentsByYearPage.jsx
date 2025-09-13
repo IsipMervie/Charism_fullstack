@@ -101,9 +101,16 @@ function StudentsByYearPage() {
     const fetchFilterOptions = async () => {
       try {
         const data = await getStudentsByYearFilterOptions();
+        console.log('Filter options received:', data);
         setFilterOptions(data);
       } catch (err) {
         console.error('Error fetching filter options:', err);
+        // Set empty filter options as fallback
+        setFilterOptions({
+          departments: [],
+          years: [],
+          sections: []
+        });
       }
     };
 
@@ -252,6 +259,13 @@ function StudentsByYearPage() {
   const generatePDF = async () => {
     setDownloading(true);
     try {
+      // Validate that a year is selected
+      if (!selectedYear) {
+        showError('No Year Selected', 'Please select a year before generating the PDF report.');
+        setDownloading(false);
+        return;
+      }
+
       // Validate hours range if both are provided
       if (pdfFilters.hoursMin && pdfFilters.hoursMax) {
         const min = parseInt(pdfFilters.hoursMin);
@@ -263,17 +277,32 @@ function StudentsByYearPage() {
         }
       }
 
+      // Validate individual hours values
+      if (pdfFilters.hoursMin && (isNaN(parseInt(pdfFilters.hoursMin)) || parseInt(pdfFilters.hoursMin) < 0)) {
+        showError('Invalid Minimum Hours', 'Minimum hours must be a valid number greater than or equal to 0.');
+        setDownloading(false);
+        return;
+      }
+
+      if (pdfFilters.hoursMax && (isNaN(parseInt(pdfFilters.hoursMax)) || parseInt(pdfFilters.hoursMax) < 0)) {
+        showError('Invalid Maximum Hours', 'Maximum hours must be a valid number greater than or equal to 0.');
+        setDownloading(false);
+        return;
+      }
+
       const params = new URLSearchParams();
       params.append('year', selectedYear);
       
       if (pdfFilters.department && pdfFilters.department.trim() !== '') params.append('department', pdfFilters.department.trim());
-      if (pdfFilters.year && pdfFilters.year.trim() !== '') params.append('year', pdfFilters.year.trim());
+      if (pdfFilters.year && pdfFilters.year.trim() !== '') params.append('yearLevel', pdfFilters.year.trim());
       if (pdfFilters.section && pdfFilters.section.trim() !== '') params.append('section', pdfFilters.section.trim());
       if (pdfFilters.hoursMin && pdfFilters.hoursMin.trim() !== '') params.append('hoursMin', pdfFilters.hoursMin.trim());
       if (pdfFilters.hoursMax && pdfFilters.hoursMax.trim() !== '') params.append('hoursMax', pdfFilters.hoursMax.trim());
 
       console.log('PDF Generation URL:', `${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com/api'}/reports/students-by-year?${params}`);
       console.log('PDF Filters:', pdfFilters);
+      console.log('Selected Year:', selectedYear);
+      console.log('Filter Options:', filterOptions);
 
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api.onrender.com/api'}/reports/students-by-year?${params}`, {
         headers: {
@@ -351,7 +380,7 @@ function StudentsByYearPage() {
         <div className="loading-section">
           <div className="loading-spinner">
             <FaSpinner className="spinner-icon" />
-            <p>Loading student data...</p>
+            
           </div>
         </div>
       </div>
@@ -800,7 +829,7 @@ function StudentsByYearPage() {
               {downloading ? (
                 <>
                   <FaSpinner className="spinner-icon" />
-                  <span>Generating PDF...</span>
+                  
                 </>
               ) : (
                 <>

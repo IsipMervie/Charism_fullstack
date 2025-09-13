@@ -781,6 +781,32 @@ exports.joinEvent = async (req, res) => {
       return res.status(400).json({ message: 'This event is not available for student registration.' });
     }
 
+    // Check if event is still open for registration
+    const now = new Date();
+    
+    // Create event start datetime by combining date and startTime
+    const eventStartDateTime = new Date(event.date);
+    if (event.startTime) {
+      const [hours, minutes] = event.startTime.split(':');
+      eventStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    }
+    
+    // Check if event has already started
+    if (eventStartDateTime <= now) {
+      return res.status(400).json({ 
+        message: 'Registration is closed. This event has already started.',
+        error: 'EVENT_STARTED'
+      });
+    }
+    
+    // Also check if event date has passed (fallback check)
+    if (event.date < now) {
+      return res.status(400).json({ 
+        message: 'This event has already passed.',
+        error: 'EVENT_EXPIRED'
+      });
+    }
+
     // Get user details to check department access
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -2511,6 +2537,23 @@ exports.getEventByRegistrationToken = async (req, res) => {
     
     // Check if event is still open for registration
     const now = new Date();
+    
+    // Create event start datetime by combining date and startTime
+    const eventStartDateTime = new Date(event.date);
+    if (event.startTime) {
+      const [hours, minutes] = event.startTime.split(':');
+      eventStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    }
+    
+    // Check if event has already started
+    if (eventStartDateTime <= now) {
+      return res.status(400).json({ 
+        message: 'Registration is closed. This event has already started.',
+        error: 'EVENT_STARTED'
+      });
+    }
+    
+    // Also check if event date has passed (fallback check)
     if (event.date < now) {
       return res.status(400).json({ 
         message: 'This event has already passed.',
@@ -2575,6 +2618,23 @@ exports.registerForEventWithToken = async (req, res) => {
     
     // Check if event is still open for registration
     const now = new Date();
+    
+    // Create event start datetime by combining date and startTime
+    const eventStartDateTime = new Date(event.date);
+    if (event.startTime) {
+      const [hours, minutes] = event.startTime.split(':');
+      eventStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    }
+    
+    // Check if event has already started
+    if (eventStartDateTime <= now) {
+      return res.status(400).json({ 
+        message: 'Registration is closed. This event has already started.',
+        error: 'EVENT_STARTED'
+      });
+    }
+    
+    // Also check if event date has passed (fallback check)
     if (event.date < now) {
       return res.status(400).json({ 
         message: 'This event has already passed.',
