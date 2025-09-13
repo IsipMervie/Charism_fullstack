@@ -46,7 +46,7 @@ export const getImageUrl = (imageData, type = 'general') => {
       case 'event':
         // For event images, we need the event ID, not the image ID
         // The imageData should contain the event ID or we need to pass it separately
-        return `${BACKEND_URL}/files/event-image/default`;
+        return `${BACKEND_URL}/api/files/event-image/default`;
       default:
         return `${BACKEND_URL}/files/${type}-image/default`;
     }
@@ -91,7 +91,7 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   
   // Handle MongoDB binary data with event ID
   if (imageData.data && imageData.contentType && eventId) {
-    return `${BACKEND_URL}/files/event-image/${eventId}`;
+    return `${BACKEND_URL}/api/files/event-image/${eventId}`;
   }
   
   // Fallback to general image handling

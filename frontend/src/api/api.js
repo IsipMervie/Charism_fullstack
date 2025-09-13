@@ -1262,11 +1262,11 @@ export const getSchoolSettings = async () => {
 // Reports
 export const generateReport = async (reportType, params = {}) => {
   try {
-    let url = `/reports/${reportType}`;
+    let url = `/api/reports/${reportType}`;
     
     // Handle special case for event-attendance report
     if (reportType === 'event-attendance' && params.eventId) {
-      url = `/reports/${reportType}/${params.eventId}`;
+      url = `/api/reports/${reportType}/${params.eventId}`;
       // Remove eventId from params to avoid duplicate
       const { eventId, ...otherParams } = params;
       if (Object.keys(otherParams).length > 0) {
@@ -1464,7 +1464,7 @@ export const generateBulkCertificates = async (userIds) => {
 // Contact Us
 export const submitContactForm = async (contactData) => {
   try {
-    const response = await axiosInstance.post('/api/contact', contactData);
+    const response = await axiosInstance.post('/api/contact-us', contactData);
     return response.data;
   } catch (error) {
     console.error('Error submitting contact form:', error);
