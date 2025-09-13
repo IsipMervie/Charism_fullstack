@@ -167,24 +167,15 @@ const addCertificateHeader = async (doc, studentName, eventTitle, hours) => {
     
     doc.moveDown(0.8);
     
-    // Add hours - highlighted in a decorative box
+    // Add hours - simple text without background
     const hoursText = `${hours} hours of Community Service`;
-    const textWidth = doc.widthOfString(hoursText, { fontSize: 24 });
-    const boxWidth = textWidth + 40;
-    const boxX = (doc.page.width - boxWidth) / 2;
-    
-    // Draw decorative box
-    doc.rect(boxX, doc.y - 10, boxWidth, 50)
-       .fill('#fef3c7')
-       .stroke('#f59e0b', 2);
     
     doc.fontSize(24).font('Helvetica-Bold').fillColor('#dc2626')
        .text(hoursText, { 
-         align: 'center',
-         y: doc.y
+         align: 'center'
        });
     
-    doc.y += 50;
+    doc.moveDown(0.8);
     doc.moveDown(0.8);
     
     // Add additional text
