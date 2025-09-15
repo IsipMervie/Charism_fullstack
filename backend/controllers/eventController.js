@@ -781,6 +781,16 @@ exports.joinEvent = async (req, res) => {
       timestamp: new Date().toISOString()
     });
 
+    // Quick success test - remove this after testing
+    if (req.params.eventId === 'test') {
+      return res.json({ 
+        message: 'Test join event successful!',
+        eventId: req.params.eventId,
+        userId: req.user?.id,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     // Quick validation - return specific error messages
     if (!req.params.eventId) {
       return res.status(400).json({ 

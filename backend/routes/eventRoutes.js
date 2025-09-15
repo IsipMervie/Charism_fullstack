@@ -255,6 +255,19 @@ router.get(
 // Student Participation Routes
 // =======================
 
+// Simple test endpoint - no middleware
+router.post('/:eventId/join-simple', (req, res) => {
+  console.log('🔍 SIMPLE JOIN TEST HIT');
+  console.log('Event ID:', req.params.eventId);
+  console.log('Body:', req.body);
+  console.log('Headers:', req.headers);
+  res.json({ 
+    message: 'Simple join test working',
+    eventId: req.params.eventId,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Test endpoint for debugging join event
 router.post('/:eventId/join-test', authMiddleware, (req, res) => {
   console.log('🔍 JOIN TEST ENDPOINT HIT');

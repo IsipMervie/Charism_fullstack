@@ -577,6 +577,17 @@ export const getEventDetails = async (eventId) => {
   }
 };
 
+export const testJoinEventSimple = async (eventId) => {
+  try {
+    const response = await axiosInstance.post(`/events/${eventId}/join-simple`);
+    return response.data;
+  } catch (error) {
+    console.error('Simple test join event error:', error);
+    console.error('Simple test join event response:', error.response);
+    throw error;
+  }
+};
+
 export const testJoinEvent = async (eventId) => {
   try {
     const response = await axiosInstance.post(`/events/${eventId}/join-test`);
@@ -595,12 +606,18 @@ export const joinEvent = async (eventId) => {
   } catch (error) {
     console.error('Error joining event:', error);
     console.error('Error response:', error.response);
-    console.error('Error response data:', error.response?.data);
+    console.error('Error response data:', JSON.stringify(error.response?.data, null, 2));
     console.error('Error status:', error.response?.status);
+    console.error('Full error object:', JSON.stringify(error, null, 2));
     
     // Extract specific error message from response
     const errorMessage = error.response?.data?.message || 'Failed to join event. Please try again.';
     const errorCode = error.response?.data?.error;
+    
+    // Show error in alert for immediate debugging
+    if (error.response?.data?.message) {
+      alert(`Join Event Error: ${error.response.data.message}`);
+    }
     
     // Create more specific error messages based on error codes
     let specificMessage = errorMessage;
