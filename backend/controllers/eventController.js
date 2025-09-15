@@ -775,6 +775,9 @@ exports.joinEvent = async (req, res) => {
         contentType: req.headers['content-type'],
         userAgent: req.headers['user-agent']
       },
+      body: req.body,
+      params: req.params,
+      query: req.query,
       timestamp: new Date().toISOString()
     });
 
@@ -784,7 +787,7 @@ exports.joinEvent = async (req, res) => {
       return res.status(400).json({ message: 'Event ID is required.' });
     }
 
-    if (!req.user || !req.user.id) {
+    if (!req.user || (!req.user.id && !req.user.userId && !req.user._id)) {
       console.log('❌ Missing user authentication - req.user:', req.user);
       return res.status(401).json({ message: 'User authentication required.' });
     }
@@ -792,17 +795,30 @@ exports.joinEvent = async (req, res) => {
     console.log('🔍 Join Event Debug:', {
       eventId: req.params.eventId,
       userId: req.user?.id,
+      userIdAlt: req.user?.userId,
+      userIdUnderscore: req.user?._id,
       userRole: req.user?.role,
+      fullUserObject: req.user,
       timestamp: new Date().toISOString()
     });
 
     // Validate eventId format (MongoDB ObjectId should be 24 hex characters)
     if (!req.params.eventId || typeof req.params.eventId !== 'string' || !req.params.eventId.match(/^[0-9a-fA-F]{24}$/)) {
-      console.log('❌ Invalid eventId format:', req.params.eventId);
+      console.log('❌ Invalid eventId format:', {
+        eventId: req.params.eventId,
+        type: typeof req.params.eventId,
+        length: req.params.eventId?.length,
+        isValidFormat: req.params.eventId?.match(/^[0-9a-fA-F]{24}$/) ? true : false
+      });
       return res.status(400).json({ 
         message: 'Invalid event ID format.', 
         eventId: req.params.eventId,
-        error: 'INVALID_EVENT_ID_FORMAT'
+        error: 'INVALID_EVENT_ID_FORMAT',
+        details: {
+          received: req.params.eventId,
+          type: typeof req.params.eventId,
+          length: req.params.eventId?.length
+        }
       });
     }
 
@@ -886,10 +902,38 @@ exports.joinEvent = async (req, res) => {
     }
 
     // Get user details to check department access
-    const user = await User.findById(req.user.id);
+    // Ensure we have the correct user ID from the token
+    const userId = req.user.id || req.user.userId || req.user._id;
+    
+    console.log('🔍 Looking up user:', {
+      userId: userId,
+      userIdType: typeof userId,
+      userObject: req.user
+    });
+    
+    if (!userId) {
+      console.log('❌ No user ID found in request');
+      return res.status(400).json({ 
+        message: 'User ID not found in authentication token.',
+        error: 'MISSING_USER_ID'
+      });
+    }
+    
+    const user = await User.findById(userId);
     if (!user) {
-      console.log('❌ User not found:', req.user.id);
-      return res.status(404).json({ message: 'User not found.' });
+      console.log('❌ User not found:', {
+        searchedId: userId,
+        searchedIdType: typeof userId,
+        allUserFields: req.user
+      });
+      return res.status(404).json({ 
+        message: 'User not found.',
+        error: 'USER_NOT_FOUND',
+        details: {
+          searchedId: userId,
+          searchedIdType: typeof userId
+        }
+      });
     }
 
     console.log('👤 User details:', {
@@ -918,7 +962,7 @@ exports.joinEvent = async (req, res) => {
 
     // Check if user is already registered
     const existingAttendance = event.attendance.find(
-      a => a.userId.toString() === req.user.id
+      a => a.userId.toString() === userId.toString()
     );
 
     console.log('📋 Registration check:', {
@@ -970,7 +1014,7 @@ exports.joinEvent = async (req, res) => {
 
     // Add user to attendance
     event.attendance.push({
-      userId: req.user.id,
+      userId: userId,
       status: initialStatus,
       registeredAt: new Date(),
       registrationApproved: registrationApproved
@@ -995,7 +1039,7 @@ exports.joinEvent = async (req, res) => {
       stack: err.stack,
       name: err.name,
       eventId: req.params?.eventId,
-      userId: req.user?.id,
+      userId: req.user?.id || req.user?.userId || req.user?._id,
       timestamp: new Date().toISOString()
     });
     
