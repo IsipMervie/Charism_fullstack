@@ -25,15 +25,23 @@ const roleMiddleware = (...allowedRoles) => {
       
       // Check if role is in the token (faster than database lookup)
       if (req.user.role && allowedRoles.includes(req.user.role)) {
-        console.log('User role from token:', req.user.role);
-        console.log('User authorized, proceeding...');
+        console.log('✅ User role from token:', req.user.role);
+        console.log('✅ User authorized, proceeding...');
         // Ensure req.user.id is properly set for controllers
         if (!req.user.id && req.user.userId) {
           req.user.id = req.user.userId;
+          console.log('🔧 Set req.user.id from req.user.userId:', req.user.id);
         }
         if (!req.user.id && req.user._id) {
           req.user.id = req.user._id;
+          console.log('🔧 Set req.user.id from req.user._id:', req.user.id);
         }
+        console.log('🔍 Final req.user before next():', {
+          id: req.user.id,
+          userId: req.user.userId,
+          _id: req.user._id,
+          role: req.user.role
+        });
         next();
         return;
       }

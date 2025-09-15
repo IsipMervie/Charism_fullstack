@@ -766,6 +766,18 @@ exports.getEventCapacityStatus = async (req, res) => {
 // Join Event
 exports.joinEvent = async (req, res) => {
   try {
+    console.log('🚀 JOIN EVENT CALLED - Full request details:', {
+      eventId: req.params.eventId,
+      userId: req.user?.id,
+      userRole: req.user?.role,
+      headers: {
+        authorization: req.headers.authorization ? 'Bearer [TOKEN]' : 'None',
+        contentType: req.headers['content-type'],
+        userAgent: req.headers['user-agent']
+      },
+      timestamp: new Date().toISOString()
+    });
+
     // Validate required parameters
     if (!req.params.eventId) {
       console.log('❌ Missing eventId parameter');
@@ -773,7 +785,7 @@ exports.joinEvent = async (req, res) => {
     }
 
     if (!req.user || !req.user.id) {
-      console.log('❌ Missing user authentication');
+      console.log('❌ Missing user authentication - req.user:', req.user);
       return res.status(401).json({ message: 'User authentication required.' });
     }
 
@@ -784,10 +796,14 @@ exports.joinEvent = async (req, res) => {
       timestamp: new Date().toISOString()
     });
 
-    // Validate eventId format
-    if (!req.params.eventId.match(/^[0-9a-fA-F]{24}$/)) {
+    // Validate eventId format (MongoDB ObjectId should be 24 hex characters)
+    if (!req.params.eventId || typeof req.params.eventId !== 'string' || !req.params.eventId.match(/^[0-9a-fA-F]{24}$/)) {
       console.log('❌ Invalid eventId format:', req.params.eventId);
-      return res.status(400).json({ message: 'Invalid event ID format.' });
+      return res.status(400).json({ 
+        message: 'Invalid event ID format.', 
+        eventId: req.params.eventId,
+        error: 'INVALID_EVENT_ID_FORMAT'
+      });
     }
 
     const event = await Event.findById(req.params.eventId);
@@ -974,8 +990,37 @@ exports.joinEvent = async (req, res) => {
       });
     }
   } catch (err) {
-    console.error('Error in joinEvent:', err);
-    res.status(500).json({ message: 'Error joining event.', error: err.message });
+    console.error('❌ CRITICAL ERROR in joinEvent:', {
+      error: err.message,
+      stack: err.stack,
+      name: err.name,
+      eventId: req.params?.eventId,
+      userId: req.user?.id,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Check if it's a validation error from Mongoose
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ 
+        message: 'Validation error occurred.', 
+        error: err.message,
+        details: err.errors
+      });
+    }
+    
+    // Check if it's a MongoDB error
+    if (err.name === 'MongoError' || err.name === 'MongoServerError') {
+      return res.status(400).json({ 
+        message: 'Database error occurred.', 
+        error: err.message 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Internal server error joining event.', 
+      error: err.message,
+      timestamp: new Date().toISOString()
+    });
   }
 };
 
