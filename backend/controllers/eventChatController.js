@@ -536,16 +536,16 @@ const enhancedRuleBasedFilter = async (text) => {
     { pattern: /\b(violence|violent|violently)\b/gi, severity: 'high' },
     
     // Common misspellings and variations
-    { pattern: /\b(f*ck|f**k|f***|fck|fcuk)\b/gi, severity: 'high' },
-    { pattern: /\b(sh*t|s**t|s***|sht|shyt)\b/gi, severity: 'high' },
-    { pattern: /\b(b*tch|b**ch|b***|btch|bich)\b/gi, severity: 'high' },
-    { pattern: /\b(a**hole|a***hole|ashole|assh0le)\b/gi, severity: 'high' },
-    { pattern: /\b(d*ck|d**k|d***|dck|dik)\b/gi, severity: 'high' },
-    { pattern: /\b(c*ck|c**k|c***|cck|cok)\b/gi, severity: 'high' },
-    { pattern: /\b(p*ssy|p**sy|p***|pssy|pisy)\b/gi, severity: 'high' },
-    { pattern: /\b(p*ta|p**a|p***|pta|pta)\b/gi, severity: 'high' },
-    { pattern: /\b(g*go|g**o|g***|ggo|gago)\b/gi, severity: 'medium' },
-    { pattern: /\b(t*ngina|t**gina|t***|tngina|tangina)\b/gi, severity: 'high' }
+    { pattern: /\b(f\*ck|f\*\*k|f\*\*\*|fck|fcuk)\b/gi, severity: 'high' },
+    { pattern: /\b(sh\*t|s\*\*t|s\*\*\*|sht|shyt)\b/gi, severity: 'high' },
+    { pattern: /\b(b\*tch|b\*\*ch|b\*\*\*|btch|bich)\b/gi, severity: 'high' },
+    { pattern: /\b(a\*\*hole|a\*\*\*hole|ashole|assh0le)\b/gi, severity: 'high' },
+    { pattern: /\b(d\*ck|d\*\*k|d\*\*\*|dck|dik)\b/gi, severity: 'high' },
+    { pattern: /\b(c\*ck|c\*\*k|c\*\*\*|cck|cok)\b/gi, severity: 'high' },
+    { pattern: /\b(p\*ssy|p\*\*sy|p\*\*\*|pssy|pisy)\b/gi, severity: 'high' },
+    { pattern: /\b(p\*ta|p\*\*a|p\*\*\*|pta|pta)\b/gi, severity: 'high' },
+    { pattern: /\b(g\*go|g\*\*o|g\*\*\*|ggo|gago)\b/gi, severity: 'medium' },
+    { pattern: /\b(t\*ngina|t\*\*gina|t\*\*\*|tngina|tangina)\b/gi, severity: 'high' }
   ];
   
   // Check for inappropriate patterns
