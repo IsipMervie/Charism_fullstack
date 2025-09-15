@@ -768,7 +768,7 @@ exports.joinEvent = async (req, res) => {
   try {
     console.log('🔍 Join Event Debug:', {
       eventId: req.params.eventId,
-      userId: req.user?.userId,
+      userId: req.user?.id,
       userRole: req.user?.role,
       timestamp: new Date().toISOString()
     });
@@ -853,9 +853,9 @@ exports.joinEvent = async (req, res) => {
     }
 
     // Get user details to check department access
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
-      console.log('❌ User not found:', req.user.userId);
+      console.log('❌ User not found:', req.user.id);
       return res.status(404).json({ message: 'User not found.' });
     }
 
@@ -885,7 +885,7 @@ exports.joinEvent = async (req, res) => {
 
     // Check if user is already registered
     const existingAttendance = event.attendance.find(
-      a => a.userId.toString() === req.user.userId
+      a => a.userId.toString() === req.user.id
     );
 
     console.log('📋 Registration check:', {
@@ -937,7 +937,7 @@ exports.joinEvent = async (req, res) => {
 
     // Add user to attendance
     event.attendance.push({
-      userId: req.user.userId,
+      userId: req.user.id,
       status: initialStatus,
       registeredAt: new Date(),
       registrationApproved: registrationApproved

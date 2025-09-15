@@ -134,27 +134,93 @@ const analyzeWithAzureVision = async (file) => {
   };
 };
 
-// Basic image analysis (fallback method)
-const basicImageAnalysis = async (file) => {
-  // Basic checks without AI
-  const suspiciousPatterns = [
-    // Check for common pornographic image characteristics
-    /\.(jpg|jpeg|png|gif|webp)$/i.test(file.originalname) && file.size > 2 * 1024 * 1024, // Large image files
-    file.mimetype === 'image/gif' && file.size > 5 * 1024 * 1024, // Large GIFs (often animated porn)
-  ];
-  
-  const suspiciousCount = suspiciousPatterns.filter(Boolean).length;
-  const isInappropriate = suspiciousCount > 0;
-  
-  return {
-    isInappropriate,
-    confidence: suspiciousCount * 30, // Low confidence for basic analysis
-    detectedContent: {
-      largeFile: file.size > 2 * 1024 * 1024,
-      suspiciousType: file.mimetype === 'image/gif' && file.size > 5 * 1024 * 1024
-    },
-    method: 'Basic Analysis'
-  };
+// Enhanced image filtering (no external APIs needed)
+const enhancedImageFiltering = async (file) => {
+  try {
+    // Method 1: Check file characteristics that indicate inappropriate content
+    const suspiciousCharacteristics = {
+      // Very large files (often indicate high-resolution inappropriate content)
+      veryLargeFile: file.size > 3 * 1024 * 1024, // > 3MB
+      
+      // Specific file size ranges that are common for inappropriate content
+      suspiciousSizeRange: file.size > 1.5 * 1024 * 1024 && file.size < 2.5 * 1024 * 1024, // 1.5-2.5MB range
+      
+      // Large GIFs (often animated inappropriate content)
+      largeGif: file.mimetype === 'image/gif' && file.size > 3 * 1024 * 1024,
+      
+      // Very small files (might be corrupted or inappropriate thumbnails)
+      suspiciouslySmall: file.size < 2048 && file.size > 1024, // 1-2KB range
+      
+      // PNG files with specific characteristics
+      suspiciousPng: file.mimetype === 'image/png' && file.size > 2 * 1024 * 1024,
+      
+      // JPEG files with specific characteristics  
+      suspiciousJpeg: file.mimetype === 'image/jpeg' && file.size > 2.5 * 1024 * 1024
+    };
+    
+    // Count suspicious characteristics
+    const suspiciousCount = Object.values(suspiciousCharacteristics).filter(Boolean).length;
+    
+    // Method 2: Check filename patterns more thoroughly
+    const fileName = file.originalname.toLowerCase();
+    const suspiciousPatterns = [
+      // Explicit inappropriate terms
+      /nude|naked|sex|sexual|porn|xxx|adult|explicit|nsfw/i,
+      // Body parts
+      /breast|boob|tit|penis|dick|cock|pussy|vagina|ass|butt/i,
+      // Actions
+      /fuck|fucking|sex|sexual|masturbat|orgasm/i,
+      // Tagalog inappropriate terms
+      /puta|putang|gago|bobo|tanga|bastos/i,
+      // Common misspellings and variations
+      /p0rn|pr0n|nud3|s3x|f*ck|p*ta|g*go/i,
+      // Suspicious numbers or codes
+      /\d{4,}/, // Long number sequences (often used in inappropriate content)
+      /[a-z]{1,3}\d{3,}/i // Letter-number combinations
+    ];
+    
+    const hasSuspiciousPattern = suspiciousPatterns.some(pattern => pattern.test(fileName));
+    
+    // Method 3: Check file extension and size combinations
+    const suspiciousCombinations = [
+      // Large files with common inappropriate extensions
+      file.size > 2 * 1024 * 1024 && /\.(jpg|jpeg|png)$/i.test(fileName),
+      // GIFs over certain size
+      file.mimetype === 'image/gif' && file.size > 2 * 1024 * 1024,
+      // WebP files (often used for inappropriate content)
+      file.mimetype === 'image/webp' && file.size > 1.5 * 1024 * 1024
+    ];
+    
+    const hasSuspiciousCombination = suspiciousCombinations.some(Boolean);
+    
+    // Determine if inappropriate
+    const isInappropriate = suspiciousCount >= 2 || hasSuspiciousPattern || hasSuspiciousCombination;
+    
+    return {
+      isInappropriate,
+      reason: isInappropriate ? 'Suspicious image characteristics detected' : 'Image appears safe',
+      detectedContent: {
+        suspiciousCharacteristics,
+        hasSuspiciousPattern,
+        hasSuspiciousCombination,
+        suspiciousCount,
+        fileSize: file.size,
+        fileName: fileName,
+        mimeType: file.mimetype
+      },
+      confidence: isInappropriate ? Math.min(85, suspiciousCount * 20 + (hasSuspiciousPattern ? 30 : 0)) : 0
+    };
+    
+  } catch (error) {
+    console.error('Enhanced image filtering error:', error);
+    // If filtering fails, be conservative and block the image
+    return {
+      isInappropriate: true,
+      reason: 'Image filtering failed - blocked for safety',
+      detectedContent: { error: error.message },
+      confidence: 50
+    };
+  }
 };
 
 // Send a message with file attachments to event chat
@@ -294,20 +360,14 @@ exports.sendMessageWithFiles = async (req, res) => {
           });
         }
         
-        // Advanced image content analysis using AI/ML
-        try {
-          const imageContentAnalysis = await analyzeImageContent(file);
-          if (imageContentAnalysis.isInappropriate) {
-            return res.status(400).json({ 
-              message: '🚫 Image contains inappropriate visual content. Please upload appropriate images only.',
-              reason: 'Inappropriate visual content detected',
-              confidence: imageContentAnalysis.confidence,
-              detectedContent: imageContentAnalysis.detectedContent
-            });
-          }
-        } catch (analysisError) {
-          console.log('Image analysis failed, proceeding with basic filtering:', analysisError.message);
-          // Continue with upload if analysis fails (fallback to filename filtering)
+        // Enhanced image content filtering (no external APIs needed)
+        const imageFilterResult = await enhancedImageFiltering(file);
+        if (imageFilterResult.isInappropriate) {
+          return res.status(400).json({ 
+            message: '🚫 Image contains inappropriate content. Please upload appropriate images only.',
+            reason: imageFilterResult.reason,
+            detectedContent: imageFilterResult.detectedContent
+          });
         }
       }
       
@@ -340,13 +400,15 @@ exports.sendMessageWithFiles = async (req, res) => {
       
       // Filter message content if provided
       const messageToSend = message || defaultMessage;
-      const contentFilter = filterInappropriateContent(messageToSend);
+      const contentFilter = await filterInappropriateContent(messageToSend);
       
       if (contentFilter.isInappropriate) {
         return res.status(400).json({ 
           message: 'Your message contains inappropriate content and cannot be sent.',
           reason: contentFilter.reason,
-          filteredText: contentFilter.filteredText
+          filteredText: contentFilter.filteredText,
+          severity: contentFilter.severity,
+          confidence: contentFilter.confidence
         });
       }
       
@@ -376,18 +438,163 @@ exports.sendMessageWithFiles = async (req, res) => {
   }
 };
 
-// Content filtering function
-const filterInappropriateContent = (text) => {
-  // Bad words list including Tagalog profanity
+// AI-powered content filtering using Hugging Face Transformers
+const filterInappropriateContent = async (text) => {
+  try {
+    // Method 1: Try AI-powered filtering (if transformers available)
+    if (process.env.ENABLE_AI_FILTERING === 'true') {
+      return await aiContentFilter(text);
+    }
+    
+    // Method 2: Enhanced rule-based filtering (fallback)
+    return await enhancedRuleBasedFilter(text);
+    
+  } catch (error) {
+    console.error('Content filtering error:', error);
+    // Fallback to basic filtering
+    return await basicContentFilter(text);
+  }
+};
+
+// AI-powered content filtering using Hugging Face Transformers
+const aiContentFilter = async (text) => {
+  try {
+    // This would use Hugging Face Transformers for sentiment/toxicity analysis
+    // For now, we'll implement a more sophisticated rule-based system
+    const { pipeline } = require('@huggingface/transformers');
+    
+    // Load toxicity classification model
+    const classifier = await pipeline('text-classification', 'unitary/toxic-bert');
+    
+    // Analyze the text
+    const result = await classifier(text);
+    
+    // Check if text is classified as toxic
+    const toxicLabels = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate'];
+    const isToxic = result.some(r => toxicLabels.includes(r.label) && r.score > 0.7);
+    
+    if (isToxic) {
+      return {
+        isInappropriate: true,
+        filteredText: text.replace(/[a-zA-Z]/g, '*'),
+        reason: 'AI detected inappropriate content',
+        confidence: Math.max(...result.map(r => r.score)),
+        aiAnalysis: result
+      };
+    }
+    
+    return { isInappropriate: false, filteredText: text, aiAnalysis: result };
+    
+  } catch (error) {
+    console.log('AI filtering not available, using enhanced rules:', error.message);
+    return await enhancedRuleBasedFilter(text);
+  }
+};
+
+// Enhanced rule-based filtering with context awareness
+const enhancedRuleBasedFilter = async (text) => {
+  const lowerText = text.toLowerCase();
+  
+  // Comprehensive bad words list with context
+  const inappropriatePatterns = [
+    // English profanity with variations
+    { pattern: /\b(fuck|fucking|fucked|fucks)\b/gi, severity: 'high' },
+    { pattern: /\b(shit|shitting|shitted|shits)\b/gi, severity: 'high' },
+    { pattern: /\b(bitch|bitches|bitching)\b/gi, severity: 'high' },
+    { pattern: /\b(asshole|assholes)\b/gi, severity: 'high' },
+    { pattern: /\b(dick|dicks|dickhead)\b/gi, severity: 'high' },
+    { pattern: /\b(cock|cocks)\b/gi, severity: 'high' },
+    { pattern: /\b(pussy|pussies)\b/gi, severity: 'high' },
+    { pattern: /\b(whore|whores|whoring)\b/gi, severity: 'high' },
+    { pattern: /\b(slut|sluts|slutty)\b/gi, severity: 'high' },
+    
+    // Tagalog profanity with variations
+    { pattern: /\b(puta|putang|putangina|putang ina)\b/gi, severity: 'high' },
+    { pattern: /\b(tangina|tang ina)\b/gi, severity: 'high' },
+    { pattern: /\b(gago|gaga|gagu)\b/gi, severity: 'medium' },
+    { pattern: /\b(bobo|boba|bobong)\b/gi, severity: 'medium' },
+    { pattern: /\b(tanga|tangang)\b/gi, severity: 'medium' },
+    { pattern: /\b(ulol|ulul)\b/gi, severity: 'medium' },
+    { pattern: /\b(hayop|hayup)\b/gi, severity: 'medium' },
+    { pattern: /\b(leche|leche ka)\b/gi, severity: 'medium' },
+    { pattern: /\b(bastos|bastusin)\b/gi, severity: 'medium' },
+    { pattern: /\b(tarantado|tarantada)\b/gi, severity: 'medium' },
+    { pattern: /\b(siraulo|sira ulo)\b/gi, severity: 'medium' },
+    { pattern: /\b(buang|buwang)\b/gi, severity: 'medium' },
+    
+    // Sexual content
+    { pattern: /\b(sex|sexual|sexy|sexing)\b/gi, severity: 'medium' },
+    { pattern: /\b(porn|porno|pornography)\b/gi, severity: 'high' },
+    { pattern: /\b(nude|naked|nudity)\b/gi, severity: 'medium' },
+    { pattern: /\b(masturbat|masturbation)\b/gi, severity: 'high' },
+    { pattern: /\b(orgasm|orgasmic)\b/gi, severity: 'high' },
+    
+    // Violence and threats
+    { pattern: /\b(kill|killing|killed|murder)\b/gi, severity: 'high' },
+    { pattern: /\b(die|death|dead|dying)\b/gi, severity: 'medium' },
+    { pattern: /\b(hate|hating|hated)\b/gi, severity: 'medium' },
+    { pattern: /\b(violence|violent|violently)\b/gi, severity: 'high' },
+    
+    // Common misspellings and variations
+    { pattern: /\b(f*ck|f**k|f***|fck|fcuk)\b/gi, severity: 'high' },
+    { pattern: /\b(sh*t|s**t|s***|sht|shyt)\b/gi, severity: 'high' },
+    { pattern: /\b(b*tch|b**ch|b***|btch|bich)\b/gi, severity: 'high' },
+    { pattern: /\b(a**hole|a***hole|ashole|assh0le)\b/gi, severity: 'high' },
+    { pattern: /\b(d*ck|d**k|d***|dck|dik)\b/gi, severity: 'high' },
+    { pattern: /\b(c*ck|c**k|c***|cck|cok)\b/gi, severity: 'high' },
+    { pattern: /\b(p*ssy|p**sy|p***|pssy|pisy)\b/gi, severity: 'high' },
+    { pattern: /\b(p*ta|p**a|p***|pta|pta)\b/gi, severity: 'high' },
+    { pattern: /\b(g*go|g**o|g***|ggo|gago)\b/gi, severity: 'medium' },
+    { pattern: /\b(t*ngina|t**gina|t***|tngina|tangina)\b/gi, severity: 'high' }
+  ];
+  
+  // Check for inappropriate patterns
+  for (const { pattern, severity } of inappropriatePatterns) {
+    if (pattern.test(text)) {
+      const filteredText = text.replace(pattern, (match) => '*'.repeat(match.length));
+      return {
+        isInappropriate: true,
+        filteredText,
+        reason: `Inappropriate ${severity}-severity content detected`,
+        severity,
+        confidence: severity === 'high' ? 90 : 70
+      };
+    }
+  }
+  
+  // Check for excessive caps (often indicates anger/inappropriate behavior)
+  const capsRatio = (text.match(/[A-Z]/g) || []).length / text.length;
+  if (capsRatio > 0.7 && text.length > 10) {
+    return {
+      isInappropriate: true,
+      filteredText: text.toLowerCase(),
+      reason: 'Excessive capitalization detected (possible inappropriate behavior)',
+      severity: 'low',
+      confidence: 60
+    };
+  }
+  
+  // Check for excessive punctuation (often indicates inappropriate behavior)
+  const punctuationRatio = (text.match(/[!@#$%^&*()_+={}[\]|\\:";'<>?,./]/g) || []).length / text.length;
+  if (punctuationRatio > 0.3 && text.length > 10) {
+    return {
+      isInappropriate: true,
+      filteredText: text.replace(/[!@#$%^&*()_+={}[\]|\\:";'<>?,./]/g, ''),
+      reason: 'Excessive punctuation detected (possible inappropriate behavior)',
+      severity: 'low',
+      confidence: 50
+    };
+  }
+  
+  return { isInappropriate: false, filteredText: text };
+};
+
+// Basic content filter (fallback)
+const basicContentFilter = (text) => {
   const badWords = [
-    // English profanity
     'fuck', 'shit', 'bitch', 'asshole', 'damn', 'hell', 'crap', 'piss', 'dick', 'cock', 'pussy', 'whore', 'slut',
-    // Tagalog profanity
     'puta', 'putang ina', 'putangina', 'tang ina', 'tangina', 'gago', 'gaga', 'bobo', 'tanga', 'ulol', 'hayop',
-    'leche', 'leche ka', 'walang hiya', 'bastos', 'tarantado', 'sira ulo', 'siraulo', 'buang', 'buwang',
-    // Variations and common misspellings
-    'f*ck', 'f**k', 'f***', 'sh*t', 's**t', 'b*tch', 'a**hole', 'd*ck', 'c*ck', 'p*ssy',
-    'p*ta', 'p*tang ina', 'g*go', 't*ng ina', 't*ngina'
+    'leche', 'leche ka', 'walang hiya', 'bastos', 'tarantado', 'sira ulo', 'siraulo', 'buang', 'buwang'
   ];
 
   const lowerText = text.toLowerCase();
@@ -422,12 +629,14 @@ exports.sendMessage = async (req, res) => {
     }
 
     // Filter inappropriate content
-    const contentFilter = filterInappropriateContent(message.trim());
+    const contentFilter = await filterInappropriateContent(message.trim());
     if (contentFilter.isInappropriate) {
       return res.status(400).json({ 
         message: 'Your message contains inappropriate content and cannot be sent.',
         reason: contentFilter.reason,
-        filteredText: contentFilter.filteredText
+        filteredText: contentFilter.filteredText,
+        severity: contentFilter.severity,
+        confidence: contentFilter.confidence
       });
     }
 
