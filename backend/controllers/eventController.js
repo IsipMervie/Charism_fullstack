@@ -903,19 +903,34 @@ exports.joinEvent = async (req, res) => {
       hasPassed: event.date < now
     });
     
-    // Check if event has already started
-    if (eventStartDateTime <= now) {
-      console.log('❌ Event has already started');
+    // Check if event has already started (with 30-minute grace period for late registration)
+    const gracePeriodMinutes = 30;
+    const registrationDeadline = new Date(eventStartDateTime.getTime() + (gracePeriodMinutes * 60 * 1000));
+    
+    if (now > registrationDeadline) {
+      console.log('❌ Event registration deadline has passed (30 minutes after start)');
       return res.status(400).json({ 
-        message: 'Registration is closed. This event has already started.',
+        message: `Registration is closed. Late registration is only allowed up to ${gracePeriodMinutes} minutes after the event starts.`,
         error: 'EVENT_STARTED',
         eventStartTime: eventStartDateTime.toISOString(),
-        currentTime: now.toISOString()
+        registrationDeadline: registrationDeadline.toISOString(),
+        currentTime: now.toISOString(),
+        gracePeriodMinutes: gracePeriodMinutes
       });
     }
     
+    // Log if user is registering late
+    if (now > eventStartDateTime) {
+      const minutesLate = Math.floor((now - eventStartDateTime) / (1000 * 60));
+      console.log(`⚠️ Late registration: User is ${minutesLate} minutes late`);
+    }
+    
     // Also check if event date has passed (fallback check)
-    if (event.date < now) {
+    // Compare with start of current day to allow same-day events
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    if (event.date < startOfToday) {
       console.log('❌ Event date has passed');
       return res.status(400).json({ 
         message: 'This event has already passed.',
@@ -2740,16 +2755,27 @@ exports.getEventByRegistrationToken = async (req, res) => {
       eventStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     }
     
-    // Check if event has already started
-    if (eventStartDateTime <= now) {
+    // Check if event has already started (with 30-minute grace period for late registration)
+    const gracePeriodMinutes = 30;
+    const registrationDeadline = new Date(eventStartDateTime.getTime() + (gracePeriodMinutes * 60 * 1000));
+    
+    if (now > registrationDeadline) {
       return res.status(400).json({ 
-        message: 'Registration is closed. This event has already started.',
-        error: 'EVENT_STARTED'
+        message: `Registration is closed. Late registration is only allowed up to ${gracePeriodMinutes} minutes after the event starts.`,
+        error: 'EVENT_STARTED',
+        eventStartTime: eventStartDateTime.toISOString(),
+        registrationDeadline: registrationDeadline.toISOString(),
+        currentTime: now.toISOString(),
+        gracePeriodMinutes: gracePeriodMinutes
       });
     }
     
     // Also check if event date has passed (fallback check)
-    if (event.date < now) {
+    // Compare with start of current day to allow same-day events
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    if (event.date < startOfToday) {
       return res.status(400).json({ 
         message: 'This event has already passed.',
         error: 'EVENT_EXPIRED'
@@ -2821,16 +2847,27 @@ exports.registerForEventWithToken = async (req, res) => {
       eventStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     }
     
-    // Check if event has already started
-    if (eventStartDateTime <= now) {
+    // Check if event has already started (with 30-minute grace period for late registration)
+    const gracePeriodMinutes = 30;
+    const registrationDeadline = new Date(eventStartDateTime.getTime() + (gracePeriodMinutes * 60 * 1000));
+    
+    if (now > registrationDeadline) {
       return res.status(400).json({ 
-        message: 'Registration is closed. This event has already started.',
-        error: 'EVENT_STARTED'
+        message: `Registration is closed. Late registration is only allowed up to ${gracePeriodMinutes} minutes after the event starts.`,
+        error: 'EVENT_STARTED',
+        eventStartTime: eventStartDateTime.toISOString(),
+        registrationDeadline: registrationDeadline.toISOString(),
+        currentTime: now.toISOString(),
+        gracePeriodMinutes: gracePeriodMinutes
       });
     }
     
     // Also check if event date has passed (fallback check)
-    if (event.date < now) {
+    // Compare with start of current day to allow same-day events
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    if (event.date < startOfToday) {
       return res.status(400).json({ 
         message: 'This event has already passed.',
         error: 'EVENT_EXPIRED'
