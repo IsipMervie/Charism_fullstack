@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const userController = require('../controllers/userController');
-const { authMiddleware, roleMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware } = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
 const { uploadProfilePictureWithErrorHandling } = require('../utils/mongoFileStorage');
 
 // Get all users (Admin/Staff)
