@@ -55,26 +55,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// Role-based access control middleware
-const roleMiddleware = (...allowedRoles) => {
-  return (req, res, next) => {
-    if (!req.user || !req.user.role) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-    
-    if (allowedRoles.includes(req.user.role)) {
-      next();
-    } else {
-      res.status(403).json({ 
-        message: 'Access denied. Insufficient permissions.',
-        requiredRoles: allowedRoles,
-        userRole: req.user.role
-      });
-    }
-  };
-};
-
 module.exports = {
-  authMiddleware,
-  roleMiddleware
+  authMiddleware
 };

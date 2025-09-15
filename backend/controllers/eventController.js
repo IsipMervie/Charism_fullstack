@@ -766,12 +766,29 @@ exports.getEventCapacityStatus = async (req, res) => {
 // Join Event
 exports.joinEvent = async (req, res) => {
   try {
+    // Validate required parameters
+    if (!req.params.eventId) {
+      console.log('❌ Missing eventId parameter');
+      return res.status(400).json({ message: 'Event ID is required.' });
+    }
+
+    if (!req.user || !req.user.id) {
+      console.log('❌ Missing user authentication');
+      return res.status(401).json({ message: 'User authentication required.' });
+    }
+
     console.log('🔍 Join Event Debug:', {
       eventId: req.params.eventId,
       userId: req.user?.id,
       userRole: req.user?.role,
       timestamp: new Date().toISOString()
     });
+
+    // Validate eventId format
+    if (!req.params.eventId.match(/^[0-9a-fA-F]{24}$/)) {
+      console.log('❌ Invalid eventId format:', req.params.eventId);
+      return res.status(400).json({ message: 'Invalid event ID format.' });
+    }
 
     const event = await Event.findById(req.params.eventId);
     

@@ -27,6 +27,13 @@ const roleMiddleware = (...allowedRoles) => {
       if (req.user.role && allowedRoles.includes(req.user.role)) {
         console.log('User role from token:', req.user.role);
         console.log('User authorized, proceeding...');
+        // Ensure req.user.id is properly set for controllers
+        if (!req.user.id && req.user.userId) {
+          req.user.id = req.user.userId;
+        }
+        if (!req.user.id && req.user._id) {
+          req.user.id = req.user._id;
+        }
         next();
         return;
       }
@@ -50,6 +57,11 @@ const roleMiddleware = (...allowedRoles) => {
       }
 
       console.log('User authorized, proceeding...');
+      
+      // Ensure req.user.id is properly set for controllers
+      if (!req.user.id) {
+        req.user.id = user._id;
+      }
       
       // Add user info to request for use in controllers
       req.userInfo = {
