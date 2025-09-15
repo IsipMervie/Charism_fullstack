@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const feedbackController = require('../controllers/feedbackController');
-const { authMiddleware, roleMiddleware } = require('../middleware/authMiddleware');
+const { authMiddleware } = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
 
 // Public routes (no authentication required)
 router.post('/submit', feedbackController.submitFeedback);
