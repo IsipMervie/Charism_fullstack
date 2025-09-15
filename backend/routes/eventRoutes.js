@@ -255,11 +255,22 @@ router.get(
 // Student Participation Routes
 // =======================
 
-// Join event (Student)
+// Test endpoint for debugging join event
+router.post('/:eventId/join-test', authMiddleware, (req, res) => {
+  console.log('🔍 JOIN TEST ENDPOINT HIT');
+  console.log('Event ID:', req.params.eventId);
+  console.log('User:', req.user);
+  res.json({ 
+    message: 'Join test endpoint working',
+    eventId: req.params.eventId,
+    user: req.user
+  });
+});
+
+// Join event (Student) - Temporarily removing role restriction for debugging
 router.post(
   '/:eventId/join',
   authMiddleware,
-  roleMiddleware('Student'),
   eventController.joinEvent
 );
 

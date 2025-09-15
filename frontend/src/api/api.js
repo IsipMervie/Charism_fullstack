@@ -577,12 +577,26 @@ export const getEventDetails = async (eventId) => {
   }
 };
 
+export const testJoinEvent = async (eventId) => {
+  try {
+    const response = await axiosInstance.post(`/events/${eventId}/join-test`);
+    return response.data;
+  } catch (error) {
+    console.error('Test join event error:', error);
+    console.error('Test join event response:', error.response);
+    throw error;
+  }
+};
+
 export const joinEvent = async (eventId) => {
   try {
     const response = await axiosInstance.post(`/events/${eventId}/join`);
     return response.data;
   } catch (error) {
     console.error('Error joining event:', error);
+    console.error('Error response:', error.response);
+    console.error('Error response data:', error.response?.data);
+    console.error('Error status:', error.response?.status);
     
     // Extract specific error message from response
     const errorMessage = error.response?.data?.message || 'Failed to join event. Please try again.';

@@ -781,16 +781,30 @@ exports.joinEvent = async (req, res) => {
       timestamp: new Date().toISOString()
     });
 
-    // Validate required parameters
+    // Quick validation - return specific error messages
     if (!req.params.eventId) {
-      console.log('❌ Missing eventId parameter');
-      return res.status(400).json({ message: 'Event ID is required.' });
+      return res.status(400).json({ 
+        message: 'Event ID is required',
+        error: 'MISSING_EVENT_ID'
+      });
     }
 
-    if (!req.user || (!req.user.id && !req.user.userId && !req.user._id)) {
-      console.log('❌ Missing user authentication - req.user:', req.user);
-      return res.status(401).json({ message: 'User authentication required.' });
+    if (!req.user) {
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        error: 'AUTHENTICATION_REQUIRED'
+      });
     }
+
+    const userId = req.user.id || req.user.userId || req.user._id;
+    if (!userId) {
+      return res.status(400).json({ 
+        message: 'User ID not found in token',
+        error: 'MISSING_USER_ID'
+      });
+    }
+
+    // Additional validation (redundant but safe)
 
     console.log('🔍 Join Event Debug:', {
       eventId: req.params.eventId,
@@ -902,22 +916,13 @@ exports.joinEvent = async (req, res) => {
     }
 
     // Get user details to check department access
-    // Ensure we have the correct user ID from the token
-    const userId = req.user.id || req.user.userId || req.user._id;
+    // userId already declared above
     
     console.log('🔍 Looking up user:', {
       userId: userId,
       userIdType: typeof userId,
       userObject: req.user
     });
-    
-    if (!userId) {
-      console.log('❌ No user ID found in request');
-      return res.status(400).json({ 
-        message: 'User ID not found in authentication token.',
-        error: 'MISSING_USER_ID'
-      });
-    }
     
     const user = await User.findById(userId);
     if (!user) {
