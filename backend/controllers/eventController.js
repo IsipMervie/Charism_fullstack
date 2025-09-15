@@ -766,19 +766,49 @@ exports.getEventCapacityStatus = async (req, res) => {
 // Join Event
 exports.joinEvent = async (req, res) => {
   try {
+    console.log('🔍 Join Event Debug:', {
+      eventId: req.params.eventId,
+      userId: req.user?.userId,
+      userRole: req.user?.role,
+      timestamp: new Date().toISOString()
+    });
+
     const event = await Event.findById(req.params.eventId);
     
     if (!event) {
+      console.log('❌ Event not found:', req.params.eventId);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    console.log('📅 Event details:', {
+      id: event._id,
+      title: event.title,
+      status: event.status,
+      isVisibleToStudents: event.isVisibleToStudents,
+      date: event.date,
+      startTime: event.startTime,
+      requiresApproval: event.requiresApproval,
+      maxParticipants: event.maxParticipants,
+      departments: event.departments,
+      isForAllDepartments: event.isForAllDepartments
+    });
+
     // Check if event is active and visible to students
     if (event.status !== 'Active') {
-      return res.status(400).json({ message: 'Event is not active.' });
+      console.log('❌ Event not active:', event.status);
+      return res.status(400).json({ 
+        message: 'Event is not active.', 
+        error: 'EVENT_NOT_ACTIVE',
+        eventStatus: event.status
+      });
     }
     
     if (!event.isVisibleToStudents) {
-      return res.status(400).json({ message: 'This event is not available for student registration.' });
+      console.log('❌ Event not visible to students');
+      return res.status(400).json({ 
+        message: 'This event is not available for student registration.',
+        error: 'EVENT_NOT_VISIBLE_TO_STUDENTS'
+      });
     }
 
     // Check if event is still open for registration
@@ -791,27 +821,50 @@ exports.joinEvent = async (req, res) => {
       eventStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     }
     
+    console.log('⏰ Time check:', {
+      now: now.toISOString(),
+      eventDate: event.date,
+      eventStartTime: event.startTime,
+      eventStartDateTime: eventStartDateTime.toISOString(),
+      hasStarted: eventStartDateTime <= now,
+      hasPassed: event.date < now
+    });
+    
     // Check if event has already started
     if (eventStartDateTime <= now) {
+      console.log('❌ Event has already started');
       return res.status(400).json({ 
         message: 'Registration is closed. This event has already started.',
-        error: 'EVENT_STARTED'
+        error: 'EVENT_STARTED',
+        eventStartTime: eventStartDateTime.toISOString(),
+        currentTime: now.toISOString()
       });
     }
     
     // Also check if event date has passed (fallback check)
     if (event.date < now) {
+      console.log('❌ Event date has passed');
       return res.status(400).json({ 
         message: 'This event has already passed.',
-        error: 'EVENT_EXPIRED'
+        error: 'EVENT_EXPIRED',
+        eventDate: event.date,
+        currentDate: now
       });
     }
 
     // Get user details to check department access
     const user = await User.findById(req.user.userId);
     if (!user) {
+      console.log('❌ User not found:', req.user.userId);
       return res.status(404).json({ message: 'User not found.' });
     }
+
+    console.log('👤 User details:', {
+      id: user._id,
+      role: user.role,
+      department: user.department,
+      email: user.email
+    });
 
     // Check department access (Admin and Staff can access all events)
     if (user.role !== 'Admin' && user.role !== 'Staff' && !event.isForAllDepartments) {
@@ -835,8 +888,19 @@ exports.joinEvent = async (req, res) => {
       a => a.userId.toString() === req.user.userId
     );
 
+    console.log('📋 Registration check:', {
+      totalAttendees: event.attendance.length,
+      userAlreadyRegistered: !!existingAttendance,
+      existingAttendanceStatus: existingAttendance?.status
+    });
+
     if (existingAttendance) {
-      return res.status(400).json({ message: 'Already registered for this event.' });
+      console.log('❌ User already registered');
+      return res.status(400).json({ 
+        message: 'Already registered for this event.',
+        error: 'ALREADY_REGISTERED',
+        currentStatus: existingAttendance.status
+      });
     }
 
     // Check if event is full - only count approved registrations
@@ -845,9 +909,19 @@ exports.joinEvent = async (req, res) => {
         a => a.registrationApproved === true
       ).length;
       
+      console.log('👥 Capacity check:', {
+        maxParticipants: event.maxParticipants,
+        approvedAttendees: approvedAttendees,
+        isFull: approvedAttendees >= event.maxParticipants
+      });
+      
       if (approvedAttendees >= event.maxParticipants) {
+        console.log('❌ Event is full');
         return res.status(400).json({ 
-          message: 'Event is full. All approved slots have been taken. You can still register and wait for approval if any approved registrations are cancelled.' 
+          message: 'Event is full. All approved slots have been taken. You can still register and wait for approval if any approved registrations are cancelled.',
+          error: 'EVENT_FULL',
+          maxParticipants: event.maxParticipants,
+          currentApproved: approvedAttendees
         });
       }
     }

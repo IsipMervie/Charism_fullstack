@@ -583,7 +583,39 @@ export const joinEvent = async (eventId) => {
     return response.data;
   } catch (error) {
     console.error('Error joining event:', error);
-    throw new Error('Failed to join event. Please try again.');
+    
+    // Extract specific error message from response
+    const errorMessage = error.response?.data?.message || 'Failed to join event. Please try again.';
+    const errorCode = error.response?.data?.error;
+    
+    // Create more specific error messages based on error codes
+    let specificMessage = errorMessage;
+    if (errorCode) {
+      switch (errorCode) {
+        case 'EVENT_NOT_ACTIVE':
+          specificMessage = 'This event is not currently active.';
+          break;
+        case 'EVENT_NOT_VISIBLE_TO_STUDENTS':
+          specificMessage = 'This event is not available for student registration.';
+          break;
+        case 'EVENT_STARTED':
+          specificMessage = 'Registration is closed. This event has already started.';
+          break;
+        case 'EVENT_EXPIRED':
+          specificMessage = 'This event has already passed.';
+          break;
+        case 'ALREADY_REGISTERED':
+          specificMessage = 'You are already registered for this event.';
+          break;
+        case 'EVENT_FULL':
+          specificMessage = 'This event is full. All approved slots have been taken.';
+          break;
+        default:
+          specificMessage = errorMessage;
+      }
+    }
+    
+    throw new Error(specificMessage);
   }
 };
 
@@ -1803,6 +1835,12 @@ export const sendEventChatMessage = async (eventId, message, replyTo = null) => 
     return response.data;
   } catch (error) {
     console.error('Error sending chat message:', error);
+    
+    // Handle content filtering errors
+    if (error.response?.status === 400 && error.response?.data?.reason) {
+      throw new Error(error.response.data.message || 'Your message contains inappropriate content.');
+    }
+    
     throw new Error('Failed to send message. Please try again.');
   }
 };
@@ -1821,6 +1859,10 @@ export const sendEventChatMessageWithFiles = async (eventId, formData) => {
     if (error.response?.status === 413) {
       throw new Error('File is too large. Maximum size is 10MB.');
     } else if (error.response?.status === 400) {
+      // Handle content filtering errors
+      if (error.response?.data?.reason) {
+        throw new Error(error.response.data.message || 'Your content contains inappropriate material.');
+      }
       throw new Error(error.response.data.message || 'Invalid file type or no files uploaded.');
     }
     throw new Error('Failed to send message with files. Please try again.');
