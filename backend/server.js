@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 
 // EMERGENCY CORS - Allow all origins
 app.use(cors({
-  origin: '*',
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
@@ -61,7 +61,8 @@ app.options('*', cors());
 
 // EMERGENCY CORS FIX - Allow all origins
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  res.header('Access-Control-Allow-Origin', origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -662,7 +663,11 @@ console.log('Loading routes...');
 
 app.use('/api/auth', require('./routes/authRoutes'));
 console.log(' Auth routes loaded');
-app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/analytics', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+}, require('./routes/analyticsRoutes'));
 console.log(' Analytics routes loaded');
 app.use('/api/admin', require('./routes/adminRoutes'));
 console.log(' Admin routes loaded');
@@ -680,7 +685,11 @@ app.use('/api/messages', require('./routes/messageRoutes'));
 console.log(' Messages routes loaded');
 app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
-app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/events', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+}, require('./routes/eventRoutes'));
 console.log(' Events routes loaded');
 
 // Global approve route for compatibility
