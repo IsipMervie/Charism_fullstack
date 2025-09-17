@@ -7,24 +7,27 @@ const path = require('path');
 const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator');
 
-// Simple in-memory cache for events (5 minute TTL)
+// Enhanced in-memory cache for events with role-based caching
 let eventsCache = {
   data: null,
   timestamp: null,
-  ttl: 5 * 60 * 1000 // 5 minutes
+  ttl: 3 * 60 * 1000, // 3 minutes for better freshness
+  userRole: null // Cache based on user role
 };
 
-const getCachedEvents = () => {
+const getCachedEvents = (userRole = 'Public') => {
   if (eventsCache.data && eventsCache.timestamp && 
+      eventsCache.userRole === userRole &&
       (Date.now() - eventsCache.timestamp) < eventsCache.ttl) {
     return eventsCache.data;
   }
   return null;
 };
 
-const setCachedEvents = (events) => {
+const setCachedEvents = (events, userRole = 'Public') => {
   eventsCache.data = events;
   eventsCache.timestamp = Date.now();
+  eventsCache.userRole = userRole;
 };
 
 
@@ -118,10 +121,10 @@ exports.getAllEvents = async (req, res) => {
     console.log('User:', req.user ? 'Authenticated' : 'Not authenticated');
     console.log('User role:', req.user?.role || 'Unknown');
     
-    // Check cache first for faster response
-    const cachedEvents = getCachedEvents();
+    // Check cache first for faster response (role-based caching)
+    const cachedEvents = getCachedEvents(userRole);
     if (cachedEvents) {
-      console.log('📦 Returning cached events');
+      console.log('📦 Returning cached events for role:', userRole);
       return res.json(cachedEvents);
     }
     
@@ -268,7 +271,7 @@ exports.getAllEvents = async (req, res) => {
         .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt attendance image')
         .sort({ createdAt: -1 }) // Single field sort for speed
         .lean()
-        .limit(10) // Reduced limit for faster response
+        .limit(50) // Increased limit for better user experience
         .maxTimeMS(8000); // Reduced to 8 seconds for faster timeout
       
       // Single timeout protection
@@ -378,7 +381,7 @@ exports.getAllEvents = async (req, res) => {
       totalEvents: eventsWithUrls.length,
       cached: false
     };
-    setCachedEvents(responseData);
+    setCachedEvents(responseData, userRole);
     
     res.json(responseData);
   } catch (err) {
@@ -1082,9 +1085,9 @@ exports.joinEvent = async (req, res) => {
       }
     }
 
-    // Check if user is already registered
+    // Check if user is already registered - OPTIMIZED
     const existingAttendance = event.attendance.find(
-      a => a.userId.toString() === userId.toString()
+      a => a.userId && a.userId.toString() === userId.toString()
     );
 
     console.log('📋 Registration check:', {
@@ -1098,7 +1101,8 @@ exports.joinEvent = async (req, res) => {
       return res.status(400).json({ 
         message: 'Already registered for this event.',
         error: 'ALREADY_REGISTERED',
-        currentStatus: existingAttendance.status
+        currentStatus: existingAttendance.status,
+        registrationDate: existingAttendance.registeredAt
       });
     }
 

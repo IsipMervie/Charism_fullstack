@@ -161,26 +161,75 @@ exports.getAnalytics = async (req, res) => {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       
       // Get daily events count
+      // OPTIMIZED: Single aggregation query for all days
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 6);
+      startDate.setHours(0, 0, 0, 0);
+      
+      const endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+      
+      // Get events data for all days in one query
+      const eventsData = await Event.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: startDate, $lt: endDate },
+            'isVisibleToStudents': true,
+            'status': { $ne: 'Disabled' }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$createdAt'
+              }
+            },
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+      
+      // Get users data for all days in one query
+      const usersData = await User.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: startDate, $lt: endDate }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$createdAt'
+              }
+            },
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+      
+      // Create maps for quick lookup
+      const eventsMap = {};
+      eventsData.forEach(item => {
+        eventsMap[item._id] = item.count;
+      });
+      
+      const usersMap = {};
+      usersData.forEach(item => {
+        usersMap[item._id] = item.count;
+      });
+      
+      // Build arrays for the last 7 days
       for (let i = 6; i >= 0; i--) {
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - i);
-        startDate.setHours(0, 0, 0, 0);
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
         
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 1);
-        
-        const dayEvents = await Event.countDocuments({
-          createdAt: { $gte: startDate, $lt: endDate },
-          'isVisibleToStudents': true,
-          'status': { $ne: 'Disabled' }
-        });
-        
-        const dayUsers = await User.countDocuments({
-          createdAt: { $gte: startDate, $lt: endDate }
-        });
-        
-        dailyEvents.push(dayEvents);
-        dailyUsers.push(dayUsers);
+        dailyEvents.push(eventsMap[dateStr] || 0);
+        dailyUsers.push(usersMap[dateStr] || 0);
       }
     } catch (timeSeriesError) {
       console.log('Error calculating time-series data:', timeSeriesError);
@@ -201,27 +250,70 @@ exports.getAnalytics = async (req, res) => {
         { $group: { _id: '$department', count: { $sum: 1 } } }
       ]);
       
-      // Get department stats in parallel
-      departmentStats = await Promise.all(
-        departments.map(async (dept) => {
-          const deptStudents = studentsByDept.find(s => s._id === dept)?.count || 0;
-          
-          // Simplified event count - just count events that have attendance from this department
-          const deptEvents = await Event.countDocuments({
-            'attendance.userId': {
-              $in: (await User.find({ role: 'Student', department: dept }, '_id')).map(u => u._id)
-            },
+      // OPTIMIZED: Get department stats efficiently
+      // Get all department user IDs in one query
+      const deptUserIds = await User.find(
+        { role: 'Student', department: { $in: departments } }, 
+        '_id department'
+      ).lean();
+      
+      // Group user IDs by department
+      const deptUserMap = {};
+      deptUserIds.forEach(user => {
+        if (!deptUserMap[user.department]) {
+          deptUserMap[user.department] = [];
+        }
+        deptUserMap[user.department].push(user._id);
+      });
+      
+      // Get event counts for all departments in one aggregation
+      const deptEventData = await Event.aggregate([
+        {
+          $match: {
             'isVisibleToStudents': true,
             'status': { $ne: 'Disabled' }
-          }).catch(() => 0);
-          
-          return {
-            department: dept,
-            students: deptStudents,
-            events: deptEvents
-          };
-        })
-      );
+          }
+        },
+        {
+          $unwind: '$attendance'
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'attendance.userId',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: '$user'
+        },
+        {
+          $group: {
+            _id: '$user.department',
+            eventCount: { $addToSet: '$_id' }
+          }
+        },
+        {
+          $project: {
+            department: '$_id',
+            events: { $size: '$eventCount' }
+          }
+        }
+      ]);
+      
+      // Create event count map
+      const eventCountMap = {};
+      deptEventData.forEach(item => {
+        eventCountMap[item.department] = item.events;
+      });
+      
+      // Build final department stats
+      departmentStats = departments.map(dept => ({
+        department: dept,
+        students: studentsByDept.find(s => s._id === dept)?.count || 0,
+        events: eventCountMap[dept] || 0
+      }));
     } catch (deptError) {
       console.log('Error calculating department statistics:', deptError);
     }

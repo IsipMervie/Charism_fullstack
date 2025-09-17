@@ -114,29 +114,45 @@ const studentsByYearPDF = async (req, res) => {
       return res.status(404).json({ message: 'No students found for this year with the specified filters' });
     }
 
-    // Calculate total hours for each student
-    const studentsWithHours = await Promise.all(
-      students.map(async (student) => {
-        const events = await Event.find({
-          'attendance.userId': student._id
-        });
+    // Calculate total hours for each student - OPTIMIZED VERSION
+    const studentIds = students.map(s => s._id);
+    
+    // Single aggregation query to get all student hours at once
+    const studentHoursData = await Event.aggregate([
+      {
+        $match: {
+          'attendance.userId': { $in: studentIds },
+          'attendance.status': 'Approved'
+        }
+      },
+      {
+        $unwind: '$attendance'
+      },
+      {
+        $match: {
+          'attendance.userId': { $in: studentIds },
+          'attendance.status': 'Approved'
+        }
+      },
+      {
+        $group: {
+          _id: '$attendance.userId',
+          totalHours: { $sum: '$hours' }
+        }
+      }
+    ]);
 
-        let totalHours = 0;
-        events.forEach(event => {
-          const attendance = event.attendance.find(a => 
-            a.userId.toString() === student._id.toString()
-          );
-          if (attendance && attendance.status === 'Approved') {
-            totalHours += event.hours || 0;
-          }
-        });
+    // Create a map for quick lookup
+    const hoursMap = {};
+    studentHoursData.forEach(item => {
+      hoursMap[item._id.toString()] = item.totalHours || 0;
+    });
 
-        return {
-          ...student.toObject(),
-          totalHours
-        };
-      })
-    );
+    // Map students with their hours
+    const studentsWithHours = students.map(student => ({
+      ...student.toObject(),
+      totalHours: hoursMap[student._id.toString()] || 0
+    }));
 
     // Apply hours range filter
     let filteredStudents = studentsWithHours;
@@ -325,29 +341,45 @@ const students40HoursPDF = async (req, res) => {
       .select('name email department academicYear year section')
       .sort('name');
 
-    // Calculate total hours for each student
-    const studentsWithHours = await Promise.all(
-      students.map(async (student) => {
-        const events = await Event.find({
-          'attendance.userId': student._id
-        });
+    // Calculate total hours for each student - OPTIMIZED VERSION
+    const studentIds = students.map(s => s._id);
+    
+    // Single aggregation query to get all student hours at once
+    const studentHoursData = await Event.aggregate([
+      {
+        $match: {
+          'attendance.userId': { $in: studentIds },
+          'attendance.status': 'Approved'
+        }
+      },
+      {
+        $unwind: '$attendance'
+      },
+      {
+        $match: {
+          'attendance.userId': { $in: studentIds },
+          'attendance.status': 'Approved'
+        }
+      },
+      {
+        $group: {
+          _id: '$attendance.userId',
+          totalHours: { $sum: '$hours' }
+        }
+      }
+    ]);
 
-        let totalHours = 0;
-        events.forEach(event => {
-          const attendance = event.attendance.find(a => 
-            a.userId.toString() === student._id.toString()
-          );
-          if (attendance && attendance.status === 'Approved') {
-            totalHours += event.hours || 0;
-          }
-        });
+    // Create a map for quick lookup
+    const hoursMap = {};
+    studentHoursData.forEach(item => {
+      hoursMap[item._id.toString()] = item.totalHours || 0;
+    });
 
-        return {
-          ...student.toObject(),
-          totalHours
-        };
-      })
-    );
+    // Map students with their hours
+    const studentsWithHours = students.map(student => ({
+      ...student.toObject(),
+      totalHours: hoursMap[student._id.toString()] || 0
+    }));
 
     // Filter students with 40+ hours
     const students40Plus = studentsWithHours.filter(s => s.totalHours >= 40);

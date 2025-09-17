@@ -128,6 +128,15 @@ app.get('/ping', (req, res) => {
   });
 });
 
+// API ping endpoint for frontend health checks
+app.get('/api/ping', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: Date.now(),
+    message: 'API server is responsive'
+  });
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -212,6 +221,10 @@ const startServer = async () => {
         throw new Error('Database connection not available');
       }
     }
+    
+    // Create database indexes for performance
+    const { createIndexes } = require('./utils/databaseIndexes');
+    await createIndexes();
     
     // Start server
     const PORT = process.env.PORT || 5000;
