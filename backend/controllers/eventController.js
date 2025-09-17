@@ -1746,41 +1746,45 @@ exports.approveRegistration = async (req, res) => {
     console.log(`✅ Registration ${wasAlreadyApproved ? 're-approved' : 'approved'} successfully`);
     
     // Send email notification to student (only for new approvals, not re-approvals)
+    // Make this completely non-blocking
     if (!wasAlreadyApproved && attendance.userId && attendance.userId.email) {
-      try {
-        const sendEmail = require('../utils/sendEmail');
-        const { getEventRegistrationApprovalTemplate } = require('../utils/emailTemplates');
-        
-        // Format event date
-        const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }) : 'TBD';
-        
-        // Prepare email content
-        const emailSubject = `Event Registration Approved - ${event.title}`;
-        const emailHtml = getEventRegistrationApprovalTemplate(
-          attendance.userId.name,
-          event.title,
-          eventDate,
-          event.location || 'TBD',
-          event.hours || 0
-        );
-        
-        // Send email
-        await sendEmail({
-          to: attendance.userId.email,
-          subject: emailSubject,
-          html: emailHtml
-        });
-        
-        console.log(`📧 Approval email sent to ${attendance.userId.email} for event: ${event.title}`);
-      } catch (emailError) {
-        console.error('❌ Failed to send approval email:', emailError.message);
-        // Don't fail the approval if email fails
-      }
+      // Send email asynchronously without blocking the response
+      setImmediate(async () => {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getEventRegistrationApprovalTemplate } = require('../utils/emailTemplates');
+          
+          // Format event date
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          // Prepare email content
+          const emailSubject = `Event Registration Approved - ${event.title}`;
+          const emailHtml = getEventRegistrationApprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            eventDate,
+            event.location || 'TBD',
+            event.hours || 0
+          );
+          
+          // Send email
+          await sendEmail({
+            to: attendance.userId.email,
+            subject: emailSubject,
+            html: emailHtml
+          });
+          
+          console.log(`📧 Approval email sent to ${attendance.userId.email} for event: ${event.title}`);
+        } catch (emailError) {
+          console.error('❌ Failed to send approval email:', emailError.message);
+          // Email failure doesn't affect approval
+        }
+      });
     }
     
     if (wasAlreadyApproved) {
@@ -1839,40 +1843,44 @@ exports.disapproveRegistration = async (req, res) => {
     console.log('✅ Registration disapproved successfully');
     
     // Send email notification to student
+    // Make this completely non-blocking
     if (attendance.userId && attendance.userId.email) {
-      try {
-        const sendEmail = require('../utils/sendEmail');
-        const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
-        
-        // Format event date
-        const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }) : 'TBD';
-        
-        // Prepare email content
-        const emailSubject = `Event Registration Update - ${event.title}`;
-        const emailHtml = getEventRegistrationDisapprovalTemplate(
-          attendance.userId.name,
-          event.title,
-          eventDate,
-          reason.trim()
-        );
-        
-        // Send email
-        await sendEmail({
-          to: attendance.userId.email,
-          subject: emailSubject,
-          html: emailHtml
-        });
-        
-        console.log(`📧 Disapproval email sent to ${attendance.userId.email} for event: ${event.title}`);
-      } catch (emailError) {
-        console.error('❌ Failed to send disapproval email:', emailError.message);
-        // Don't fail the disapproval if email fails
-      }
+      // Send email asynchronously without blocking the response
+      setImmediate(async () => {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+          
+          // Format event date
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          // Prepare email content
+          const emailSubject = `Event Registration Update - ${event.title}`;
+          const emailHtml = getEventRegistrationDisapprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            eventDate,
+            reason.trim()
+          );
+          
+          // Send email
+          await sendEmail({
+            to: attendance.userId.email,
+            subject: emailSubject,
+            html: emailHtml
+          });
+          
+          console.log(`📧 Disapproval email sent to ${attendance.userId.email} for event: ${event.title}`);
+        } catch (emailError) {
+          console.error('❌ Failed to send disapproval email:', emailError.message);
+          // Email failure doesn't affect disapproval
+        }
+      });
     }
     
     res.json({ message: 'Registration disapproved successfully.' });
