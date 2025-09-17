@@ -111,9 +111,13 @@ function AdminManageEventsPage() {
       // Clean up old cache first
       cleanupCache();
       
+      // Get user role for cache key
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const role = user.role || localStorage.getItem('role') || 'Admin';
+      
       // Try to cache full data (might fail due to size, that's ok)
       try {
-        const cacheKey = `events_cache_${user?.role || 'Admin'}`;
+        const cacheKey = `events_cache_${role}`;
         sessionStorage.setItem(cacheKey, JSON.stringify(data));
         sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
         console.log('📦 Full events data cached successfully');
@@ -131,6 +135,7 @@ function AdminManageEventsPage() {
             maxParticipants: event.maxParticipants,
             attendance: event.attendance ? event.attendance.length : 0
           }));
+          const cacheKey = `events_cache_${role}`;
           sessionStorage.setItem(cacheKey, JSON.stringify(essentialData));
           sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
           console.log('📦 Essential events data cached successfully');
@@ -141,7 +146,7 @@ function AdminManageEventsPage() {
     } catch (err) {
       console.warn('⚠️ Failed to fetch full events data:', err.message);
     }
-  }, [user?.role, cleanupCache]);
+  }, [cleanupCache]);
 
   const fetchEvents = useCallback(async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
