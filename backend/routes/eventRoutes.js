@@ -14,6 +14,38 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 // Health check
 router.get('/health', eventController.healthCheck);
 
+// Test route for approval endpoints
+router.get('/test-approval', (req, res) => {
+  res.json({ 
+    message: 'Approval endpoints are working',
+    timestamp: new Date().toISOString(),
+    availableRoutes: [
+      'PUT /:eventId/registrations/:userId/approve',
+      'PUT /:eventId/registrations/:userId/disapprove',
+      'PUT /:eventId/approve/:userId',
+      'PUT /:eventId/disapprove/:userId'
+    ]
+  });
+});
+
+// Simple test route without auth
+router.get('/test-simple', (req, res) => {
+  res.json({ 
+    message: 'Simple test route working',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test approval route structure without auth
+router.put('/:eventId/registrations/:userId/test-approve', (req, res) => {
+  res.json({ 
+    message: 'Test approval route working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Get all events (public) - MUST come before /:eventId routes
 router.get('/', eventController.getAllEvents);
 
@@ -206,6 +238,15 @@ router.patch(
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
   '/:eventId/registrations/:userId/approve',
+  (req, res, next) => {
+    console.log('🔍 Approve registration route hit:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body
+    });
+    next();
+  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.approveRegistration
@@ -214,6 +255,15 @@ router.put(
 // Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
   '/:eventId/registrations/:userId/disapprove',
+  (req, res, next) => {
+    console.log('🔍 Disapprove registration route hit:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body
+    });
+    next();
+  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.disapproveRegistration
@@ -396,11 +446,50 @@ router.delete(
 // =======================
 
 // 404 handler for undefined routes
-router.use('*', (req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+// Catch-all route for debugging missed requests
+router.all('*', (req, res, next) => {
+  if (req.path.includes('approve') || req.path.includes('disapprove')) {
+    console.log('🚨 MISSED APPROVAL/DISAPPROVAL ROUTE:', {
+      method: req.method,
+      url: req.url,
+      path: req.path,
+      params: req.params,
+      body: req.body,
+      headers: {
+        'authorization': req.headers['authorization'] ? 'Present' : 'Missing',
+        'content-type': req.headers['content-type']
+      }
+    });
+    
+    // Try to handle the request manually
+    const eventId = req.params.eventId;
+    const userId = req.params.userId;
+    
+    if (eventId && userId) {
+      if (req.path.includes('approve')) {
+        console.log('🔄 Attempting manual approval redirect');
+        return eventController.approveRegistration(req, res);
+      } else if (req.path.includes('disapprove')) {
+        console.log('🔄 Attempting manual disapproval redirect');
+        return eventController.disapproveRegistration(req, res);
+      }
+    }
+    
+    res.status(404).json({
+      message: 'Route not found - approval/disapproval endpoint',
+      method: req.method,
+      url: req.url,
+      availableRoutes: [
+        'PUT /:eventId/registrations/:userId/approve',
+        'PUT /:eventId/registrations/:userId/disapprove',
+        'PUT /:eventId/approve/:userId',
+        'PUT /:eventId/disapprove/:userId'
+      ]
+    });
+  }
+  next();
 });
 
-// Global error handler
 router.use((err, req, res, next) => {
   console.error('Route error:', err);
   

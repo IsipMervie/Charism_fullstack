@@ -924,12 +924,17 @@ app.all('/disapprove*', (req, res) => {
 
 // Debug all API calls
 app.all('/api/*', (req, res, next) => {
-  if (req.path.includes('approve')) {
-    console.log('🔍 API approve call:', {
+  if (req.path.includes('approve') || req.path.includes('disapprove')) {
+    console.log('🔍 API APPROVAL/DISAPPROVAL CALL:', {
       method: req.method,
+      url: req.url,
       path: req.path,
       params: req.params,
-      body: req.body
+      body: req.body,
+      headers: {
+        'authorization': req.headers['authorization'] ? 'Present' : 'Missing',
+        'content-type': req.headers['content-type']
+      }
     });
   }
   next();
