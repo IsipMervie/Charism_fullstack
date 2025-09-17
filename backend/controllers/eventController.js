@@ -605,6 +605,30 @@ exports.createEvent = async (req, res) => {
       // Store image data in MongoDB
       const imageInfo = getImageInfo(req.file);
       eventData.image = imageInfo;
+    } else {
+      // Use default logo.png when no image is uploaded
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const logoPath = path.join(__dirname, '../logo.png');
+        
+        if (fs.existsSync(logoPath)) {
+          const logoBuffer = fs.readFileSync(logoPath);
+          const imageInfo = {
+            data: logoBuffer,
+            contentType: 'image/png',
+            filename: 'logo.png',
+            size: logoBuffer.length
+          };
+          eventData.image = imageInfo;
+          console.log('📷 Using default logo.png for event:', title);
+        } else {
+          console.log('⚠️ Default logo.png not found, creating event without image');
+        }
+      } catch (error) {
+        console.error('❌ Error loading default logo:', error.message);
+        // Continue without image if logo loading fails
+      }
     }
 
     const event = new Event(eventData);
@@ -673,6 +697,34 @@ exports.updateEvent = async (req, res) => {
       // Store new image data in MongoDB
       const imageInfo = getImageInfo(req.file);
       updateData.image = imageInfo;
+    } else if (req.body.removeImage === 'true') {
+      // Remove image if explicitly requested
+      updateData.image = null;
+    } else if (!req.file && !req.body.removeImage) {
+      // If no new image and not removing, keep existing image or use default
+      const currentEvent = await Event.findById(req.params.eventId);
+      if (!currentEvent.image || !currentEvent.image.data) {
+        // Use default logo.png if no existing image
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const logoPath = path.join(__dirname, '../logo.png');
+          
+          if (fs.existsSync(logoPath)) {
+            const logoBuffer = fs.readFileSync(logoPath);
+            const imageInfo = {
+              data: logoBuffer,
+              contentType: 'image/png',
+              filename: 'logo.png',
+              size: logoBuffer.length
+            };
+            updateData.image = imageInfo;
+            console.log('📷 Using default logo.png for updated event:', title);
+          }
+        } catch (error) {
+          console.error('❌ Error loading default logo for update:', error.message);
+        }
+      }
     }
 
     const event = await Event.findByIdAndUpdate(

@@ -31,6 +31,8 @@ function CreateEventPage() {
   useEffect(() => {
     setIsVisible(true);
     loadDepartments();
+    // Set default logo preview
+    setImagePreview('/logo.png');
   }, []);
 
   const loadDepartments = async () => {
@@ -53,6 +55,10 @@ function CreateEventPage() {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
+    } else {
+      // Reset to default logo preview when no file is selected
+      setImage(null);
+      setImagePreview('/logo.png'); // Use default logo from public folder
     }
   };
 
@@ -365,6 +371,11 @@ function CreateEventPage() {
                             className="img-thumbnail" 
                             style={{ maxHeight: '200px' }}
                           />
+                          {!image && (
+                            <p className="mt-2 text-muted small">
+                              📷 Default logo will be used if no image is uploaded
+                            </p>
+                          )}
                         </div>
                       )}
                     </Form.Group>

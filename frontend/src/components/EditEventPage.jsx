@@ -223,8 +223,19 @@ function EditEventPage() {
               <div className="current-image image-preview">
                 <p>Current Image:</p>
                 <div className="image-frame">
-                                              <img src={getEventImageUrl(event.image, event._id)} alt="Current event" />
+                  <img src={getEventImageUrl(event.image, event._id)} alt="Current event" />
                 </div>
+              </div>
+            )}
+            {!event?.image && !form.image && (
+              <div className="current-image image-preview">
+                <p>Current Image:</p>
+                <div className="image-frame">
+                  <img src="/logo.png" alt="Default logo" />
+                </div>
+                <p className="text-muted small mt-2">
+                  📷 Using default logo (no custom image uploaded)
+                </p>
               </div>
             )}
             {form.image && (
