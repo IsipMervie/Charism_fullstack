@@ -728,7 +728,97 @@ app.put('/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req
   }
 });
 
-// Catch-all approve routes with debugging
+// Very simple disapprove route for compatibility
+app.put('/disapprove', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
+  try {
+    console.log('🔍 /disapprove route called with:', { body: req.body, params: req.params });
+    const { eventId, userId, reason } = req.body;
+    
+    if (!eventId || !userId || !reason) {
+      return res.status(400).json({ message: 'Event ID, User ID, and reason are required in request body' });
+    }
+    
+    const eventController = require('./controllers/eventController');
+    
+    // Create a new request object with the correct parameters
+    const modifiedReq = {
+      ...req,
+      params: {
+        eventId: eventId,
+        userId: userId
+      },
+      body: {
+        ...req.body,
+        reason: reason
+      }
+    };
+    
+    return await eventController.disapproveRegistration(modifiedReq, res);
+  } catch (error) {
+    console.error('Error in simple disapprove route:', error);
+    res.status(500).json({ message: 'Error disapproving registration', error: error.message });
+  }
+});
+
+// Also support GET requests (in case frontend is using GET)
+app.get('/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
+  try {
+    console.log('🔍 GET /approve route called with:', { query: req.query, params: req.params });
+    const { eventId, userId } = req.query;
+    
+    if (!eventId || !userId) {
+      return res.status(400).json({ message: 'Event ID and User ID are required in query parameters' });
+    }
+    
+    const eventController = require('./controllers/eventController');
+    
+    // Create a new request object with the correct parameters
+    const modifiedReq = {
+      ...req,
+      params: {
+        eventId: eventId,
+        userId: userId
+      }
+    };
+    
+    return await eventController.approveRegistration(modifiedReq, res);
+  } catch (error) {
+    console.error('Error in GET approve route:', error);
+    res.status(500).json({ message: 'Error approving registration', error: error.message });
+  }
+});
+
+app.get('/disapprove', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
+  try {
+    console.log('🔍 GET /disapprove route called with:', { query: req.query, params: req.params });
+    const { eventId, userId, reason } = req.query;
+    
+    if (!eventId || !userId || !reason) {
+      return res.status(400).json({ message: 'Event ID, User ID, and reason are required in query parameters' });
+    }
+    
+    const eventController = require('./controllers/eventController');
+    
+    // Create a new request object with the correct parameters
+    const modifiedReq = {
+      ...req,
+      params: {
+        eventId: eventId,
+        userId: userId
+      },
+      body: {
+        reason: reason
+      }
+    };
+    
+    return await eventController.disapproveRegistration(modifiedReq, res);
+  } catch (error) {
+    console.error('Error in GET disapprove route:', error);
+    res.status(500).json({ message: 'Error disapproving registration', error: error.message });
+  }
+});
+
+// Catch-all approve/disapprove routes with debugging
 app.all('/approve*', (req, res) => {
   console.log('🚨 Catch-all approve route hit:', {
     method: req.method,
@@ -748,6 +838,29 @@ app.all('/approve*', (req, res) => {
       'PUT /api/approve/:userId',
       'PUT /api/approve',
       'PUT /approve'
+    ]
+  });
+});
+
+app.all('/disapprove*', (req, res) => {
+  console.log('🚨 Catch-all disapprove route hit:', {
+    method: req.method,
+    url: req.url,
+    path: req.path,
+    params: req.params,
+    body: req.body,
+    headers: req.headers
+  });
+  res.status(404).json({ 
+    message: 'Disapprove endpoint not found',
+    method: req.method,
+    url: req.url,
+    availableRoutes: [
+      'PUT /api/events/:eventId/registrations/:userId/disapprove',
+      'PUT /api/events/:eventId/disapprove/:userId',
+      'PUT /api/disapprove/:userId',
+      'PUT /api/disapprove',
+      'PUT /disapprove'
     ]
   });
 });
