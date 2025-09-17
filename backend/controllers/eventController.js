@@ -1858,10 +1858,20 @@ exports.approveRegistration = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    console.log('🔍 Looking for attendance record...');
+    console.log('🔍 Event attendance records:', event.attendance.map(a => ({
+      userId: a.userId,
+      userIdString: a.userId.toString(),
+      targetUserId: userId,
+      match: a.userId.toString() === userId
+    })));
+
     const attendance = event.attendance.find(a => a.userId.toString() === userId);
 
     if (!attendance) {
       console.log('❌ Attendance record not found');
+      console.log('❌ Available user IDs:', event.attendance.map(a => a.userId.toString()));
+      console.log('❌ Looking for user ID:', userId);
       return res.status(404).json({ message: 'Attendance record not found.' });
     }
 
@@ -1961,10 +1971,20 @@ exports.disapproveRegistration = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    console.log('🔍 Looking for attendance record in disapproval...');
+    console.log('🔍 Event attendance records:', event.attendance.map(a => ({
+      userId: a.userId,
+      userIdString: a.userId.toString(),
+      targetUserId: userId,
+      match: a.userId.toString() === userId
+    })));
+
     const attendance = event.attendance.find(a => a.userId.toString() === userId);
 
     if (!attendance) {
       console.log('❌ Attendance record not found');
+      console.log('❌ Available user IDs:', event.attendance.map(a => a.userId.toString()));
+      console.log('❌ Looking for user ID:', userId);
       return res.status(404).json({ message: 'Attendance record not found.' });
     }
 
