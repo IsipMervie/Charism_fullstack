@@ -1,5 +1,14 @@
 // server.js
 require('dotenv').config();
+
+// Set environment variables if not set
+if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
+if (!process.env.PORT) process.env.PORT = '5000';
+if (!process.env.MONGO_URI) process.env.MONGO_URI = 'mongodb+srv://charism:charism123@charism-cluster.0x8xq.mongodb.net/charism?retryWrites=true&w=majority';
+if (!process.env.JWT_SECRET) process.env.JWT_SECRET = 'your_super_secret_jwt_key_here_charism_2024';
+if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = 'https://charism-ucb4.onrender.com';
+if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw9.onrender.com';
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -47,31 +56,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// EMERGENCY CORS - Allow all origins
-app.use(cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  optionsSuccessStatus: 200
-}));
+// SIMPLE CORS - Allow all origins
+app.use(cors());
 
 // Handle preflight requests
 app.options('*', cors());
 
-// EMERGENCY CORS FIX - Allow all origins
+// SIMPLE CORS HEADERS
 app.use((req, res, next) => {
-  // Force CORS headers on EVERY request
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Expose-Headers', 'Content-Length, X-JSON');
-  
-  console.log('🔧 CORS headers set for:', req.method, req.path);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
   if (req.method === 'OPTIONS') {
-    console.log('✅ OPTIONS request handled');
     res.status(200).end();
     return;
   }
@@ -667,11 +664,7 @@ console.log('Loading routes...');
 
 app.use('/api/auth', require('./routes/authRoutes'));
 console.log(' Auth routes loaded');
-app.use('/api/analytics', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-}, require('./routes/analyticsRoutes'));
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
 console.log(' Analytics routes loaded');
 app.use('/api/admin', require('./routes/adminRoutes'));
 console.log(' Admin routes loaded');
@@ -689,11 +682,7 @@ app.use('/api/messages', require('./routes/messageRoutes'));
 console.log(' Messages routes loaded');
 app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
-app.use('/api/events', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-}, require('./routes/eventRoutes'));
+app.use('/api/events', require('./routes/eventRoutes'));
 console.log(' Events routes loaded');
 
 // Global approve route for compatibility
