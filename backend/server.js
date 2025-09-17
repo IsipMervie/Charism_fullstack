@@ -61,13 +61,17 @@ app.options('*', cors());
 
 // EMERGENCY CORS FIX - Allow all origins
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  res.header('Access-Control-Allow-Origin', origin || '*');
+  // Force CORS headers on EVERY request
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Expose-Headers', 'Content-Length, X-JSON');
+  
+  console.log('🔧 CORS headers set for:', req.method, req.path);
   
   if (req.method === 'OPTIONS') {
+    console.log('✅ OPTIONS request handled');
     res.status(200).end();
     return;
   }

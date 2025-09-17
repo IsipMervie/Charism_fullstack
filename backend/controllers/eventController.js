@@ -117,7 +117,14 @@ exports.healthCheck = async (req, res) => {
 // Get All Events - Ultra-optimized version
 exports.getAllEvents = async (req, res) => {
   try {
+    // EMERGENCY CORS FIX - Force headers
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+    
     console.log('=== GET ALL EVENTS (OPTIMIZED) ===');
+    console.log('🔧 CORS headers forced in getAllEvents');
     console.log('User:', req.user ? 'Authenticated' : 'Not authenticated');
     console.log('User role:', req.user?.role || 'Unknown');
     
