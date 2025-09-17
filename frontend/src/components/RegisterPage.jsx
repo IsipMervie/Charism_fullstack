@@ -76,6 +76,10 @@ function RegisterPage() {
       Swal.fire({ icon: 'error', title: 'Invalid Email', text: 'Please use a valid @ua.edu.ph email address.' });
       return;
     }
+    if (password.length < 8) {
+      Swal.fire({ icon: 'error', title: 'Password Too Short', text: 'Password must be at least 8 characters long.' });
+      return;
+    }
     if (password !== confirmPassword) {
       Swal.fire({ icon: 'error', title: 'Password Mismatch', text: 'Passwords do not match. Please try again.' });
       return;

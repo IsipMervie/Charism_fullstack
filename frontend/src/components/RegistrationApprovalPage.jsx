@@ -100,20 +100,39 @@ function RegistrationApprovalPage() {
 
   const handleApproveRegistration = async (eventId, userId, studentName) => {
     try {
-      await approveRegistration(eventId, userId);
+      console.log('🔍 Starting approval process:', { eventId, userId, studentName });
+      
+      // Validate parameters
+      if (!eventId || !userId) {
+        throw new Error('Missing required parameters: eventId or userId');
+      }
+      
+      const result = await approveRegistration(eventId, userId);
+      console.log('✅ Approval successful:', result);
+      
       await loadEventRegistrations(eventId);
       Swal.fire({
         icon: 'success',
-        title: 'Registration Approved for Registered',
-        text: `${studentName}'s registration has been approved for registered successfully.`,
+        title: 'Registration Approved!',
+        text: `${studentName}'s registration has been approved successfully.`,
         timer: 2000,
         showConfirmButton: false
       });
     } catch (err) {
+      console.error('❌ Approval failed:', err);
+      
+      let errorMessage = 'Failed to approve registration.';
+      if (err.message) {
+        errorMessage = err.message;
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      
       Swal.fire({
         icon: 'error',
         title: 'Approval Failed',
-        text: err.response?.data?.message || 'Failed to approve registration.'
+        text: errorMessage,
+        footer: 'Please check the console for more details and contact support if the issue persists.'
       });
     }
   };
@@ -144,7 +163,16 @@ function RegistrationApprovalPage() {
 
     if (reason) {
       try {
-        await disapproveRegistration(eventId, userId, reason);
+        console.log('🔍 Starting disapproval process:', { eventId, userId, studentName, reason });
+        
+        // Validate parameters
+        if (!eventId || !userId || !reason) {
+          throw new Error('Missing required parameters: eventId, userId, or reason');
+        }
+        
+        const result = await disapproveRegistration(eventId, userId, reason);
+        console.log('✅ Disapproval successful:', result);
+        
         await loadEventRegistrations(eventId);
         Swal.fire({
           icon: 'success',
@@ -154,10 +182,20 @@ function RegistrationApprovalPage() {
           showConfirmButton: false
         });
       } catch (err) {
+        console.error('❌ Disapproval failed:', err);
+        
+        let errorMessage = 'Failed to disapprove registration.';
+        if (err.message) {
+          errorMessage = err.message;
+        } else if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        }
+        
         Swal.fire({
           icon: 'error',
           title: 'Disapproval Failed',
-          text: err.response?.data?.message || 'Failed to disapprove registration.'
+          text: errorMessage,
+          footer: 'Please check the console for more details and contact support if the issue persists.'
         });
       }
     }

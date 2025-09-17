@@ -235,6 +235,39 @@ router.put(
   eventController.disapproveRegistration
 );
 
+// Additional fallback routes to catch any malformed requests
+router.all(
+  '/:eventId/registrations/:userId/approve*',
+  (req, res, next) => {
+    console.log('🔍 Fallback approve route hit:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body
+    });
+    if (req.method === 'PUT') {
+      return eventController.approveRegistration(req, res);
+    }
+    next();
+  }
+);
+
+router.all(
+  '/:eventId/registrations/:userId/disapprove*',
+  (req, res, next) => {
+    console.log('🔍 Fallback disapprove route hit:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body
+    });
+    if (req.method === 'PUT') {
+      return eventController.disapproveRegistration(req, res);
+    }
+    next();
+  }
+);
+
 // Approve attendance (Admin/Staff)
 router.patch(
   '/:eventId/attendance/:userId/approve',

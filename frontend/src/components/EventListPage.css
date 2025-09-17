@@ -114,10 +114,56 @@
 .search-filter-section {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+/* Action Buttons Section */
+.action-buttons-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.action-buttons-section .refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 160px;
+  justify-content: center;
+}
+
+.action-buttons-section .refresh-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--primary-shadow);
+}
+
+.action-buttons-section .refresh-button:active {
+  transform: translateY(0);
+}
+
+.action-buttons-section .refresh-icon {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.action-buttons-section .refresh-button:hover .refresh-icon {
+  transform: rotate(180deg);
 }
 
 
@@ -1246,6 +1292,17 @@
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
+  }
+  
+  .action-buttons-section {
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .action-buttons-section .refresh-button {
+    min-width: 140px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
   
   .search-box {

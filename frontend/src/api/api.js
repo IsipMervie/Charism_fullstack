@@ -1606,13 +1606,23 @@ export const getPendingRegistrationsForEvent = async (eventId) => {
 export const approveRegistration = async (eventId, userId) => {
   try {
     console.log(`✅ Approving registration for event ${eventId}, user ${userId}`);
+    console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/approve`);
+    console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
+    
     const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve`);
     console.log('✅ Registration approved successfully:', response.data);
     return response.data;
   } catch (error) {
     console.error('❌ Error approving registration:', error);
+    console.error('❌ Request URL:', error.config?.url);
+    console.error('❌ Response status:', error.response?.status);
+    console.error('❌ Response data:', error.response?.data);
+    
     if (error.response?.status === 400) {
       throw new Error(error.response.data.message || 'Cannot approve registration. Event may be full.');
+    }
+    if (error.response?.status === 404) {
+      throw new Error('Approval endpoint not found. Please contact administrator.');
     }
     throw new Error('Failed to approve registration. Please try again.');
   }
@@ -1621,13 +1631,23 @@ export const approveRegistration = async (eventId, userId) => {
 export const disapproveRegistration = async (eventId, userId, reason) => {
   try {
     console.log(`❌ Disapproving registration for event ${eventId}, user ${userId}`);
+    console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/disapprove`);
+    console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
+    
     const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove`, { reason });
     console.log('✅ Registration disapproved successfully:', response.data);
     return response.data;
   } catch (error) {
     console.error('❌ Error disapproving registration:', error);
+    console.error('❌ Request URL:', error.config?.url);
+    console.error('❌ Response status:', error.response?.status);
+    console.error('❌ Response data:', error.response?.data);
+    
     if (error.response?.status === 400) {
       throw new Error(error.response.data.message || 'Cannot disapprove registration. Reason is required.');
+    }
+    if (error.response?.status === 404) {
+      throw new Error('Disapproval endpoint not found. Please contact administrator.');
     }
     throw new Error('Failed to disapprove registration. Please try again.');
   }

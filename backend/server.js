@@ -818,50 +818,107 @@ app.get('/disapprove', authMiddleware, roleMiddleware('Admin', 'Staff'), async (
   }
 });
 
-// Catch-all approve/disapprove routes with debugging
+// Enhanced catch-all approve/disapprove routes with comprehensive debugging
 app.all('/approve*', (req, res) => {
-  console.log('🚨 Catch-all approve route hit:', {
+  console.log('🚨 DIRECT APPROVE CALL DETECTED:', {
     method: req.method,
     url: req.url,
     path: req.path,
+    originalUrl: req.originalUrl,
     params: req.params,
+    query: req.query,
     body: req.body,
-    headers: req.headers
+    headers: {
+      'user-agent': req.headers['user-agent'],
+      'referer': req.headers['referer'],
+      'authorization': req.headers['authorization'] ? 'Present' : 'Missing'
+    }
   });
+  
+  // Try to extract eventId and userId from the request
+  const eventId = req.body?.eventId || req.query?.eventId;
+  const userId = req.body?.userId || req.query?.userId;
+  
+  if (eventId && userId) {
+    console.log('🔄 Attempting to redirect to proper approval endpoint');
+    const eventController = require('./controllers/eventController');
+    const modifiedReq = {
+      ...req,
+      params: { eventId, userId }
+    };
+    return eventController.approveRegistration(modifiedReq, res);
+  }
+  
   res.status(404).json({ 
-    message: 'Approve endpoint not found',
+    message: 'Direct approve endpoint not found - use proper API routes',
     method: req.method,
     url: req.url,
     availableRoutes: [
       'PUT /api/events/:eventId/registrations/:userId/approve',
       'PUT /api/events/:eventId/approve/:userId',
-      'PUT /api/approve/:userId',
-      'PUT /api/approve',
-      'PUT /approve'
-    ]
+      'PUT /api/approve/:userId (with eventId in body)',
+      'PUT /api/approve (with both IDs in body)',
+      'PUT /approve (with both IDs in body)'
+    ],
+    debugInfo: {
+      hasEventId: !!eventId,
+      hasUserId: !!userId,
+      requestBody: req.body,
+      requestQuery: req.query
+    }
   });
 });
 
 app.all('/disapprove*', (req, res) => {
-  console.log('🚨 Catch-all disapprove route hit:', {
+  console.log('🚨 DIRECT DISAPPROVE CALL DETECTED:', {
     method: req.method,
     url: req.url,
     path: req.path,
+    originalUrl: req.originalUrl,
     params: req.params,
+    query: req.query,
     body: req.body,
-    headers: req.headers
+    headers: {
+      'user-agent': req.headers['user-agent'],
+      'referer': req.headers['referer'],
+      'authorization': req.headers['authorization'] ? 'Present' : 'Missing'
+    }
   });
+  
+  // Try to extract eventId, userId, and reason from the request
+  const eventId = req.body?.eventId || req.query?.eventId;
+  const userId = req.body?.userId || req.query?.userId;
+  const reason = req.body?.reason || req.query?.reason;
+  
+  if (eventId && userId && reason) {
+    console.log('🔄 Attempting to redirect to proper disapproval endpoint');
+    const eventController = require('./controllers/eventController');
+    const modifiedReq = {
+      ...req,
+      params: { eventId, userId },
+      body: { ...req.body, reason }
+    };
+    return eventController.disapproveRegistration(modifiedReq, res);
+  }
+  
   res.status(404).json({ 
-    message: 'Disapprove endpoint not found',
+    message: 'Direct disapprove endpoint not found - use proper API routes',
     method: req.method,
     url: req.url,
     availableRoutes: [
       'PUT /api/events/:eventId/registrations/:userId/disapprove',
       'PUT /api/events/:eventId/disapprove/:userId',
-      'PUT /api/disapprove/:userId',
-      'PUT /api/disapprove',
-      'PUT /disapprove'
-    ]
+      'PUT /api/disapprove/:userId (with eventId and reason in body)',
+      'PUT /api/disapprove (with all params in body)',
+      'PUT /disapprove (with all params in body)'
+    ],
+    debugInfo: {
+      hasEventId: !!eventId,
+      hasUserId: !!userId,
+      hasReason: !!reason,
+      requestBody: req.body,
+      requestQuery: req.query
+    }
   });
 });
 

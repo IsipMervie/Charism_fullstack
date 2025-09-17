@@ -46,6 +46,15 @@ function ResetPasswordPage() {
       return;
     }
     
+    if (password.length < 8) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Password Too Short',
+        text: 'Password must be at least 8 characters long.'
+      });
+      return;
+    }
+    
     if (password !== confirmPassword) {
       Swal.fire({
         icon: 'error',

@@ -29,6 +29,13 @@ exports.register = async (req, res) => {
       });
     }
 
+    // Validate password length
+    if (password.length < 8) {
+      return res.status(400).json({ 
+        message: 'Password must be at least 8 characters long' 
+      });
+    }
+
     // Validate role
     if (!['Admin', 'Staff', 'Student'].includes(role)) {
       return res.status(400).json({ 
@@ -256,6 +263,11 @@ exports.changePassword = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // Validate new password length
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'New password must be at least 8 characters long' });
+    }
+
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -327,6 +339,9 @@ exports.resetPassword = async (req, res) => {
   }
   if (!providedNewPassword) {
     return res.status(400).json({ message: 'Missing new password' });
+  }
+  if (providedNewPassword.length < 8) {
+    return res.status(400).json({ message: 'New password must be at least 8 characters long' });
   }
 
   try {

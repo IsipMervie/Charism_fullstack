@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo, memo } from '
 import { getEvents, joinEvent, timeIn, timeOut, generateReport, getPublicSettings } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload, FaSyncAlt } from 'react-icons/fa';
 import { formatTimeRange12Hour, formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
 import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../utils/arrayUtils';
@@ -1167,6 +1167,18 @@ function EventListPage() {
               <option value="completed">Completed</option>
             </select>
           </div>
+        </div>
+
+        {/* Action Buttons Section */}
+        <div className="action-buttons-section">
+          <button 
+            onClick={handleManualRefresh} 
+            className="refresh-button"
+            title="Refresh Events"
+          >
+            <FaSyncAlt className="refresh-icon" />
+            Refresh Events
+          </button>
         </div>
 
         {/* Download PDF Button for Admin/Staff */}
