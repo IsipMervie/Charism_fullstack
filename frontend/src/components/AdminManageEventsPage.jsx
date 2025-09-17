@@ -75,6 +75,74 @@ function AdminManageEventsPage() {
     });
   };
 
+  // Function to clean up old cache data
+  const cleanupCache = useCallback(() => {
+    try {
+      const keys = Object.keys(sessionStorage);
+      const eventCacheKeys = keys.filter(key => key.startsWith('events_cache_'));
+      
+      // Remove old cache entries (older than 1 hour)
+      eventCacheKeys.forEach(key => {
+        const timestampKey = `${key}_timestamp`;
+        const timestamp = sessionStorage.getItem(timestampKey);
+        if (timestamp) {
+          const age = Date.now() - parseInt(timestamp);
+          if (age > 60 * 60 * 1000) { // 1 hour
+            sessionStorage.removeItem(key);
+            sessionStorage.removeItem(timestampKey);
+            console.log(`🧹 Cleaned up old cache: ${key}`);
+          }
+        }
+      });
+    } catch (error) {
+      console.warn('⚠️ Failed to cleanup cache:', error.message);
+    }
+  }, []);
+
+  // Function to fetch full events data in background
+  const fetchFullEvents = useCallback(async () => {
+    try {
+      console.log('🔄 Fetching full events data in background...');
+      const data = await getEvents();
+      
+      // Update with full data
+      setEvents(data);
+      
+      // Clean up old cache first
+      cleanupCache();
+      
+      // Try to cache full data (might fail due to size, that's ok)
+      try {
+        const cacheKey = `events_cache_${user?.role || 'Admin'}`;
+        sessionStorage.setItem(cacheKey, JSON.stringify(data));
+        sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+        console.log('📦 Full events data cached successfully');
+      } catch (cacheError) {
+        console.warn('⚠️ Failed to cache full events data:', cacheError.message);
+        // If caching fails, try to cache essential data instead
+        try {
+          const essentialData = data.map(event => ({
+            _id: event._id,
+            title: event.title,
+            date: event.date,
+            status: event.status,
+            isVisibleToStudents: event.isVisibleToStudents,
+            requiresApproval: event.requiresApproval,
+            maxParticipants: event.maxParticipants,
+            attendance: event.attendance ? event.attendance.length : 0
+          }));
+          sessionStorage.setItem(cacheKey, JSON.stringify(essentialData));
+          sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+          console.log('📦 Essential events data cached successfully');
+        } catch (essentialCacheError) {
+          console.warn('⚠️ Failed to cache even essential data:', essentialCacheError.message);
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ Failed to fetch full events data:', err.message);
+    }
+  }, [user?.role, cleanupCache]);
+
   const fetchEvents = useCallback(async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
     if (isFetching && retryCount === 0) {
@@ -122,10 +190,24 @@ function AdminManageEventsPage() {
         const cacheAge = Date.now() - parseInt(cacheTimestamp);
         if (cacheAge < 5000) { // 5 seconds to ensure fresh data
           console.log('📦 Using cached events data');
-          setEvents(JSON.parse(cachedData));
-          setLoading(false);
-          setIsFetching(false);
-          return;
+          const parsedData = JSON.parse(cachedData);
+          
+          // Check if this is essential data (has limited fields) or full data
+          if (parsedData.length > 0 && parsedData[0].description === undefined) {
+            console.log('📦 Using essential cached data, fetching full data...');
+            // Essential data cached, fetch full data in background
+            fetchFullEvents();
+            setEvents(parsedData); // Show essential data immediately
+            setLoading(false);
+            setIsFetching(false);
+            return;
+          } else {
+            // Full data cached
+            setEvents(parsedData);
+            setLoading(false);
+            setIsFetching(false);
+            return;
+          }
         }
       }
 
@@ -137,9 +219,26 @@ function AdminManageEventsPage() {
       console.log('✅ Events fetched successfully, count:', data?.length || 0);
       console.log('📊 Events data sample:', data?.slice(0, 2)); // Log first 2 events for debugging
       
-      // Cache the data
-      sessionStorage.setItem(cacheKey, JSON.stringify(data));
-      sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+      // Cache only essential data to avoid quota exceeded errors
+      try {
+        const essentialData = data.map(event => ({
+          _id: event._id,
+          title: event.title,
+          date: event.date,
+          status: event.status,
+          isVisibleToStudents: event.isVisibleToStudents,
+          requiresApproval: event.requiresApproval,
+          maxParticipants: event.maxParticipants,
+          attendance: event.attendance ? event.attendance.length : 0
+        }));
+        
+        sessionStorage.setItem(cacheKey, JSON.stringify(essentialData));
+        sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+        console.log('📦 Events cached successfully (essential data only)');
+      } catch (cacheError) {
+        console.warn('⚠️ Failed to cache events:', cacheError.message);
+        // Continue without caching if storage is full
+      }
       
       setEvents(data);
       setError('');

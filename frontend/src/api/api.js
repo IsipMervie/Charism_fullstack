@@ -464,12 +464,34 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
   }
 };
 
+// Check server health quickly
+export const checkServerHealth = async () => {
+  try {
+    const response = await axiosInstance.get('/ping', {
+      timeout: 3000 // 3 seconds timeout
+    });
+    return response.data.status === 'OK';
+  } catch (error) {
+    console.warn('⚠️ Server health check failed:', error.message);
+    return false;
+  }
+};
+
 // Events
 export const getEvents = async (retryCount = 0) => {
   const maxRetries = 2;
   
   try {
     console.log(`🔄 Fetching events from API... (attempt ${retryCount + 1}/${maxRetries + 1})`);
+    
+    // Check server health first if this is the first attempt
+    if (retryCount === 0) {
+      const isHealthy = await checkServerHealth();
+      if (!isHealthy) {
+        console.warn('🚨 Server appears to be down or unresponsive');
+        return [];
+      }
+    }
     
     // Use shorter timeout for faster failure detection
     const response = await axiosInstance.get('/events', {
@@ -511,15 +533,22 @@ export const getEvents = async (retryCount = 0) => {
       console.warn('⚠️ Events API endpoint not found - routing issue');
     }
     
-    // Retry logic for timeouts
+    // Retry logic for timeouts - but with exponential backoff
     if (retryCount < maxRetries && (error.code === 'ECONNABORTED' || error.response?.status >= 500)) {
-      console.log(`🔄 Retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const delay = Math.min(1000 * Math.pow(2, retryCount), 5000); // Exponential backoff, max 5 seconds
+      console.log(`🔄 Retrying in ${delay/1000} seconds... (${retryCount + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, delay));
       return getEvents(retryCount + 1);
     }
     
     // Return empty array instead of throwing error to prevent crashes
     console.warn('⚠️ Returning empty events array due to persistent errors');
+    
+    // If this is the first attempt and we're getting timeouts, the server might be overloaded
+    if (retryCount === 0 && error.code === 'ECONNABORTED') {
+      console.warn('🚨 Server appears to be overloaded - consider reducing load or checking server health');
+    }
+    
     return [];
   }
 };

@@ -119,6 +119,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Quick ping endpoint for server responsiveness check
+app.get('/ping', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: Date.now(),
+    message: 'Server is responsive'
+  });
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
