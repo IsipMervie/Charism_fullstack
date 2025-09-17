@@ -699,6 +699,71 @@ app.put('/api/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), async 
     res.status(500).json({ message: 'Error approving registration', error: error.message });
   }
 });
+
+// Very simple approve route for compatibility
+app.put('/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
+  try {
+    console.log('🔍 /approve route called with:', { body: req.body, params: req.params });
+    const { eventId, userId } = req.body;
+    
+    if (!eventId || !userId) {
+      return res.status(400).json({ message: 'Event ID and User ID are required in request body' });
+    }
+    
+    const eventController = require('./controllers/eventController');
+    
+    // Create a new request object with the correct parameters
+    const modifiedReq = {
+      ...req,
+      params: {
+        eventId: eventId,
+        userId: userId
+      }
+    };
+    
+    return await eventController.approveRegistration(modifiedReq, res);
+  } catch (error) {
+    console.error('Error in simple approve route:', error);
+    res.status(500).json({ message: 'Error approving registration', error: error.message });
+  }
+});
+
+// Catch-all approve routes with debugging
+app.all('/approve*', (req, res) => {
+  console.log('🚨 Catch-all approve route hit:', {
+    method: req.method,
+    url: req.url,
+    path: req.path,
+    params: req.params,
+    body: req.body,
+    headers: req.headers
+  });
+  res.status(404).json({ 
+    message: 'Approve endpoint not found',
+    method: req.method,
+    url: req.url,
+    availableRoutes: [
+      'PUT /api/events/:eventId/registrations/:userId/approve',
+      'PUT /api/events/:eventId/approve/:userId',
+      'PUT /api/approve/:userId',
+      'PUT /api/approve',
+      'PUT /approve'
+    ]
+  });
+});
+
+// Debug all API calls
+app.all('/api/*', (req, res, next) => {
+  if (req.path.includes('approve')) {
+    console.log('🔍 API approve call:', {
+      method: req.method,
+      path: req.path,
+      params: req.params,
+      body: req.body
+    });
+  }
+  next();
+});
 app.use('/api/event-chat', require('./routes/eventChatRoutes'));
 console.log(' Event chat routes loaded');
 app.use('/api/users', require('./routes/userRoutes'));
