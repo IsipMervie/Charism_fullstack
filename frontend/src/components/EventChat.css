@@ -1093,84 +1093,6 @@
   transform: scale(1.1);
 }
 
-/* Audio Preview */
-.audio-preview-container {
-  background: var(--warning-light);
-  border-top: 1px solid var(--warning);
-  padding: 1rem;
-  animation: slideUp 0.3s ease-out;
-}
-
-.audio-preview-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-
-.audio-preview-header span {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--warning);
-}
-
-.remove-audio-btn {
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: var(--text-tertiary);
-  color: var(--text-inverse);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  transition: all 0.2s ease;
-}
-
-.remove-audio-btn:hover {
-  background: var(--error);
-  transform: scale(1.1);
-}
-
-.audio-preview-player {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.audio-preview-player audio {
-  flex: 1;
-  height: 32px;
-}
-
-.send-audio-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--warning);
-  color: var(--text-inverse);
-  border: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.send-audio-btn:hover:not(:disabled) {
-  background: var(--warning-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px var(--warning-shadow);
-}
-
-.send-audio-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
 
 /* Enhanced Message Input */
 .message-input-container {
@@ -1223,8 +1145,6 @@
 }
 
 .file-btn,
-.record-btn,
-.stop-record-btn,
 .emoji-btn,
 .send-btn {
   width: 40px;
@@ -1247,27 +1167,6 @@
 
 .file-btn:hover {
   background: var(--success-hover);
-  transform: scale(1.05);
-}
-
-.record-btn {
-  background: var(--info);
-  color: var(--text-inverse);
-}
-
-.record-btn:hover {
-  background: var(--info-hover);
-  transform: scale(1.05);
-}
-
-.stop-record-btn {
-  background: var(--error);
-  color: var(--text-inverse);
-  animation: pulse 1s infinite;
-}
-
-.stop-record-btn:hover {
-  background: var(--error-hover);
   transform: scale(1.05);
 }
 
@@ -1508,7 +1407,7 @@
     min-width: 0;
   }
   
-  .file-btn, .record-btn, .stop-record-btn, .emoji-btn, .send-btn {
+  .file-btn, .emoji-btn, .send-btn {
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
@@ -1644,7 +1543,7 @@
     min-width: 0;
   }
   
-  .file-btn, .record-btn, .stop-record-btn, .emoji-btn, .send-btn {
+  .file-btn, .emoji-btn, .send-btn {
     width: 32px;
     height: 32px;
     font-size: 0.85rem;
@@ -1780,7 +1679,7 @@
     min-height: 28px;
   }
   
-  .file-btn, .record-btn, .stop-record-btn, .emoji-btn, .send-btn {
+  .file-btn, .emoji-btn, .send-btn {
     width: 28px;
     height: 28px;
     font-size: 0.8rem;
@@ -1811,8 +1710,6 @@
   }
   
   .file-btn:hover,
-  .record-btn:hover,
-  .stop-record-btn:hover,
   .emoji-btn:hover,
   .send-btn:hover {
     transform: none;
@@ -1827,8 +1724,6 @@
   }
   
   .file-btn:active,
-  .record-btn:active,
-  .stop-record-btn:active,
   .emoji-btn:active,
   .send-btn:active {
     transform: scale(0.95);
@@ -1840,7 +1735,6 @@
   .message,
   .emoji-picker,
   .file-preview-container,
-  .audio-preview-container,
   .edit-message-form,
   .search-bar {
     animation: none;
@@ -1848,14 +1742,9 @@
   
   .status-dot,
   .typing-dots span,
-  .stop-record-btn {
-    animation: none;
-  }
   
   .action-btn:hover,
   .file-btn:hover,
-  .record-btn:hover,
-  .stop-record-btn:hover,
   .emoji-btn:hover,
   .send-btn:hover {
     transform: none;
@@ -1864,8 +1753,6 @@
 
 /* Focus States */
 .file-btn:focus,
-.record-btn:focus,
-.stop-record-btn:focus,
 .emoji-btn:focus,
 .send-btn:focus,
 .message-input:focus,
@@ -2014,4 +1901,81 @@
 
 .remove-participant-btn:active {
   transform: scale(0.95);
+}
+
+/* Optimistic Message Styles */
+.message.optimistic {
+  opacity: 0.7;
+  animation: pulse 1.5s infinite;
+}
+
+.message.optimistic .message-content {
+  border-left: 3px solid var(--warning);
+}
+
+.sending-indicator {
+  color: var(--warning);
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-left: 0.5rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.9; }
+}
+
+/* Improved Loading States */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  color: var(--text-secondary);
+}
+
+.loading-state .spinner {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Background Refresh Indicator */
+.messages-container::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.messages-container.refreshing::after {
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .message.optimistic {
+    animation: none;
+  }
+  
+  .loading-state .spinner {
+    animation: none;
+  }
+  
+  .messages-container::after {
+    animation: none;
+  }
 }

@@ -24,6 +24,7 @@ const roleMiddleware = (...allowedRoles) => {
       console.log('User ID:', userId);
       
       // Check if role is in the token (faster than database lookup)
+      console.log('🔍 Role check - User role:', req.user.role, 'Allowed roles:', allowedRoles);
       if (req.user.role && allowedRoles.includes(req.user.role)) {
         console.log('✅ User role from token:', req.user.role);
         console.log('✅ User authorized, proceeding...');

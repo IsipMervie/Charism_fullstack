@@ -254,25 +254,54 @@ function MyParticipationPage() {
         </div>
 
         {/* Certificate Section */}
-        {eligibleForCertificate && (
-          <div className="certificate-section">
-            <div className="certificate-card">
+        <div className="certificate-section">
+          {eligibleForCertificate ? (
+            <div className="certificate-card available">
               <div className="certificate-icon">
                 <FaAward />
               </div>
               <div className="certificate-content">
-                <h3 className="certificate-title">Certificate Available</h3>
+                <h3 className="certificate-title">🎉 Certificate Available!</h3>
                 <p className="certificate-description">
-                  You've completed the 40-hour community service requirement. Download your certificate!
+                  Congratulations! You've completed the 40-hour community service requirement. 
+                  Your certificate is ready for download.
                 </p>
+                <div className="certificate-stats">
+                  <span className="stat-item">✅ {analytics.totalHours} hours completed</span>
+                  <span className="stat-item">✅ {analytics.approvedEvents} events approved</span>
+                </div>
                 <button className="certificate-button" onClick={handleDownloadCertificate}>
                   <FaDownload className="button-icon" />
                   <span>Download Certificate</span>
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="certificate-card not-eligible">
+              <div className="certificate-icon">
+                <FaAward />
+              </div>
+              <div className="certificate-content">
+                <h3 className="certificate-title">Certificate Progress</h3>
+                <p className="certificate-description">
+                  Complete 40 hours of approved community service to earn your certificate.
+                </p>
+                <div className="certificate-progress">
+                  <div className="progress-info">
+                    <span className="current-progress">{analytics.totalHours}/40 hours</span>
+                    <span className="remaining-hours">{40 - analytics.totalHours} hours remaining</span>
+                  </div>
+                  <div className="progress-bar-small">
+                    <div 
+                      className="progress-fill-small" 
+                      style={{ width: `${getProgressPercentage()}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Participation List */}
         <div className="participation-section">
@@ -353,6 +382,25 @@ function MyParticipationPage() {
                             <span className="reason-label">Reason:</span>
                             <span className="reason-text">{att.reason}</span>
                           </div>
+                        </div>
+                      )}
+
+                      {/* Certificate Eligibility Indicator */}
+                      {att && att.status === 'Approved' && (
+                        <div className="certificate-indicator">
+                          <FaAward className="certificate-icon-small" />
+                          <span className="certificate-text">
+                            ✅ Counts towards certificate ({event.hours}h)
+                          </span>
+                        </div>
+                      )}
+                      
+                      {att && att.status === 'Pending' && (
+                        <div className="certificate-indicator pending">
+                          <FaClock className="certificate-icon-small" />
+                          <span className="certificate-text">
+                            ⏳ Pending approval for certificate
+                          </span>
                         </div>
                       )}
                     </div>

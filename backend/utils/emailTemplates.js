@@ -129,6 +129,129 @@ const getPasswordResetTemplate = (resetLink, userName) => {
 `;
 };
 
+// Event registration approval template
+const getEventRegistrationApprovalTemplate = (userName, eventTitle, eventDate, eventLocation, eventHours) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration Approved - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
+      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Event Registration Approved</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <p>Hello ${userName || 'there'},</p>
+      <p>Great news! Your registration for the following community service event has been <strong style="color: #27ae60;">approved</strong>:</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #27ae60; padding: 20px; margin: 20px 0; border-radius: 4px;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Event Details</h3>
+      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+      <p style="margin: 5px 0;"><strong>Location:</strong> ${eventLocation || 'TBD'}</p>
+      <p style="margin: 5px 0;"><strong>Service Hours:</strong> ${eventHours} hours</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">What's Next?</h3>
+      <ul style="color: #555;">
+        <li>Make sure to arrive on time for the event</li>
+        <li>Bring any required materials or documentation</li>
+        <li>Check the event details for any specific requirements</li>
+        <li>Remember to time in and time out during the event</li>
+      </ul>
+    </div>
+    
+    <div style="background-color: #e8f5e8; border: 1px solid #27ae60; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <p style="margin: 0; color: #27ae60; font-weight: bold;">
+        ✅ Your registration is confirmed! You can now participate in this event.
+      </p>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <p style="color: #7f8c8d; font-size: 14px;">
+        Thank you for your commitment to community service!
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+};
+
+// Event registration disapproval template
+const getEventRegistrationDisapprovalTemplate = (userName, eventTitle, eventDate, reason) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration Update - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
+      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Event Registration Update</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <p>Hello ${userName || 'there'},</p>
+      <p>We wanted to inform you about an update regarding your registration for the following community service event:</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0; border-radius: 4px;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Event Details</h3>
+      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+    </div>
+    
+    <div style="background-color: #fdf2f2; border: 1px solid #e74c3c; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <h3 style="color: #e74c3c; margin: 0 0 10px 0;">Registration Status</h3>
+      <p style="margin: 0; color: #e74c3c; font-weight: bold;">
+        ❌ Your registration for this event has been disapproved.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">Reason for Disapproval</h3>
+      <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #e74c3c;">
+        <p style="margin: 0; color: #555;">${reason}</p>
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">What's Next?</h3>
+      <ul style="color: #555;">
+        <li>You can register for other available community service events</li>
+        <li>Make sure to meet all requirements before registering for future events</li>
+        <li>Contact the event organizer if you have any questions</li>
+      </ul>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <p style="color: #7f8c8d; font-size: 14px;">
+        We encourage you to continue participating in community service opportunities.
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+};
+
 // Staff approval template
 const getStaffApprovalTemplate = (userName, isApproved) => {
   const status = isApproved ? 'Approved' : 'Rejected';
@@ -585,6 +708,8 @@ module.exports = {
   getEmailVerificationTemplate,
   getPasswordResetTemplate,
   getStaffApprovalTemplate,
+  getEventRegistrationApprovalTemplate,
+  getEventRegistrationDisapprovalTemplate,
   getFeedbackResponseTemplate,
   getFeedbackStatusUpdateTemplate,
   getFeedbackSubmissionTemplate,

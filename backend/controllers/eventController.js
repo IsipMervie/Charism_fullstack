@@ -1708,7 +1708,7 @@ exports.approveRegistration = async (req, res) => {
     const { eventId, userId } = req.params;
     console.log(`Event ID: ${eventId}, User ID: ${userId}`);
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
     if (!event) {
       console.log('❌ Event not found');
@@ -1745,6 +1745,44 @@ exports.approveRegistration = async (req, res) => {
     
     console.log(`✅ Registration ${wasAlreadyApproved ? 're-approved' : 'approved'} successfully`);
     
+    // Send email notification to student (only for new approvals, not re-approvals)
+    if (!wasAlreadyApproved && attendance.userId && attendance.userId.email) {
+      try {
+        const sendEmail = require('../utils/sendEmail');
+        const { getEventRegistrationApprovalTemplate } = require('../utils/emailTemplates');
+        
+        // Format event date
+        const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) : 'TBD';
+        
+        // Prepare email content
+        const emailSubject = `Event Registration Approved - ${event.title}`;
+        const emailHtml = getEventRegistrationApprovalTemplate(
+          attendance.userId.name,
+          event.title,
+          eventDate,
+          event.location || 'TBD',
+          event.hours || 0
+        );
+        
+        // Send email
+        await sendEmail({
+          to: attendance.userId.email,
+          subject: emailSubject,
+          html: emailHtml
+        });
+        
+        console.log(`📧 Approval email sent to ${attendance.userId.email} for event: ${event.title}`);
+      } catch (emailError) {
+        console.error('❌ Failed to send approval email:', emailError.message);
+        // Don't fail the approval if email fails
+      }
+    }
+    
     if (wasAlreadyApproved) {
       res.json({ message: 'Registration re-approved successfully.' });
     } else {
@@ -1769,7 +1807,7 @@ exports.disapproveRegistration = async (req, res) => {
       return res.status(400).json({ message: 'Reason for disapproval is required.' });
     }
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
     if (!event) {
       console.log('❌ Event not found');
@@ -1799,6 +1837,44 @@ exports.disapproveRegistration = async (req, res) => {
     await event.save();
 
     console.log('✅ Registration disapproved successfully');
+    
+    // Send email notification to student
+    if (attendance.userId && attendance.userId.email) {
+      try {
+        const sendEmail = require('../utils/sendEmail');
+        const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+        
+        // Format event date
+        const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) : 'TBD';
+        
+        // Prepare email content
+        const emailSubject = `Event Registration Update - ${event.title}`;
+        const emailHtml = getEventRegistrationDisapprovalTemplate(
+          attendance.userId.name,
+          event.title,
+          eventDate,
+          reason.trim()
+        );
+        
+        // Send email
+        await sendEmail({
+          to: attendance.userId.email,
+          subject: emailSubject,
+          html: emailHtml
+        });
+        
+        console.log(`📧 Disapproval email sent to ${attendance.userId.email} for event: ${event.title}`);
+      } catch (emailError) {
+        console.error('❌ Failed to send disapproval email:', emailError.message);
+        // Don't fail the disapproval if email fails
+      }
+    }
+    
     res.json({ message: 'Registration disapproved successfully.' });
   } catch (err) {
     console.error('❌ Error in disapproveRegistration:', err);
@@ -1809,6 +1885,9 @@ exports.disapproveRegistration = async (req, res) => {
 // Get All Registrations for an Event (Admin/Staff)
 exports.getAllEventRegistrations = async (req, res) => {
   try {
+    console.log('🔍 getAllEventRegistrations called');
+    console.log('🔍 req.user:', req.user);
+    console.log('🔍 req.params:', req.params);
     const { eventId } = req.params;
     
     const event = await Event.findById(eventId)

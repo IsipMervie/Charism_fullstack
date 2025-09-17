@@ -348,7 +348,7 @@ function EventParticipantsPage() {
       <div className="event-participants-card">
         {loading ? (
           <div className="loading-container">
-            <LoadingSpinner size="medium" variant="primary" text="Loading participants..." />
+            <LoadingSpinner size="medium" variant="primary"/>
           </div>
         ) : null}
         <div className="participants-header">

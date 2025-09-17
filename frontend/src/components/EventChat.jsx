@@ -17,8 +17,6 @@ import {
   FaTimes,
   FaEllipsisV,
   FaCopy,
-  FaMicrophone,
-  FaStop,
   FaVolumeUp,
   FaVolumeMute,
   FaSearch,
@@ -52,6 +50,8 @@ const EventChat = ({
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [lastMessageCount, setLastMessageCount] = useState(0);
   
   // UI state
   const [participants, setParticipants] = useState([]);
@@ -72,17 +72,12 @@ const EventChat = ({
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
   
-  // Audio recording
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const mediaRecorderRef = useRef(null);
   
   // Message status
   const [messageStatus, setMessageStatus] = useState({});
   
-  // Track failed images and audio
+  // Track failed images
   const [failedImages, setFailedImages] = useState(new Set());
-  const [failedAudio, setFailedAudio] = useState(new Set());
   
   // Refs
   const messagesEndRef = useRef(null);
@@ -185,8 +180,6 @@ const EventChat = ({
   const getFileIcon = useCallback((file) => {
     if (file.type.startsWith('image/')) {
       return <FaImage className="file-icon image" />;
-    } else if (file.type.startsWith('audio/')) {
-      return <FaVolumeUp className="file-icon audio" />;
     } else if (file.type.startsWith('video/')) {
       return <FaFile className="file-icon video" />;
     }
@@ -228,12 +221,33 @@ const EventChat = ({
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // Load messages with retry logic
-  const loadMessages = useCallback(async (retryCount = 0) => {
+  // Load messages with retry logic and smart loading states
+  const loadMessages = useCallback(async (retryCount = 0, isBackgroundRefresh = false) => {
     try {
-      setLoading(true);
+      // Only show loading spinner on initial load or manual refresh
+      if (!isBackgroundRefresh) {
+        setLoading(true);
+      }
+      
       const data = await getEventChatMessages(eventId);
-      setMessages(data.messages || []);
+      const newMessages = data.messages || [];
+      
+      // Check if we have new messages
+      const hasNewMessages = newMessages.length > lastMessageCount;
+      
+      setMessages(newMessages);
+      setLastMessageCount(newMessages.length);
+      
+      // Show notification for new messages (only in background refresh)
+      if (isBackgroundRefresh && hasNewMessages && notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+        const newMessageCount = newMessages.length - lastMessageCount;
+        new Notification('New Messages', {
+          body: `${newMessageCount} new message${newMessageCount > 1 ? 's' : ''} in ${eventTitle}`,
+          icon: '/favicon.ico'
+        });
+      }
+      
+      setInitialLoad(false);
     } catch (error) {
       console.error('Error loading messages:', error);
       
@@ -245,28 +259,32 @@ const EventChat = ({
       )) {
         console.log(`Retrying message load (attempt ${retryCount + 1})...`);
         setTimeout(() => {
-          loadMessages(retryCount + 1);
+          loadMessages(retryCount + 1, isBackgroundRefresh);
         }, 2000 * (retryCount + 1)); // Exponential backoff
         return;
       }
       
-      // Show user-friendly error message
-      setMessages([]);
-      if (error.message.includes('Network connection failed')) {
-        alert('Unable to connect to the server. Please check your internet connection and try refreshing the page.');
-      } else if (error.message.includes('Connection protocol error')) {
-        alert('Connection error detected. Please refresh the page to reconnect.');
-      } else if (error.message.includes('Chat not found')) {
-        alert('This event does not have a chat enabled or the chat is not available.');
-      } else if (error.message.includes('Access denied')) {
-        alert('You do not have permission to view this chat. Please contact the event organizer.');
-      } else {
-        alert('Failed to load chat messages. Please try refreshing the page.');
+      // Show user-friendly error message (only on initial load or manual refresh)
+      if (!isBackgroundRefresh) {
+        setMessages([]);
+        if (error.message.includes('Network connection failed')) {
+          alert('Unable to connect to the server. Please check your internet connection and try refreshing the page.');
+        } else if (error.message.includes('Connection protocol error')) {
+          alert('Connection error detected. Please refresh the page to reconnect.');
+        } else if (error.message.includes('Chat not found')) {
+          alert('This event does not have a chat enabled or the chat is not available.');
+        } else if (error.message.includes('Access denied')) {
+          alert('You do not have permission to view this chat. Please contact the event organizer.');
+        } else {
+          alert('Failed to load chat messages. Please try refreshing the page.');
+        }
       }
     } finally {
-      setLoading(false);
+      if (!isBackgroundRefresh) {
+        setLoading(false);
+      }
     }
-  }, [eventId]);
+  }, [eventId, lastMessageCount, notificationsEnabled, eventTitle]);
 
   // Load participants
   const loadParticipants = useCallback(async () => {
@@ -304,7 +322,6 @@ const EventChat = ({
         'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
         'application/pdf', 'text/plain', 'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg',
         'video/mp4', 'video/webm', 'video/ogg'
       ];
       
@@ -359,91 +376,45 @@ const EventChat = ({
     });
   }, []);
 
-  // Audio recording functionality
-  const startRecording = useCallback(async () => {
-    try {
-      // Request microphone permission first
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          sampleRate: 44100
-        } 
-      });
-      
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
-      const chunks = [];
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        setAudioBlob(blob);
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(1000); // Record in 1-second chunks
-      setIsRecording(true);
-    } catch (err) {
-      console.error('Error starting recording:', err);
-      if (err.name === 'NotAllowedError') {
-        alert('Microphone permission denied. Please allow microphone access to record voice messages.');
-      } else if (err.name === 'NotFoundError') {
-        alert('No microphone found. Please connect a microphone to record voice messages.');
-      } else {
-        alert('Unable to access microphone. Please check your microphone settings.');
-      }
-    }
-  }, []);
-
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  }, [isRecording]);
-
-  const sendAudioMessage = useCallback(async () => {
-    if (!audioBlob) return;
-
-    try {
-      setSending(true);
-      const formData = new FormData();
-      formData.append('files', audioBlob, 'voice-message.webm');
-      formData.append('messageType', 'audio');
-      formData.append('content', 'Voice message');
-
-      const data = await sendEventChatMessageWithFiles(eventId, formData);
-      setMessages(prev => [...prev, data.chatMessage]);
-      setAudioBlob(null);
-    } catch (error) {
-      console.error('Error sending audio message:', error);
-      alert('Failed to send voice message: ' + error.message);
-    } finally {
-      setSending(false);
-    }
-  }, [audioBlob, eventId]);
-
-  // Enhanced send message function
+  // Enhanced send message function with optimistic updates
   const sendMessage = useCallback(async (e) => {
     e.preventDefault();
     
-    if ((!newMessage || !newMessage.trim()) && selectedFiles.length === 0 && !audioBlob || sending) return;
+    if ((!newMessage || !newMessage.trim()) && selectedFiles.length === 0 || sending) return;
+
+    const messageText = newMessage.trim();
+    const tempId = `temp_${Date.now()}`;
+    
+    // Create optimistic message
+    const optimisticMessage = {
+      _id: tempId,
+      message: messageText,
+      user: { name: user.name, _id: user._id },
+      userId: user._id,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true,
+      replyTo: replyingTo ? { user: replyingTo.user, message: replyingTo.message } : null
+    };
 
     try {
       setSending(true);
+      
+      // Add optimistic message immediately
+      setMessages(prev => [...prev, optimisticMessage]);
+      
+      // Clear form immediately for better UX
+      setNewMessage('');
+      setReplyingTo(null);
+      setSelectedFiles([]);
+      setShowFilePreview(false);
+      
+      let data;
       
       // If there are files, send them with the message
       if (selectedFiles.length > 0) {
         const formData = new FormData();
-        formData.append('message', newMessage.trim() || '');
+        formData.append('message', messageText || '');
         formData.append('messageType', 'file');
         if (replyingTo?.id) {
           formData.append('replyTo', replyingTo.id);
@@ -454,23 +425,19 @@ const EventChat = ({
           formData.append('files', file);
         });
 
-        const data = await sendEventChatMessageWithFiles(eventId, formData);
-        setMessages(prev => [...prev, data.chatMessage]);
-      } else if (audioBlob) {
-        // Send audio message
-        await sendAudioMessage();
+        data = await sendEventChatMessageWithFiles(eventId, formData);
       } else {
         // Send text message only
-        const data = await sendEventChatMessage(eventId, newMessage.trim(), replyingTo?.id || null);
-        setMessages(prev => [...prev, data.chatMessage]);
+        data = await sendEventChatMessage(eventId, messageText, replyingTo?.id || null);
       }
       
-      // Clear form
-      setNewMessage('');
-      setReplyingTo(null);
-      setSelectedFiles([]);
-      setShowFilePreview(false);
-      setAudioBlob(null);
+      // Replace optimistic message with real message
+      setMessages(prev => prev.map(msg => 
+        msg._id === tempId ? { ...data.chatMessage, isOptimistic: false } : msg
+      ));
+      
+      // Update message count
+      setLastMessageCount(prev => prev + 1);
       
       // Refresh participants
       loadParticipants();
@@ -484,11 +451,19 @@ const EventChat = ({
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg._id !== tempId));
+      
+      // Restore form content
+      setNewMessage(messageText);
+      setReplyingTo(replyingTo);
+      
       alert(error.message || 'Failed to send message');
     } finally {
       setSending(false);
     }
-  }, [newMessage, selectedFiles, audioBlob, sending, replyingTo, eventId, sendAudioMessage, loadParticipants, notificationsEnabled]);
+  }, [newMessage, selectedFiles, sending, replyingTo, eventId, loadParticipants, notificationsEnabled, user]);
 
   // Enhanced message actions
   const addReaction = useCallback(async (messageId, emoji) => {
@@ -576,10 +551,10 @@ const EventChat = ({
         Notification.requestPermission();
       }
       
-      // Set up polling for new messages (less frequent)
+      // Set up smart polling for new messages
       const interval = setInterval(() => {
-        loadMessages();
-      }, 15000); // Poll every 15 seconds
+        loadMessages(0, true); // Background refresh - no loading spinner
+      }, 30000); // Poll every 30 seconds (reduced frequency)
       return () => clearInterval(interval);
     }
   }, [eventId, notificationsEnabled, loadMessages, loadParticipants]);
@@ -709,7 +684,7 @@ const EventChat = ({
 
       {/* Messages Area */}
       <div className="messages-container">
-        {loading ? (
+        {loading && initialLoad ? (
           <div className="loading-state">
             <FaSpinner className="spinner" />
             <span>Loading messages...</span>
@@ -743,7 +718,7 @@ const EventChat = ({
                   </div>
                   
                   {dateMessages.map((message) => (
-                    <div key={message._id} className={`message ${message.userId === user._id ? 'sent' : 'received'}`}>
+                    <div key={message._id} className={`message ${message.userId === user._id ? 'sent' : 'received'} ${message.isOptimistic ? 'optimistic' : ''}`}>
                       <div className="message-content">
                         <div className="message-header">
                           <span 
@@ -755,6 +730,7 @@ const EventChat = ({
                           </span>
                           <span className="message-time">{formatTime(message.createdAt)}</span>
                           {message.isEdited && <span className="edited-indicator">(edited)</span>}
+                          {message.isOptimistic && <span className="sending-indicator">Sending...</span>}
                         </div>
                         
                         {message.replyTo && (
@@ -839,42 +815,6 @@ const EventChat = ({
                                     {failedImages.has(attachment.url) && (
                                       <div className="image-info">
                                         <span className="image-status">File not found</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : attachment.contentType?.startsWith('audio/') ? (
-                                  <div className="audio-attachment">
-                                    {!failedAudio.has(attachment.url) ? (
-                                      <div className="audio-player">
-                                        <FaVolumeUp className="audio-icon" />
-                                        <audio 
-                                          controls 
-                                          preload="metadata"
-                                          onError={(e) => {
-                                            setFailedAudio(prev => new Set([...prev, attachment.url]));
-                                          }}
-                                        >
-                                          <source src={getAttachmentUrl(attachment.url)} type={attachment.contentType} />
-                                          <source src={getAttachmentUrl(attachment.url)} type="audio/mpeg" />
-                                          <source src={getAttachmentUrl(attachment.url)} type="audio/wav" />
-                                          Your browser does not support the audio element.
-                                        </audio>
-                                      </div>
-                                    ) : (
-                                      <div className="audio-fallback">
-                                        <FaVolumeUp className="fallback-icon" />
-                                        <div className="fallback-content">
-                                          <span className="fallback-text">Audio not available</span>
-                                          <span className="fallback-subtext">File may have been deleted or moved</span>
-                                          <button 
-                                            className="download-btn"
-                                            onClick={() => downloadFile(attachment)}
-                                            title="Try to download audio"
-                                          >
-                                            <FaDownload />
-                                            Try Download
-                                          </button>
-                                        </div>
                                       </div>
                                     )}
                                   </div>
@@ -1074,33 +1014,6 @@ const EventChat = ({
         </div>
       )}
 
-      {/* Audio Preview */}
-      {audioBlob && (
-        <div className="audio-preview-container">
-          <div className="audio-preview-header">
-            <span>Voice message ready</span>
-            <button 
-              className="remove-audio-btn"
-              onClick={() => setAudioBlob(null)}
-            >
-              <FaTimes />
-            </button>
-          </div>
-          <div className="audio-preview-player">
-            <audio controls>
-              <source src={URL.createObjectURL(audioBlob)} type="audio/wav" />
-            </audio>
-            <button 
-              className="send-audio-btn"
-              onClick={sendAudioMessage}
-              disabled={sending}
-            >
-              <FaPaperPlane />
-              Send Voice Message
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Enhanced Message Input */}
       <div className="message-input-container">
@@ -1125,7 +1038,7 @@ const EventChat = ({
                 multiple
                 onChange={handleFileInputChange}
                 style={{ display: 'none' }}
-                accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar,audio/*,video/*"
+                accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar,video/*"
               />
               <button
                 type="button"
@@ -1136,25 +1049,6 @@ const EventChat = ({
                 <FaFile />
               </button>
               
-              {!isRecording ? (
-                <button
-                  type="button"
-                  className="record-btn"
-                  onClick={startRecording}
-                  title="Record voice message"
-                >
-                  <FaMicrophone />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="stop-record-btn"
-                  onClick={stopRecording}
-                  title="Stop recording"
-                >
-                  <FaStop />
-                </button>
-              )}
               
               <button
                 type="button"
@@ -1168,7 +1062,7 @@ const EventChat = ({
               <button
                 type="submit"
                 className="send-btn"
-                disabled={(!newMessage.trim() && selectedFiles.length === 0 && !audioBlob) || sending}
+                disabled={(!newMessage.trim() && selectedFiles.length === 0) || sending}
                 title="Send message"
               >
                 {sending ? <FaSpinner className="spinner" /> : <FaPaperPlane />}

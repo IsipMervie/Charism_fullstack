@@ -26,6 +26,7 @@ const authMiddleware = (req, res, next) => {
     console.log('JWT decoded.userId:', decoded.userId);
     console.log('JWT decoded.id:', decoded.id);
     console.log('JWT decoded._id:', decoded._id);
+    console.log('JWT decoded.role:', decoded.role);
     
     // Set both id and userId for compatibility with different controllers
     req.user = { 
