@@ -641,7 +641,10 @@ app.use('/api/events', require('./routes/eventRoutes'));
 console.log(' Events routes loaded');
 
 // Global approve route for compatibility
-app.put('/api/approve/:userId', require('./middleware/authMiddleware'), require('./middleware/roleMiddleware')('Admin', 'Staff'), async (req, res) => {
+const authMiddleware = require('./middleware/authMiddleware');
+const roleMiddleware = require('./middleware/roleMiddleware');
+
+app.put('/api/approve/:userId', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
   try {
     const { userId } = req.params;
     const { eventId } = req.body;
