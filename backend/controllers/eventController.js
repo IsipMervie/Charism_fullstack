@@ -1104,6 +1104,47 @@ exports.joinEvent = async (req, res) => {
 
     await event.save();
     
+    // Send registration confirmation email to student
+    // Make this completely non-blocking
+    if (req.user && req.user.email) {
+      setImmediate(async () => {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getEventRegistrationConfirmationTemplate } = require('../utils/emailTemplates');
+          
+          // Format event date
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          // Prepare email content
+          const emailSubject = `Event Registration Confirmed - ${event.title}`;
+          const emailHtml = getEventRegistrationConfirmationTemplate(
+            req.user.name || req.user.firstName + ' ' + req.user.lastName,
+            event.title,
+            eventDate,
+            event.location || 'TBD',
+            event.requiresApproval
+          );
+          
+          // Send email
+          await sendEmail({
+            to: req.user.email,
+            subject: emailSubject,
+            html: emailHtml
+          });
+          
+          console.log(`📧 Registration confirmation email sent to ${req.user.email} for event: ${event.title}`);
+        } catch (emailError) {
+          console.error('❌ Failed to send registration confirmation email:', emailError.message);
+          // Email failure doesn't affect registration
+        }
+      });
+    }
+    
     if (event.requiresApproval) {
       res.json({ 
         message: 'Successfully registered for event. Your registration is pending approval from staff/admin.',
@@ -1327,6 +1368,56 @@ exports.timeOut = async (req, res) => {
 
     attendance.timeOut = now;
     await event.save();
+
+    // Send completion email to student
+    // Make this completely non-blocking
+    setImmediate(async () => {
+      try {
+        const sendEmail = require('../utils/sendEmail');
+        const { getEventCompletionTemplate } = require('../utils/emailTemplates');
+        
+        // Get user details for email
+        const user = await User.findById(userId).select('name email');
+        if (!user || !user.email) {
+          console.log('❌ User not found or no email for completion notification');
+          return;
+        }
+        
+        // Calculate hours completed
+        const timeInDate = new Date(attendance.timeIn);
+        const timeOutDate = new Date(now);
+        const hoursCompleted = ((timeOutDate - timeInDate) / (1000 * 60 * 60)).toFixed(1);
+        
+        // Format event date
+        const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) : 'TBD';
+        
+        // Prepare email content
+        const emailSubject = `Event Completed - ${event.title}`;
+        const emailHtml = getEventCompletionTemplate(
+          user.name,
+          event.title,
+          eventDate,
+          hoursCompleted
+        );
+        
+        // Send email
+        await sendEmail({
+          to: user.email,
+          subject: emailSubject,
+          html: emailHtml
+        });
+        
+        console.log(`✅ Event completion email sent to ${user.email} for event: ${event.title}`);
+      } catch (emailError) {
+        console.error('❌ Error sending event completion email:', emailError);
+        // Don't throw error - email failure shouldn't affect the main operation
+      }
+    });
 
     res.json({ message: 'Time out recorded successfully.' });
   } catch (err) {

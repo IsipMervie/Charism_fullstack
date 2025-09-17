@@ -704,12 +704,254 @@ const getContactResponseTemplate = (name, email, originalMessage, adminResponse,
 `;
 };
 
+// Event Registration Confirmation Template
+const getEventRegistrationConfirmationTemplate = (studentName, eventTitle, eventDate, eventLocation, requiresApproval) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration Confirmation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #007bff;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+    .success-icon {
+      font-size: 48px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    .event-details {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+    .status-badge {
+      background-color: ${requiresApproval ? '#ffc107' : '#28a745'};
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      display: inline-block;
+      margin: 15px 0;
+    }
+    .next-steps {
+      background-color: #e7f3ff;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">CHARISM</div>
+      <div class="success-icon">🎉</div>
+      <h1 style="color: #28a745; margin: 0;">Registration Confirmed!</h1>
+    </div>
+    
+    <p>Dear <strong>${studentName}</strong>,</p>
+    
+    <p>Thank you for registering for our event! Your registration has been successfully recorded.</p>
+    
+    <div class="event-details">
+      <h3 style="margin-top: 0; color: #007bff;">Event Details:</h3>
+      <p><strong>Event:</strong> ${eventTitle}</p>
+      <p><strong>Date:</strong> ${eventDate}</p>
+      <p><strong>Location:</strong> ${eventLocation || 'TBD'}</p>
+      <div class="status-badge">
+        ${requiresApproval ? '⏳ Pending Approval' : '✅ Auto-Approved'}
+      </div>
+    </div>
+    
+    <div class="next-steps">
+      <h3 style="margin-top: 0; color: #007bff;">What's Next?</h3>
+      ${requiresApproval ? `
+      <ul>
+        <li>Your registration is pending approval from staff/admin</li>
+        <li>You will receive an email notification once your registration is reviewed</li>
+        <li>Please wait for approval before attending the event</li>
+        <li>Check your "My Participants" page for updates</li>
+      </ul>
+      ` : `
+      <ul>
+        <li>Your registration has been automatically approved</li>
+        <li>You can now attend the event</li>
+        <li>Remember to time in and time out during the event</li>
+        <li>Check your "My Participants" page for event details</li>
+      </ul>
+      `}
+    </div>
+    
+    <p>We look forward to seeing you at the event!</p>
+    
+    <p>Best regards,<br>
+    <strong>CHARISM Team</strong></p>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Event Completion Template
+const getEventCompletionTemplate = (studentName, eventTitle, eventDate, hoursCompleted) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Completion Confirmation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #007bff;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+    .success-icon {
+      font-size: 48px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    .event-details {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+    .hours-badge {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      display: inline-block;
+      margin: 15px 0;
+    }
+    .next-steps {
+      background-color: #e7f3ff;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border-left: 4px solid #007bff;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">CHARISM</div>
+      <div class="success-icon">🎉</div>
+      <h1 style="color: #28a745; margin: 0;">Event Completed Successfully!</h1>
+    </div>
+    
+    <p>Dear <strong>${studentName}</strong>,</p>
+    
+    <p>Congratulations! You have successfully completed the event and your participation has been recorded.</p>
+    
+    <div class="event-details">
+      <h3 style="margin-top: 0; color: #007bff;">Event Details:</h3>
+      <p><strong>Event:</strong> ${eventTitle}</p>
+      <p><strong>Date:</strong> ${eventDate}</p>
+      <div class="hours-badge">
+        ⏱️ ${hoursCompleted} hours completed
+      </div>
+    </div>
+    
+    <div class="next-steps">
+      <h3 style="margin-top: 0; color: #007bff;">What's Next?</h3>
+      <ul>
+        <li>Your participation hours have been added to your profile</li>
+        <li>Check your "My Participants" page to view your updated hours</li>
+        <li>Continue participating in more events to reach your certificate goals</li>
+        <li>If you have any questions, contact the event organizers</li>
+      </ul>
+    </div>
+    
+    <p>Thank you for your participation and contribution to our community!</p>
+    
+    <p>Best regards,<br>
+    <strong>CHARISM Team</strong></p>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
 module.exports = {
   getEmailVerificationTemplate,
   getPasswordResetTemplate,
   getStaffApprovalTemplate,
+  getEventRegistrationConfirmationTemplate,
   getEventRegistrationApprovalTemplate,
   getEventRegistrationDisapprovalTemplate,
+  getEventCompletionTemplate,
   getFeedbackResponseTemplate,
   getFeedbackStatusUpdateTemplate,
   getFeedbackSubmissionTemplate,
