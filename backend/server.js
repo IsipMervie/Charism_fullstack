@@ -47,49 +47,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware
+// EMERGENCY CORS - Allow all origins
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl requests)
-    if (!origin) {
-      console.log('✅ Allowing request with no origin');
-      return callback(null, true);
-    }
-    
-    // Get allowed origins from environment variable or use defaults
-    const allowedOrigins = process.env.CORS_ORIGINS 
-      ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-      : [
-          'http://localhost:3000',
-          'https://charism-ucb4.onrender.com',
-          'https://charism-api-xtw9.onrender.com',
-        ];
-    
-    console.log('🔗 Allowed CORS origins:', allowedOrigins);
-    console.log('🔍 Request origin:', origin);
-    
-    // Check if origin is allowed
-    const isAllowed = allowedOrigins.includes(origin);
-    if (isAllowed) {
-      console.log('✅ CORS allowed for origin:', origin);
-      callback(null, true);
-    } else {
-      console.log('❌ CORS blocked origin:', origin);
-      // In production, be more permissive for debugging
-      if (process.env.NODE_ENV === 'production') {
-        console.log('🚨 Production mode - allowing blocked origin for debugging');
-        callback(null, true);
-      } else {
-        // Additional fallback for Render domains
-        if (origin.includes('onrender.com')) {
-          console.log('✅ Allowing Render domain:', origin);
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      }
-    }
-  },
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
@@ -98,6 +58,21 @@ app.use(cors({
 
 // Handle preflight requests
 app.options('*', cors());
+
+// EMERGENCY CORS FIX - Allow all origins
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
 
 // Simple health check endpoint
 app.get('/health', (req, res) => {
@@ -501,6 +476,37 @@ app.get('/api/frontend-test', (req, res) => {
     res.status(500).json({ 
       status: 'ERROR', 
       message: 'Frontend test failed' 
+    });
+  }
+});
+
+// CORS test endpoint
+app.get('/api/cors-test', (req, res) => {
+  try {
+    const origin = req.headers.origin;
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://charism-ucb4.onrender.com',
+      'https://charism-api-xtw9.onrender.com',
+    ];
+    
+    const isAllowed = allowedOrigins.includes(origin) || 
+                     (origin && origin.includes('onrender.com')) ||
+                     (origin && origin.includes('localhost'));
+    
+    res.json({
+      status: 'OK',
+      message: 'CORS test endpoint',
+      corsStatus: isAllowed ? 'ALLOWED' : 'BLOCKED',
+      origin: origin || 'No origin header',
+      allowedOrigins: allowedOrigins,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'CORS test error',
+      error: error.message 
     });
   }
 });
