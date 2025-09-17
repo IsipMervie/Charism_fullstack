@@ -644,6 +644,7 @@ console.log(' Events routes loaded');
 const { authMiddleware } = require('./middleware/authMiddleware');
 const roleMiddleware = require('./middleware/roleMiddleware');
 
+// Simple approve route that matches frontend expectations
 app.put('/api/approve/:userId', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
   try {
     const { userId } = req.params;
@@ -654,12 +655,47 @@ app.put('/api/approve/:userId', authMiddleware, roleMiddleware('Admin', 'Staff')
     }
     
     const eventController = require('./controllers/eventController');
-    req.params.eventId = eventId;
-    req.params.userId = userId;
     
-    return await eventController.approveRegistration(req, res);
+    // Create a new request object with the correct parameters
+    const modifiedReq = {
+      ...req,
+      params: {
+        ...req.params,
+        eventId: eventId,
+        userId: userId
+      }
+    };
+    
+    return await eventController.approveRegistration(modifiedReq, res);
   } catch (error) {
     console.error('Error in global approve route:', error);
+    res.status(500).json({ message: 'Error approving registration', error: error.message });
+  }
+});
+
+// Alternative route for direct approve calls
+app.put('/api/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), async (req, res) => {
+  try {
+    const { eventId, userId } = req.body;
+    
+    if (!eventId || !userId) {
+      return res.status(400).json({ message: 'Event ID and User ID are required in request body' });
+    }
+    
+    const eventController = require('./controllers/eventController');
+    
+    // Create a new request object with the correct parameters
+    const modifiedReq = {
+      ...req,
+      params: {
+        eventId: eventId,
+        userId: userId
+      }
+    };
+    
+    return await eventController.approveRegistration(modifiedReq, res);
+  } catch (error) {
+    console.error('Error in direct approve route:', error);
     res.status(500).json({ message: 'Error approving registration', error: error.message });
   }
 });
