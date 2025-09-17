@@ -7,6 +7,26 @@ const path = require('path');
 const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator');
 
+// Simple in-memory cache for events (5 minute TTL)
+let eventsCache = {
+  data: null,
+  timestamp: null,
+  ttl: 5 * 60 * 1000 // 5 minutes
+};
+
+const getCachedEvents = () => {
+  if (eventsCache.data && eventsCache.timestamp && 
+      (Date.now() - eventsCache.timestamp) < eventsCache.ttl) {
+    return eventsCache.data;
+  }
+  return null;
+};
+
+const setCachedEvents = (events) => {
+  eventsCache.data = events;
+  eventsCache.timestamp = Date.now();
+};
+
 
 
 // Health check endpoint
@@ -97,6 +117,13 @@ exports.getAllEvents = async (req, res) => {
     console.log('=== GET ALL EVENTS (OPTIMIZED) ===');
     console.log('User:', req.user ? 'Authenticated' : 'Not authenticated');
     console.log('User role:', req.user?.role || 'Unknown');
+    
+    // Check cache first for faster response
+    const cachedEvents = getCachedEvents();
+    if (cachedEvents) {
+      console.log('📦 Returning cached events');
+      return res.json(cachedEvents);
+    }
     
     // Flag to prevent multiple responses
     let responseSent = false;
@@ -237,8 +264,8 @@ exports.getAllEvents = async (req, res) => {
         .select('title description date startTime endTime location hours maxParticipants department departments isForAllDepartments status isVisibleToStudents requiresApproval publicRegistrationToken isPublicRegistrationEnabled createdAt attendance image')
         .sort({ createdAt: -1 }) // Single field sort for speed
         .lean()
-        .limit(15) // Reasonable limit
-        .maxTimeMS(10000); // Increased to 10 seconds for slow server
+        .limit(10) // Reduced limit for faster response
+        .maxTimeMS(8000); // Reduced to 8 seconds for faster timeout
       
       // Single timeout protection
       const timeoutPromise = new Promise((_, reject) => {
@@ -340,7 +367,16 @@ exports.getAllEvents = async (req, res) => {
     responseSent = true;
     
     console.log(`✅ Returning ${eventsWithUrls.length} events successfully`);
-    res.json(eventsWithUrls);
+    
+    // Cache the results for faster future requests
+    const responseData = {
+      events: eventsWithUrls,
+      totalEvents: eventsWithUrls.length,
+      cached: false
+    };
+    setCachedEvents(responseData);
+    
+    res.json(responseData);
   } catch (err) {
     console.error('❌ Error in getAllEvents:', err);
     

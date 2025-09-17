@@ -19,6 +19,21 @@ require('./models/Feedback');
 
 const app = express();
 
+// Performance monitoring middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  
+  // Log slow requests
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    if (duration > 5000) { // Log requests taking more than 5 seconds
+      console.log(`🐌 SLOW REQUEST: ${req.method} ${req.path} took ${duration}ms`);
+    }
+  });
+  
+  next();
+});
+
 // Set server timeout for long-running requests (like analytics)
 app.use((req, res, next) => {
   // Set timeout to 90 seconds for analytics endpoints
