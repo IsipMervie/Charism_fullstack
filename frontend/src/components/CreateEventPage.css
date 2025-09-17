@@ -119,14 +119,64 @@
   border-color: var(--primary-dark);
 }
 
+/* Checkbox Styling */
+.create-event-page .form-check-input {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
 .create-event-page .form-check-input:checked {
   background-color: var(--primary-dark);
   border-color: var(--primary-dark);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
 }
 
 .create-event-page .form-check-input:focus {
   border-color: var(--primary-dark);
   box-shadow: 0 0 0 0.2rem var(--primary-focus);
+  outline: none;
+}
+
+.create-event-page .form-check-input:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+.create-event-page .form-check-label {
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.create-event-page .form-check-label:hover {
+  color: var(--primary);
+}
+
+/* Form Check Container */
+.create-event-page .form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  transition: all 0.3s ease;
+}
+
+.create-event-page .form-check:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--shadow-md);
 }
 
 .create-event-page .department-tags {

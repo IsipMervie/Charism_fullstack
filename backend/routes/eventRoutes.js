@@ -219,6 +219,22 @@ router.put(
   eventController.disapproveRegistration
 );
 
+// Simple approve route (for compatibility)
+router.put(
+  '/:eventId/approve/:userId',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.approveRegistration
+);
+
+// Simple disapprove route (for compatibility)
+router.put(
+  '/:eventId/disapprove/:userId',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveRegistration
+);
+
 // Approve attendance (Admin/Staff)
 router.patch(
   '/:eventId/attendance/:userId/approve',

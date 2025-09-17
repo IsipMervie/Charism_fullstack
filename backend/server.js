@@ -639,6 +639,27 @@ app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
 app.use('/api/events', require('./routes/eventRoutes'));
 console.log(' Events routes loaded');
+
+// Global approve route for compatibility
+app.put('/api/approve/:userId', require('./middleware/authMiddleware'), require('./middleware/roleMiddleware')('Admin', 'Staff'), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { eventId } = req.body;
+    
+    if (!eventId) {
+      return res.status(400).json({ message: 'Event ID is required in request body' });
+    }
+    
+    const eventController = require('./controllers/eventController');
+    req.params.eventId = eventId;
+    req.params.userId = userId;
+    
+    return await eventController.approveRegistration(req, res);
+  } catch (error) {
+    console.error('Error in global approve route:', error);
+    res.status(500).json({ message: 'Error approving registration', error: error.message });
+  }
+});
 app.use('/api/event-chat', require('./routes/eventChatRoutes'));
 console.log(' Event chat routes loaded');
 app.use('/api/users', require('./routes/userRoutes'));

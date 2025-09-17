@@ -560,9 +560,87 @@ button {
   color: var(--text-secondary) !important;
 }
 
+/* Global Checkbox Styling */
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+input[type="checkbox"]:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 0.2rem var(--primary-focus);
+  outline: none;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+/* Bootstrap Form Check Overrides */
+.form-check-input {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 4px !important;
+  background-color: var(--bg-primary) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-dark) !important;
+  box-shadow: 0 0 0 0.2rem var(--primary-focus) !important;
+  outline: none !important;
+}
+
+.form-check-input:hover {
+  border-color: var(--primary) !important;
+  transform: scale(1.05) !important;
+}
+
+.form-check-label {
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
 /* Disable transitions for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+  }
+  
+  input[type="checkbox"]:hover {
+    transform: none !important;
+  }
+  
+  .form-check-input:hover {
+    transform: none !important;
   }
 }
