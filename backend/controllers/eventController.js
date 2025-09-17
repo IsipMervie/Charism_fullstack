@@ -125,6 +125,9 @@ exports.getAllEvents = async (req, res) => {
       return res.json(cachedEvents);
     }
     
+    // If no cache, try to return a minimal response immediately
+    console.log('🚀 No cache available, attempting fast database query...');
+    
     // Flag to prevent multiple responses
     let responseSent = false;
     
@@ -137,9 +140,10 @@ exports.getAllEvents = async (req, res) => {
         events: [],
         message: 'Request timeout - server overloaded',
         totalEvents: 0,
-        warning: 'Please try again later'
+        warning: 'Please try again later',
+        cached: false
       });
-    }, 15000); // 15 second total timeout for slow server
+    }, 10000); // Reduced to 10 seconds for faster timeout
     
     // Check if Event model is available
     if (!Event) {

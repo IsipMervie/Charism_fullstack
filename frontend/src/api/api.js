@@ -14,7 +14,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Reduced to 30 seconds for better UX
+  timeout: 15000, // Reduced to 15 seconds for faster failure detection
 });
 
 // Simple request interceptor to add token
@@ -465,10 +465,17 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
 };
 
 // Events
-export const getEvents = async () => {
+export const getEvents = async (retryCount = 0) => {
+  const maxRetries = 2;
+  
   try {
-    console.log('🔄 Fetching events from API...');
-    const response = await axiosInstance.get('/events');
+    console.log(`🔄 Fetching events from API... (attempt ${retryCount + 1}/${maxRetries + 1})`);
+    
+    // Use shorter timeout for faster failure detection
+    const response = await axiosInstance.get('/events', {
+      timeout: 10000 // 10 seconds timeout
+    });
+    
     console.log('✅ Events API response received');
     console.log('📊 Full response:', {
       status: response.status,
@@ -491,7 +498,7 @@ export const getEvents = async () => {
       return [];
     }
   } catch (error) {
-    console.error('❌ Error fetching events:', error);
+    console.error(`❌ Error fetching events (attempt ${retryCount + 1}):`, error);
     
     // Handle specific error types
     if (error.code === 'ECONNABORTED') {
@@ -504,7 +511,15 @@ export const getEvents = async () => {
       console.warn('⚠️ Events API endpoint not found - routing issue');
     }
     
+    // Retry logic for timeouts
+    if (retryCount < maxRetries && (error.code === 'ECONNABORTED' || error.response?.status >= 500)) {
+      console.log(`🔄 Retrying in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return getEvents(retryCount + 1);
+    }
+    
     // Return empty array instead of throwing error to prevent crashes
+    console.warn('⚠️ Returning empty events array due to persistent errors');
     return [];
   }
 };
