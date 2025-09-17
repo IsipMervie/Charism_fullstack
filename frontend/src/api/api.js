@@ -201,7 +201,7 @@ export default {
 // Generate registration tokens for existing events (admin utility)
 export const generateTokensForExistingEvents = async () => {
   try {
-    const response = await axiosInstance.post('/api/events/generate-tokens');
+    const response = await axiosInstance.post('/events/generate-tokens');
     return response.data;
   } catch (error) {
     console.error('Error generating tokens for existing events:', error);
@@ -559,7 +559,7 @@ export const getEventsWithUserData = async () => {
 // Public event details (no authentication required)
 export const getPublicEventDetails = async (eventId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/events/${eventId}`);
+    const response = await axios.get(`${API_URL}/events/${eventId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching public event details:', error);
@@ -569,7 +569,7 @@ export const getPublicEventDetails = async (eventId) => {
 
 export const getEventDetails = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}`);
+    const response = await axiosInstance.get(`/events/${eventId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event details:', error);
@@ -579,7 +579,7 @@ export const getEventDetails = async (eventId) => {
 
 export const testJoinEventSimple = async (eventId) => {
   try {
-    const response = await axiosInstance.post(`/api/events/${eventId}/join-simple`);
+    const response = await axiosInstance.post(`/events/${eventId}/join-simple`);
     return response.data;
   } catch (error) {
     console.error('Simple test join event error:', error);
@@ -590,7 +590,7 @@ export const testJoinEventSimple = async (eventId) => {
 
 export const testJoinEvent = async (eventId) => {
   try {
-    const response = await axiosInstance.post(`/api/events/${eventId}/join-test`);
+    const response = await axiosInstance.post(`/events/${eventId}/join-test`);
     return response.data;
   } catch (error) {
     console.error('Test join event error:', error);
@@ -601,7 +601,7 @@ export const testJoinEvent = async (eventId) => {
 
 export const joinEvent = async (eventId) => {
   try {
-    const response = await axiosInstance.post(`/api/events/${eventId}/join`);
+    const response = await axiosInstance.post(`/events/${eventId}/join`);
     return response.data;
   } catch (error) {
     console.error('Error joining event:', error);
@@ -653,7 +653,7 @@ export const joinEvent = async (eventId) => {
 export const timeIn = async (eventId) => {
   try {
     const userId = getUserId();
-    const response = await axiosInstance.post(`/api/events/${eventId}/attendance/${userId}/time-in`);
+    const response = await axiosInstance.post(`/events/${eventId}/attendance/${userId}/time-in`);
     return response.data;
   } catch (error) {
     console.error('Error timing in:', error);
@@ -681,7 +681,7 @@ export const timeIn = async (eventId) => {
 export const timeOut = async (eventId) => {
   try {
     const userId = getUserId();
-    const response = await axiosInstance.post(`/api/events/${eventId}/attendance/${userId}/time-out`);
+    const response = await axiosInstance.post(`/events/${eventId}/attendance/${userId}/time-out`);
     return response.data;
   } catch (error) {
     console.error('Error timing out:', error);
@@ -708,7 +708,7 @@ export const timeOut = async (eventId) => {
 
 export const getEventParticipants = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/participants`);
+    const response = await axiosInstance.get(`/events/${eventId}/participants`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event participants:', error);
@@ -718,7 +718,7 @@ export const getEventParticipants = async (eventId) => {
 
 export const getEventParticipantsPublic = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/participants/public`);
+    const response = await axiosInstance.get(`/events/${eventId}/participants/public`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event participants:', error);
@@ -758,7 +758,7 @@ export const getStudents40Hours = async () => {
 
 export const deleteEvent = async (eventId) => {
   try {
-    const response = await axiosInstance.delete(`/api/events/${eventId}`);
+    const response = await axiosInstance.delete(`/events/${eventId}`);
     
     // Clear participant and event-related caches after successful deletion
     clearParticipantCache(eventId);
@@ -774,7 +774,7 @@ export const deleteEvent = async (eventId) => {
 
 export const updateEvent = async (eventId, eventData) => {
   try {
-    const response = await axiosInstance.put(`/api/events/${eventId}`, eventData);
+    const response = await axiosInstance.put(`/events/${eventId}`, eventData);
     return response.data;
   } catch (error) {
     console.error('Error updating event:', error);
@@ -897,7 +897,7 @@ export const registerUser = async (name, email, password, userId, academicYear, 
 export const createEvent = async (formData) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axiosInstance.post('/api/events/', formData, {
+    const response = await axiosInstance.post('/events/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -917,7 +917,7 @@ export const createEvent = async (formData) => {
 // Toggle Event Availability
 export const toggleEventAvailability = async (eventId) => {
   try {
-    const response = await axiosInstance.patch(`/api/events/${eventId}/toggle-availability`);
+    const response = await axiosInstance.patch(`/events/${eventId}/toggle-availability`);
     return response.data;
   } catch (error) {
     console.error('Error toggling event availability:', error);
@@ -959,7 +959,7 @@ export const getAnalytics = async () => {
         if (error?.response?.status === 404) {
           try {
             console.log('🔄 Trying legacy analytics endpoint...');
-            const legacy = await axiosInstance.get('/api/events/analytics', {
+            const legacy = await axiosInstance.get('/events/analytics', {
               timeout: 60000
             });
             return legacy.data;
@@ -1102,7 +1102,7 @@ export const markNotificationAsRead = async (notificationId) => {
 // Attendance Management
 export const setParticipationStatus = async (eventId, userId, status) => {
   try {
-    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}`, { status });
+    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}`, { status });
     return response.data;
   } catch (error) {
     console.error('Error setting participation status:', error);
@@ -1112,7 +1112,7 @@ export const setParticipationStatus = async (eventId, userId, status) => {
 
 export const approveAttendance = async (eventId, userId) => {
   try {
-    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}/approve`);
+    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}/approve`);
     return response.data;
   } catch (error) {
     console.error('Error approving attendance:', error);
@@ -1139,7 +1139,7 @@ export const approveAttendance = async (eventId, userId) => {
 
 export const disapproveAttendance = async (eventId, userId, reason) => {
   try {
-    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}/disapprove`, {
+    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}/disapprove`, {
       reason: reason
     });
     return response.data;
@@ -1168,7 +1168,7 @@ export const disapproveAttendance = async (eventId, userId, reason) => {
 
 export const removeParticipant = async (eventId, userId) => {
   try {
-    const response = await axiosInstance.delete(`/api/events/${eventId}/participants/${userId}`);
+    const response = await axiosInstance.delete(`/events/${eventId}/participants/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error removing participant:', error);
@@ -1414,7 +1414,7 @@ export const verifyEmail = async (token) => {
 // Event Attendance
 export const getEventAttendance = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/attendance`);
+    const response = await axiosInstance.get(`/events/${eventId}/attendance`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event attendance:', error);
@@ -1436,7 +1436,7 @@ export const getUserParticipation = async () => {
 // Event Statistics
 export const getEventStatistics = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/statistics`);
+    const response = await axiosInstance.get(`/events/${eventId}/statistics`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event statistics:', error);
@@ -1469,7 +1469,7 @@ export const getMyParticipationHistory = async () => {
 // Event Attendance Report
 export const getEventAttendanceReport = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/attendance-report`);
+    const response = await axiosInstance.get(`/events/${eventId}/attendance-report`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event attendance report:', error);
@@ -1550,7 +1550,7 @@ export const getAllContactMessages = async (searchTerm = '') => {
 export const toggleEventVisibility = async (eventId) => {
   try {
     console.log(`🔄 Toggling event visibility for event: ${eventId}`);
-    const response = await axiosInstance.patch(`/api/events/${eventId}/toggle-visibility`);
+    const response = await axiosInstance.patch(`/events/${eventId}/toggle-visibility`);
     console.log('✅ Event visibility toggled successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1570,7 +1570,7 @@ export const toggleEventVisibility = async (eventId) => {
 
 export const getAllEventAttachments = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/attachments`);
+    const response = await axiosInstance.get(`/events/${eventId}/attachments`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event attachments:', error);
@@ -1581,7 +1581,7 @@ export const getAllEventAttachments = async (eventId) => {
 export const getPendingRegistrations = async () => {
   try {
     console.log('🔍 Fetching pending registrations...');
-    const response = await axiosInstance.get('/api/events/pending-registrations');
+    const response = await axiosInstance.get('/events/pending-registrations');
     console.log('✅ Pending registrations fetched:', response.data);
     return response.data;
   } catch (error) {
@@ -1595,7 +1595,7 @@ export const getPendingRegistrations = async () => {
 
 export const getPendingRegistrationsForEvent = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/registrations/pending`);
+    const response = await axiosInstance.get(`/events/${eventId}/registrations/pending`);
     return response.data;
   } catch (error) {
     console.error('Error fetching pending registrations for event:', error);
@@ -1606,10 +1606,10 @@ export const getPendingRegistrationsForEvent = async (eventId) => {
 export const approveRegistration = async (eventId, userId) => {
   try {
     console.log(`✅ Approving registration for event ${eventId}, user ${userId}`);
-    console.log(`🔍 Making request to: /api/events/${eventId}/registrations/${userId}/approve`);
+    console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/approve`);
     console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
     
-    const response = await axiosInstance.put(`/api/events/${eventId}/registrations/${userId}/approve`);
+    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve`);
     console.log('✅ Registration approved successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1631,10 +1631,10 @@ export const approveRegistration = async (eventId, userId) => {
 export const disapproveRegistration = async (eventId, userId, reason) => {
   try {
     console.log(`❌ Disapproving registration for event ${eventId}, user ${userId}`);
-    console.log(`🔍 Making request to: /api/events/${eventId}/registrations/${userId}/disapprove`);
+    console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/disapprove`);
     console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
     
-    const response = await axiosInstance.put(`/api/events/${eventId}/registrations/${userId}/disapprove`, { reason });
+    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove`, { reason });
     console.log('✅ Registration disapproved successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1655,7 +1655,7 @@ export const disapproveRegistration = async (eventId, userId, reason) => {
 
 export const getAllEventRegistrations = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/registrations`);
+    const response = await axiosInstance.get(`/events/${eventId}/registrations`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event registrations:', error);
@@ -1681,7 +1681,7 @@ export const uploadEventDocumentation = async (eventId, files, description = '')
       formData.append('description', description);
     }
     
-    const response = await axiosInstance.post(`/api/events/${eventId}/documentation/upload`, formData, {
+    const response = await axiosInstance.post(`/events/${eventId}/documentation/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -1701,7 +1701,7 @@ export const uploadEventDocumentation = async (eventId, files, description = '')
 
 export const getEventDocumentation = async (eventId) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/documentation`);
+    const response = await axiosInstance.get(`/events/${eventId}/documentation`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event documentation:', error);
@@ -1711,7 +1711,7 @@ export const getEventDocumentation = async (eventId) => {
 
 export const downloadDocumentationFile = async (eventId, filename, originalName) => {
   try {
-    const response = await axiosInstance.get(`/api/events/${eventId}/documentation/download/${filename}`, {
+    const response = await axiosInstance.get(`/events/${eventId}/documentation/download/${filename}`, {
       responseType: 'blob',
     });
     
@@ -1734,7 +1734,7 @@ export const downloadDocumentationFile = async (eventId, filename, originalName)
 
 export const deleteDocumentationFile = async (eventId, filename) => {
   try {
-    const response = await axiosInstance.delete(`/api/events/${eventId}/documentation/${filename}`);
+    const response = await axiosInstance.delete(`/events/${eventId}/documentation/${filename}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting documentation file:', error);
@@ -1749,7 +1749,7 @@ export const deleteDocumentationFile = async (eventId, filename) => {
 export const markEventAsCompleted = async (eventId) => {
   try {
     console.log(`✅ Marking event as completed: ${eventId}`);
-    const response = await axiosInstance.patch(`/api/events/${eventId}/mark-completed`);
+    const response = await axiosInstance.patch(`/events/${eventId}/mark-completed`);
     console.log('✅ Event marked as completed successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1768,7 +1768,7 @@ export const markEventAsCompleted = async (eventId) => {
 export const markEventAsNotCompleted = async (eventId) => {
   try {
     console.log(`🔄 Marking event as NOT completed: ${eventId}`);
-    const response = await axiosInstance.patch(`/api/events/${eventId}/mark-not-completed`);
+    const response = await axiosInstance.patch(`/events/${eventId}/mark-not-completed`);
     console.log('✅ Event marked as NOT completed successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1790,7 +1790,7 @@ export const markEventAsNotCompleted = async (eventId) => {
 
 export const getEventByRegistrationToken = async (token) => {
   try {
-    const response = await axiosInstance.get(`/api/events/register/${token}`);
+    const response = await axiosInstance.get(`/events/register/${token}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event by registration token:', error);
@@ -1805,7 +1805,7 @@ export const getEventByRegistrationToken = async (token) => {
 
 export const registerForEventWithToken = async (token) => {
   try {
-    const response = await axiosInstance.post(`/api/events/register/${token}`);
+    const response = await axiosInstance.post(`/events/register/${token}`);
     return response.data;
   } catch (error) {
     console.error('Error registering for event with token:', error);
