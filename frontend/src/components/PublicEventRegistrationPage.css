@@ -28,8 +28,9 @@
 .event-image {
   width: 100%;
   max-width: 600px;
-  height: 300px;
-  object-fit: cover;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
   border-radius: 15px;
   box-shadow: 0 10px 20px var(--shadow-md);
 }

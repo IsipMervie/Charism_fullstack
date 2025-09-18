@@ -68,15 +68,6 @@ router.get('/test-simple', (req, res) => {
   });
 });
 
-// Test approval route structure without auth
-router.put('/:eventId/registrations/:userId/test-approve', (req, res) => {
-  res.json({ 
-    message: 'Test approval route working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
 
 // Get all events (public) - MUST come before /:eventId routes
 router.get('/', eventController.getAllEvents);
@@ -85,15 +76,48 @@ router.get('/', eventController.getAllEvents);
 // CRITICAL: Approval/Disapproval routes MUST come first to avoid conflicts
 // =======================
 
+// TEST ROUTE - Simple test without auth to verify route structure
+router.put('/:eventId/registrations/:userId/test-route', (req, res) => {
+  console.log('🚨 TEST ROUTE HIT:', {
+    method: req.method,
+    url: req.url,
+    params: req.params,
+    timestamp: new Date().toISOString()
+  });
+  res.json({ 
+    message: 'Test route working - route structure is correct',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// SIMPLE APPROVAL TEST - No auth required for testing
+router.put('/:eventId/registrations/:userId/test-approve', (req, res) => {
+  console.log('🚨 TEST APPROVE ROUTE HIT:', {
+    method: req.method,
+    url: req.url,
+    params: req.params,
+    timestamp: new Date().toISOString()
+  });
+  res.json({ 
+    message: 'Test approve route working - approval routes are accessible',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
   '/:eventId/registrations/:userId/approve',
   (req, res, next) => {
-    console.log('🔍 Approve registration route hit:', {
+    console.log('🚨 APPROVE ROUTE HIT - DEPLOYMENT TEST:', {
       method: req.method,
       url: req.url,
       params: req.params,
-      body: req.body
+      body: req.body,
+      timestamp: new Date().toISOString()
     });
     next();
   },
@@ -106,11 +130,12 @@ router.put(
 router.put(
   '/:eventId/registrations/:userId/disapprove',
   (req, res, next) => {
-    console.log('🔍 Disapprove registration route hit:', {
+    console.log('🚨 DISAPPROVE ROUTE HIT - DEPLOYMENT TEST:', {
       method: req.method,
       url: req.url,
       params: req.params,
-      body: req.body
+      body: req.body,
+      timestamp: new Date().toISOString()
     });
     next();
   },
@@ -323,38 +348,6 @@ router.put(
   eventController.disapproveRegistration
 );
 
-// Additional fallback routes to catch any malformed requests
-router.all(
-  '/:eventId/registrations/:userId/approve*',
-  (req, res, next) => {
-    console.log('🔍 Fallback approve route hit:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body
-    });
-    if (req.method === 'PUT') {
-      return eventController.approveRegistration(req, res);
-    }
-    next();
-  }
-);
-
-router.all(
-  '/:eventId/registrations/:userId/disapprove*',
-  (req, res, next) => {
-    console.log('🔍 Fallback disapprove route hit:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body
-    });
-    if (req.method === 'PUT') {
-      return eventController.disapproveRegistration(req, res);
-    }
-    next();
-  }
-);
 
 // Approve attendance (Admin/Staff)
 router.patch(

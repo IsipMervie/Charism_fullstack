@@ -210,9 +210,9 @@
 .event-image {
   width: 100%;
   height: auto;
+  max-height: 500px;
   display: block;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.3s ease;
 }
 
