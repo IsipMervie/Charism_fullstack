@@ -44,21 +44,6 @@ router.get('/test-approval', (req, res) => {
 });
 
 
-// Direct test route for disapproval
-router.put('/test-disapprove/:eventId/:userId', (req, res) => {
-  console.log('🔍 TEST DISAPPROVE ROUTE HIT:', {
-    method: req.method,
-    url: req.url,
-    params: req.params,
-    body: req.body
-  });
-  res.json({ 
-    message: 'Test disapprove route working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
 
 // Simple test route without auth
 router.get('/test-simple', (req, res) => {
