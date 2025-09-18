@@ -1,0 +1,70 @@
+warning: in the working copy of 'backend/routes/eventRoutes.js', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/backend/routes/eventRoutes.js b/backend/routes/eventRoutes.js[m
+[1mindex d138221..0c156f8 100644[m
+[1m--- a/backend/routes/eventRoutes.js[m
+[1m+++ b/backend/routes/eventRoutes.js[m
+[36m@@ -128,34 +128,10 @@[m [mrouter.post([m
+ [m
+ [m
+ [m
+[31m-// Get event details (public) - MUST come after specific routes[m
+[31m-router.get('/:eventId', eventController.getEventDetails);[m
+[31m-[m
+[31m-// Get event capacity status (public)[m
+[31m-router.get('/:eventId/capacity', eventController.getEventCapacityStatus);[m
+[31m-[m
+[31m-// Get all registrations for an event (Admin/Staff)[m
+[31m-router.get([m
+[31m-  '/:eventId/registrations',[m
+[31m-  authMiddleware,[m
+[31m-  roleMiddleware('Admin', 'Staff'),[m
+[31m-  eventController.getAllEventRegistrations[m
+[31m-);[m
+[31m-[m
+[31m-// Get pending registrations for a specific event (Admin/Staff)[m
+[31m-router.get([m
+[31m-  '/:eventId/registrations/pending',[m
+[31m-  authMiddleware,[m
+[31m-  roleMiddleware('Admin', 'Staff'),[m
+[31m-  eventController.getPendingRegistrationsForEvent[m
+[31m-);[m
+[31m-[m
+ // =======================[m
+[31m-// CRITICAL: Approval/Disapproval routes MUST come before general /:eventId route[m
+[32m+[m[32m// CRITICAL: Approval/Disapproval routes MUST come FIRST to prevent conflicts[m
+ // =======================[m
+ [m
+[31m-// All test routes removed - only production routes remain[m
+[31m-[m
+ // Approve registration for specific event (Admin/Staff) - Frontend expects this route[m
+ router.put([m
+   '/:eventId/registrations/:userId/approve',[m
+[36m@@ -192,6 +168,28 @@[m [mrouter.put([m
+   eventController.disapproveRegistration[m
+ );[m
+ [m
+[32m+[m[32m// Get event details (public) - MUST come after specific routes[m
+[32m+[m[32mrouter.get('/:eventId', eventController.getEventDetails);[m
+[32m+[m
+[32m+[m[32m// Get event capacity status (public)[m
+[32m+[m[32mrouter.get('/:eventId/capacity', eventController.getEventCapacityStatus);[m
+[32m+[m
+[32m+[m[32m// Get all registrations for an event (Admin/Staff)[m
+[32m+[m[32mrouter.get([m
+[32m+[m[32m  '/:eventId/registrations',[m
+[32m+[m[32m  authMiddleware,[m
+[32m+[m[32m  roleMiddleware('Admin', 'Staff'),[m
+[32m+[m[32m  eventController.getAllEventRegistrations[m
+[32m+[m[32m);[m
+[32m+[m
+[32m+[m[32m// Get pending registrations for a specific event (Admin/Staff)[m
+[32m+[m[32mrouter.get([m
+[32m+[m[32m  '/:eventId/registrations/pending',[m
+[32m+[m[32m  authMiddleware,[m
+[32m+[m[32m  roleMiddleware('Admin', 'Staff'),[m
+[32m+[m[32m  eventController.getPendingRegistrationsForEvent[m
+[32m+[m[32m);[m
+[32m+[m
+ // Edit (update) event (Admin/Staff) - MUST come after specific routes[m
+ router.put([m
+   '/:eventId/edit',[m

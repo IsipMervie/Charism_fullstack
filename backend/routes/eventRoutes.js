@@ -128,33 +128,9 @@ router.post(
 
 
 
-// Get event details (public) - MUST come after specific routes
-router.get('/:eventId', eventController.getEventDetails);
-
-// Get event capacity status (public)
-router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
-
-// Get all registrations for an event (Admin/Staff)
-router.get(
-  '/:eventId/registrations',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.getAllEventRegistrations
-);
-
-// Get pending registrations for a specific event (Admin/Staff)
-router.get(
-  '/:eventId/registrations/pending',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.getPendingRegistrationsForEvent
-);
-
 // =======================
-// CRITICAL: Approval/Disapproval routes MUST come before general /:eventId route
+// CRITICAL: Approval/Disapproval routes MUST come FIRST to prevent conflicts
 // =======================
-
-// All test routes removed - only production routes remain
 
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
@@ -190,6 +166,28 @@ router.put(
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.disapproveRegistration
+);
+
+// Get event details (public) - MUST come after specific routes
+router.get('/:eventId', eventController.getEventDetails);
+
+// Get event capacity status (public)
+router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
+
+// Get all registrations for an event (Admin/Staff)
+router.get(
+  '/:eventId/registrations',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getAllEventRegistrations
+);
+
+// Get pending registrations for a specific event (Admin/Staff)
+router.get(
+  '/:eventId/registrations/pending',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getPendingRegistrationsForEvent
 );
 
 // Edit (update) event (Admin/Staff) - MUST come after specific routes
