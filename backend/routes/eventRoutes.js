@@ -43,6 +43,7 @@ router.get('/test-approval', (req, res) => {
   });
 });
 
+
 // Direct test route for disapproval
 router.put('/test-disapprove/:eventId/:userId', (req, res) => {
   console.log('🔍 TEST DISAPPROVE ROUTE HIT:', {
@@ -164,6 +165,7 @@ router.put(
   eventController.approveRegistration
 );
 
+
 // Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
   '/:eventId/registrations/:userId/disapprove',
@@ -180,6 +182,7 @@ router.put(
   roleMiddleware('Admin', 'Staff'),
   eventController.disapproveRegistration
 );
+
 
 // Get event details (public) - MUST come after specific routes
 router.get('/:eventId', eventController.getEventDetails);
