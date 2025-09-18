@@ -272,21 +272,7 @@ router.post(
   eventController.cleanupDuplicateParticipants
 );
 
-// Approve/reject registration (Admin/Staff)
-router.patch(
-  '/:eventId/attendance/:userId/approve-registration',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveRegistration
-);
-
-// Disapprove registration (Admin/Staff)
-router.patch(
-  '/:eventId/attendance/:userId/disapprove-registration',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveRegistration
-);
+// REMOVED: Duplicate approval routes - using PUT routes above instead
 
 
 
