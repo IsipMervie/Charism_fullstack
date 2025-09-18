@@ -108,42 +108,6 @@ router.put('/:eventId/registrations/:userId/test-approve', (req, res) => {
   });
 });
 
-// Approve registration for specific event (Admin/Staff) - Frontend expects this route
-router.put(
-  '/:eventId/registrations/:userId/approve',
-  (req, res, next) => {
-    console.log('🚨 APPROVE ROUTE HIT - DEPLOYMENT TEST:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body,
-      timestamp: new Date().toISOString()
-    });
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveRegistration
-);
-
-// Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
-router.put(
-  '/:eventId/registrations/:userId/disapprove',
-  (req, res, next) => {
-    console.log('🚨 DISAPPROVE ROUTE HIT - DEPLOYMENT TEST:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body,
-      timestamp: new Date().toISOString()
-    });
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveRegistration
-);
-
 // =======================
 // Public Event Registration Routes
 // =======================
@@ -234,7 +198,47 @@ router.get(
   eventController.getPendingRegistrationsForEvent
 );
 
-// Edit (update) event (Admin/Staff)
+// =======================
+// CRITICAL: Approval/Disapproval routes MUST come before general /:eventId route
+// =======================
+
+// Approve registration for specific event (Admin/Staff) - Frontend expects this route
+router.put(
+  '/:eventId/registrations/:userId/approve',
+  (req, res, next) => {
+    console.log('🚨 APPROVE ROUTE HIT - DEPLOYMENT TEST:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body,
+      timestamp: new Date().toISOString()
+    });
+    next();
+  },
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.approveRegistration
+);
+
+// Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
+router.put(
+  '/:eventId/registrations/:userId/disapprove',
+  (req, res, next) => {
+    console.log('🚨 DISAPPROVE ROUTE HIT - DEPLOYMENT TEST:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body,
+      timestamp: new Date().toISOString()
+    });
+    next();
+  },
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveRegistration
+);
+
+// Edit (update) event (Admin/Staff) - MUST come after specific routes
 router.put(
   '/:eventId',
   authMiddleware,

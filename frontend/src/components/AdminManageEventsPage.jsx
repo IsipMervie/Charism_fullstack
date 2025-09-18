@@ -483,14 +483,30 @@ function AdminManageEventsPage() {
   };
 
   const handleShareEvent = (event) => {
-    // Check if event has public registration enabled
-    if (!event.isPublicRegistrationEnabled || !event.publicRegistrationToken) {
-      showWarning('Public Registration Not Enabled', 'Please enable public registration for this event first to generate a shareable link.');
-      return;
-    }
-
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
-    const registrationUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
+    
+    // Generate different share options based on event settings
+    let shareOptions = [];
+    
+    // Always include event details link
+    const eventDetailsUrl = `${frontendUrl}/#/events/${event._id}`;
+    shareOptions.push({
+      type: 'details',
+      title: 'Event Details Link',
+      url: eventDetailsUrl,
+      description: 'Share the event details page (requires login)'
+    });
+    
+    // Include public registration link if enabled
+    if (event.isPublicRegistrationEnabled && event.publicRegistrationToken) {
+      const registrationUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
+      shareOptions.push({
+        type: 'registration',
+        title: 'Public Registration Link',
+        url: registrationUrl,
+        description: 'Anyone can register without logging in'
+      });
+    }
 
     const eventTitle = event.title;
     const eventDate = new Date(event.date).toLocaleDateString();
@@ -514,21 +530,46 @@ function AdminManageEventsPage() {
             </p>
           </div>
           
-
+          ${shareOptions.map((option, index) => `
+            <div style="margin: 15px 0;">
+              <label style="font-weight: 500; margin-bottom: 8px; display: block;">${option.title}:</label>
+              <input 
+                type="text" 
+                value="${option.url}" 
+                readonly 
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa; font-family: monospace; font-size: 12px;"
+                onClick="this.select()"
+              />
+              <p style="font-size: 12px; color: #666; margin-top: 5px;">${option.description}</p>
+            </div>
+          `).join('')}
           
+          ${!event.isPublicRegistrationEnabled ? `
+            <div style="margin: 15px 0; padding: 10px; background: #fff3cd; border-radius: 4px; border-left: 4px solid #ffc107;">
+              <p style="margin: 0; font-size: 14px; color: #856404;">
+                <strong>💡 Tip:</strong> Enable public registration in event settings to generate a registration link that works without login.
+              </p>
+            </div>
+          ` : ''}
         </div>
       `,
-      confirmButtonText: '📋 Copy Link',
-      showCancelButton: false,
+      confirmButtonText: '📋 Copy All Links',
+      showCancelButton: true,
+      cancelButtonText: 'Close',
+      confirmButtonColor: '#007bff',
+      cancelButtonColor: '#6c757d',
       width: '600px',
       customClass: {
         popup: 'share-event-popup'
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Copy registration link to clipboard
-        navigator.clipboard.writeText(registrationUrl);
-        showSuccess('Registration Link Copied!', 'Registration link copied to clipboard');
+        const allUrls = shareOptions.map(option => `${option.title}:\n${option.url}`).join('\n\n');
+        navigator.clipboard.writeText(allUrls).then(() => {
+          showSuccess('Links Copied!', 'All shareable links have been copied to your clipboard.');
+        }).catch(() => {
+          showError('Copy Failed', 'Failed to copy links. Please manually select and copy the links.');
+        });
       }
     });
   };
@@ -816,17 +857,15 @@ function AdminManageEventsPage() {
                             <span>View</span>
                           </button>
 
-                          {/* Share Button - Only show if public registration is enabled */}
-                          {event.isPublicRegistrationEnabled && event.publicRegistrationToken && (
-                            <button
-                              className="action-button share-button"
-                              onClick={() => handleShareEvent(event)}
-                              title="Share Event"
-                            >
-                              <FaShare className="button-icon" />
-                              <span>Share</span>
-                            </button>
-                          )}
+                          {/* Share Button - Always show for all events */}
+                          <button
+                            className="action-button share-button"
+                            onClick={() => handleShareEvent(event)}
+                            title="Share Event"
+                          >
+                            <FaShare className="button-icon" />
+                            <span>Share</span>
+                          </button>
 
                           {/* Visibility Toggle Button - Only show for non-completed events */}
                           {event.status !== 'Completed' && (
