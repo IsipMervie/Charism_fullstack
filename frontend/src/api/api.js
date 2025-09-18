@@ -1653,7 +1653,9 @@ export const approveRegistration = async (eventId, userId) => {
     console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/approve`);
     console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
     
-    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve`);
+    // Add cache-busting parameter
+    const timestamp = Date.now();
+    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve?t=${timestamp}`);
     console.log('✅ Registration approved successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1678,7 +1680,9 @@ export const disapproveRegistration = async (eventId, userId, reason) => {
     console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/disapprove`);
     console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
     
-    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove`, { reason });
+    // Add cache-busting parameter
+    const timestamp = Date.now();
+    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove?t=${timestamp}`, { reason });
     console.log('✅ Registration disapproved successfully:', response.data);
     return response.data;
   } catch (error) {
