@@ -76,37 +76,6 @@ router.get('/', eventController.getAllEvents);
 // CRITICAL: Approval/Disapproval routes MUST come first to avoid conflicts
 // =======================
 
-// TEST ROUTE - Simple test without auth to verify route structure
-router.put('/:eventId/registrations/:userId/test-route', (req, res) => {
-  console.log('🚨 TEST ROUTE HIT:', {
-    method: req.method,
-    url: req.url,
-    params: req.params,
-    timestamp: new Date().toISOString()
-  });
-  res.json({ 
-    message: 'Test route working - route structure is correct',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
-
-// SIMPLE APPROVAL TEST - No auth required for testing
-router.put('/:eventId/registrations/:userId/test-approve', (req, res) => {
-  console.log('🚨 TEST APPROVE ROUTE HIT:', {
-    method: req.method,
-    url: req.url,
-    params: req.params,
-    timestamp: new Date().toISOString()
-  });
-  res.json({ 
-    message: 'Test approve route working - approval routes are accessible',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
 
 // =======================
 // Public Event Registration Routes
@@ -201,6 +170,14 @@ router.get(
 // =======================
 // CRITICAL: Approval/Disapproval routes MUST come before general /:eventId route
 // =======================
+
+// ULTIMATE TEST - This should work no matter what
+router.put('/test-ultimate-approve', (req, res) => {
+  res.json({ 
+    message: 'ULTIMATE TEST: Approval route is working',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
@@ -336,21 +313,6 @@ router.patch(
   eventController.disapproveRegistration
 );
 
-// Simple approve route (for compatibility)
-router.put(
-  '/:eventId/approve/:userId',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveRegistration
-);
-
-// Simple disapprove route (for compatibility)
-router.put(
-  '/:eventId/disapprove/:userId',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveRegistration
-);
 
 
 // Approve attendance (Admin/Staff)
