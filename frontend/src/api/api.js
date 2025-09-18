@@ -818,7 +818,7 @@ export const deleteEvent = async (eventId) => {
 
 export const updateEvent = async (eventId, eventData) => {
   try {
-    const response = await axiosInstance.put(`/events/${eventId}`, eventData);
+    const response = await axiosInstance.put(`/events/${eventId}/edit`, eventData);
     return response.data;
   } catch (error) {
     console.error('Error updating event:', error);

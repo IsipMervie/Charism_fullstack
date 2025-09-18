@@ -36,9 +36,7 @@ router.get('/test-approval', (req, res) => {
     timestamp: new Date().toISOString(),
     availableRoutes: [
       'PUT /:eventId/registrations/:userId/approve',
-      'PUT /:eventId/registrations/:userId/disapprove',
-      'PUT /:eventId/approve/:userId',
-      'PUT /:eventId/disapprove/:userId'
+      'PUT /:eventId/registrations/:userId/disapprove'
     ]
   });
 });
@@ -196,7 +194,7 @@ router.put(
 
 // Edit (update) event (Admin/Staff) - MUST come after specific routes
 router.put(
-  '/:eventId',
+  '/:eventId/edit',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   uploadEventImage,
