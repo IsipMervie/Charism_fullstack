@@ -1,7 +1,7 @@
 // Environment configuration for different deployment environments
 const config = {
   development: {
-    API_URL: 'http://localhost:5000/api',
+    API_URL: 'http://localhost:10000/api',
     FRONTEND_URL: 'http://localhost:3000',
     NODE_ENV: 'development'
   },
@@ -9,7 +9,7 @@ const config = {
     API_URL: (() => {
       let apiUrl = process.env.REACT_APP_API_URL || 
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-          ? 'http://localhost:5000/api' 
+          ? 'http://localhost:10000/api' 
           : 'https://charism-api-xtw9.onrender.com/api');
       
       // Ensure API URL always ends with /api

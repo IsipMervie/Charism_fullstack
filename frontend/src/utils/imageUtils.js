@@ -15,7 +15,7 @@ const getBackendUrl = () => {
     }
     // Local development
     else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      apiUrl = 'http://localhost:5000/api';
+      apiUrl = 'http://localhost:10000/api';
     }
     // Default to production for any other case
     else {

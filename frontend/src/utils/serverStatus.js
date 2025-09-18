@@ -4,7 +4,7 @@
 export const checkServerStatus = async () => {
   const serverUrl = process.env.REACT_APP_API_URL || 
     (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:5000/api' 
+      ? 'http://localhost:10000/api' 
       : 'https://charism-api-xtw9.onrender.com/api');
   
   console.log('🔍 Checking server status...');
@@ -141,7 +141,7 @@ export const quickHealthCheck = async () => {
   try {
     const serverUrl = process.env.REACT_APP_API_URL || 
       (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:5000/api' 
+        ? 'http://localhost:10000/api' 
         : 'https://charism-api-xtw9.onrender.com/api');
     const response = await fetch(`${serverUrl}/health`, {
       method: 'GET',
