@@ -156,33 +156,7 @@ router.get(
 // CRITICAL: Approval/Disapproval routes MUST come before general /:eventId route
 // =======================
 
-// ULTIMATE TEST - This should work no matter what
-router.put('/test-ultimate-approve', (req, res) => {
-  res.json({ 
-    message: 'ULTIMATE TEST: Approval route is working',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// TEST EXACT PATTERN - Test the exact pattern that's failing
-router.put('/:eventId/registrations/:userId/test-pattern', (req, res) => {
-  res.json({ 
-    message: 'TEST PATTERN: Exact pattern is working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
-
-// SIMPLE APPROVAL TEST - No auth required for testing
-router.put('/:eventId/registrations/:userId/simple-approve', (req, res) => {
-  res.json({ 
-    message: 'SIMPLE APPROVAL: Route is working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
+// All test routes removed - only production routes remain
 
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
