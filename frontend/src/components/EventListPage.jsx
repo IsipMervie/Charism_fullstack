@@ -1366,23 +1366,21 @@ function EventListPage() {
                 return (
                   <div key={event._id} className="event-card">
                     {/* Event Image */}
-                    {event.image && event.image.data && (
-                      <div className="event-image">
-                        <img 
-                          src={getEventImageUrl(event.image, event._id)} 
-                          alt={event.title}
-                          className="event-image-img"
-                          loading="lazy"
-                          onError={(e) => {
-                            console.log('Image failed to load for event:', event.title);
-                            e.target.style.display = 'none';
-                          }}
-                          onLoad={() => {
-                            console.log('Image loaded successfully for event:', event.title);
-                          }}
-                        />
-                      </div>
-                    )}
+                    <div className="event-image">
+                      <img 
+                        src={getEventImageUrl(event.image, event._id) || '/images/527595417_1167021392113223_2872992497207843477_n.jpg'} 
+                        alt={event.title}
+                        className="event-image-img"
+                        loading="lazy"
+                        onError={(e) => {
+                          console.log('Image failed to load for event:', event.title);
+                          e.target.src = '/images/527595417_1167021392113223_2872992497207843477_n.jpg';
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully for event:', event.title);
+                        }}
+                      />
+                    </div>
                    
                     {/* Event Content */}
                     <div className="event-content">

@@ -130,7 +130,7 @@ exports.getAllEvents = async (req, res) => {
     // Simple database query with error handling
     try {
       const events = await Event.find({})
-        .select('title description date startTime endTime location hours status')
+        .select('title description date startTime endTime location hours status attendance maxParticipants requiresApproval isVisibleToStudents image departments isForAllDepartments')
         .limit(20)
         .lean();
       
@@ -1208,17 +1208,34 @@ exports.timeOut = async (req, res) => {
 // Get Event Participants
 exports.getEventParticipants = async (req, res) => {
   try {
+    console.log('=== GET EVENT PARTICIPANTS ===');
+    console.log('Event ID:', req.params.eventId);
+    
     const event = await Event.findById(req.params.eventId)
       .populate('attendance.userId', 'name email department academicYear year year section role profilePicture');
 
     if (!event) {
+      console.log('❌ Event not found');
       return res.status(404).json({ message: 'Event not found.' });
     }
+
+    console.log(`📊 Event found with ${event.attendance.length} attendance records`);
+
+    // Filter out attendance records with invalid userId references
+    const validAttendanceRecords = event.attendance.filter(att => {
+      if (!att.userId) {
+        console.log('⚠️ Attendance record has no userId:', att._id);
+        return false;
+      }
+      return true;
+    });
+
+    console.log(`📊 Valid attendance records: ${validAttendanceRecords.length} out of ${event.attendance.length}`);
 
     // Deduplicate participants by userId - keep the most recent registration
     const uniqueParticipants = new Map();
     
-    event.attendance.forEach(attendance => {
+    validAttendanceRecords.forEach(attendance => {
       const userId = attendance.userId._id.toString();
       const existing = uniqueParticipants.get(userId);
       
@@ -1234,9 +1251,17 @@ exports.getEventParticipants = async (req, res) => {
       userId: attendance.userId // Keep the populated user data under userId
     }));
 
+    console.log(`✅ Returning ${participants.length} participants`);
+    console.log('Sample participants:', participants.slice(0, 2).map(p => ({
+      userId: p.userId?._id,
+      name: p.userId?.name,
+      registrationApproved: p.registrationApproved,
+      status: p.status
+    })));
+
     res.json(participants);
   } catch (err) {
-    console.error('Error in getEventParticipants:', err);
+    console.error('❌ Error in getEventParticipants:', err);
     res.status(500).json({ message: 'Error fetching participants.', error: err.message });
   }
 };
