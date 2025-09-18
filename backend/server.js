@@ -1,13 +1,17 @@
 // server.js
 require('dotenv').config();
 
-// Set environment variables if not set
+// Set basic environment variables if not set (no sensitive data)
 if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
-if (!process.env.PORT) process.env.PORT = '5000';
-if (!process.env.MONGO_URI) process.env.MONGO_URI = 'mongodb+srv://charism:charism123@charism-cluster.0x8xq.mongodb.net/charism?retryWrites=true&w=majority';
-if (!process.env.JWT_SECRET) process.env.JWT_SECRET = 'your_super_secret_jwt_key_here_charism_2024';
+if (!process.env.PORT) process.env.PORT = '10000';
 if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = 'https://charism-ucb4.onrender.com';
 if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw9.onrender.com';
+
+console.log('🔧 Environment variables set:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
+console.log('MONGO_URI exists:', !!process.env.MONGO_URI);
+console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
 
 const express = require('express');
 const cors = require('cors');
@@ -203,7 +207,7 @@ const startServer = async () => {
     const { createIndexes } = require('./utils/databaseIndexes');
     await createIndexes();
     
-    // Start server
+    // Start server with error handling
     const PORT = process.env.PORT || 5000;
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
@@ -212,6 +216,15 @@ const startServer = async () => {
       console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
       console.log(`📊 MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected'}`);
       console.log('✅ All routes loaded successfully!');
+    });
+
+    // Handle server errors
+    server.on('error', (error) => {
+      console.error('❌ Server error:', error);
+      if (error.code === 'EADDRINUSE') {
+        console.log('Port is already in use, trying next port...');
+        server.listen(PORT + 1);
+      }
     });
 
     // Handle server errors
