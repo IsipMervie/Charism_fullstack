@@ -164,6 +164,26 @@ router.put('/test-ultimate-approve', (req, res) => {
   });
 });
 
+// TEST EXACT PATTERN - Test the exact pattern that's failing
+router.put('/:eventId/registrations/:userId/test-pattern', (req, res) => {
+  res.json({ 
+    message: 'TEST PATTERN: Exact pattern is working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// SIMPLE APPROVAL TEST - No auth required for testing
+router.put('/:eventId/registrations/:userId/simple-approve', (req, res) => {
+  res.json({ 
+    message: 'SIMPLE APPROVAL: Route is working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
 router.put(
   '/:eventId/registrations/:userId/approve',

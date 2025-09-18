@@ -139,38 +139,75 @@ function RegistrationApprovalPage() {
 
   const handleDisapproveRegistration = async (eventId, userId, studentName, isCurrentlyApproved = false) => {
     const action = isCurrentlyApproved ? 'Remove Approval' : 'Disapprove Registration';
-    const message = isCurrentlyApproved ? 
-      'This will remove approval from an already approved registration. Are you sure?' : 
-      'Enter the reason for disapproving this registration...';
+    
+    // Define disapproval reasons
+    const disapprovalReasons = [
+      'Full slot',
+      'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
+      'Late Arrival (Arrived late and wasn\'t present during the call time)',
+      'Left Early (Left in the middle of the duration of commserv)',
+      'Did not sign the Community Service Form',
+      'Did not sign attendance sheet (if any)',
+      'Absent (Student was absent and didn\'t attend the commserv)',
+      'Not wearing the required uniform',
+      'Other'
+    ];
     
     const { value: reason } = await Swal.fire({
       title: action,
-      input: 'textarea',
+      input: 'select',
       inputLabel: 'Reason for disapproval',
-      inputPlaceholder: message,
-      inputAttributes: {
-        'aria-label': 'Reason for disapproval'
-      },
+      inputOptions: disapprovalReasons.reduce((acc, reason, index) => {
+        acc[index] = reason;
+        return acc;
+      }, {}),
+      inputPlaceholder: 'Select a reason for disapproval',
       showCancelButton: true,
       confirmButtonText: isCurrentlyApproved ? 'Remove Approval' : 'Disapprove',
       cancelButtonText: 'Cancel',
       inputValidator: (value) => {
-        if (!value || value.trim() === '') {
-          return 'Please provide a reason for disapproval';
+        if (!value) {
+          return 'Please select a reason for disapproval';
         }
       }
     });
 
-    if (reason) {
+    if (reason !== null) {
+      let finalReason = disapprovalReasons[reason];
+      
+      // If "Other" is selected, ask for custom reason
+      if (finalReason === 'Other') {
+        const { value: customReason } = await Swal.fire({
+          title: 'Custom Reason',
+          input: 'textarea',
+          inputLabel: 'Please specify the reason for disapproval',
+          inputPlaceholder: 'Enter the specific reason...',
+          showCancelButton: true,
+          confirmButtonText: 'Continue',
+          cancelButtonText: 'Cancel',
+          inputValidator: (value) => {
+            if (!value || value.trim() === '') {
+              return 'Please provide a specific reason';
+            }
+          }
+        });
+        
+        if (!customReason) {
+          return; // User cancelled
+        }
+        
+        finalReason = customReason.trim();
+      }
+      
       try {
-        console.log('🔍 Starting disapproval process:', { eventId, userId, studentName, reason });
+        console.log('🔍 Starting disapproval process:', { eventId, userId, studentName, reason: finalReason });
         
         // Validate parameters
-        if (!eventId || !userId || !reason) {
+        if (!eventId || !userId || !finalReason) {
           throw new Error('Missing required parameters: eventId, userId, or reason');
         }
         
-        const result = await disapproveRegistration(eventId, userId, reason);
+        const result = await disapproveRegistration(eventId, userId, finalReason);
         console.log('✅ Disapproval successful:', result);
         
         await loadEventRegistrations(eventId);
