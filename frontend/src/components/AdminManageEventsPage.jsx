@@ -512,9 +512,16 @@ function AdminManageEventsPage() {
     const eventDate = new Date(event.date).toLocaleDateString();
     const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
     const eventLocation = event.location;
+    
+    // Calculate registration statistics
+    const totalRegistrations = event.attendance ? event.attendance.length : 0;
+    const approvedRegistrations = event.attendance ? event.attendance.filter(a => a.registrationApproved).length : 0;
+    const pendingRegistrations = event.attendance ? event.attendance.filter(a => !a.registrationApproved && a.status === 'Pending').length : 0;
+    const maxParticipants = event.maxParticipants || 'Unlimited';
+    const availableSlots = typeof maxParticipants === 'number' ? Math.max(0, maxParticipants - approvedRegistrations) : 'Unlimited';
 
     Swal.fire({
-      title: 'Share Event',
+      title: 'Share Event & Registration Info',
       html: `
         <div style="text-align: left; max-width: 500px;">
           <h4 className="event-details-title">${eventTitle}</h4>
@@ -528,6 +535,27 @@ function AdminManageEventsPage() {
             <p className="event-details-item">
               <strong>📍 Location:</strong> ${eventLocation}
             </p>
+          </div>
+          
+          <div style="margin: 20px 0; padding: 15px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
+            <h5 style="margin: 0 0 10px 0; color: #155724;">📊 Registration Statistics</h5>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div>
+                <strong>Total Registrations:</strong> ${totalRegistrations}
+              </div>
+              <div>
+                <strong>Approved:</strong> ${approvedRegistrations}
+              </div>
+              <div>
+                <strong>Pending:</strong> ${pendingRegistrations}
+              </div>
+              <div>
+                <strong>Available Slots:</strong> ${availableSlots}
+              </div>
+            </div>
+            <div style="margin-top: 10px;">
+              <strong>Max Participants:</strong> ${maxParticipants}
+            </div>
           </div>
           
           ${shareOptions.map((option, index) => `
@@ -558,15 +586,23 @@ function AdminManageEventsPage() {
       cancelButtonText: 'Close',
       confirmButtonColor: '#007bff',
       cancelButtonColor: '#6c757d',
-      width: '600px',
+      width: '650px',
       customClass: {
         popup: 'share-event-popup'
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        const allUrls = shareOptions.map(option => `${option.title}:\n${option.url}`).join('\n\n');
+        const registrationInfo = `Registration Statistics:
+- Total Registrations: ${totalRegistrations}
+- Approved: ${approvedRegistrations}
+- Pending: ${pendingRegistrations}
+- Available Slots: ${availableSlots}
+- Max Participants: ${maxParticipants}
+
+`;
+        const allUrls = registrationInfo + shareOptions.map(option => `${option.title}:\n${option.url}`).join('\n\n');
         navigator.clipboard.writeText(allUrls).then(() => {
-          showSuccess('Links Copied!', 'All shareable links have been copied to your clipboard.');
+          showSuccess('Links & Registration Info Copied!', 'All shareable links and registration statistics have been copied to your clipboard.');
         }).catch(() => {
           showError('Copy Failed', 'Failed to copy links. Please manually select and copy the links.');
         });

@@ -1326,8 +1326,8 @@ function EventListPage() {
               </button>
             </div>
           ) : (
-            <div className="events-grid">
-              {filteredEvents.map(event => {
+            <div className="events-grid-horizontal">
+              {filteredEvents.slice(0, 3).map(event => {
                 // Try multiple ways to get user ID
                 let userId = user._id || user.id;
                 if (!userId) {
@@ -1364,13 +1364,13 @@ function EventListPage() {
                 const isAvailable = eventStatus !== 'completed' && event.status !== 'Completed' && hasAvailableSlots && !isTimeExpired;
 
                 return (
-                  <div key={event._id} className="event-card">
+                  <div key={event._id} className="event-card-horizontal">
                     {/* Event Image */}
-                    <div className="event-image">
+                    <div className="event-image-horizontal">
                       <img 
                         src={getEventImageUrl(event.image, event._id) || '/images/527595417_1167021392113223_2872992497207843477_n.jpg'} 
                         alt={event.title}
-                        className="event-image-img"
+                        className="event-image-img-horizontal"
                         loading="lazy"
                         onError={(e) => {
                           console.log('Image failed to load for event:', event.title);
@@ -1380,80 +1380,65 @@ function EventListPage() {
                           console.log('Image loaded successfully for event:', event.title);
                         }}
                       />
+                      {/* Status Badge */}
+                      {eventStatus === 'completed' && (
+                        <div className="status-badge-horizontal completed">
+                          <span className="status-icon">✅</span>
+                          <span className="status-text">completed</span>
+                        </div>
+                      )}
                     </div>
                    
                     {/* Event Content */}
-                    <div className="event-content">
-                      <h3 className="event-title">{event.title}</h3>
+                    <div className="event-content-horizontal">
+                      <h3 className="event-title-horizontal">{event.title}</h3>
                       
-                      <div className="event-meta">
-                        <div className="meta-item">
-                          <FaCalendar className="meta-icon" />
-                          <span>{formatDatePhilippines(event.date)}</span>
+                      {/* Participants Count */}
+                      <div className="participants-count-horizontal">
+                        <FaUsers className="participants-icon" />
+                        <span>{approvedAttendanceCount}</span>
+                      </div>
+                      
+                      {/* Event Details */}
+                      <div className="event-details-horizontal">
+                        <div className="detail-item">
+                          <span className="detail-label">Date:</span>
+                          <span className="detail-value">{formatDatePhilippines(event.date)}</span>
                         </div>
-                        <div className="meta-item">
-                          <FaClock className="meta-icon" />
-                          <span>{formatTimeRange12Hour(event.startTime, event.endTime)}</span>
+                        <div className="detail-item">
+                          <span className="detail-label">Time:</span>
+                          <span className="detail-value">{formatTimeRange12Hour(event.startTime, event.endTime)}</span>
                         </div>
-                        <div className="meta-item">
-                          <FaMapMarkerAlt className="meta-icon" />
-                          <span>{event.location || 'TBD'}</span>
-                        </div>
-                        <div className="meta-item">
-                          <FaUsers className="meta-icon" />
-                          <span>
-                            {availableSlots === 'Unlimited' ? 'Unlimited Slots' : `${availableSlots} slots`}
-                            {maxParticipants > 0 && (
-                              <span className="capacity-details">
-                                ({approvedAttendanceCount} approved, {pendingRegistrationsCount} pending)
-                              </span>
-                            )}
-                          </span>
+                        <div className="detail-item">
+                          <span className="detail-label">Location:</span>
+                          <span className="detail-value">{event.location || 'TBD'}</span>
                         </div>
                       </div>
 
-                       {/* Department Access Indicator */}
-                       <div className="department-access">
-                         <strong>Available for: </strong>
-                         {event.isForAllDepartments ? (
-                           <span className="all-departments">All Departments</span>
-                         ) : event.departments && event.departments.length > 0 ? (
-                           <span className="specific-departments">
-                             {event.departments.join(', ')}
-                           </span>
-                         ) : event.department ? (
-                           <span className="single-department">{event.department}</span>
-                         ) : (
-                           <span className="no-department">All Departments</span>
-                         )}
-                       </div>
+                      {/* Description */}
+                      <p className="event-description-horizontal">{event.description}</p>
 
-                       <p className="event-description">{event.description}</p>
-                      
-                      <div className="event-hours">
-                        <strong>Service Hours: {event.hours} hours</strong>
-                      </div>
-
-                      {/* Event Actions */}
-                      <div className="event-actions">
+                      {/* Action Button */}
+                      <div className="event-action-horizontal">
                         {role === 'Student' && !isJoined && (
                           <>
                             {isAvailable ? (
                               <button 
-                                className="register-event-button"
+                                className="join-chat-button"
                                 onClick={() => handleJoin(event._id)}
                                 disabled={loading}
                               >
-                                {loading ? 'Registering...' : 'Register for Event'}
+                                <span className="button-icon">💬</span>
+                                Join Chat
                               </button>
                             ) : (
-                              <div className="event-unavailable">
+                              <div className="event-unavailable-horizontal">
                                 {eventStatus === 'completed' ? (
-                                  <span className="unavailable-reason">Event Completed - Time Has Passed</span>
+                                  <span className="unavailable-reason">Event Completed</span>
                                 ) : event.status === 'Completed' ? (
-                                  <span className="unavailable-reason">Event Manually Completed</span>
+                                  <span className="unavailable-reason">Event Completed</span>
                                 ) : isTimeExpired ? (
-                                  <span className="unavailable-reason">Registration Closed - Event Time Has Passed</span>
+                                  <span className="unavailable-reason">Registration Closed</span>
                                 ) : (
                                   <span className="unavailable-reason">No Available Slots</span>
                                 )}
@@ -1463,94 +1448,24 @@ function EventListPage() {
                         )}
                         
                         {role === 'Student' && isJoined && (
-                          <div className="student-actions">
-                            {/* Show approval status if approval is required */}
-                            {event.requiresApproval && att && (
-                              <>
-                                {!att.registrationApproved && att.status === 'Pending' && (
-                                  <div className="approval-status pending">
-                                    <span className="status-icon">⏳</span>
-                                    <span className="status-text">Registration Pending Approval</span>
-                                  </div>
-                                )}
-                                
-                                {!att.registrationApproved && att.status === 'Disapproved' && (
-                                  <div className="approval-status disapproved">
-                                    <span className="status-icon">❌</span>
-                                    <span className="status-text">Registration Disapproved</span>
-                                    {att.reason && (
-                                      <div className="disapproval-reason">
-                                        <strong>Reason:</strong> {att.reason}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                                
-                                {att.registrationApproved && (
-                                  <div className="approval-status approved">
-                                    <span className="status-icon">✅</span>
-                                    <span className="status-text">Registration Approved</span>
-                                  </div>
-                                )}
-                              </>
-                            )}
-
-                            {/* Show time buttons if registration is approved or no approval required */}
-                            {/* Allow students to see their own time tracking buttons */}
-                            {((att.registrationApproved || !event.requiresApproval) && att.status !== 'Disapproved') && (
-                              <div className="time-buttons">
-                                <button 
-                                  className={`action-button time-in-button ${att && att.timeIn ? 'success-button disabled' : 'warning-button'}`}
-                                  onClick={() => handleTimeIn(event._id)} 
-                                  disabled={att && att.timeIn}
-                                >
-                                  {att && att.timeIn ? 'Time In Recorded' : 'Time In'}
-                                </button>
-                                
-                                <button 
-                                  className={`action-button time-out-button ${att && att.timeOut ? 'success-button disabled' : 'info-button'}`}
-                                  onClick={() => handleTimeOut(event._id)} 
-                                  disabled={(att && !att.timeIn) || (att && att.timeOut)}
-                                >
-                                  {att && att.timeOut ? 'Time Out Recorded' : 'Time Out'}
-                                </button>
-                              </div>
-                            )}
-
-                            {/* Time Display - Show to all users */}
-                            {((att && att.timeIn) || (att && att.timeOut)) && (
-                              <div className="time-display">
-                                {att.timeIn && (
-                                  <div className="time-item">
-                                    <span className="time-label">Time In:</span>
-                                    <span className="time-value">
-                                      {formatDateTimePhilippines(att.timeIn)}
-                                    </span>
-                                  </div>
-                                )}
-                                {att.timeOut && (
-                                  <div className="time-item">
-                                    <span className="time-label">Time Out:</span>
-                                    <span className="time-value">
-                                      {formatDateTimePhilippines(att.timeOut)}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                          </div>
+                          <button 
+                            className="join-chat-button"
+                            onClick={() => navigate(`/events/${event._id}/chat`)}
+                          >
+                            <span className="button-icon">💬</span>
+                            Join Chat
+                          </button>
                         )}
                         
                         {(role === 'Admin' || role === 'Staff') && (
                           <button 
-                            className="view-participants-button"
+                            className="join-chat-button"
                             onClick={() => navigate(`/events/${event._id}`)}
                           >
-                            <FaEye className="button-icon" /> View 
+                            <span className="button-icon">💬</span>
+                            Join Chat
                           </button>
                         )}
-
                       </div>
                     </div>
                   </div>

@@ -148,6 +148,36 @@ app.get('/api/test', (req, res) => {
   });
 });
 
+// Email test endpoint
+app.get('/api/test-email', async (req, res) => {
+  try {
+    const sendEmail = require('./utils/sendEmail');
+    const { getEventRegistrationApprovalTemplate } = require('./utils/emailTemplates');
+    
+    // Test email configuration
+    const emailConfig = {
+      EMAIL_USER: process.env.EMAIL_USER,
+      EMAIL_PASS: process.env.EMAIL_PASS ? '***configured***' : 'NOT_SET',
+      EMAIL_SERVICE: process.env.EMAIL_SERVICE || 'gmail',
+      NO_REPLY_EMAIL: process.env.NO_REPLY_EMAIL || 'noreply@charism.edu.ph'
+    };
+    
+    res.json({
+      status: 'SUCCESS',
+      message: 'Email configuration check',
+      emailConfig,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Email test failed',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

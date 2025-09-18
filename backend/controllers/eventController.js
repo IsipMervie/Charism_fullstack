@@ -1711,6 +1711,12 @@ exports.approveRegistration = async (req, res) => {
           const sendEmail = require('../utils/sendEmail');
           const { getEventRegistrationApprovalTemplate } = require('../utils/emailTemplates');
           
+          // Check email configuration
+          if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+            console.warn('⚠️ Email not configured - skipping approval email');
+            return;
+          }
+          
           // Format event date
           const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
             weekday: 'long',
@@ -1730,15 +1736,27 @@ exports.approveRegistration = async (req, res) => {
           );
           
           // Send email
-          await sendEmail({
-            to: attendance.userId.email,
-            subject: emailSubject,
-            html: emailHtml
-          });
+          const result = await sendEmail(
+            attendance.userId.email,
+            emailSubject,
+            undefined,
+            emailHtml,
+            true
+          );
           
-          console.log(`📧 Approval email sent to ${attendance.userId.email} for event: ${event.title}`);
+          if (result.success) {
+            console.log(`📧 Approval email sent successfully to ${attendance.userId.email} for event: ${event.title}`);
+          } else {
+            console.warn(`⚠️ Approval email failed: ${result.message}`);
+          }
         } catch (emailError) {
           console.error('❌ Failed to send approval email:', emailError.message);
+          console.error('❌ Email error details:', {
+            to: attendance.userId.email,
+            event: event.title,
+            error: emailError.message,
+            stack: emailError.stack
+          });
           // Email failure doesn't affect approval
         }
       });
@@ -1818,6 +1836,12 @@ exports.disapproveRegistration = async (req, res) => {
           const sendEmail = require('../utils/sendEmail');
           const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
           
+          // Check email configuration
+          if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+            console.warn('⚠️ Email not configured - skipping disapproval email');
+            return;
+          }
+          
           // Format event date
           const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
             weekday: 'long',
@@ -1836,15 +1860,28 @@ exports.disapproveRegistration = async (req, res) => {
           );
           
           // Send email
-          await sendEmail({
-            to: attendance.userId.email,
-            subject: emailSubject,
-            html: emailHtml
-          });
+          const result = await sendEmail(
+            attendance.userId.email,
+            emailSubject,
+            undefined,
+            emailHtml,
+            true
+          );
           
-          console.log(`📧 Disapproval email sent to ${attendance.userId.email} for event: ${event.title}`);
+          if (result.success) {
+            console.log(`📧 Disapproval email sent successfully to ${attendance.userId.email} for event: ${event.title}`);
+          } else {
+            console.warn(`⚠️ Disapproval email failed: ${result.message}`);
+          }
         } catch (emailError) {
           console.error('❌ Failed to send disapproval email:', emailError.message);
+          console.error('❌ Email error details:', {
+            to: attendance.userId.email,
+            event: event.title,
+            reason: reason.trim(),
+            error: emailError.message,
+            stack: emailError.stack
+          });
           // Email failure doesn't affect disapproval
         }
       });
