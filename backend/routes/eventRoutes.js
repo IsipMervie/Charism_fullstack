@@ -480,50 +480,6 @@ router.delete(
 // Global Error Handlers
 // =======================
 
-// 404 handler for undefined routes
-// Catch-all route for debugging missed requests
-router.all('*', (req, res, next) => {
-  if (req.path.includes('approve') || req.path.includes('disapprove')) {
-    console.log('🚨 MISSED APPROVAL/DISAPPROVAL ROUTE:', {
-      method: req.method,
-      url: req.url,
-      path: req.path,
-      params: req.params,
-      body: req.body,
-      headers: {
-        'authorization': req.headers['authorization'] ? 'Present' : 'Missing',
-        'content-type': req.headers['content-type']
-      }
-    });
-    
-    // Try to handle the request manually
-    const eventId = req.params.eventId;
-    const userId = req.params.userId;
-    
-    if (eventId && userId) {
-      if (req.path.includes('approve')) {
-        console.log('🔄 Attempting manual approval redirect');
-        return eventController.approveRegistration(req, res);
-      } else if (req.path.includes('disapprove')) {
-        console.log('🔄 Attempting manual disapproval redirect');
-        return eventController.disapproveRegistration(req, res);
-      }
-    }
-    
-    res.status(404).json({
-      message: 'Route not found - approval/disapproval endpoint',
-      method: req.method,
-      url: req.url,
-      availableRoutes: [
-        'PUT /:eventId/registrations/:userId/approve',
-        'PUT /:eventId/registrations/:userId/disapprove',
-        'PUT /:eventId/approve/:userId',
-        'PUT /:eventId/disapprove/:userId'
-      ]
-    });
-  }
-  next();
-});
 
 router.use((err, req, res, next) => {
   console.error('Route error:', err);
