@@ -9,12 +9,16 @@ if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw
 
 // EMERGENCY FALLBACK - Set critical variables if missing (for immediate fix)
 if (!process.env.MONGO_URI) {
-  console.log('⚠️ MONGO_URI not set - server may not connect to database');
-  console.log('📋 Please set MONGO_URI in Render environment variables');
+  console.log('⚠️ MONGO_URI not set - using emergency fallback');
+  process.env.MONGO_URI = 'mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE';
 }
 if (!process.env.JWT_SECRET) {
-  console.log('⚠️ JWT_SECRET not set - authentication may fail');
-  console.log('📋 Please set JWT_SECRET in Render environment variables');
+  console.log('⚠️ JWT_SECRET not set - using emergency fallback');
+  process.env.JWT_SECRET = 'mysecretkey123456789';
+}
+if (!process.env.CORS_ORIGINS) {
+  console.log('⚠️ CORS_ORIGINS not set - using emergency fallback');
+  process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000';
 }
 
 console.log('🔧 Environment variables set:');
