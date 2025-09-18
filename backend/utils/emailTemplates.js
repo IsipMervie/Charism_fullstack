@@ -944,6 +944,57 @@ const getEventCompletionTemplate = (studentName, eventTitle, eventDate, hoursCom
 </html>
 `;
 
+// Attendance Approval Email Template
+const getAttendanceApprovalTemplate = (userName, eventTitle, eventHours, totalHours) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Approved - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #27ae60; margin: 0;">CHARISM</h1>
+      <p style="color: #666; margin: 5px 0 0 0;">Community Service Management System</p>
+    </div>
+    
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px;">
+      ✅ Attendance Approved
+    </h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <p>Great news! Your attendance for the following community service event has been <strong style="color: #27ae60;">approved</strong>:</p>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #27ae60; padding: 20px; margin: 20px 0;">
+      <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${eventTitle}</h3>
+      <p style="margin: 5px 0;"><strong>Hours Earned:</strong> ${eventHours} hours</p>
+      <p style="margin: 5px 0;"><strong>Total Community Service Hours:</strong> ${totalHours} hours</p>
+    </div>
+    
+    <p>Your community service hours have been added to your record. Keep up the great work!</p>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" 
+         style="background-color: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+        View Your Dashboard
+      </a>
+    </div>
+    
+    <p>Thank you for your participation in community service activities.</p>
+    
+    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
+    
+    <p style="font-size: 12px; color: #666; text-align: center;">
+      ${getNoReplyFooter()}
+    </p>
+  </div>
+</body>
+</html>
+`;
+
 module.exports = {
   getEmailVerificationTemplate,
   getPasswordResetTemplate,
@@ -958,6 +1009,7 @@ module.exports = {
   getContactSubmissionTemplate,
   getContactAdminNotificationTemplate,
   getContactResponseTemplate,
+  getAttendanceApprovalTemplate,
   getNoReplyFooter,
   NO_REPLY_EMAIL
 };

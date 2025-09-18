@@ -485,126 +485,47 @@ function AdminManageEventsPage() {
   const handleShareEvent = (event) => {
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
     
-    // Generate different share options based on event settings
-    let shareOptions = [];
+    // Generate share link based on event settings
+    let shareUrl;
+    let shareTitle;
     
-    // Always include event details link
-    const eventDetailsUrl = `${frontendUrl}/#/events/${event._id}`;
-    shareOptions.push({
-      type: 'details',
-      title: 'Event Details Link',
-      url: eventDetailsUrl,
-      description: 'Share the event details page (requires login)'
-    });
-    
-    // Include public registration link if enabled
     if (event.isPublicRegistrationEnabled && event.publicRegistrationToken) {
-      const registrationUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
-      shareOptions.push({
-        type: 'registration',
-        title: 'Public Registration Link',
-        url: registrationUrl,
-        description: 'Anyone can register without logging in'
-      });
+      shareUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
+      shareTitle = 'Public Registration Link';
+    } else {
+      shareUrl = `${frontendUrl}/#/events/${event._id}`;
+      shareTitle = 'Event Details Link';
     }
 
-    const eventTitle = event.title;
-    const eventDate = new Date(event.date).toLocaleDateString();
-    const eventTime = formatTimeRange12Hour(event.startTime, event.endTime);
-    const eventLocation = event.location;
-    
-    // Calculate registration statistics
-    const totalRegistrations = event.attendance ? event.attendance.length : 0;
-    const approvedRegistrations = event.attendance ? event.attendance.filter(a => a.registrationApproved).length : 0;
-    const pendingRegistrations = event.attendance ? event.attendance.filter(a => !a.registrationApproved && a.status === 'Pending').length : 0;
-    const maxParticipants = event.maxParticipants || 'Unlimited';
-    const availableSlots = typeof maxParticipants === 'number' ? Math.max(0, maxParticipants - approvedRegistrations) : 'Unlimited';
-
     Swal.fire({
-      title: 'Share Event & Registration Info',
+      title: 'Share Event Link',
       html: `
         <div style="text-align: left; max-width: 500px;">
-          <h4 className="event-details-title">${eventTitle}</h4>
-          <div className="event-details-info">
-            <p className="event-details-item">
-              <strong>📅 Date:</strong> ${eventDate}
-            </p>
-            <p className="event-details-item">
-              <strong>🕐 Time:</strong> ${eventTime}
-            </p>
-            <p className="event-details-item">
-              <strong>📍 Location:</strong> ${eventLocation}
-            </p>
+          <p style="margin-bottom: 15px;">Copy the link below to share this event:</p>
+          <div style="margin: 15px 0;">
+            <label style="font-weight: 500; margin-bottom: 8px; display: block;">${shareTitle}:</label>
+            <input 
+              type="text" 
+              value="${shareUrl}" 
+              readonly 
+              style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa; font-family: monospace; font-size: 12px;"
+              onClick="this.select()"
+            />
           </div>
-          
-          <div style="margin: 20px 0; padding: 15px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
-            <h5 style="margin: 0 0 10px 0; color: #155724;">📊 Registration Statistics</h5>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <div>
-                <strong>Total Registrations:</strong> ${totalRegistrations}
-              </div>
-              <div>
-                <strong>Approved:</strong> ${approvedRegistrations}
-              </div>
-              <div>
-                <strong>Pending:</strong> ${pendingRegistrations}
-              </div>
-              <div>
-                <strong>Available Slots:</strong> ${availableSlots}
-              </div>
-            </div>
-            <div style="margin-top: 10px;">
-              <strong>Max Participants:</strong> ${maxParticipants}
-            </div>
-          </div>
-          
-          ${shareOptions.map((option, index) => `
-            <div style="margin: 15px 0;">
-              <label style="font-weight: 500; margin-bottom: 8px; display: block;">${option.title}:</label>
-              <input 
-                type="text" 
-                value="${option.url}" 
-                readonly 
-                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa; font-family: monospace; font-size: 12px;"
-                onClick="this.select()"
-              />
-              <p style="font-size: 12px; color: #666; margin-top: 5px;">${option.description}</p>
-            </div>
-          `).join('')}
-          
-          ${!event.isPublicRegistrationEnabled ? `
-            <div style="margin: 15px 0; padding: 10px; background: #fff3cd; border-radius: 4px; border-left: 4px solid #ffc107;">
-              <p style="margin: 0; font-size: 14px; color: #856404;">
-                <strong>💡 Tip:</strong> Enable public registration in event settings to generate a registration link that works without login.
-              </p>
-            </div>
-          ` : ''}
         </div>
       `,
-      confirmButtonText: '📋 Copy All Links',
       showCancelButton: true,
+      confirmButtonText: 'Copy Link',
       cancelButtonText: 'Close',
-      confirmButtonColor: '#007bff',
+      confirmButtonColor: '#27ae60',
       cancelButtonColor: '#6c757d',
-      width: '650px',
-      customClass: {
-        popup: 'share-event-popup'
-      }
+      width: '500px'
     }).then((result) => {
       if (result.isConfirmed) {
-        const registrationInfo = `Registration Statistics:
-- Total Registrations: ${totalRegistrations}
-- Approved: ${approvedRegistrations}
-- Pending: ${pendingRegistrations}
-- Available Slots: ${availableSlots}
-- Max Participants: ${maxParticipants}
-
-`;
-        const allUrls = registrationInfo + shareOptions.map(option => `${option.title}:\n${option.url}`).join('\n\n');
-        navigator.clipboard.writeText(allUrls).then(() => {
-          showSuccess('Links & Registration Info Copied!', 'All shareable links and registration statistics have been copied to your clipboard.');
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showSuccess('Link Copied!', 'Event link has been copied to your clipboard.');
         }).catch(() => {
-          showError('Copy Failed', 'Failed to copy links. Please manually select and copy the links.');
+          showError('Copy Failed', 'Failed to copy link. Please manually select and copy the link.');
         });
       }
     });

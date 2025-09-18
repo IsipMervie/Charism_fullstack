@@ -1481,6 +1481,34 @@ exports.approveAttendance = async (req, res) => {
     }
 
     await event.save();
+
+    // Send email notification to user about attendance approval
+    if (approvedUser && approvedUser.email) {
+      try {
+        const sendEmail = require('../utils/sendEmail');
+        const { getAttendanceApprovalTemplate } = require('../utils/emailTemplates');
+        
+        const emailContent = getAttendanceApprovalTemplate(
+          approvedUser.name,
+          event.title,
+          event.hours,
+          approvedUser.communityServiceHours
+        );
+        
+        await sendEmail(
+          approvedUser.email,
+          `CHARISM - Your Attendance Has Been Approved`,
+          '',
+          emailContent
+        );
+        
+        console.log(`✅ Attendance approval email sent to ${approvedUser.email}`);
+      } catch (emailError) {
+        console.error('❌ Failed to send attendance approval email:', emailError);
+        // Don't fail the request if email fails
+      }
+    }
+
     res.json({ 
       message: 'Attendance approved successfully.',
       hoursAdded: event.hours,
@@ -1651,7 +1679,11 @@ exports.toggleEventAvailability = async (req, res) => {
 // Approve Registration
 exports.approveRegistration = async (req, res) => {
   try {
+    console.log('✅ APPROVE REGISTRATION FUNCTION CALLED');
     console.log('✅ Approving registration...');
+    console.log('✅ Request method:', req.method);
+    console.log('✅ Request URL:', req.originalUrl);
+    console.log('✅ Request params:', req.params);
     const { eventId, userId } = req.params;
     console.log(`Event ID: ${eventId}, User ID: ${userId}`);
 
@@ -1776,7 +1808,11 @@ exports.approveRegistration = async (req, res) => {
 // Disapprove Registration (can disapprove both pending and approved)
 exports.disapproveRegistration = async (req, res) => {
   try {
+    console.log('❌ DISAPPROVE REGISTRATION FUNCTION CALLED');
     console.log('❌ Disapproving registration...');
+    console.log('❌ Request method:', req.method);
+    console.log('❌ Request URL:', req.originalUrl);
+    console.log('❌ Request params:', req.params);
     const { eventId, userId } = req.params;
     const { reason } = req.body;
     console.log(`Event ID: ${eventId}, User ID: ${userId}, Reason: ${reason}`);
