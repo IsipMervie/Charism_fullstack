@@ -1326,8 +1326,8 @@ function EventListPage() {
               </button>
             </div>
           ) : (
-            <div className="events-grid-horizontal">
-              {filteredEvents.slice(0, 3).map(event => {
+            <div className="events-grid">
+              {filteredEvents.map(event => {
                 // Try multiple ways to get user ID
                 let userId = user._id || user.id;
                 if (!userId) {
@@ -1364,7 +1364,7 @@ function EventListPage() {
                 const isAvailable = eventStatus !== 'completed' && event.status !== 'Completed' && hasAvailableSlots && !isTimeExpired;
 
                 return (
-                  <div key={event._id} className="event-card-horizontal">
+                  <div key={event._id} className="event-card">
                     {/* Event Image */}
                     <div className="event-image-horizontal">
                       <img 

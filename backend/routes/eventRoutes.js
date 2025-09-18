@@ -133,40 +133,10 @@ router.post(
 // =======================
 
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
-router.put(
-  '/:eventId/registrations/:userId/approve',
-  (req, res, next) => {
-    console.log('🚨 APPROVE ROUTE HIT - DEPLOYMENT TEST:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body,
-      timestamp: new Date().toISOString()
-    });
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveRegistration
-);
+router.put('/:eventId/registrations/:userId/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.approveRegistration);
 
 // Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
-router.put(
-  '/:eventId/registrations/:userId/disapprove',
-  (req, res, next) => {
-    console.log('🚨 DISAPPROVE ROUTE HIT - DEPLOYMENT TEST:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body,
-      timestamp: new Date().toISOString()
-    });
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveRegistration
-);
+router.put('/:eventId/registrations/:userId/disapprove', authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.disapproveRegistration);
 
 // Get event details (public) - MUST come after specific routes
 router.get('/:eventId', eventController.getEventDetails);

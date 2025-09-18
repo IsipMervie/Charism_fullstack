@@ -144,7 +144,24 @@ app.get('/api/test', (req, res) => {
     message: 'Emergency test endpoint working!',
     timestamp: new Date().toISOString(),
     cors: 'FIXED',
-    server: 'RUNNING'
+    server: 'RUNNING',
+    version: '2.0.0 - APPROVAL FIXES DEPLOYED'
+  });
+});
+
+// TEST APPROVAL ENDPOINT - Direct test
+app.put('/api/test-approval/:eventId/registrations/:userId/approve', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  res.json({
+    status: 'SUCCESS',
+    message: 'Approval endpoint test working!',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString(),
+    test: 'APPROVAL_ENDPOINT_EXISTS'
   });
 });
 
