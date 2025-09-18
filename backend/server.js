@@ -7,6 +7,16 @@ if (!process.env.PORT) process.env.PORT = '10000';
 if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = 'https://charism-ucb4.onrender.com';
 if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw9.onrender.com';
 
+// EMERGENCY FALLBACK - Set critical variables if missing (for immediate fix)
+if (!process.env.MONGO_URI) {
+  console.log('⚠️ MONGO_URI not set - server may not connect to database');
+  console.log('📋 Please set MONGO_URI in Render environment variables');
+}
+if (!process.env.JWT_SECRET) {
+  console.log('⚠️ JWT_SECRET not set - authentication may fail');
+  console.log('📋 Please set JWT_SECRET in Render environment variables');
+}
+
 console.log('🔧 Environment variables set:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('PORT:', process.env.PORT);
