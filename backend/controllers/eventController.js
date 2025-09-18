@@ -114,54 +114,55 @@ exports.healthCheck = async (req, res) => {
   }
 };
 
-// Get All Events - Simple version
+// Get All Events - Clean version
 exports.getAllEvents = async (req, res) => {
   try {
-    console.log('=== GET ALL EVENTS ===');
-    console.log('User:', req.user ? 'Authenticated' : 'Not authenticated');
+    console.log('=== GET ALL EVENTS (CLEAN) ===');
     
-    // Check cache first for faster response (role-based caching)
-    const cachedEvents = getCachedEvents(userRole);
-    if (cachedEvents) {
-      console.log('📦 Returning cached events for role:', userRole);
-      return res.json(cachedEvents);
-    }
+    // EMERGENCY: Add CORS headers immediately
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     
-    // If no cache, try to return a minimal response immediately
-    console.log('🚀 No cache available, attempting fast database query...');
+    // Get user role safely
+    const userRole = req.user ? req.user.role : 'Public';
     
-    // Flag to prevent multiple responses
-    let responseSent = false;
-    
-    // Immediate timeout protection for the entire function
-    const functionTimeout = setTimeout(() => {
-      if (responseSent) return;
-      responseSent = true;
-      console.error('❌ Function timeout - returning empty response');
+    // Simple database query with error handling
+    try {
+      const events = await Event.find({})
+        .select('title description date startTime endTime location hours status')
+        .limit(20)
+        .lean();
+      
+      console.log('✅ Events fetched successfully:', events.length);
+      res.json({ 
+        events, 
+        totalEvents: events.length,
+        cached: false,
+        userRole: userRole
+      });
+      
+    } catch (dbError) {
+      console.error('❌ Database error:', dbError.message);
       res.json({ 
         events: [],
-        message: 'Request timeout - server overloaded',
+        message: 'Database temporarily unavailable',
         totalEvents: 0,
-        warning: 'Please try again later',
         cached: false
-      });
-    }, 10000); // Reduced to 10 seconds for faster timeout
-    
-    // Check if Event model is available
-    if (!Event) {
-      clearTimeout(functionTimeout);
-      if (responseSent) return;
-      responseSent = true;
-      console.error('Event model not available');
-      return res.status(500).json({ 
-        message: 'Event model not available',
-        error: 'Database model not loaded'
       });
     }
     
-    // Quick database connection check with aggressive timeout
-    const { mongoose, getLazyConnection } = require('../config/db');
-    let isConnected = mongoose.connection.readyState === 1;
+  } catch (error) {
+    console.error('❌ getAllEvents error:', error.message);
+    res.status(500).json({ 
+      events: [],
+      message: 'Server error occurred',
+      totalEvents: 0,
+      cached: false,
+      error: error.message
+    });
+  }
+};
     
     if (!isConnected) {
       console.log('🔄 Quick database connection attempt...');

@@ -7,7 +7,7 @@ if (!process.env.PORT) process.env.PORT = '10000';
 if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = 'https://charism-ucb4.onrender.com';
 if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw9.onrender.com';
 
-// EMERGENCY FALLBACK - Set critical variables if missing (for immediate fix)
+// EMERGENCY: Set critical variables if missing (server needs to work)
 if (!process.env.MONGO_URI) {
   console.log('⚠️ MONGO_URI not set - using emergency fallback');
   process.env.MONGO_URI = 'mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE';
@@ -17,7 +17,7 @@ if (!process.env.JWT_SECRET) {
   process.env.JWT_SECRET = 'mysecretkey123456789';
 }
 if (!process.env.CORS_ORIGINS) {
-  console.log('⚠️ CORS_ORIGINS not set - using emergency fallback');
+  console.log('⚠️ CORS_ORIGINS not set - using default');
   process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000';
 }
 
@@ -132,6 +132,22 @@ app.get('/api/ping', (req, res) => {
   });
 });
 
+// EMERGENCY TEST ENDPOINT - Simple CORS test
+app.get('/api/test', (req, res) => {
+  // Force CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  res.json({
+    status: 'SUCCESS',
+    message: 'Emergency test endpoint working!',
+    timestamp: new Date().toISOString(),
+    cors: 'FIXED',
+    server: 'RUNNING'
+  });
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -221,16 +237,26 @@ const startServer = async () => {
     const { createIndexes } = require('./utils/databaseIndexes');
     await createIndexes();
     
-    // Start server with error handling
-    const PORT = process.env.PORT || 5000;
-    const server = app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
-      console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
-      console.log(`📊 MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected'}`);
-      console.log('✅ All routes loaded successfully!');
-    });
+// Start server with error handling
+const PORT = process.env.PORT || 5000;
+
+// Check for email configuration
+if (!process.env.EMAIL_USER) {
+  console.log('⚠️ EMAIL_USER not set - email features may not work');
+}
+if (!process.env.EMAIL_PASS) {
+  console.log('⚠️ EMAIL_PASS not set - email features may not work');
+}
+
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
+  console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
+  console.log(`📊 MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected'}`);
+  console.log('✅ All routes loaded successfully!');
+  console.log('🎯 Server is ready to handle requests!');
+});
 
     // Handle server errors
     server.on('error', (error) => {
