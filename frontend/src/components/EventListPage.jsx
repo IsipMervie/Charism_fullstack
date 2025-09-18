@@ -1462,8 +1462,8 @@ function EventListPage() {
                             className="join-chat-button"
                             onClick={() => navigate(`/events/${event._id}`)}
                           >
-                            <span className="button-icon">💬</span>
-                            Join Chat
+                            <span className="button-icon">👁️</span>
+                            View
                           </button>
                         )}
                       </div>
