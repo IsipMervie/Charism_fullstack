@@ -82,6 +82,44 @@ router.put('/:eventId/registrations/:userId/test-approve', (req, res) => {
 router.get('/', eventController.getAllEvents);
 
 // =======================
+// CRITICAL: Approval/Disapproval routes MUST come first to avoid conflicts
+// =======================
+
+// Approve registration for specific event (Admin/Staff) - Frontend expects this route
+router.put(
+  '/:eventId/registrations/:userId/approve',
+  (req, res, next) => {
+    console.log('🔍 Approve registration route hit:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body
+    });
+    next();
+  },
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.approveRegistration
+);
+
+// Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
+router.put(
+  '/:eventId/registrations/:userId/disapprove',
+  (req, res, next) => {
+    console.log('🔍 Disapprove registration route hit:', {
+      method: req.method,
+      url: req.url,
+      params: req.params,
+      body: req.body
+    });
+    next();
+  },
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveRegistration
+);
+
+// =======================
 // Public Event Registration Routes
 // =======================
 
@@ -147,41 +185,6 @@ router.post(
 // Parameterized Routes (must come after specific routes)
 // =======================
 
-// APPROVAL/DISAPPROVAL ROUTES MUST COME BEFORE /:eventId ROUTE
-// Approve registration for specific event (Admin/Staff) - Frontend expects this route
-router.put(
-  '/:eventId/registrations/:userId/approve',
-  (req, res, next) => {
-    console.log('🔍 Approve registration route hit:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body
-    });
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveRegistration
-);
-
-
-// Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
-router.put(
-  '/:eventId/registrations/:userId/disapprove',
-  (req, res, next) => {
-    console.log('🔍 Disapprove registration route hit:', {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      body: req.body
-    });
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveRegistration
-);
 
 
 // Get event details (public) - MUST come after specific routes
