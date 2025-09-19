@@ -450,8 +450,7 @@ const EventAttendancePage = memo(() => {
     return (
       <div className="event-list-container">
         <div className="loading-section">
-          <h3>Loading Events...</h3>
-          <p>Please wait while we fetch the latest events</p>
+          <div className="loading-spinner"></div>
         </div>
       </div>
     );

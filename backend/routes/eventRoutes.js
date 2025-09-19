@@ -7,13 +7,28 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 
 // Debug middleware to log all requests
 router.use((req, res, next) => {
+  console.log('🔍 EVENT ROUTER REQUEST:', {
+    method: req.method,
+    url: req.url,
+    path: req.path,
+    originalUrl: req.originalUrl,
+    params: req.params,
+    query: req.query,
+    timestamp: new Date().toISOString()
+  });
+  
   if (req.path.includes('approve') || req.path.includes('disapprove')) {
-    console.log('🚨 EVENT ROUTER DEBUG:', {
+    console.log('🚨 APPROVAL/DISAPPROVAL REQUEST:', {
       method: req.method,
       url: req.url,
       path: req.path,
+      originalUrl: req.originalUrl,
       params: req.params,
       body: req.body,
+      headers: {
+        authorization: req.headers.authorization ? 'Bearer [REDACTED]' : 'None',
+        contentType: req.headers['content-type']
+      },
       timestamp: new Date().toISOString()
     });
   }
@@ -38,6 +53,16 @@ router.get('/test-approval', (req, res) => {
       'PUT /:eventId/registrations/:userId/approve',
       'PUT /:eventId/registrations/:userId/disapprove'
     ]
+  });
+});
+
+// Test route to check if approval routes are accessible
+router.put('/test-approve/:eventId/:userId', (req, res) => {
+  res.json({
+    message: 'Test approval route working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
   });
 });
 

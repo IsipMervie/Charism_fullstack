@@ -621,7 +621,6 @@ const EventChatPage = () => {
       <div className="event-chat-page">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Loading event details...</p>
         </div>
       </div>
     );
@@ -802,7 +801,6 @@ const EventChatPage = () => {
                     {participantsLoading ? (
                       <div className="loading-state">
                         <div className="loading-spinner"></div>
-                        <p>Loading participants...</p>
                       </div>
                     ) : participantsError ? (
                       <div className="error-state">

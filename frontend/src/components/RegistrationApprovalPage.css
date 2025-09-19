@@ -698,6 +698,14 @@
   border: 1px solid #fecaca;
 }
 
+/* Dark mode fix for reason text readability */
+[data-theme="dark"] .meta-value.reason {
+  color: #ffffff !important;
+  background: #dc2626 !important;
+  border: 1px solid #ef4444 !important;
+  font-weight: 600;
+}
+
 /* Registration Actions */
 .registration-actions {
   display: flex;

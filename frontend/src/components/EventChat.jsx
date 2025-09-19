@@ -687,7 +687,6 @@ const EventChat = ({
         {loading && initialLoad ? (
           <div className="loading-state">
             <FaSpinner className="spinner" />
-            <span>Loading messages...</span>
           </div>
         ) : (
           <>

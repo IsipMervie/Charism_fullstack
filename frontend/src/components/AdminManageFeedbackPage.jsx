@@ -225,8 +225,6 @@ function AdminManageFeedbackPage() {
         <div className={`manage-feedback-container ${isVisible ? 'visible' : ''}`}>
           <div className="loading-section">
             <FaSpinner className="loading-spinner" />
-            <h3>Loading Feedback...</h3>
-            <p>Please wait while we fetch the latest feedback.</p>
           </div>
         </div>
       </div>

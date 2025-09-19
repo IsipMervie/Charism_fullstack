@@ -1440,7 +1440,7 @@ exports.approveAttendance = async (req, res) => {
   try {
     const { eventId, userId } = req.params;
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
@@ -1483,30 +1483,44 @@ exports.approveAttendance = async (req, res) => {
     await event.save();
 
     // Send email notification to user about attendance approval
-    if (approvedUser && approvedUser.email) {
-      try {
-        const sendEmail = require('../utils/sendEmail');
-        const { getAttendanceApprovalTemplate } = require('../utils/emailTemplates');
-        
-        const emailContent = getAttendanceApprovalTemplate(
-          approvedUser.name,
-          event.title,
-          event.hours,
-          approvedUser.communityServiceHours
-        );
-        
-        await sendEmail(
-          approvedUser.email,
-          `CHARISM - Your Attendance Has Been Approved`,
-          '',
-          emailContent
-        );
-        
-        console.log(`✅ Attendance approval email sent to ${approvedUser.email}`);
-      } catch (emailError) {
-        console.error('❌ Failed to send attendance approval email:', emailError);
-        // Don't fail the request if email fails
-      }
+    if (attendance.userId && attendance.userId.email) {
+      // Send email asynchronously without blocking the response
+      setImmediate(async () => {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getAttendanceApprovalTemplate } = require('../utils/emailTemplates');
+          
+          // Check email configuration
+          if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+            console.warn('⚠️ Email not configured - skipping attendance approval email');
+            return;
+          }
+          
+          const emailContent = getAttendanceApprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            event.hours,
+            approvedUser ? approvedUser.communityServiceHours : 0
+          );
+          
+          const result = await sendEmail(
+            attendance.userId.email,
+            `CHARISM - Your Attendance Has Been Approved`,
+            '',
+            emailContent,
+            true
+          );
+          
+          if (result.success) {
+            console.log(`✅ Attendance approval email sent to ${attendance.userId.email}`);
+          } else {
+            console.warn(`⚠️ Attendance approval email failed: ${result.message}`);
+          }
+        } catch (emailError) {
+          console.error('❌ Failed to send attendance approval email:', emailError);
+          // Don't fail the request if email fails
+        }
+      });
     }
 
     res.json({ 
@@ -1532,7 +1546,7 @@ exports.disapproveAttendance = async (req, res) => {
       return res.status(400).json({ message: 'Reason for disapproval is required.' });
     }
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
 
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
@@ -1568,6 +1582,66 @@ exports.disapproveAttendance = async (req, res) => {
     attendance.approvedAt = new Date();
 
     await event.save();
+
+    // Send email notification to student about attendance disapproval
+    if (attendance.userId && attendance.userId.email) {
+      // Send email asynchronously without blocking the response
+      setImmediate(async () => {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+          
+          // Check email configuration
+          if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+            console.warn('⚠️ Email not configured - skipping attendance disapproval email');
+            return;
+          }
+          
+          // Format event date
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          // Prepare email content - use disapproval template with attendance context
+          const emailSubject = `Attendance Update - ${event.title}`;
+          const emailHtml = getEventRegistrationDisapprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            eventDate,
+            `Your attendance for this event has been disapproved. Reason: ${reason.trim()}`
+          );
+          
+          // Send email
+          const result = await sendEmail(
+            attendance.userId.email,
+            emailSubject,
+            undefined,
+            emailHtml,
+            true
+          );
+          
+          if (result.success) {
+            console.log(`📧 Attendance disapproval email sent successfully to ${attendance.userId.email} for event: ${event.title}`);
+          } else {
+            console.warn(`⚠️ Attendance disapproval email failed: ${result.message}`);
+          }
+        } catch (emailError) {
+          console.error('❌ Failed to send attendance disapproval email:', emailError.message);
+          console.error('❌ Email error details:', {
+            to: attendance.userId.email,
+            event: event.title,
+            reason: reason.trim(),
+            error: emailError.message,
+            stack: emailError.stack
+          });
+          // Email failure doesn't affect disapproval
+        }
+      });
+    }
+
     res.json({ message: 'Attendance disapproved successfully.' });
   } catch (err) {
     console.error('Error in disapproveAttendance:', err);

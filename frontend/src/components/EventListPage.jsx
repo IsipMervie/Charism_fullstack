@@ -1026,8 +1026,7 @@ function EventListPage() {
     return (
       <div className="event-list-page">
         <div className="loading-section">
-          <h3>Loading Events...</h3>
-          <p>Please wait while we fetch the latest events</p>
+          <div className="loading-spinner"></div>
           <button onClick={handleManualRefresh} className="refresh-button">
             Refresh
           </button>
@@ -1428,8 +1427,8 @@ function EventListPage() {
                                 onClick={() => handleJoin(event._id)}
                                 disabled={loading}
                               >
-                                <span className="button-icon">💬</span>
-                                Join Chat
+                                <span className="button-icon"></span>
+                                Join Event
                               </button>
                             ) : (
                               <div className="event-unavailable-horizontal">
@@ -1453,7 +1452,7 @@ function EventListPage() {
                             onClick={() => navigate(`/events/${event._id}/chat`)}
                           >
                             <span className="button-icon">💬</span>
-                            Join Chat
+                            Join Event
                           </button>
                         )}
                         
@@ -1462,7 +1461,7 @@ function EventListPage() {
                             className="join-chat-button"
                             onClick={() => navigate(`/events/${event._id}`)}
                           >
-                            <span className="button-icon">👁️</span>
+                            <span className="button-icon"></span>
                             View
                           </button>
                         )}

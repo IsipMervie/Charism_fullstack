@@ -321,7 +321,6 @@ const EventChatListPage = () => {
       <div className="event-chat-list-page">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Loading events...</p>
         </div>
       </div>
     );

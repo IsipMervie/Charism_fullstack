@@ -138,8 +138,6 @@ function EditEventPage() {
       <div className="edit-event-container">
         <div className="loading-section">
           <div className="loading-spinner"></div>
-          <h3>Loading Event...</h3>
-          <p>Please wait while we fetch the event details</p>
         </div>
       </div>
     );

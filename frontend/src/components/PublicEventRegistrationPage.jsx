@@ -130,7 +130,6 @@ function PublicEventRegistrationPage() {
       <div className="public-registration-container">
         <div className="loading-message">
           <div className="loading-spinner"></div>
-          <p>Loading event details...</p>
         </div>
       </div>
     );
