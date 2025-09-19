@@ -51,7 +51,9 @@ router.get('/test-approval', (req, res) => {
     timestamp: new Date().toISOString(),
     availableRoutes: [
       'PUT /:eventId/registrations/:userId/approve',
-      'PUT /:eventId/registrations/:userId/disapprove'
+      'PUT /:eventId/registrations/:userId/disapprove',
+      'PATCH /:eventId/attendance/:userId/approve',
+      'PATCH /:eventId/attendance/:userId/disapprove'
     ]
   });
 });
@@ -60,6 +62,25 @@ router.get('/test-approval', (req, res) => {
 router.put('/test-approve/:eventId/:userId', (req, res) => {
   res.json({
     message: 'Test approval route working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test route for attendance endpoints
+router.patch('/test-attendance/:eventId/:userId/approve', (req, res) => {
+  res.json({
+    message: 'Test attendance approval route working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
+router.patch('/test-attendance/:eventId/:userId/disapprove', (req, res) => {
+  res.json({
+    message: 'Test attendance disapproval route working',
     eventId: req.params.eventId,
     userId: req.params.userId,
     timestamp: new Date().toISOString()
@@ -158,10 +179,40 @@ router.post(
 // =======================
 
 // Approve registration for specific event (Admin/Staff) - Frontend expects this route
-router.put('/:eventId/registrations/:userId/approve', authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.approveRegistration);
+router.put('/:eventId/registrations/:userId/approve', (req, res, next) => {
+  console.log('🚀 APPROVAL ROUTE HIT:', req.method, req.path, req.params);
+  next();
+}, authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.approveRegistration);
 
 // Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
-router.put('/:eventId/registrations/:userId/disapprove', authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.disapproveRegistration);
+router.put('/:eventId/registrations/:userId/disapprove', (req, res, next) => {
+  console.log('🚀 DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
+  next();
+}, authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.disapproveRegistration);
+
+// Approve attendance (Admin/Staff) - MUST come before generic /:eventId route
+router.patch(
+  '/:eventId/attendance/:userId/approve',
+  (req, res, next) => {
+    console.log('🚀 ATTENDANCE APPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    next();
+  },
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.approveAttendance
+);
+
+// Disapprove attendance (Admin/Staff) - MUST come before generic /:eventId route
+router.patch(
+  '/:eventId/attendance/:userId/disapprove',
+  (req, res, next) => {
+    console.log('🚀 ATTENDANCE DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    next();
+  },
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveAttendance
+);
 
 // Get event details (public) - MUST come after specific routes
 router.get('/:eventId', eventController.getEventDetails);
@@ -271,21 +322,7 @@ router.post(
 
 
 
-// Approve attendance (Admin/Staff)
-router.patch(
-  '/:eventId/attendance/:userId/approve',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveAttendance
-);
-
-// Disapprove attendance (Admin/Staff)
-router.patch(
-  '/:eventId/attendance/:userId/disapprove',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveAttendance
-);
+// REMOVED: Duplicate attendance approval routes - moved above to prevent conflicts
 
 // Remove participant (Admin/Staff)
 router.delete(
