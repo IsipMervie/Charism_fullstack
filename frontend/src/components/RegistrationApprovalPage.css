@@ -758,6 +758,28 @@
   text-align: center;
 }
 
+.error-container {
+  padding: 3rem;
+  text-align: center;
+  background: var(--bg-card);
+  border-radius: 15px;
+  border: 1px solid var(--border-primary);
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.error-content h2 {
+  color: var(--error);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-content p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
 .loading-spinner {
   color: var(--primary);
 }

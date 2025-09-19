@@ -20,6 +20,10 @@ function RegistrationApprovalPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('events'); // 'events' or 'registrations'
 
+  // Check user role
+  const userRole = localStorage.getItem('role');
+  const isAuthorized = userRole === 'Admin' || userRole === 'Staff';
+
   const filterEvents = useCallback(() => {
     if (!eventSearchTerm.trim()) {
       setFilteredEvents(events);
@@ -281,6 +285,21 @@ function RegistrationApprovalPage() {
   const totalRegistrations = (filteredRegistrations.pending?.length || 0) + 
                            (filteredRegistrations.pending?.length || 0) + 
                            (filteredRegistrations.disapproved?.length || 0);
+
+  // Check authorization
+  if (!isAuthorized) {
+    return (
+      <div className="registration-approval-page">
+        <div className="error-container">
+          <div className="error-content">
+            <h2>Access Denied</h2>
+            <p>You need Admin or Staff privileges to access this page.</p>
+            <p>Your current role: <strong>{userRole || 'Not logged in'}</strong></p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

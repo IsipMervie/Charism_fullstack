@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getEventDetails, getPublicEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt, FaComments } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt, FaComments, FaShare } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import EventChat from './EventChat';
 
@@ -240,6 +240,58 @@ function EventDetailsPage() {
     }
   }, [loading, error, event, navigate]);
 
+  const handleShareEvent = (event) => {
+    const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
+    
+    // Always generate a registration-style link like in the image
+    let shareUrl;
+    let shareTitle;
+    
+    if (event.publicRegistrationToken) {
+      // Use existing registration token
+      shareUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
+      shareTitle = 'Event Registration Link';
+    } else {
+      // Generate a registration-style link using event ID
+      shareUrl = `${frontendUrl}/#/events/register/evt_${event._id}_${Date.now()}`;
+      shareTitle = 'Event Registration Link';
+    }
+
+    Swal.fire({
+      title: 'Share Event Link',
+      html: `
+        <div style="text-align: left; max-width: 500px;">
+          <p style="margin-bottom: 15px;">Copy the link below to share this event:</p>
+          <div style="margin: 15px 0;">
+            <label style="font-weight: 500; margin-bottom: 8px; display: block;">${shareTitle}:</label>
+            <input 
+              type="text" 
+              value="${shareUrl}" 
+              readonly 
+              style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa; font-family: monospace; font-size: 12px;"
+              onClick="this.select()"
+            />
+          </div>
+          <p style="font-size: 12px; color: #666; margin-top: 10px;">
+            Click the input field to select all text, then copy it.
+          </p>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Copy Link',
+      cancelButtonText: 'Close',
+      width: '500px'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          Swal.fire('Success!', 'Event link has been copied to your clipboard.', 'success');
+        }).catch(() => {
+          Swal.fire('Error', 'Failed to copy link. Please manually select and copy the link.', 'error');
+        });
+      }
+    });
+  };
+
   if (loading) return (
     <div className="event-details-page">
       <div className="loading-section">
@@ -317,6 +369,15 @@ function EventDetailsPage() {
               </button>
             )}
             
+            {/* Share button for all users */}
+            <button 
+              onClick={() => handleShareEvent(event)}
+              className="action-button share-button"
+            >
+              <FaShare className="button-icon" />
+              <span>Share</span>
+            </button>
+            
             
             {!isAuthenticated && (
               <button 
@@ -388,6 +449,13 @@ function EventDetailsPage() {
                   className="participants-button"
                 >
                   View Participants
+                </button>
+                <button 
+                  onClick={() => handleShareEvent(event)}
+                  className="action-button share-button"
+                >
+                  <FaShare className="button-icon" />
+                  <span>Share</span>
                 </button>
               </div>
             </div>

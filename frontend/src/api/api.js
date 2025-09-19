@@ -1668,7 +1668,10 @@ export const approveRegistration = async (eventId, userId) => {
       throw new Error(error.response.data.message || 'Cannot approve registration. Event may be full.');
     }
     if (error.response?.status === 401) {
-      throw new Error('Authentication failed. Please log in again.');
+      throw new Error('Authentication failed. Please log out and log back in.');
+    }
+    if (error.response?.status === 403) {
+      throw new Error('Access denied. You do not have permission to approve registrations.');
     }
     if (error.response?.status === 404) {
       throw new Error('Approval endpoint not found. Please contact administrator.');
@@ -1698,7 +1701,10 @@ export const disapproveRegistration = async (eventId, userId, reason) => {
       throw new Error(error.response.data.message || 'Cannot disapprove registration. Reason is required.');
     }
     if (error.response?.status === 401) {
-      throw new Error('Authentication failed. Please log in again.');
+      throw new Error('Authentication failed. Please log out and log back in.');
+    }
+    if (error.response?.status === 403) {
+      throw new Error('Access denied. You do not have permission to disapprove registrations.');
     }
     if (error.response?.status === 404) {
       throw new Error('Disapproval endpoint not found. Please contact administrator.');

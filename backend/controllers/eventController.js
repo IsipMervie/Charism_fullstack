@@ -131,7 +131,7 @@ exports.getAllEvents = async (req, res) => {
     try {
       const events = await Event.find({})
         .select('title description date startTime endTime location hours status attendance maxParticipants requiresApproval isVisibleToStudents image departments isForAllDepartments')
-        .limit(20)
+        .sort({ date: -1 }) // Sort by date, newest first
         .lean();
       
       console.log('✅ Events fetched successfully:', events.length);

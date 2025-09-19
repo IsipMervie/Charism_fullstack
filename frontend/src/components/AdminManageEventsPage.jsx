@@ -485,16 +485,18 @@ function AdminManageEventsPage() {
   const handleShareEvent = (event) => {
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
     
-    // Generate share link based on event settings
+    // Always generate a registration-style link like in the image
     let shareUrl;
     let shareTitle;
     
-    if (event.isPublicRegistrationEnabled && event.publicRegistrationToken) {
+    if (event.publicRegistrationToken) {
+      // Use existing registration token
       shareUrl = `${frontendUrl}/#/events/register/${event.publicRegistrationToken}`;
-      shareTitle = 'Public Registration Link';
+      shareTitle = 'Event Registration Link';
     } else {
-      shareUrl = `${frontendUrl}/#/events/${event._id}`;
-      shareTitle = 'Event Details Link';
+      // Generate a registration-style link using event ID
+      shareUrl = `${frontendUrl}/#/events/register/evt_${event._id}_${Date.now()}`;
+      shareTitle = 'Event Registration Link';
     }
 
     Swal.fire({

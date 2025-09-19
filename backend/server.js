@@ -21,6 +21,19 @@ if (!process.env.CORS_ORIGINS) {
   process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000';
 }
 
+// Email configuration fallbacks (non-blocking)
+if (!process.env.EMAIL_USER) {
+  console.log('⚠️ EMAIL_USER not set - email notifications will be disabled');
+  process.env.EMAIL_USER = 'noreply@charism.edu.ph';
+}
+if (!process.env.EMAIL_PASS) {
+  console.log('⚠️ EMAIL_PASS not set - email notifications will be disabled');
+  process.env.EMAIL_PASS = 'your_email_password';
+}
+if (!process.env.EMAIL_SERVICE) {
+  process.env.EMAIL_SERVICE = 'gmail';
+}
+
 console.log('🔧 Environment variables set:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('PORT:', process.env.PORT);
