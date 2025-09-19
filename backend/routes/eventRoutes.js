@@ -214,8 +214,7 @@ router.patch(
   eventController.disapproveAttendance
 );
 
-// Get event details (public) - MUST come after specific routes
-router.get('/:eventId', eventController.getEventDetails);
+// REMOVED: Generic /:eventId route moved to end to prevent conflicts
 
 // Get event capacity status (public)
 router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
@@ -453,5 +452,8 @@ router.use((err, req, res, next) => {
   
   res.status(500).json({ message: 'Internal server error' });
 });
+
+// Get event details (public) - MUST come LAST to prevent conflicts with approval routes
+router.get('/:eventId', eventController.getEventDetails);
 
 module.exports = router;
