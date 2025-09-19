@@ -1814,6 +1814,10 @@ exports.approveRegistration = async (req, res) => {
       // Send email asynchronously without blocking the response
       setImmediate(async () => {
         try {
+          // TEMPORARILY DISABLE EMAIL TO TEST APPROVAL PROCESS
+          console.log('📧 Email sending temporarily disabled for testing');
+          return;
+          
           const sendEmail = require('../utils/sendEmail');
           const { getEventRegistrationApprovalTemplate } = require('../utils/emailTemplates');
           
