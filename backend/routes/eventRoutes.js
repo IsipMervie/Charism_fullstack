@@ -15,6 +15,26 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 // Health check
 router.get('/health', eventController.healthCheck);
 
+// Test route to verify server is updated
+router.get('/test-update', (req, res) => {
+  res.json({
+    message: 'Server updated successfully!',
+    timestamp: new Date().toISOString(),
+    version: '2024-01-15-fixed'
+  });
+});
+
+// Simple test route for approval
+router.put('/test-simple-approve/:eventId/:userId', (req, res) => {
+  res.json({
+    message: 'Simple approval test working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    method: req.method,
+    path: req.path
+  });
+});
+
 // Test route for approval endpoints
 router.get('/test-approval', (req, res) => {
   res.json({ 
@@ -156,6 +176,27 @@ router.get(
 
 // Get event capacity status (public)
 router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
+
+// Test route for registration approval (no auth)
+router.put('/test-registration-approve/:eventId/:userId', (req, res) => {
+  res.json({
+    message: 'Test registration approval route working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test route without middleware
+router.put('/test-no-middleware/:eventId/registrations/:userId/approve', (req, res) => {
+  res.json({
+    message: 'No middleware test working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    method: req.method,
+    path: req.path
+  });
+});
 
 // Approve registration (Admin/Staff) - MUST come before generic registrations route
 router.put(

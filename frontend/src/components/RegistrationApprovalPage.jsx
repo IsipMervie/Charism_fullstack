@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getEvents, getAllEventRegistrations, approveRegistration, disapproveRegistration } from '../api/api';
 import Swal from 'sweetalert2';
-import { FaSpinner, FaEye, FaArrowLeft, FaFilter, FaMapMarkerAlt, FaUsers, FaClock, FaBuilding, FaUserGraduate, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaSpinner, FaEye, FaArrowLeft, FaFilter, FaMapMarkerAlt, FaUsers, FaClock, FaBuilding, FaUserGraduate, FaCheck, FaTimes, FaChartBar, FaCalendarAlt, FaUserCheck, FaUserTimes, FaSearch, FaSync } from 'react-icons/fa';
 import { safeFilter, safeLength } from '../utils/arrayUtils';
 import { formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import './RegistrationApprovalPage.css';
@@ -314,91 +314,142 @@ function RegistrationApprovalPage() {
     );
   }
 
-  return (
-    <div className="registration-approval-page">
-      <div className="registration-background">
-        <div className="background-pattern"></div>
-      </div>
-      
-      <div className={`registration-container ${isVisible ? 'visible' : ''}`}>
-        {/* Header */}
-        <div className="header-section">
-          <div className="header-content">
-            <div className="header-icon">
-              <div className="icon-symbol">📋</div>
+        return (
+          <div className="registration-approval-page">
+            <div className="registration-background">
+              <div className="background-pattern"></div>
             </div>
-            <div className="header-text">
-              <h1 className="page-title">Registration Approval</h1>
-              <p className="page-subtitle">Review and approve student event registrations</p>
-            </div>
-          </div>
-          <div className="header-actions">
-            <button 
-              className="action-button secondary-button"
-              onClick={() => setViewMode('events')}
-            >
-              View Events
-            </button>
-          </div>
-        </div>
+
+            <div className={`registration-container ${isVisible ? 'visible' : ''}`}>
+              {/* Modern Analytics Header */}
+              <div className="analytics-header">
+                <div className="header-content">
+                  <div className="header-icon">
+                    <FaChartBar className="header-icon-symbol" />
+                  </div>
+                  <div className="header-text">
+                    <h1 className="page-title">Registration Management</h1>
+                    <p className="page-subtitle">Review and approve student event registrations with comprehensive analytics</p>
+                  </div>
+                </div>
+                <div className="header-actions">
+                  <button
+                    className="action-button secondary-button"
+                    onClick={() => setViewMode('events')}
+                  >
+                    <FaEye className="btn-icon" />
+                    View Events
+                  </button>
+                </div>
+              </div>
 
       {viewMode === 'events' && (
         <div className="events-section">
-          {/* Search and Filter Section */}
-          <div className="search-filter-section">
-            <div className="search-box">
-              <div className="search-input-wrapper">
-                <input
-                  type="text"
-                  placeholder="Search events by title or description..."
-                  value={eventSearchTerm}
-                  onChange={(e) => setEventSearchTerm(e.target.value)}
-                  className="search-input"
-                />
+          {/* Modern Search and Filter Section */}
+          <div className="analytics-search-filter-section">
+            <div className="search-filter-grid">
+              <div className="search-container">
+                <div className="search-input-group">
+                  <FaSearch className="search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search events by title, description, or location..."
+                    value={eventSearchTerm}
+                    onChange={(e) => setEventSearchTerm(e.target.value)}
+                    className="modern-search-input"
+                  />
+                </div>
+              </div>
+
+              <div className="filter-container">
+                <div className="filter-input-group">
+                  <FaFilter className="filter-icon" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="modern-filter-select"
+                  >
+                    <option value="">All Events</option>
+                    <option value="upcoming">🚀 Upcoming Events</option>
+                    <option value="ongoing">🔄 Ongoing Events</option>
+                    <option value="past">⏰ Past Events</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="action-container">
+                {(eventSearchTerm || statusFilter) && (
+                  <button
+                    className="clear-filters-btn"
+                    onClick={() => {
+                      setEventSearchTerm('');
+                      setStatusFilter('');
+                    }}
+                    title="Clear all filters"
+                  >
+                    <FaSync className="btn-icon" />
+                    Clear Filters
+                  </button>
+                )}
               </div>
             </div>
-            
-            <div className="filter-box">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">All Events</option>
-                <option value="upcoming">🚀 Upcoming Events</option>
-                <option value="ongoing">🔄 Ongoing Events</option>
-                <option value="past">⏰ Past Events</option>
-              </select>
-            </div>
-            
-            {(eventSearchTerm || statusFilter) && (
-              <button 
-                className="clear-filters-btn"
-                onClick={() => {
-                  setEventSearchTerm('');
-                  setStatusFilter('');
-                }}
-                title="Clear all filters"
-              >
-                ✕ Clear Filters
-              </button>
-            )}
           </div>
 
-          {/* Events Summary */}
-          <div className="events-summary">
-            <div className="summary-stats">
-              <div className="stat-item">
-                <span className="stat-number">{filteredEvents.length}</span>
-                <span className="stat-label">📅 Total Events</span>
+          {/* Analytics Summary Cards */}
+          <div className="analytics-summary-grid">
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaCalendarAlt />
+                </div>
+                <div className="card-info">
+                  <h3>Total Events</h3>
+                  <p>All available events</p>
+                </div>
               </div>
-              <div className="stat-item">
-                <span className="stat-number">{filteredEvents.filter(e => safeLength(e.attendance) > 0).length}</span>
-                <span className="stat-label">👥 With Registrations</span>
+              <div className="card-value">{filteredEvents.length}</div>
+            </div>
+
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaUsers />
+                </div>
+                <div className="card-info">
+                  <h3>Active Events</h3>
+                  <p>Events with registrations</p>
+                </div>
               </div>
-              <div className="stat-item">
-                <span className="stat-number">{filteredEvents.reduce((total, e) => total + safeLength(e.attendance), 0)}</span>
-                <span className="stat-label">📝 Total Registrations</span>
+              <div className="card-value">{filteredEvents.filter(e => safeLength(e.attendance) > 0).length}</div>
+            </div>
+
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaUserCheck />
+                </div>
+                <div className="card-info">
+                  <h3>Total Registrations</h3>
+                  <p>All student registrations</p>
+                </div>
+              </div>
+              <div className="card-value">{filteredEvents.reduce((total, e) => total + safeLength(e.attendance), 0)}</div>
+            </div>
+
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaChartBar />
+                </div>
+                <div className="card-info">
+                  <h3>Pending Reviews</h3>
+                  <p>Awaiting approval</p>
+                </div>
+              </div>
+              <div className="card-value">
+                {filteredEvents.reduce((total, e) => 
+                  total + safeLength(e.attendance.filter(a => !a.registrationApproved && !a.reason)), 0
+                )}
               </div>
             </div>
           </div>
@@ -444,36 +495,106 @@ function RegistrationApprovalPage() {
         <div className="registrations-section">
           <div className="registrations-header">
             <button 
-              className="back-btn"
+              className="back-button"
               onClick={() => setViewMode('events')}
             >
               <FaArrowLeft /> Back to Events
             </button>
-            <div className="event-info">
-              <h2>{selectedEvent.title}</h2>
-              <p>{formatDatePhilippines(selectedEvent.date)} • {selectedEvent.location}</p>
+            <div className="event-title-section">
+              <h2>Registrations for "{selectedEvent.title}"</h2>
+              <p className="event-subtitle">{formatDatePhilippines(selectedEvent.date)} • {selectedEvent.location}</p>
+            </div>
+            <div className="search-container">
+              <div className="search-input-group">
+                <FaSearch className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search students by name or email..."
+                  value={studentSearchTerm}
+                  onChange={(e) => setStudentSearchTerm(e.target.value)}
+                  className="modern-search-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Registration Analytics */}
+          <div className="registration-analytics">
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaUserCheck />
+                </div>
+                <div className="card-info">
+                  <h3>Approved</h3>
+                  <p>Registrations approved</p>
+                </div>
+              </div>
+              <div className="card-value">
+                {safeFilter(eventRegistrations, reg => reg.registrationApproved).length}
+              </div>
+            </div>
+
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaUserTimes />
+                </div>
+                <div className="card-info">
+                  <h3>Disapproved</h3>
+                  <p>Registrations disapproved</p>
+                </div>
+              </div>
+              <div className="card-value">
+                {safeFilter(eventRegistrations, reg => reg.reason).length}
+              </div>
+            </div>
+
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaClock />
+                </div>
+                <div className="card-info">
+                  <h3>Pending</h3>
+                  <p>Awaiting review</p>
+                </div>
+              </div>
+              <div className="card-value">
+                {safeFilter(eventRegistrations, reg => !reg.registrationApproved && !reg.reason).length}
+              </div>
+            </div>
+
+            <div className="analytics-card">
+              <div className="card-header">
+                <div className="card-icon">
+                  <FaUsers />
+                </div>
+                <div className="card-info">
+                  <h3>Total</h3>
+                  <p>All registrations</p>
+                </div>
+              </div>
+              <div className="card-value">{eventRegistrations.length}</div>
             </div>
           </div>
 
           <div className="registrations-filters">
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Search students..."
-                value={studentSearchTerm}
-                onChange={(e) => setStudentSearchTerm(e.target.value)}
-              />
+            <div className="filter-container">
+              <div className="filter-input-group">
+                <FaFilter className="filter-icon" />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="modern-filter-select"
+                >
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="disapproved">Disapproved</option>
+                </select>
+              </div>
             </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="status-filter"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="disapproved">Disapproved</option>
-            </select>
           </div>
 
           <div className="registrations-summary">
