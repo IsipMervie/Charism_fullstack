@@ -300,12 +300,7 @@ router.get(
   eventController.getEventParticipantsPublic
 );
 
-// Get event attendance (Admin/Staff/Student - for chat access)
-router.get(
-  '/:eventId/attendance',
-  authMiddleware,
-  eventController.getEventAttendance
-);
+// MOVED: Generic attendance route moved to end to prevent conflicts with specific routes
 
 // Clean up duplicate participants (Admin/Staff)
 router.post(
@@ -450,6 +445,13 @@ router.use((err, req, res, next) => {
   
   res.status(500).json({ message: 'Internal server error' });
 });
+
+// Get event attendance (Admin/Staff/Student - for chat access) - MUST come before generic /:eventId route
+router.get(
+  '/:eventId/attendance',
+  authMiddleware,
+  eventController.getEventAttendance
+);
 
 // Get event details (public) - MUST come LAST to prevent conflicts with approval routes
 router.get('/:eventId', eventController.getEventDetails);

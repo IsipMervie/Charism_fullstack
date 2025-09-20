@@ -1548,7 +1548,6 @@ function EventListPage() {
                                 className="admin-action-button view-button"
                                 onClick={() => navigate(`/events/${event._id}`)}
                               >
-                                <span className="button-icon">👁️</span>
                                 View Details
                               </button>
                               

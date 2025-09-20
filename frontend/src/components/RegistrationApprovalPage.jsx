@@ -290,54 +290,69 @@ function RegistrationApprovalPage() {
 
   return (
     <div className="registration-approval-page">
-      <div className="page-header">
-        <h1>Event Registration Approval</h1>
-        <p>Review and approve student event registrations</p>
+      <div className="registration-background">
+        <div className="background-pattern"></div>
       </div>
+      
+      <div className="registration-container">
+        <div className="page-header">
+          <h1 className="page-title">Event Registration Approval</h1>
+          <p className="page-subtitle">Review and approve student event registrations</p>
+        </div>
 
       {viewMode === 'events' && (
         <div className="events-section">
-          <div className="search-filters">
+          <div className="search-controls-section">
             <div className="search-box">
               <FaSearch className="search-icon" />
               <input
+                className="search-input"
                 type="text"
                 placeholder="Search events..."
                 value={eventSearchTerm}
                 onChange={(e) => setEventSearchTerm(e.target.value)}
               />
             </div>
+            <button 
+              className="refresh-button"
+              onClick={loadEvents}
+            >
+              <FaSpinner className={`refresh-icon ${loading ? 'spinning' : ''}`} />
+              Refresh
+            </button>
           </div>
 
           <div className="events-grid">
             {filteredEvents.map(event => (
               <div key={event._id} className="event-card">
-                <div className="event-header">
-                  <h3>{event.title}</h3>
-                  <span className="event-date">{formatDatePhilippines(event.date)}</span>
+                <div className="event-card-header">
+                  <h3 className="event-title">{event.title}</h3>
+                  <span className="event-date-badge">{formatDatePhilippines(event.date)}</span>
                 </div>
-                <div className="event-details">
-                  <div className="detail-row">
-                    <FaMapMarkerAlt className="detail-icon" />
+                <div className="event-meta">
+                  <div className="meta-item">
+                    <FaMapMarkerAlt className="meta-icon" />
                     <span>{event.location}</span>
                   </div>
-                  <div className="detail-row">
-                    <FaClock className="detail-icon" />
+                  <div className="meta-item">
+                    <FaClock className="meta-icon" />
                     <span>{event.startTime} - {event.endTime}</span>
                   </div>
-                  <div className="detail-row">
-                    <FaUsers className="detail-icon" />
+                  <div className="meta-item">
+                    <FaUsers className="meta-icon" />
                     <span>{safeLength(event.attendance)} registrations</span>
                   </div>
                 </div>
-                <button
-                  className="view-registrations-btn"
-                  onClick={() => loadEventRegistrations(event._id)}
-                  disabled={loadingRegistrations}
-                >
-                  <FaEye />
-                  {loadingRegistrations ? 'Loading...' : 'View Registrations'}
-                </button>
+                <div className="event-actions">
+                  <button
+                    className="view-registrations-btn"
+                    onClick={() => loadEventRegistrations(event._id)}
+                    disabled={loadingRegistrations}
+                  >
+                    <FaEye className="btn-icon" />
+                    {loadingRegistrations ? 'Loading...' : 'View Registrations'}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -428,6 +443,7 @@ function RegistrationApprovalPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
