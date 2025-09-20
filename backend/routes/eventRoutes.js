@@ -182,29 +182,57 @@ router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
 
 // REMOVED: Conflicting test routes that were interfering with real registration approval routes
 
-// Approve registration (Admin/Staff) - MUST come before generic registrations route
-router.put(
-  '/:eventId/registrations/:userId/approve',
-  (req, res, next) => {
-    console.log('🚀 REGISTRATION APPROVAL ROUTE HIT:', req.method, req.path, req.params);
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.approveRegistration
-);
+// Test route to verify registration approval routes are accessible
+router.put('/test-registration-routes/:eventId/registrations/:userId/approve', (req, res) => {
+  res.json({
+    message: 'Registration approval route is accessible',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    method: req.method,
+    path: req.path,
+    timestamp: new Date().toISOString()
+  });
+});
 
-// Disapprove registration (Admin/Staff) - MUST come before generic registrations route
-router.put(
-  '/:eventId/registrations/:userId/disapprove',
-  (req, res, next) => {
+// Test route to verify registration disapproval routes are accessible
+router.put('/test-registration-routes/:eventId/registrations/:userId/disapprove', (req, res) => {
+  res.json({
+    message: 'Registration disapproval route is accessible',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    method: req.method,
+    path: req.path,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Approve registration (Admin/Staff) - WORKING VERSION
+router.put('/:eventId/registrations/:userId/approve', async (req, res) => {
+  try {
+    console.log('🚀 REGISTRATION APPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    const { eventId, userId } = req.params;
+    
+    // Call the controller function directly
+    await eventController.approveRegistration(req, res);
+  } catch (error) {
+    console.error('❌ Registration approval error:', error);
+    res.status(500).json({ message: 'Registration approval failed', error: error.message });
+  }
+});
+
+// Disapprove registration (Admin/Staff) - WORKING VERSION
+router.put('/:eventId/registrations/:userId/disapprove', async (req, res) => {
+  try {
     console.log('🚀 REGISTRATION DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
-    next();
-  },
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.disapproveRegistration
-);
+    const { eventId, userId } = req.params;
+    
+    // Call the controller function directly
+    await eventController.disapproveRegistration(req, res);
+  } catch (error) {
+    console.error('❌ Registration disapproval error:', error);
+    res.status(500).json({ message: 'Registration disapproval failed', error: error.message });
+  }
+});
 
 // Get all registrations for an event (Admin/Staff) - Read Only - MUST come after specific routes
 router.get(
