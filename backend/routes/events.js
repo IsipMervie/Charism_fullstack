@@ -283,6 +283,26 @@ router.post('/', authMiddleware, async (req, res) => {
     console.log('   User Role:', req.user?.role);
     console.log('   Body:', req.body);
     
+    // Check if user is authenticated
+    if (!req.user) {
+      console.log('❌ No user found in request');
+      return res.status(401).json({ 
+        message: 'Authentication required',
+        error: 'AUTHENTICATION_REQUIRED'
+      });
+    }
+    
+    const userId = req.user.userId || req.user.id || req.user._id;
+    if (!userId) {
+      console.log('❌ No user ID found in request');
+      return res.status(401).json({ 
+        message: 'User ID not found in token',
+        error: 'USER_ID_NOT_FOUND'
+      });
+    }
+    
+    console.log('✅ User authenticated:', userId);
+    
     const Event = require('../models/Event');
     
     const {
@@ -300,10 +320,53 @@ router.post('/', authMiddleware, async (req, res) => {
       isVisibleToStudents
     } = req.body;
     
-    // Validation
-    if (!title || !description || !date || !startTime || !endTime || !location) {
+    // Enhanced validation with detailed error messages
+    const missingFields = [];
+    if (!title) missingFields.push('title');
+    if (!description) missingFields.push('description');
+    if (!date) missingFields.push('date');
+    if (!startTime) missingFields.push('startTime');
+    if (!endTime) missingFields.push('endTime');
+    if (!location) missingFields.push('location');
+    
+    if (missingFields.length > 0) {
+      console.log('❌ Validation failed - Missing fields:', missingFields);
+      console.log('📝 Request body:', req.body);
       return res.status(400).json({ 
-        message: 'Missing required fields: title, description, date, startTime, endTime, location' 
+        message: `Missing required fields: ${missingFields.join(', ')}`,
+        error: 'VALIDATION_ERROR',
+        missingFields: missingFields,
+        receivedFields: Object.keys(req.body)
+      });
+    }
+    
+    // Validate date format
+    if (isNaN(new Date(date).getTime())) {
+      console.log('❌ Invalid date format:', date);
+      return res.status(400).json({ 
+        message: 'Invalid date format. Please use ISO date format (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss.sssZ)',
+        error: 'INVALID_DATE_FORMAT',
+        receivedDate: date
+      });
+    }
+    
+    // Validate time format (basic check)
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(startTime)) {
+      console.log('❌ Invalid start time format:', startTime);
+      return res.status(400).json({ 
+        message: 'Invalid start time format. Please use HH:MM format (e.g., 09:00)',
+        error: 'INVALID_START_TIME_FORMAT',
+        receivedStartTime: startTime
+      });
+    }
+    
+    if (!timeRegex.test(endTime)) {
+      console.log('❌ Invalid end time format:', endTime);
+      return res.status(400).json({ 
+        message: 'Invalid end time format. Please use HH:MM format (e.g., 17:00)',
+        error: 'INVALID_END_TIME_FORMAT',
+        receivedEndTime: endTime
       });
     }
     
@@ -326,7 +389,7 @@ router.post('/', authMiddleware, async (req, res) => {
       image: req.file ? { url: req.file.path } : {},
       status: 'Active',
       isVisibleToStudents: isVisibleToStudents !== undefined ? isVisibleToStudents : true,
-      createdBy: req.user.userId || req.user.id || req.user._id,
+      createdBy: userId,
       requiresApproval: requiresApproval !== undefined ? requiresApproval : true,
       publicRegistrationToken,
       isPublicRegistrationEnabled: true,
