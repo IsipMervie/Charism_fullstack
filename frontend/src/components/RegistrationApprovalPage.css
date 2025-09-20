@@ -721,6 +721,23 @@
   gap: 1rem;
 }
 
+/* Center the event title section in desktop view */
+@media (min-width: 769px) {
+  .registrations-header {
+    justify-content: center;
+    position: relative;
+  }
+  
+  .registrations-header .back-button {
+    position: absolute;
+    left: 0;
+  }
+  
+  .registrations-header .event-title-section {
+    text-align: center;
+  }
+}
+
 /* Large Search Section */
 .registrations-search-section {
   margin-bottom: 2rem;

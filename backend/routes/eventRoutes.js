@@ -178,38 +178,9 @@ router.get(
 // Get event capacity status (public)
 router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
 
-// Test route for registration approval (no auth)
-router.put('/test-registration-approve/:eventId/:userId', (req, res) => {
-  res.json({
-    message: 'Test registration approval route working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
+// REMOVED: Another conflicting test route
 
-// Test route without middleware
-router.put('/test-no-middleware/:eventId/registrations/:userId/approve', (req, res) => {
-  res.json({
-    message: 'No middleware test working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    method: req.method,
-    path: req.path
-  });
-});
-
-// Test route for registration approval endpoints (no auth)
-router.put('/test-approval-endpoints/:eventId/registrations/:userId/approve', (req, res) => {
-  res.json({
-    message: 'Registration approval endpoint test working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    method: req.method,
-    path: req.path,
-    timestamp: new Date().toISOString()
-  });
-});
+// REMOVED: Conflicting test routes that were interfering with real registration approval routes
 
 // Approve registration (Admin/Staff) - MUST come before generic registrations route
 router.put(

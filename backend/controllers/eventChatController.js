@@ -141,73 +141,173 @@ const analyzeWithAzureVision = async (file) => {
   };
 };
 
-// Enhanced image filtering (no external APIs needed) - RELAXED VERSION
+// Enhanced image filtering (no external APIs needed) - STRICT VERSION FOR SEXUAL CONTENT
 const enhancedImageFiltering = async (file) => {
   try {
-    // Method 1: Check file characteristics that indicate inappropriate content (RELAXED)
+    const fileName = file.originalname.toLowerCase();
+    
+    // Method 1: Comprehensive filename pattern detection for sexual/inappropriate content
+    const sexualContentPatterns = [
+      // Explicit sexual terms
+      /porn|xxx|nsfw|explicit|adult|nude|naked|sex|sexual/i,
+      // Body parts
+      /penis|cock|dick|pussy|vagina|boobs|tits|breast|ass|butt/i,
+      // Sexual actions
+      /masturbat|orgasm|fuck|fucking|sex|sexual|intercourse/i,
+      // Inappropriate poses/positions
+      /nude|naked|undress|strip|lingerie|underwear/i,
+      // Tagalog inappropriate terms
+      /puta|putang|putangina|tangina|bastos|tarantado/i,
+      // Common variations and misspellings
+      /p0rn|pr0n|xoxo|adlt|nud3|s3x|fck|f\*ck|f\*\*k/i,
+      /p\*ta|p\*tang|g\*go|t\*ngina|t\*ng ina/i
+    ];
+    
+    const hasSexualPattern = sexualContentPatterns.some(pattern => pattern.test(fileName));
+    
+    // Method 2: Check file characteristics that indicate inappropriate content
     const suspiciousCharacteristics = {
-      // Only flag extremely large files (> 10MB)
-      extremelyLargeFile: file.size > 10 * 1024 * 1024, // > 10MB
+      // Flag large files that might contain inappropriate content
+      largeFile: file.size > 5 * 1024 * 1024, // > 5MB
       
-      // Only flag very small corrupted files
+      // Flag very small corrupted files
       corruptedFile: file.size < 1024, // < 1KB (likely corrupted)
       
-      // Only flag extremely large GIFs (> 10MB)
-      extremelyLargeGif: file.mimetype === 'image/gif' && file.size > 10 * 1024 * 1024
+      // Flag large GIFs that might be inappropriate
+      largeGif: file.mimetype === 'image/gif' && file.size > 5 * 1024 * 1024,
+      
+      // Flag files with suspicious extensions
+      suspiciousExtension: /\.(exe|bat|cmd|scr|pif)$/i.test(fileName)
     };
     
     // Count suspicious characteristics
     const suspiciousCount = Object.values(suspiciousCharacteristics).filter(Boolean).length;
     
-    // Method 2: Check filename patterns (ONLY explicit inappropriate terms)
-    const fileName = file.originalname.toLowerCase();
-    const explicitInappropriatePatterns = [
-      // Only the most explicit inappropriate terms
-      /porn|xxx|nsfw|explicit.*nude|nude.*explicit/i,
-      // Very explicit body parts
-      /penis|cock|pussy|vagina/i,
-      // Very explicit actions
-      /masturbat|orgasm/i
-    ];
-    
-    const hasExplicitPattern = explicitInappropriatePatterns.some(pattern => pattern.test(fileName));
-    
-    // Method 3: Check for corrupted or suspicious file types only
+    // Method 3: Check for corrupted or suspicious file types
     const suspiciousCombinations = [
-      // Only flag corrupted files
+      // Corrupted files
       file.size < 1024 && /\.(jpg|jpeg|png|gif)$/i.test(fileName),
-      // Only flag non-image files disguised as images
-      !file.mimetype.startsWith('image/') && /\.(jpg|jpeg|png|gif)$/i.test(fileName)
+      // Non-image files disguised as images
+      !file.mimetype.startsWith('image/') && /\.(jpg|jpeg|png|gif)$/i.test(fileName),
+      // Executable files disguised as images
+      /\.(exe|bat|cmd|scr|pif)$/i.test(fileName)
     ];
     
     const hasSuspiciousCombination = suspiciousCombinations.some(Boolean);
     
-    // Determine if inappropriate (MUCH MORE STRICT - need multiple flags)
-    const isInappropriate = (suspiciousCount >= 2 && hasExplicitPattern) || hasSuspiciousCombination;
+    // Method 4: Check for common inappropriate image naming patterns
+    const inappropriateNamingPatterns = [
+      /selfie.*nude|nude.*selfie/i,
+      /bikini.*selfie|selfie.*bikini/i,
+      /underwear|lingerie|bra|panties/i,
+      /bedroom|bed.*room|private/i,
+      /bathroom|shower|bath/i,
+      /mirror.*selfie|selfie.*mirror/i
+    ];
+    
+    const hasInappropriateNaming = inappropriateNamingPatterns.some(pattern => pattern.test(fileName));
+    
+    // Determine if inappropriate - STRICT DETECTION
+    const isInappropriate = hasSexualPattern || hasSuspiciousCombination || 
+                          (suspiciousCount >= 1 && hasInappropriateNaming) ||
+                          hasInappropriateNaming;
     
     return {
       isInappropriate,
-      reason: isInappropriate ? 'Suspicious image characteristics detected' : 'Image appears safe',
+      reason: isInappropriate ? 'Sexual or inappropriate content detected' : 'Image appears safe',
       detectedContent: {
         suspiciousCharacteristics,
-        hasSuspiciousPattern,
+        hasSexualPattern,
         hasSuspiciousCombination,
+        hasInappropriateNaming,
         suspiciousCount,
         fileSize: file.size,
         fileName: fileName,
         mimeType: file.mimetype
       },
-      confidence: isInappropriate ? Math.min(85, suspiciousCount * 20 + (hasSuspiciousPattern ? 30 : 0)) : 0
+      confidence: isInappropriate ? Math.min(85, suspiciousCount * 20 + (hasSexualPattern ? 30 : 0)) : 0,
+      method: 'Enhanced Image Filtering (Strict)'
+    };
+  } catch (error) {
+    console.error('Enhanced image filtering error:', error);
+    return {
+      isInappropriate: false,
+      reason: 'Image filtering error - allowing upload',
+      detectedContent: { error: error.message },
+      confidence: 0,
+      method: 'Enhanced Image Filtering (Error Fallback)'
+    };
+  }
+};
+
+// Additional image content analysis for detecting inappropriate content
+const analyzeImageForInappropriateContent = async (file) => {
+  try {
+    // This function can be extended with more sophisticated image analysis
+    // For now, we'll use the enhanced filename and pattern detection
+    
+    const fileName = file.originalname.toLowerCase();
+    
+    // Check for common inappropriate image naming conventions
+    const inappropriateImagePatterns = [
+      // Selfie-related inappropriate content
+      /selfie.*nude|nude.*selfie|selfie.*naked|naked.*selfie/i,
+      /selfie.*bikini|bikini.*selfie|selfie.*underwear|underwear.*selfie/i,
+      /selfie.*lingerie|lingerie.*selfie|selfie.*bra|bra.*selfie/i,
+      
+      // Bedroom/bathroom inappropriate content
+      /bedroom.*selfie|selfie.*bedroom|bed.*selfie|selfie.*bed/i,
+      /bathroom.*selfie|selfie.*bathroom|shower.*selfie|selfie.*shower/i,
+      /mirror.*selfie|selfie.*mirror|mirror.*nude|nude.*mirror/i,
+      
+      // Private/intimate content
+      /private.*photo|photo.*private|intimate.*photo|photo.*intimate/i,
+      /personal.*photo|photo.*personal|secret.*photo|photo.*secret/i,
+      
+      // Explicit content indicators
+      /explicit.*content|content.*explicit|adult.*content|content.*adult/i,
+      /nsfw.*content|content.*nsfw|not.*safe.*work|work.*safe/i
+    ];
+    
+    const hasInappropriateImagePattern = inappropriateImagePatterns.some(pattern => pattern.test(fileName));
+    
+    // Check file size patterns that might indicate inappropriate content
+    const suspiciousSizePatterns = {
+      // Very large files might contain inappropriate content
+      veryLarge: file.size > 8 * 1024 * 1024, // > 8MB
+      // Very small files might be corrupted or inappropriate
+      verySmall: file.size < 1024, // < 1KB
+      // Medium-large GIFs might be inappropriate animations
+      largeGif: file.mimetype === 'image/gif' && file.size > 3 * 1024 * 1024 // > 3MB GIF
+    };
+    
+    const hasSuspiciousSize = Object.values(suspiciousSizePatterns).some(Boolean);
+    
+    // Determine if inappropriate based on patterns and characteristics
+    const isInappropriate = hasInappropriateImagePattern || hasSuspiciousSize;
+    
+    return {
+      isInappropriate,
+      reason: isInappropriate ? 'Inappropriate image content pattern detected' : 'Image content appears appropriate',
+      detectedContent: {
+        inappropriateImagePatterns: hasInappropriateImagePattern,
+        suspiciousSizePatterns,
+        fileName,
+        fileSize: file.size,
+        mimeType: file.mimetype
+      },
+      confidence: isInappropriate ? 75 : 0,
+      method: 'Image Content Pattern Analysis'
     };
     
   } catch (error) {
-    console.error('Enhanced image filtering error:', error);
-    // If filtering fails, default to allowing the image (more lenient approach)
+    console.error('Image content analysis error:', error);
     return {
       isInappropriate: false,
-      reason: 'Image filtering failed - allowing for safety',
+      reason: 'Image content analysis error - allowing upload',
       detectedContent: { error: error.message },
-      confidence: 0
+      confidence: 0,
+      method: 'Image Content Analysis (Error Fallback)'
     };
   }
 };
@@ -339,18 +439,34 @@ exports.sendMessageWithFiles = async (req, res) => {
       if (isImage) {
         const fileName = file.originalname.toLowerCase();
         
-        // Extended suspicious filename patterns
+        // Comprehensive suspicious filename patterns for sexual/inappropriate content
         const suspiciousNames = [
-          // English inappropriate terms
-          'porn', 'xxx', 'adult', 'nude', 'naked', 'sex', 'sexual', 'fuck', 'fucking', 'bitch', 'slut', 'whore',
-          'dick', 'cock', 'pussy', 'ass', 'boobs', 'tits', 'breast', 'penis', 'vagina',
+          // Explicit sexual terms
+          'porn', 'xxx', 'nsfw', 'explicit', 'adult', 'nude', 'naked', 'sex', 'sexual', 'fuck', 'fucking',
+          'bitch', 'slut', 'whore', 'prostitute', 'hooker', 'escort',
+          
+          // Body parts (sexual context)
+          'dick', 'cock', 'penis', 'pussy', 'vagina', 'boobs', 'tits', 'breast', 'breasts', 'ass', 'butt',
+          'nipple', 'nipples', 'clit', 'clitoris', 'anus', 'butthole',
+          
+          // Sexual actions/positions
+          'masturbat', 'orgasm', 'cum', 'cumming', 'ejaculat', 'intercourse', 'penetrat', 'oral',
+          'blowjob', 'handjob', 'fingering', 'anal', 'missionary', 'doggy', 'cowgirl',
+          
+          // Inappropriate clothing/poses
+          'lingerie', 'underwear', 'bra', 'panties', 'thong', 'g-string', 'bikini', 'swimsuit',
+          'selfie', 'mirror', 'bedroom', 'bathroom', 'shower', 'bath', 'bed', 'private',
+          
           // Tagalog inappropriate terms
           'puta', 'putang', 'putangina', 'tangina', 'gago', 'gaga', 'bobo', 'tanga', 'ulol', 'hayop',
-          'leche', 'bastos', 'tarantado', 'siraulo', 'buang', 'buwang',
+          'leche', 'bastos', 'tarantado', 'siraulo', 'buang', 'buwang', 'walanghiya',
+          
           // Common variations and misspellings
-          'p0rn', 'pr0n', 'xxx', 'xoxo', 'adult', 'adlt', 'nude', 'nud3', 'sex', 's3x',
-          'fck', 'f*ck', 'f**k', 'f***', 'sh*t', 's**t', 'b*tch', 'a**hole',
-          'p*ta', 'p*tang', 'g*go', 't*ngina', 't*ng ina'
+          'p0rn', 'pr0n', 'xoxo', 'adlt', 'nud3', 's3x', 'fck', 'f*ck', 'f**k', 'f***',
+          'sh*t', 's**t', 'b*tch', 'a**hole', 'p*ta', 'p*tang', 'g*go', 't*ngina', 't*ng ina',
+          
+          // Additional inappropriate terms
+          'hentai', 'anime', 'manga', 'cartoon', 'drawing', 'art', 'sketch', 'illustration'
         ];
         
         // Check filename for inappropriate content
@@ -364,8 +480,13 @@ exports.sendMessageWithFiles = async (req, res) => {
         
         // Check for suspicious file extensions or patterns
         const suspiciousPatterns = [
-          /porn/i, /xxx/i, /adult/i, /nude/i, /sex/i, /fuck/i, /puta/i, /gago/i,
-          /naked/i, /nude/i, /sexual/i, /explicit/i, /nsfw/i
+          /porn/i, /xxx/i, /nsfw/i, /adult/i, /nude/i, /naked/i, /sex/i, /sexual/i, /fuck/i, /explicit/i,
+          /puta/i, /gago/i, /tangina/i, /bastos/i, /tarantado/i,
+          /dick/i, /cock/i, /penis/i, /pussy/i, /vagina/i, /boobs/i, /tits/i, /breast/i, /ass/i, /butt/i,
+          /masturbat/i, /orgasm/i, /cum/i, /intercourse/i, /oral/i, /anal/i,
+          /lingerie/i, /underwear/i, /bra/i, /panties/i, /thong/i, /bikini/i,
+          /selfie/i, /mirror/i, /bedroom/i, /bathroom/i, /shower/i, /bed/i, /private/i,
+          /hentai/i, /anime/i, /manga/i, /cartoon/i, /drawing/i, /art/i, /sketch/i
         ];
         
         if (suspiciousPatterns.some(pattern => pattern.test(fileName))) {
@@ -401,6 +522,16 @@ exports.sendMessageWithFiles = async (req, res) => {
             message: '🚫 Image contains inappropriate content. Please upload appropriate images only.',
             reason: imageFilterResult.reason,
             detectedContent: imageFilterResult.detectedContent
+          });
+        }
+        
+        // Additional image content analysis for inappropriate patterns
+        const contentAnalysisResult = await analyzeImageForInappropriateContent(file);
+        if (contentAnalysisResult.isInappropriate) {
+          return res.status(400).json({ 
+            message: '🚫 Image content pattern suggests inappropriate content. Please upload appropriate images only.',
+            reason: contentAnalysisResult.reason,
+            detectedContent: contentAnalysisResult.detectedContent
           });
         }
       }
