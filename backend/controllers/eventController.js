@@ -378,6 +378,11 @@ exports.createEvent = async (req, res) => {
       status: 'Active'
     };
 
+    // Generate public registration token if public registration is enabled
+    if (eventData.isPublicRegistrationEnabled) {
+      eventData.publicRegistrationToken = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
     // Handle image upload
     if (req.file) {
       // Store image data in MongoDB
@@ -883,46 +888,7 @@ exports.joinEvent = async (req, res) => {
 
     await event.save();
     
-    // Send registration confirmation email to student
-    // Make this completely non-blocking
-    if (req.user && req.user.email) {
-      setImmediate(async () => {
-        try {
-          const sendEmail = require('../utils/sendEmail');
-          const { getEventRegistrationConfirmationTemplate } = require('../utils/emailTemplates');
-          
-          // Format event date
-          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }) : 'TBD';
-          
-          // Prepare email content
-          const emailSubject = `Event Registration Confirmed - ${event.title}`;
-          const emailHtml = getEventRegistrationConfirmationTemplate(
-            req.user.name || req.user.firstName + ' ' + req.user.lastName,
-            event.title,
-            eventDate,
-            event.location || 'TBD',
-            event.requiresApproval
-          );
-          
-          // Send email
-          await sendEmail({
-            to: req.user.email,
-            subject: emailSubject,
-            html: emailHtml
-          });
-          
-          console.log(`📧 Registration confirmation email sent to ${req.user.email} for event: ${event.title}`);
-        } catch (emailError) {
-          console.error('❌ Failed to send registration confirmation email:', emailError.message);
-          // Email failure doesn't affect registration
-        }
-      });
-    }
+    // Email notifications disabled
     
     if (event.requiresApproval) {
       res.json({ 
@@ -1148,55 +1114,7 @@ exports.timeOut = async (req, res) => {
     attendance.timeOut = now;
     await event.save();
 
-    // Send completion email to student
-    // Make this completely non-blocking
-    setImmediate(async () => {
-      try {
-        const sendEmail = require('../utils/sendEmail');
-        const { getEventCompletionTemplate } = require('../utils/emailTemplates');
-        
-        // Get user details for email
-        const user = await User.findById(userId).select('name email');
-        if (!user || !user.email) {
-          console.log('❌ User not found or no email for completion notification');
-          return;
-        }
-        
-        // Calculate hours completed
-        const timeInDate = new Date(attendance.timeIn);
-        const timeOutDate = new Date(now);
-        const hoursCompleted = ((timeOutDate - timeInDate) / (1000 * 60 * 60)).toFixed(1);
-        
-        // Format event date
-        const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }) : 'TBD';
-        
-        // Prepare email content
-        const emailSubject = `Event Completed - ${event.title}`;
-        const emailHtml = getEventCompletionTemplate(
-          user.name,
-          event.title,
-          eventDate,
-          hoursCompleted
-        );
-        
-        // Send email
-        await sendEmail({
-          to: user.email,
-          subject: emailSubject,
-          html: emailHtml
-        });
-        
-        console.log(`✅ Event completion email sent to ${user.email} for event: ${event.title}`);
-      } catch (emailError) {
-        console.error('❌ Error sending event completion email:', emailError);
-        // Don't throw error - email failure shouldn't affect the main operation
-      }
-    });
+    // Email notifications disabled
 
     res.json({ message: 'Time out recorded successfully.' });
   } catch (err) {
@@ -1583,13 +1501,13 @@ exports.disapproveAttendance = async (req, res) => {
 
     await event.save();
 
-    // Send email notification to student about attendance disapproval
+    // Send email notification to user about attendance disapproval
     if (attendance.userId && attendance.userId.email) {
       // Send email asynchronously without blocking the response
       setImmediate(async () => {
         try {
           const sendEmail = require('../utils/sendEmail');
-          const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+          const { getAttendanceDisapprovalTemplate } = require('../utils/emailTemplates');
           
           // Check email configuration
           if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
@@ -1605,39 +1523,29 @@ exports.disapproveAttendance = async (req, res) => {
             day: 'numeric'
           }) : 'TBD';
           
-          // Prepare email content - use disapproval template with attendance context
-          const emailSubject = `Attendance Update - ${event.title}`;
-          const emailHtml = getEventRegistrationDisapprovalTemplate(
+          const emailContent = getAttendanceDisapprovalTemplate(
             attendance.userId.name,
             event.title,
             eventDate,
-            `Your attendance for this event has been disapproved. Reason: ${reason.trim()}`
+            reason.trim()
           );
           
-          // Send email
           const result = await sendEmail(
             attendance.userId.email,
-            emailSubject,
-            undefined,
-            emailHtml,
+            `CHARISM - Attendance Update`,
+            '',
+            emailContent,
             true
           );
           
           if (result.success) {
-            console.log(`📧 Attendance disapproval email sent successfully to ${attendance.userId.email} for event: ${event.title}`);
+            console.log(`✅ Attendance disapproval email sent to ${attendance.userId.email}`);
           } else {
             console.warn(`⚠️ Attendance disapproval email failed: ${result.message}`);
           }
         } catch (emailError) {
-          console.error('❌ Failed to send attendance disapproval email:', emailError.message);
-          console.error('❌ Email error details:', {
-            to: attendance.userId.email,
-            event: event.title,
-            reason: reason.trim(),
-            error: emailError.message,
-            stack: emailError.stack
-          });
-          // Email failure doesn't affect disapproval
+          console.error('❌ Failed to send attendance disapproval email:', emailError);
+          // Don't fail the request if email fails
         }
       });
     }
@@ -1750,209 +1658,47 @@ exports.toggleEventAvailability = async (req, res) => {
   }
 };
 
-// Approve Registration
+// Approve Registration (Admin/Staff)
 exports.approveRegistration = async (req, res) => {
   try {
-    console.log('✅ APPROVE REGISTRATION FUNCTION CALLED');
-    console.log('✅ Approving registration...');
-    console.log('✅ Request method:', req.method);
-    console.log('✅ Request URL:', req.originalUrl);
-    console.log('✅ Request params:', req.params);
     const { eventId, userId } = req.params;
-    console.log(`Event ID: ${eventId}, User ID: ${userId}`);
-
-    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
+    const event = await Event.findById(eventId);
     if (!event) {
-      console.log('❌ Event not found');
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    console.log('🔍 Looking for attendance record...');
-    console.log('🔍 Event attendance records:', event.attendance.map(a => ({
-      userId: a.userId,
-      userIdString: a.userId.toString(),
-      targetUserId: userId,
-      match: a.userId.toString() === userId
-    })));
-
-    const attendance = event.attendance.find(a => a.userId.toString() === userId);
+    // Find the attendance record for this user
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
+    );
 
     if (!attendance) {
-      console.log('❌ Attendance record not found');
-      console.log('❌ Available user IDs:', event.attendance.map(a => a.userId.toString()));
-      console.log('❌ Looking for user ID:', userId);
-      return res.status(404).json({ message: 'Attendance record not found.' });
+      return res.status(404).json({ message: 'Registration not found.' });
     }
 
-    // Check if event is full (only for events with max participants)
-    if (event.maxParticipants > 0) {
-      const approvedCount = event.attendance.filter(a => a.registrationApproved === true).length;
-      if (approvedCount >= event.maxParticipants) {
-        console.log('❌ Event is full');
-        return res.status(400).json({ 
-          message: 'Cannot approve registration. Event is full.' 
-        });
-      }
+    if (attendance.registrationApproved) {
+      return res.status(400).json({ message: 'Registration is already approved.' });
     }
 
-    // Allow re-approval if already approved
-    const wasAlreadyApproved = attendance.registrationApproved;
-    
+    // Approve the registration
     attendance.registrationApproved = true;
     attendance.registrationApprovedBy = req.user.userId;
     attendance.registrationApprovedAt = new Date();
-    attendance.status = 'Attended'; // Change status to Attended after approval
-
-    await event.save();
-    
-    console.log(`✅ Registration ${wasAlreadyApproved ? 're-approved' : 'approved'} successfully`);
-    
-    // Send email notification to student (only for new approvals, not re-approvals)
-    // Make this completely non-blocking
-    if (!wasAlreadyApproved && attendance.userId && attendance.userId.email) {
-      // Send email asynchronously without blocking the response
-      setImmediate(async () => {
-        try {
-          // TEMPORARILY DISABLE EMAIL TO TEST APPROVAL PROCESS
-          console.log('📧 Email sending temporarily disabled for testing');
-          return;
-          
-          const sendEmail = require('../utils/sendEmail');
-          const { getEventRegistrationApprovalTemplate } = require('../utils/emailTemplates');
-          
-          // Check email configuration
-          if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
-            console.warn('⚠️ Email not configured - skipping approval email');
-            return;
-          }
-          
-          // Format event date
-          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }) : 'TBD';
-          
-          // Prepare email content
-          const emailSubject = `Event Registration Approved - ${event.title}`;
-          const emailHtml = getEventRegistrationApprovalTemplate(
-            attendance.userId.name,
-            event.title,
-            eventDate,
-            event.location || 'TBD',
-            event.hours || 0
-          );
-          
-          // Send email
-          const result = await sendEmail(
-            attendance.userId.email,
-            emailSubject,
-            undefined,
-            emailHtml,
-            true
-          );
-          
-          if (result.success) {
-            console.log(`📧 Approval email sent successfully to ${attendance.userId.email} for event: ${event.title}`);
-          } else {
-            console.warn(`⚠️ Approval email failed: ${result.message}`);
-          }
-        } catch (emailError) {
-          console.error('❌ Failed to send approval email:', emailError.message);
-          console.error('❌ Email error details:', {
-            to: attendance.userId.email,
-            event: event.title,
-            error: emailError.message,
-            stack: emailError.stack
-          });
-          // Email failure doesn't affect approval
-        }
-      });
-    }
-    
-    if (wasAlreadyApproved) {
-      res.json({ message: 'Registration re-approved successfully.' });
-    } else {
-      res.json({ message: 'Registration approved successfully.' });
-    }
-  } catch (err) {
-    console.error('❌ Error in approveRegistration:', err);
-    res.status(500).json({ message: 'Error approving registration.', error: err.message });
-  }
-};
-
-// Disapprove Registration (can disapprove both pending and approved)
-exports.disapproveRegistration = async (req, res) => {
-  try {
-    console.log('❌ DISAPPROVE REGISTRATION FUNCTION CALLED');
-    console.log('❌ Disapproving registration...');
-    console.log('❌ Request method:', req.method);
-    console.log('❌ Request URL:', req.originalUrl);
-    console.log('❌ Request params:', req.params);
-    const { eventId, userId } = req.params;
-    const { reason } = req.body;
-    console.log(`Event ID: ${eventId}, User ID: ${userId}, Reason: ${reason}`);
-    
-    if (!reason || reason.trim() === '') {
-      console.log('❌ Reason is required');
-      return res.status(400).json({ message: 'Reason for disapproval is required.' });
-    }
-
-    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
-    
-    if (!event) {
-      console.log('❌ Event not found');
-      return res.status(404).json({ message: 'Event not found.' });
-    }
-
-    console.log('🔍 Looking for attendance record in disapproval...');
-    console.log('🔍 Event attendance records:', event.attendance.map(a => ({
-      userId: a.userId,
-      userIdString: a.userId.toString(),
-      targetUserId: userId,
-      match: a.userId.toString() === userId
-    })));
-
-    const attendance = event.attendance.find(a => a.userId.toString() === userId);
-
-    if (!attendance) {
-      console.log('❌ Attendance record not found');
-      console.log('❌ Available user IDs:', event.attendance.map(a => a.userId.toString()));
-      console.log('❌ Looking for user ID:', userId);
-      return res.status(404).json({ message: 'Attendance record not found.' });
-    }
-
-    // Store disapproval information
-    attendance.status = 'Disapproved';
-    attendance.reason = reason.trim();
-    attendance.approvedBy = req.user.userId;
-    attendance.approvedAt = new Date();
-    
-    // If it was previously approved, mark it as disapproved but keep the record
-    if (attendance.registrationApproved) {
-      attendance.registrationApproved = false;
-      attendance.registrationApprovedBy = null;
-      attendance.registrationApprovedAt = null;
-    }
 
     await event.save();
 
-    console.log('✅ Registration disapproved successfully');
-    
-    // Send email notification to student
-    // Make this completely non-blocking
+    // Send email notification to user about registration approval
     if (attendance.userId && attendance.userId.email) {
       // Send email asynchronously without blocking the response
       setImmediate(async () => {
         try {
           const sendEmail = require('../utils/sendEmail');
-          const { getEventRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+          const { getRegistrationApprovalTemplate } = require('../utils/emailTemplates');
           
           // Check email configuration
           if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
-            console.warn('⚠️ Email not configured - skipping disapproval email');
+            console.warn('⚠️ Email not configured - skipping registration approval email');
             return;
           }
           
@@ -1964,51 +1710,131 @@ exports.disapproveRegistration = async (req, res) => {
             day: 'numeric'
           }) : 'TBD';
           
-          // Prepare email content
-          const emailSubject = `Event Registration Update - ${event.title}`;
-          const emailHtml = getEventRegistrationDisapprovalTemplate(
+          const emailContent = getRegistrationApprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            eventDate,
+            event.location || 'TBD',
+            event.hours
+          );
+          
+          const result = await sendEmail(
+            attendance.userId.email,
+            `CHARISM - Your Registration Has Been Approved`,
+            '',
+            emailContent,
+            true
+          );
+          
+          if (result.success) {
+            console.log(`✅ Registration approval email sent to ${attendance.userId.email}`);
+          } else {
+            console.warn(`⚠️ Registration approval email failed: ${result.message}`);
+          }
+        } catch (emailError) {
+          console.error('❌ Failed to send registration approval email:', emailError);
+          // Don't fail the request if email fails
+        }
+      });
+    }
+
+    res.json({ message: 'Registration approved successfully.' });
+  } catch (err) {
+    console.error('Error in approveRegistration:', err);
+    res.status(500).json({ message: 'Error approving registration.', error: err.message });
+  }
+};
+
+// Disapprove Registration (Admin/Staff)
+exports.disapproveRegistration = async (req, res) => {
+  try {
+    const { eventId, userId } = req.params;
+    const { reason } = req.body;
+    
+    if (!reason || reason.trim() === '') {
+      return res.status(400).json({ message: 'Reason for disapproval is required.' });
+    }
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Find the attendance record for this user
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
+    );
+
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found.' });
+    }
+
+    // Disapprove the registration
+    attendance.registrationApproved = false;
+    attendance.status = 'Disapproved';
+    attendance.reason = reason.trim();
+    attendance.registrationApprovedBy = req.user.userId;
+    attendance.registrationApprovedAt = new Date();
+
+    await event.save();
+
+    // Send email notification to user about registration disapproval
+    if (attendance.userId && attendance.userId.email) {
+      // Send email asynchronously without blocking the response
+      setImmediate(async () => {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+          
+          // Check email configuration
+          if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+            console.warn('⚠️ Email not configured - skipping registration disapproval email');
+            return;
+          }
+          
+          // Format event date
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          const emailContent = getRegistrationDisapprovalTemplate(
             attendance.userId.name,
             event.title,
             eventDate,
             reason.trim()
           );
           
-          // Send email
           const result = await sendEmail(
             attendance.userId.email,
-            emailSubject,
-            undefined,
-            emailHtml,
+            `CHARISM - Registration Update`,
+            '',
+            emailContent,
             true
           );
           
           if (result.success) {
-            console.log(`📧 Disapproval email sent successfully to ${attendance.userId.email} for event: ${event.title}`);
+            console.log(`✅ Registration disapproval email sent to ${attendance.userId.email}`);
           } else {
-            console.warn(`⚠️ Disapproval email failed: ${result.message}`);
+            console.warn(`⚠️ Registration disapproval email failed: ${result.message}`);
           }
         } catch (emailError) {
-          console.error('❌ Failed to send disapproval email:', emailError.message);
-          console.error('❌ Email error details:', {
-            to: attendance.userId.email,
-            event: event.title,
-            reason: reason.trim(),
-            error: emailError.message,
-            stack: emailError.stack
-          });
-          // Email failure doesn't affect disapproval
+          console.error('❌ Failed to send registration disapproval email:', emailError);
+          // Don't fail the request if email fails
         }
       });
     }
-    
+
     res.json({ message: 'Registration disapproved successfully.' });
   } catch (err) {
-    console.error('❌ Error in disapproveRegistration:', err);
+    console.error('Error in disapproveRegistration:', err);
     res.status(500).json({ message: 'Error disapproving registration.', error: err.message });
   }
 };
 
-// Get All Registrations for an Event (Admin/Staff)
+// Get All Registrations for an Event (Admin/Staff) - Read Only
 exports.getAllEventRegistrations = async (req, res) => {
   try {
     console.log('🔍 getAllEventRegistrations called');
@@ -2071,167 +1897,7 @@ exports.getAllEventRegistrations = async (req, res) => {
   }
 };
 
-// Get Pending Registrations
-exports.getPendingRegistrations = async (req, res) => {
-  try {
-    console.log('🔍 Fetching pending registrations...');
-    
-    // Get all events that have pending registrations
-    const events = await Event.find({
-      'attendance': {
-        $elemMatch: {
-          'registrationApproved': false,
-          'status': 'Pending'
-        }
-      }
-    })
-    .populate('createdBy', 'name')
-    .populate('attendance.userId', 'name email department academicYear year section')
-    .populate('attendance.registrationApprovedBy', 'name');
 
-    console.log(`Found ${events.length} events with pending registrations`);
-
-    // Filter to only show events where the current user has permission to approve
-    const user = await User.findById(req.user.userId);
-    if (!user) {
-      console.error('❌ User not found in getPendingRegistrations');
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    console.log(`👤 User role: ${user.role}, Department: ${user.department}`);
-
-    let filteredEvents = events;
-
-    if (user.role === 'Staff') {
-      // Staff can only approve registrations for events in their department
-      // If staff doesn't have a department set, they can only see events for all departments
-      filteredEvents = events.filter(event => {
-        if (event.isForAllDepartments) return true;
-        if (!user.department) return false; // Staff without department can only see all-department events
-        if (event.departments && event.departments.length > 0) {
-          return event.departments.includes(user.department);
-        }
-        return event.department === user.department;
-      });
-      console.log(`🔒 Filtered to ${filteredEvents.length} events for staff department`);
-    }
-    // Admin users can see all events regardless of department
-
-    // Filter out events that don't have any pending registrations after filtering
-    const finalEvents = filteredEvents.filter(event => {
-      return event.attendance && event.attendance.some(att => 
-        !att.registrationApproved && att.status === 'Pending'
-      );
-    });
-
-    // Format the response to match frontend expectations
-    const formattedEvents = finalEvents.map(event => ({
-      _id: event._id,
-      title: event.title,
-      date: event.date,
-      time: event.time,
-      location: event.location,
-      department: event.department,
-      departments: event.departments,
-      isForAllDepartments: event.isForAllDepartments,
-      maxParticipants: event.maxParticipants,
-      createdBy: event.createdBy,
-      attendance: event.attendance.filter(att => 
-        !att.registrationApproved && att.status === 'Pending'
-      )
-    }));
-
-    console.log(`✅ Returning ${formattedEvents.length} events with pending registrations`);
-    res.json(formattedEvents);
-  } catch (err) {
-    console.error('❌ Error in getPendingRegistrations:', err);
-    console.error('Error stack:', err.stack);
-    res.status(500).json({ message: 'Error fetching pending registrations.', error: err.message });
-  }
-};
-
-// Get Pending Registrations for a Specific Event
-exports.getPendingRegistrationsForEvent = async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    
-    if (!eventId) {
-      return res.status(400).json({ 
-        message: 'Event ID is required',
-        error: 'MISSING_EVENT_ID'
-      });
-    }
-
-    const event = await Event.findById(eventId)
-      .populate('createdBy', 'name')
-      .populate('attendance.userId', 'name email department academicYear year section')
-      .populate('attendance.registrationApprovedBy', 'name');
-
-    if (!event) {
-      return res.status(404).json({ 
-        message: 'Event not found',
-        error: 'EVENT_NOT_FOUND'
-      });
-    }
-
-    // Filter to only show pending registrations
-    const pendingRegistrations = event.attendance.filter(att => 
-      !att.registrationApproved && att.status === 'Pending'
-    );
-
-    // Check user permissions
-    const user = await User.findById(req.user.userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    if (user.role === 'Staff') {
-      // Staff can only see registrations for events in their department
-      // If staff doesn't have a department set, they can only see events for all departments
-      if (!event.isForAllDepartments) {
-        if (!user.department) {
-          return res.status(403).json({ 
-            message: 'You need to have a department assigned to view department-specific events',
-            error: 'INSUFFICIENT_PERMISSIONS'
-          });
-        }
-        if ((!event.departments || !event.departments.includes(user.department)) &&
-            event.department !== user.department) {
-          return res.status(403).json({ 
-            message: 'You do not have permission to view registrations for this event',
-            error: 'INSUFFICIENT_PERMISSIONS'
-          });
-        }
-      }
-    }
-    // Admin users can see all events regardless of department
-
-    res.json({
-      eventId: event._id,
-      eventTitle: event.title,
-      eventDate: event.date,
-      registrations: {
-        pending: pendingRegistrations,
-        total: event.attendance.length
-      }
-    });
-
-  } catch (err) {
-    console.error('Error in getPendingRegistrationsForEvent:', err);
-    
-    if (err.name === 'CastError') {
-      return res.status(400).json({ 
-        message: 'Invalid event ID format',
-        error: 'INVALID_ID_FORMAT'
-      });
-    }
-    
-    res.status(500).json({ 
-      message: 'Error fetching pending registrations for event.', 
-      error: err.message 
-    });
-  }
-};
 
 // Analytics
 exports.getAnalytics = async (req, res) => {
@@ -2404,6 +2070,67 @@ exports.getStudentsByYear = async (req, res) => {
   } catch (err) {
     console.error('Error in getStudentsByYear:', err);
     res.status(500).json({ message: 'Error fetching students by year.', error: err.message });
+  }
+};
+
+// Get Pending Registrations (Admin/Staff)
+exports.getPendingRegistrations = async (req, res) => {
+  try {
+    console.log('=== GET PENDING REGISTRATIONS ===');
+    
+    // Find all events with pending registrations
+    const events = await Event.find({
+      'attendance.registrationApproved': false,
+      'attendance.status': 'Pending'
+    }).populate('attendance.userId', 'name email department academicYear year section')
+      .populate('createdBy', 'name');
+
+    if (!events || events.length === 0) {
+      return res.json({ 
+        message: 'No pending registrations found.',
+        pendingRegistrations: []
+      });
+    }
+
+    // Extract pending registrations from all events
+    const pendingRegistrations = [];
+    events.forEach(event => {
+      const pendingAttendees = event.attendance.filter(
+        att => !att.registrationApproved && att.status === 'Pending'
+      );
+      
+      pendingAttendees.forEach(attendance => {
+        pendingRegistrations.push({
+          eventId: event._id,
+          eventTitle: event.title,
+          eventDate: event.date,
+          userId: attendance.userId._id,
+          userName: attendance.userId.name,
+          userEmail: attendance.userId.email,
+          userDepartment: attendance.userId.department,
+          userAcademicYear: attendance.userId.academicYear,
+          userYear: attendance.userId.year,
+          userSection: attendance.userId.section,
+          registeredAt: attendance.registeredAt,
+          attendanceId: attendance._id
+        });
+      });
+    });
+
+    console.log(`✅ Found ${pendingRegistrations.length} pending registrations`);
+    
+    res.json({
+      message: `Found ${pendingRegistrations.length} pending registrations.`,
+      pendingRegistrations: pendingRegistrations,
+      totalCount: pendingRegistrations.length
+    });
+    
+  } catch (err) {
+    console.error('Error in getPendingRegistrations:', err);
+    res.status(500).json({ 
+      message: 'Error fetching pending registrations.', 
+      error: err.message 
+    });
   }
 };
 

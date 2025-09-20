@@ -218,8 +218,8 @@ function AdminDashboard() {
                 <FaUserCheck />
               </div>
               <div className="action-content">
-                <div className="action-title">Event Registration Approval</div>
-                <div className="action-description">Review and approve student event registrations</div>
+                <div className="action-title">Event Registration Management</div>
+                <div className="action-description">View student event registrations (read-only)</div>
               </div>
               <div className="action-arrow">→</div>
             </div>

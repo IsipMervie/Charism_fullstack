@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getEventDetails, getPublicEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaCheck, FaTimes, FaArrowLeft, FaSignInAlt, FaComments, FaShare } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaShare, FaCheck, FaTimes } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import EventChat from './EventChat';
 
@@ -19,6 +19,19 @@ function EventDetailsPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [isUserApprovedForEvent, setIsUserApprovedForEvent] = useState(false);
+  const [actionLoading, setActionLoading] = useState({});
+
+  // Attendance disapproval reasons
+  const attendanceDisapprovalReasons = [
+    'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
+    'Late Arrival (Arrived late and wasn\'t present during the call time)',
+    'Left Early (Left in the middle of the duration of commserv)',
+    'Did not sign the Community Service Form',
+    'Did not sign attendance sheet (if any)',
+    'Absent (Student was absent and didn\'t attend the commserv)',
+    'Not wearing the required uniform',
+    'Other'
+  ];
 
   const navigate = useNavigate();
   
@@ -48,139 +61,7 @@ function EventDetailsPage() {
     setIsVisible(true);
   }, []);
 
-  // Handle approve attendance with confirmation
-  const handleApprove = async (userId) => {
-    if (!isAuthenticated) {
-      Swal.fire('Authentication Required', 'Please log in to perform this action.', 'info');
-      return;
-    }
-    
-    // Find the participant in the event
-    const participant = event?.attendance?.find(p => p.userId._id === userId || p.userId === userId);
-    
-    // Check if student has timed out
-    if (!participant?.timeOut) {
-      Swal.fire('Cannot Approve', 'Student has not timed out yet. Attendance can only be approved after time-out.', 'warning');
-      return;
-    }
 
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to approve this attendance?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, approve it!',
-      cancelButtonText: 'Cancel'
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await approveAttendance(eventId, userId);
-        Swal.fire('Success', 'Attendance approved!', 'success');
-        // Refresh event details
-        const updatedEvent = await getEventDetails(eventId);
-        setEvent(updatedEvent);
-      } catch (err) {
-        Swal.fire('Error', err.message || 'Failed to approve attendance.', 'error');
-      }
-    }
-  };
-
-  const handleDisapprove = async (userId) => {
-    if (!isAuthenticated) {
-      Swal.fire('Authentication Required', 'Please log in to perform this action.', 'info');
-      return;
-    }
-    
-    // Predefined disapproval reasons
-    const disapprovalReasons = [
-      'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
-      'Late Arrival (Arrived late and wasn\'t present during the call time)',
-      'Left Early (Left in the middle of the duration of commserv)',
-      'Did not sign the Community Service Form',
-      'Did not sign attendance sheet (if any)',
-      'Absent (Student was absent and didn\'t attend the commserv)',
-      'Not wearing the required uniform',
-      'Full slot',
-      'Other'
-    ];
-    
-    const { value: formData } = await Swal.fire({
-      title: 'Reason for Disapproval',
-      html: `
-        <div style="text-align: left;">
-          <p style="margin-bottom: 15px; font-weight: 500;">Reasons why this student is disapproved (Attendance and During Duration of commserv):</p>
-          <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-            <option value="">Select a reason...</option>
-            ${disapprovalReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('')}
-          </select>
-          <div id="other-reason-container" style="display: none; margin-top: 10px;">
-            <label for="other-reason" style="display: block; margin-bottom: 5px; font-weight: 500;">Please specify other reason:</label>
-            <textarea id="other-reason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 80px;" placeholder="Enter your specific reason here..."></textarea>
-          </div>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Submit',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6c757d',
-      preConfirm: () => {
-        const selectedReason = document.getElementById('disapproval-reason').value;
-        const otherReason = document.getElementById('other-reason').value;
-        
-        if (!selectedReason) {
-          Swal.showValidationMessage('Please select a reason for disapproval');
-          return false;
-        }
-        
-        if (selectedReason === 'Other' && !otherReason.trim()) {
-          Swal.showValidationMessage('Please specify the other reason');
-          return false;
-        }
-        
-        return {
-          reason: selectedReason === 'Other' ? otherReason.trim() : selectedReason,
-          selectedReason: selectedReason
-        };
-      },
-      didOpen: () => {
-        const reasonSelect = document.getElementById('disapproval-reason');
-        const otherContainer = document.getElementById('other-reason-container');
-        
-        reasonSelect.addEventListener('change', (e) => {
-          if (e.target.value === 'Other') {
-            otherContainer.style.display = 'block';
-          } else {
-            otherContainer.style.display = 'none';
-          }
-        });
-      }
-    });
-
-    if (formData) {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: `Do you want to disapprove this attendance?\n\nReason: ${formData.reason}`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, disapprove it!',
-        cancelButtonText: 'Cancel'
-      });
-
-      if (result.isConfirmed) {
-        try {
-          await disapproveAttendance(eventId, userId, formData.reason);
-          Swal.fire('Success', 'Attendance disapproved!', 'success');
-          // Refresh event details
-          const updatedEvent = await getEventDetails(eventId);
-          setEvent(updatedEvent);
-        } catch (err) {
-          Swal.fire('Error', 'Failed to disapprove attendance.', 'error');
-        }
-      }
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -239,6 +120,112 @@ function EventDetailsPage() {
       }).then(() => navigate('/events'));
     }
   }, [loading, error, event, navigate]);
+
+  const handleApproveAttendance = async (userId) => {
+    // Find the participant in the event
+    const participant = event?.attendance?.find(p => p.userId._id === userId || p.userId === userId);
+    
+    // Check if student has timed out
+    if (!participant?.timeOut) {
+      Swal.fire('Cannot Approve', 'Student has not timed out yet. Attendance can only be approved after time-out.', 'warning');
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to approve this attendance?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, approve it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: true }));
+      try {
+        await approveAttendance(eventId, userId);
+        Swal.fire('Success', 'Attendance approved successfully!', 'success');
+        // Reload event data
+        loadEventDetails();
+      } catch (error) {
+        Swal.fire('Error', error.message || 'Failed to approve attendance.', 'error');
+      } finally {
+        setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: false }));
+      }
+    }
+  };
+
+  const handleDisapproveAttendance = async (userId) => {
+    // Find the participant in the event
+    const participant = event?.attendance?.find(p => p.userId._id === userId || p.userId === userId);
+    
+    // Show dropdown for disapproval reason
+    const { value: reasonData } = await Swal.fire({
+      title: 'Reason for Disapproval',
+      html: `
+        <div style="text-align: left;">
+          <p style="margin-bottom: 15px;">Please select a reason for disapproving ${participant?.userId?.name || 'student'}'s attendance:</p>
+          <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+            <option value="">Select a reason...</option>
+            ${attendanceDisapprovalReasons.map((reason, index) => `<option value="${index}">${reason}</option>`).join('')}
+          </select>
+          <div id="other-reason-container" style="display: none; margin-top: 10px;">
+            <label for="other-reason" style="display: block; margin-bottom: 5px; font-weight: 500;">Please specify other reason:</label>
+            <textarea id="other-reason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 80px;" placeholder="Enter your specific reason here..."></textarea>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Disapprove',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc3545',
+      preConfirm: () => {
+        const selectedReason = document.getElementById('disapproval-reason').value;
+        const otherReason = document.getElementById('other-reason').value;
+        
+        if (!selectedReason) {
+          Swal.showValidationMessage('Please select a reason for disapproval');
+          return false;
+        }
+        
+        if (selectedReason === '7' && !otherReason.trim()) { // "Other" is index 7
+          Swal.showValidationMessage('Please specify the other reason');
+          return false;
+        }
+        
+        return {
+          reason: selectedReason === '7' ? otherReason.trim() : attendanceDisapprovalReasons[selectedReason],
+          selectedReason: selectedReason
+        };
+      },
+      didOpen: () => {
+        const reasonSelect = document.getElementById('disapproval-reason');
+        const otherContainer = document.getElementById('other-reason-container');
+        
+        reasonSelect.addEventListener('change', (e) => {
+          if (e.target.value === '7') { // "Other" is index 7
+            otherContainer.style.display = 'block';
+          } else {
+            otherContainer.style.display = 'none';
+          }
+        });
+      }
+    });
+
+    if (reasonData) {
+      setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: true }));
+      try {
+        await disapproveAttendance(eventId, userId, reasonData.reason);
+        Swal.fire('Success', 'Attendance disapproved successfully!', 'success');
+        // Reload event data
+        loadEventDetails();
+      } catch (error) {
+        Swal.fire('Error', error.message || 'Failed to disapprove attendance.', 'error');
+      } finally {
+        setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: false }));
+      }
+    }
+  };
 
   const handleShareEvent = (event) => {
     const frontendUrl = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
@@ -480,18 +467,26 @@ function EventDetailsPage() {
                       {attendance.status === 'Pending' && (
                         <>
                           <button 
-                            onClick={() => handleApprove(attendance.userId?._id || attendance.userId)}
+                            onClick={() => handleApproveAttendance(attendance.userId?._id || attendance.userId)}
                             className="approve-button"
+                            disabled={actionLoading[`approve_${attendance.userId?._id || attendance.userId}`]}
                           >
-                            <FaCheck /> Approve
+                            <FaCheck /> {actionLoading[`approve_${attendance.userId?._id || attendance.userId}`] ? 'Approving...' : 'Approve'}
                           </button>
                           <button 
-                            onClick={() => handleDisapprove(attendance.userId?._id || attendance.userId)}
+                            onClick={() => handleDisapproveAttendance(attendance.userId?._id || attendance.userId)}
                             className="disapprove-button"
+                            disabled={actionLoading[`disapprove_${attendance.userId?._id || attendance.userId}`]}
                           >
-                            <FaTimes /> Disapprove
+                            <FaTimes /> {actionLoading[`disapprove_${attendance.userId?._id || attendance.userId}`] ? 'Disapproving...' : 'Disapprove'}
                           </button>
                         </>
+                      )}
+                      {attendance.status === 'Approved' && (
+                        <span className="approved-note">✅ Attendance approved</span>
+                      )}
+                      {attendance.status === 'Disapproved' && (
+                        <span className="disapproved-note">❌ Attendance disapproved</span>
                       )}
                     </div>
                   </div>

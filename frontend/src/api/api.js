@@ -1687,95 +1687,6 @@ export const getPendingRegistrationsForEvent = async (eventId) => {
   }
 };
 
-export const approveRegistration = async (eventId, userId) => {
-  try {
-    console.log(`✅ Approving registration for event ${eventId}, user ${userId}`);
-    console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/approve`);
-    console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
-    console.log(`🔑 Token exists: ${!!localStorage.getItem('token')}`);
-    console.log(`👤 User role: ${localStorage.getItem('role')}`);
-    
-    // Add cache-busting parameter and force fresh request
-    const timestamp = Date.now();
-    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve?t=${timestamp}`, {}, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
-      }
-    });
-    console.log('✅ Registration approved successfully:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error approving registration:', error);
-    console.error('❌ Request URL:', error.config?.url);
-    console.error('❌ Full URL:', `${axiosInstance.defaults.baseURL}/events/${eventId}/registrations/${userId}/approve`);
-    console.error('❌ Response status:', error.response?.status);
-    console.error('❌ Response data:', error.response?.data);
-    console.error('❌ Request headers:', error.config?.headers);
-    
-    if (error.response?.status === 400) {
-      throw new Error(error.response.data.message || 'Cannot approve registration. Event may be full.');
-    }
-    if (error.response?.status === 401) {
-      // Clear invalid token and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      throw new Error('Your session has expired. Please log in again.');
-    }
-    if (error.response?.status === 403) {
-      throw new Error('Access denied. You do not have permission to approve registrations.');
-    }
-    if (error.response?.status === 404) {
-      throw new Error('Approval endpoint not found. Please contact administrator.');
-    }
-    throw new Error('Failed to approve registration. Please try again.');
-  }
-};
-
-export const disapproveRegistration = async (eventId, userId, reason) => {
-  try {
-    console.log(`❌ Disapproving registration for event ${eventId}, user ${userId}`);
-    console.log(`🔍 Making request to: /events/${eventId}/registrations/${userId}/disapprove`);
-    console.log(`🌐 Base URL: ${axiosInstance.defaults.baseURL}`);
-    console.log(`🔑 Token exists: ${!!localStorage.getItem('token')}`);
-    console.log(`👤 User role: ${localStorage.getItem('role')}`);
-    
-    // Add cache-busting parameter and force fresh request
-    const timestamp = Date.now();
-    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove?t=${timestamp}`, { reason }, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
-      }
-    });
-    console.log('✅ Registration disapproved successfully:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error disapproving registration:', error);
-    console.error('❌ Request URL:', error.config?.url);
-    console.error('❌ Full URL:', `${axiosInstance.defaults.baseURL}/events/${eventId}/registrations/${userId}/disapprove`);
-    console.error('❌ Response status:', error.response?.status);
-    console.error('❌ Response data:', error.response?.data);
-    console.error('❌ Request headers:', error.config?.headers);
-    
-    if (error.response?.status === 400) {
-      throw new Error(error.response.data.message || 'Cannot disapprove registration. Reason is required.');
-    }
-    if (error.response?.status === 401) {
-      // Clear invalid token and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      throw new Error('Your session has expired. Please log in again.');
-    }
-    if (error.response?.status === 403) {
-      throw new Error('Access denied. You do not have permission to disapprove registrations.');
-    }
-    if (error.response?.status === 404) {
-      throw new Error('Disapproval endpoint not found. Please contact administrator.');
-    }
-    throw new Error('Failed to disapprove registration. Please try again.');
-  }
-};
 
 export const getAllEventRegistrations = async (eventId) => {
   try {
@@ -1784,6 +1695,28 @@ export const getAllEventRegistrations = async (eventId) => {
   } catch (error) {
     console.error('Error fetching event registrations:', error);
     throw new Error('Failed to fetch event registrations. Please try again.');
+  }
+};
+
+export const approveRegistration = async (eventId, userId) => {
+  try {
+    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve`);
+    return response.data;
+  } catch (error) {
+    console.error('Error approving registration:', error);
+    throw new Error('Failed to approve registration. Please try again.');
+  }
+};
+
+export const disapproveRegistration = async (eventId, userId, reason) => {
+  try {
+    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove`, {
+      reason
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error disapproving registration:', error);
+    throw new Error('Failed to disapprove registration. Please try again.');
   }
 };
 

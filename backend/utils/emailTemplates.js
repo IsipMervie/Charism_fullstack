@@ -944,6 +944,135 @@ const getEventCompletionTemplate = (studentName, eventTitle, eventDate, hoursCom
 </html>
 `;
 
+// Registration Approval Email Template
+const getRegistrationApprovalTemplate = (userName, eventTitle, eventDate, eventLocation, eventHours) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Approved - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #27ae60; margin: 0;">CHARISM</h1>
+      <p style="color: #666; margin: 5px 0 0 0;">Community Service Management System</p>
+    </div>
+    
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px;">
+      ✅ Registration Approved
+    </h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <p>Great news! Your registration for the following community service event has been <strong style="color: #27ae60;">approved</strong>:</p>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #27ae60; padding: 20px; margin: 20px 0;">
+      <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${eventTitle}</h3>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+      <p style="margin: 5px 0;"><strong>Location:</strong> ${eventLocation || 'TBD'}</p>
+      <p style="margin: 5px 0;"><strong>Service Hours:</strong> ${eventHours} hours</p>
+    </div>
+    
+    <div style="background-color: #e8f5e8; border: 1px solid #27ae60; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <p style="margin: 0; color: #27ae60; font-weight: bold;">
+        ✅ Your registration is confirmed! You can now participate in this event.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">What's Next?</h3>
+      <ul style="color: #555;">
+        <li>Make sure to arrive on time for the event</li>
+        <li>Bring any required materials or documentation</li>
+        <li>Check the event details for any specific requirements</li>
+        <li>Remember to time in and time out during the event</li>
+      </ul>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" 
+         style="background-color: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+        View Event Details
+      </a>
+    </div>
+    
+    <p>Thank you for your commitment to community service!</p>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Registration Disapproval Email Template
+const getRegistrationDisapprovalTemplate = (userName, eventTitle, eventDate, reason) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Update - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #e74c3c; margin: 0;">CHARISM</h1>
+      <p style="color: #666; margin: 5px 0 0 0;">Community Service Management System</p>
+    </div>
+    
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;">
+      ❌ Registration Update
+    </h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <p>We wanted to inform you about an update regarding your registration for the following community service event:</p>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0;">
+      <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${eventTitle}</h3>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+    </div>
+    
+    <div style="background-color: #fdf2f2; border: 1px solid #e74c3c; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <h3 style="color: #e74c3c; margin: 0 0 10px 0;">Registration Status</h3>
+      <p style="margin: 0; color: #e74c3c; font-weight: bold;">
+        ❌ Your registration for this event has been disapproved.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">Reason for Disapproval</h3>
+      <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #e74c3c;">
+        <p style="margin: 0; color: #555;">${reason}</p>
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">What's Next?</h3>
+      <ul style="color: #555;">
+        <li>You can register for other available community service events</li>
+        <li>Make sure to meet all requirements before registering for future events</li>
+        <li>Contact the event organizer if you have any questions</li>
+      </ul>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" 
+         style="background-color: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+        View Other Events
+      </a>
+    </div>
+    
+    <p>We encourage you to continue participating in community service opportunities.</p>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
 // Attendance Approval Email Template
 const getAttendanceApprovalTemplate = (userName, eventTitle, eventHours, totalHours) => `
 <!DOCTYPE html>
@@ -974,7 +1103,21 @@ const getAttendanceApprovalTemplate = (userName, eventTitle, eventHours, totalHo
       <p style="margin: 5px 0;"><strong>Total Community Service Hours:</strong> ${totalHours} hours</p>
     </div>
     
-    <p>Your community service hours have been added to your record. Keep up the great work!</p>
+    <div style="background-color: #e8f5e8; border: 1px solid #27ae60; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <p style="margin: 0; color: #27ae60; font-weight: bold;">
+        ✅ Your attendance has been confirmed! Hours have been added to your record.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">What's Next?</h3>
+      <ul style="color: #555;">
+        <li>Your community service hours have been added to your profile</li>
+        <li>Continue participating in more events to reach your certificate goals</li>
+        <li>Check your dashboard to view your updated total hours</li>
+        <li>Keep up the excellent work!</li>
+      </ul>
+    </div>
     
     <div style="text-align: center; margin: 30px 0;">
       <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" 
@@ -985,11 +1128,75 @@ const getAttendanceApprovalTemplate = (userName, eventTitle, eventHours, totalHo
     
     <p>Thank you for your participation in community service activities.</p>
     
-    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Attendance Disapproval Email Template
+const getAttendanceDisapprovalTemplate = (userName, eventTitle, eventDate, reason) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Update - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #e74c3c; margin: 0;">CHARISM</h1>
+      <p style="color: #666; margin: 5px 0 0 0;">Community Service Management System</p>
+    </div>
     
-    <p style="font-size: 12px; color: #666; text-align: center;">
-      ${getNoReplyFooter()}
-    </p>
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #e74c3c; padding-bottom: 10px;">
+      ❌ Attendance Update
+    </h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <p>We wanted to inform you about an update regarding your attendance for the following community service event:</p>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0;">
+      <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${eventTitle}</h3>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+    </div>
+    
+    <div style="background-color: #fdf2f2; border: 1px solid #e74c3c; padding: 15px; border-radius: 4px; margin: 20px 0;">
+      <h3 style="color: #e74c3c; margin: 0 0 10px 0;">Attendance Status</h3>
+      <p style="margin: 0; color: #e74c3c; font-weight: bold;">
+        ❌ Your attendance for this event has been disapproved.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">Reason for Disapproval</h3>
+      <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #e74c3c;">
+        <p style="margin: 0; color: #555;">${reason}</p>
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #2c3e50;">What's Next?</h3>
+      <ul style="color: #555;">
+        <li>You can register for other available community service events</li>
+        <li>Make sure to follow all event requirements and guidelines</li>
+        <li>Contact the event organizer if you have any questions</li>
+        <li>We encourage you to continue participating in future events</li>
+      </ul>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" 
+         style="background-color: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+        View Other Events
+      </a>
+    </div>
+    
+    <p>We encourage you to continue participating in community service opportunities.</p>
+    
+    ${getNoReplyFooter()}
   </div>
 </body>
 </html>
@@ -1009,7 +1216,10 @@ module.exports = {
   getContactSubmissionTemplate,
   getContactAdminNotificationTemplate,
   getContactResponseTemplate,
+  getRegistrationApprovalTemplate,
+  getRegistrationDisapprovalTemplate,
   getAttendanceApprovalTemplate,
+  getAttendanceDisapprovalTemplate,
   getNoReplyFooter,
   NO_REPLY_EMAIL
 };

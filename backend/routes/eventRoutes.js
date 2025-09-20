@@ -178,17 +178,6 @@ router.post(
 // CRITICAL: Approval/Disapproval routes MUST come FIRST to prevent conflicts
 // =======================
 
-// Approve registration for specific event (Admin/Staff) - Frontend expects this route
-router.put('/:eventId/registrations/:userId/approve', (req, res, next) => {
-  console.log('🚀 APPROVAL ROUTE HIT:', req.method, req.path, req.params);
-  next();
-}, authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.approveRegistration);
-
-// Disapprove registration for specific event (Admin/Staff) - Frontend expects this route
-router.put('/:eventId/registrations/:userId/disapprove', (req, res, next) => {
-  console.log('🚀 DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
-  next();
-}, authMiddleware, roleMiddleware('Admin', 'Staff'), eventController.disapproveRegistration);
 
 // Approve attendance (Admin/Staff) - MUST come before generic /:eventId route
 router.patch(
@@ -219,7 +208,7 @@ router.patch(
 // Get event capacity status (public)
 router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
 
-// Get all registrations for an event (Admin/Staff)
+// Get all registrations for an event (Admin/Staff) - Read Only
 router.get(
   '/:eventId/registrations',
   authMiddleware,
@@ -227,13 +216,22 @@ router.get(
   eventController.getAllEventRegistrations
 );
 
-// Get pending registrations for a specific event (Admin/Staff)
-router.get(
-  '/:eventId/registrations/pending',
+// Approve registration (Admin/Staff)
+router.put(
+  '/:eventId/registrations/:userId/approve',
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
-  eventController.getPendingRegistrationsForEvent
+  eventController.approveRegistration
 );
+
+// Disapprove registration (Admin/Staff)
+router.put(
+  '/:eventId/registrations/:userId/disapprove',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.disapproveRegistration
+);
+
 
 // Edit (update) event (Admin/Staff) - MUST come after specific routes
 router.put(

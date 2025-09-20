@@ -14,6 +14,18 @@ function EventParticipantsPage() {
   const [actionLoading, setActionLoading] = useState({});
   const [pdfLoading, setPdfLoading] = useState(false);
 
+  // Attendance disapproval reasons
+  const attendanceDisapprovalReasons = [
+    'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
+    'Late Arrival (Arrived late and wasn\'t present during the call time)',
+    'Left Early (Left in the middle of the duration of commserv)',
+    'Did not sign the Community Service Form',
+    'Did not sign attendance sheet (if any)',
+    'Absent (Student was absent and didn\'t attend the commserv)',
+    'Not wearing the required uniform',
+    'Other'
+  ];
+
   // Helper function to determine status text
   const getStatusText = (participant) => {
     // If registration is not approved, show pending
@@ -61,7 +73,9 @@ function EventParticipantsPage() {
     fetchParticipants();
   }, [eventId]);
 
-  const handleApprove = async (userId) => {
+
+
+  const handleApproveAttendance = async (userId) => {
     const participant = participants.find(p => {
       const pUserId = p.userId._id || p.userId;
       return pUserId === userId;
@@ -91,25 +105,17 @@ function EventParticipantsPage() {
       setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: true }));
       try {
         await approveAttendance(eventId, userId);
-        Swal.fire({
-          icon: 'success',
-          title: 'Attendance Approved!',
-          text: 'The student\'s attendance has been successfully approved.',
-          timer: 2000,
-          showConfirmButton: false
-        });
-        // Refresh participants list
-        const data = await getEventParticipants(eventId);
-        setParticipants(data);
-      } catch (err) {
-        Swal.fire('Error', err.message || 'Failed to approve attendance.', 'error');
+        Swal.fire('Success', 'Attendance approved successfully!', 'success');
+        loadParticipants();
+      } catch (error) {
+        Swal.fire('Error', error.message || 'Failed to approve attendance.', 'error');
       } finally {
         setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: false }));
       }
     }
   };
 
-  const handleDisapprove = async (userId) => {
+  const handleDisapproveAttendance = async (userId) => {
     const participant = participants.find(p => {
       const pUserId = p.userId._id || p.userId;
       return pUserId === userId;
@@ -120,27 +126,15 @@ function EventParticipantsPage() {
       return;
     }
     
-    // Predefined disapproval reasons
-    const disapprovalReasons = [
-      'Act of Misconduct (Student displayed inappropriate behavior or violated rules during the commserv)',
-      'Late Arrival (Arrived late and wasn\'t present during the call time)',
-      'Left Early (Left in the middle of the duration of commserv)',
-      'Did not sign the Community Service Form',
-      'Did not sign attendance sheet (if any)',
-      'Absent (Student was absent and didn\'t attend the commserv)',
-      'Not wearing the required uniform',
-      'Full slot',
-      'Other'
-    ];
-    
-    const { value: formData } = await Swal.fire({
+    // Show dropdown for disapproval reason
+    const { value: reasonData } = await Swal.fire({
       title: 'Reason for Disapproval',
       html: `
         <div style="text-align: left;">
-          <p style="margin-bottom: 15px; font-weight: 500;">Reasons why this student is disapproved (Attendance and During Duration of commserv):</p>
+          <p style="margin-bottom: 15px;">Please select a reason for disapproving ${participant.userId.name}'s attendance:</p>
           <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
             <option value="">Select a reason...</option>
-            ${disapprovalReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('')}
+            ${attendanceDisapprovalReasons.map((reason, index) => `<option value="${index}">${reason}</option>`).join('')}
           </select>
           <div id="other-reason-container" style="display: none; margin-top: 10px;">
             <label for="other-reason" style="display: block; margin-bottom: 5px; font-weight: 500;">Please specify other reason:</label>
@@ -149,10 +143,9 @@ function EventParticipantsPage() {
         </div>
       `,
       showCancelButton: true,
-      confirmButtonText: 'Submit',
+      confirmButtonText: 'Disapprove',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#6c757d',
+      confirmButtonColor: '#dc3545',
       preConfirm: () => {
         const selectedReason = document.getElementById('disapproval-reason').value;
         const otherReason = document.getElementById('other-reason').value;
@@ -162,13 +155,13 @@ function EventParticipantsPage() {
           return false;
         }
         
-        if (selectedReason === 'Other' && !otherReason.trim()) {
+        if (selectedReason === '7' && !otherReason.trim()) { // "Other" is index 7
           Swal.showValidationMessage('Please specify the other reason');
           return false;
         }
         
         return {
-          reason: selectedReason === 'Other' ? otherReason.trim() : selectedReason,
+          reason: selectedReason === '7' ? otherReason.trim() : attendanceDisapprovalReasons[selectedReason],
           selectedReason: selectedReason
         };
       },
@@ -177,7 +170,7 @@ function EventParticipantsPage() {
         const otherContainer = document.getElementById('other-reason-container');
         
         reasonSelect.addEventListener('change', (e) => {
-          if (e.target.value === 'Other') {
+          if (e.target.value === '7') { // "Other" is index 7
             otherContainer.style.display = 'block';
           } else {
             otherContainer.style.display = 'none';
@@ -186,38 +179,17 @@ function EventParticipantsPage() {
       }
     });
 
-    if (formData) {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: `Do you want to disapprove this attendance?\n\nReason: ${formData.reason}`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, disapprove it!',
-        cancelButtonText: 'Cancel'
-      });
-
-      if (result.isConfirmed) {
-        setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: true }));
-        try {
-          await disapproveAttendance(eventId, userId, formData.reason);
-          Swal.fire({
-            icon: 'success',
-            title: 'Attendance Disapproved!',
-            text: 'The student\'s attendance has been disapproved with the provided reason.',
-            timer: 2000,
-            showConfirmButton: false
-          });
-          // Refresh participants list
-          const data = await getEventParticipants(eventId);
-          setParticipants(data);
-        } catch (err) {
-          Swal.fire('Error', err.message || 'Failed to disapprove attendance.', 'error');
-        } finally {
-          setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: false }));
-        }
+    if (reasonData) {
+      setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: true }));
+      try {
+        await disapproveAttendance(eventId, userId, reasonData.reason);
+        Swal.fire('Success', 'Attendance disapproved successfully!', 'success');
+        loadParticipants();
+      } catch (error) {
+        Swal.fire('Error', error.message || 'Failed to disapprove attendance.', 'error');
+      } finally {
+        setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: false }));
       }
-    } else {
-      Swal.fire('Error', 'Reason is required to disapprove attendance.', 'error');
     }
   };
 
@@ -450,7 +422,7 @@ function EventParticipantsPage() {
                         <>
                           <button 
                             className={`approve-btn ${!participant.timeOut ? 'disabled' : ''}`}
-                            onClick={() => handleApprove(participant.userId._id || participant.userId)}
+                            onClick={() => handleApproveAttendance(participant.userId._id || participant.userId)}
                             title={!participant.timeOut ? 'Cannot approve: Student has not timed out' : 'Approve Attendance'}
                             disabled={!participant.timeOut || actionLoading[`approve_${participant.userId._id || participant.userId}`]}
                           >
@@ -459,55 +431,24 @@ function EventParticipantsPage() {
                           </button>
                           <button 
                             className="disapprove-btn"
-                            onClick={() => handleDisapprove(participant.userId._id || participant.userId)}
+                            onClick={() => handleDisapproveAttendance(participant.userId._id || participant.userId)}
                             title="Disapprove Attendance"
                             disabled={actionLoading[`disapprove_${participant.userId._id || participant.userId}`]}
                           >
                             <FaTimes />
                             <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
                           </button>
-                          <button 
-                            className="remove-btn"
-                            onClick={() => handleRemove(participant.userId._id || participant.userId)}
-                            title="Remove Participant"
-                            disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
-                          >
-                            <FaTrash />
-                            <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
-                          </button>
                         </>
                       )}
-                      {(participant.status === 'Approved' || participant.status === 'Disapproved' || participant.status === 'Attended') && (
-                        <>
-                          <button 
-                            className={`approve-btn ${!participant.timeOut ? 'disabled' : ''}`}
-                            onClick={() => handleApprove(participant.userId._id || participant.userId)}
-                            title={!participant.timeOut ? 'Cannot approve: Student has not timed out' : 'Change to Approved'}
-                            disabled={!participant.timeOut || actionLoading[`approve_${participant.userId._id || participant.userId}`]}
-                          >
-                            <FaCheck />
-                            <span>{actionLoading[`approve_${participant.userId._id || participant.userId}`] ? 'Approving...' : 'Approve'}</span>
-                          </button>
-                          <button 
-                            className="disapprove-btn"
-                            onClick={() => handleDisapprove(participant.userId._id || participant.userId)}
-                            title="Change to Disapproved"
-                            disabled={actionLoading[`disapprove_${participant.userId._id || participant.userId}`]}
-                          >
-                            <FaTimes />
-                            <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
-                          </button>
-                          <button 
-                            className="remove-btn"
-                            onClick={() => handleRemove(participant.userId._id || participant.userId)}
-                            title="Remove Participant"
-                            disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
-                          >
-                            <FaTrash />
-                            <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
-                          </button>
-                        </>
-                      )}
+                      <button 
+                        className="remove-btn"
+                        onClick={() => handleRemove(participant.userId._id || participant.userId)}
+                        title="Remove Participant"
+                        disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
+                      >
+                        <FaTrash />
+                        <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -574,7 +515,7 @@ function EventParticipantsPage() {
                     <>
                       <button 
                         className={`approve-btn ${!participant.timeOut ? 'disabled' : ''}`}
-                        onClick={() => handleApprove(participant.userId._id || participant.userId)}
+                        onClick={() => handleApproveAttendance(participant.userId._id || participant.userId)}
                         title={!participant.timeOut ? 'Cannot approve: Student has not timed out' : 'Approve Attendance'}
                         disabled={!participant.timeOut || actionLoading[`approve_${participant.userId._id || participant.userId}`]}
                       >
@@ -583,55 +524,24 @@ function EventParticipantsPage() {
                       </button>
                       <button 
                         className="disapprove-btn"
-                        onClick={() => handleDisapprove(participant.userId._id || participant.userId)}
+                        onClick={() => handleDisapproveAttendance(participant.userId._id || participant.userId)}
                         title="Disapprove Attendance"
                         disabled={actionLoading[`disapprove_${participant.userId._id || participant.userId}`]}
                       >
                         <FaTimes />
                         <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
                       </button>
-                      <button 
-                        className="remove-btn"
-                        onClick={() => handleRemove(participant.userId._id || participant.userId)}
-                        title="Remove Participant"
-                        disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
-                      >
-                        <FaTrash />
-                        <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
-                      </button>
                     </>
                   )}
-                  {(participant.status === 'Approved' || participant.status === 'Disapproved' || participant.status === 'Attended') && (
-                    <>
-                      <button 
-                        className={`approve-btn ${!participant.timeOut ? 'disabled' : ''}`}
-                        onClick={() => handleApprove(participant.userId._id || participant.userId)}
-                        title={!participant.timeOut ? 'Cannot approve: Student has not timed out' : 'Change to Approved'}
-                        disabled={!participant.timeOut || actionLoading[`approve_${participant.userId._id || participant.userId}`]}
-                      >
-                        <FaCheck />
-                        <span>{actionLoading[`approve_${participant.userId._id || participant.userId}`] ? 'Approving...' : 'Approve'}</span>
-                      </button>
-                      <button 
-                        className="disapprove-btn"
-                        onClick={() => handleDisapprove(participant.userId._id || participant.userId)}
-                        title="Change to Disapproved"
-                        disabled={actionLoading[`disapprove_${participant.userId._id || participant.userId}`]}
-                      >
-                        <FaTimes />
-                        <span>{actionLoading[`disapprove_${participant.userId._id || participant.userId}`] ? 'Disapproving...' : 'Disapprove'}</span>
-                      </button>
-                      <button 
-                        className="remove-btn"
-                        onClick={() => handleRemove(participant.userId._id || participant.userId)}
-                        title="Remove Participant"
-                        disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
-                      >
-                        <FaTrash />
-                        <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
-                      </button>
-                    </>
-                  )}
+                  <button 
+                    className="remove-btn"
+                    onClick={() => handleRemove(participant.userId._id || participant.userId)}
+                    title="Remove Participant"
+                    disabled={actionLoading[`remove_${participant.userId._id || participant.userId}`]}
+                  >
+                    <FaTrash />
+                    <span>{actionLoading[`remove_${participant.userId._id || participant.userId}`] ? 'Removing...' : 'Remove'}</span>
+                  </button>
                 </div>
               </div>
             </div>

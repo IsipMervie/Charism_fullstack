@@ -251,7 +251,7 @@ function NavigationBar() {
                   className={location.pathname === '/registration-approval' ? 'active' : ''}
                   onClick={handleNavLinkClick}
                 >
-                  Event Registered Approval
+                  Registration Management
                 </Nav.Link>
               </>
             )}
@@ -309,7 +309,7 @@ function NavigationBar() {
                   active={location.pathname === '/registration-approval'}
                   onClick={handleDropdownItemClick}
                 >
-                  Event Registered Approval
+                  Manage Event Registration
                 </NavDropdown.Item>
                 <NavDropdown.Item 
                   as={Link} 
