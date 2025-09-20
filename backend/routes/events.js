@@ -81,9 +81,27 @@ router.get('/:eventId/registrations', authMiddleware, async (req, res) => {
     console.log('📋 Registrations:', event.attendance);
     
     // Ensure we always return an array, even if empty
-    const registrations = event.attendance || [];
+    const allRegistrations = event.attendance || [];
     
-    res.json(registrations);
+    // Categorize registrations for frontend
+    const categorizedRegistrations = {
+      pending: allRegistrations.filter(reg => !reg.registrationApproved && !reg.reason),
+      approved: allRegistrations.filter(reg => reg.registrationApproved && !reg.reason),
+      disapproved: allRegistrations.filter(reg => reg.reason)
+    };
+    
+    const response = {
+      registrations: categorizedRegistrations,
+      summary: {
+        total: allRegistrations.length,
+        pending: categorizedRegistrations.pending.length,
+        approved: categorizedRegistrations.approved.length,
+        disapproved: categorizedRegistrations.disapproved.length
+      }
+    };
+    
+    console.log('📤 Returning categorized registrations:', response);
+    res.json(response);
   } catch (error) {
     console.error('❌ Error getting registrations:', error);
     res.status(500).json({ message: 'Failed to get registrations', error: error.message });
