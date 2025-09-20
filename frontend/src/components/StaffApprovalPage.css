@@ -51,7 +51,7 @@
 
 /* Table */
 .staff-approval-table {
-  background-color: white;
+  background-color: var(--bg-secondary);
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border-primary);
@@ -67,6 +67,16 @@
 
 .staff-approval-table td {
   vertical-align: middle;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+}
+
+.staff-approval-table tbody tr:nth-child(odd) td {
+  background-color: var(--bg-tertiary);
+}
+
+.staff-approval-table tbody tr:hover td {
+  background-color: var(--bg-hover);
 }
 
 /* Buttons */
@@ -96,12 +106,24 @@
   border-radius: 12px;
   border: none;
   box-shadow: 0 10px 30px var(--shadow-xl);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .approval-modal .modal-header {
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-tertiary);
   border-bottom: 1px solid var(--border-primary);
   border-radius: 12px 12px 0 0;
+}
+
+.approval-modal .modal-body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.approval-modal .modal-footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-primary);
 }
 
 .approval-modal .modal-title {
@@ -120,6 +142,12 @@
   border: 1px solid var(--border-primary);
   padding: 10px 12px;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.staff-approval-page .form-control::placeholder {
+  color: var(--text-tertiary);
 }
 
 .staff-approval-page .form-control:focus {
