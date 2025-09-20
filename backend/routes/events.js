@@ -190,6 +190,139 @@ router.post('/register/:token', authMiddleware, async (req, res) => {
   }
 });
 
+// Join event by event ID (AUTH REQUIRED) - Alternative to token registration
+router.post('/:eventId/join', authMiddleware, async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId);
+    
+    if (!event) {
+      return res.status(404).json({ 
+        message: 'Event not found',
+        error: 'EVENT_NOT_FOUND'
+      });
+    }
+    
+    if (!event.isVisibleToStudents || event.status !== 'Active') {
+      return res.status(400).json({ 
+        message: 'Event is not available for registration',
+        error: 'EVENT_NOT_AVAILABLE'
+      });
+    }
+    
+    const userId = req.user.userId || req.user.id || req.user._id;
+    
+    // Check if already registered
+    const existingRegistration = event.attendance.find(att => 
+      att.userId.toString() === userId.toString()
+    );
+    
+    if (existingRegistration) {
+      return res.status(400).json({ 
+        message: 'You are already registered for this event',
+        error: 'ALREADY_REGISTERED'
+      });
+    }
+    
+    // Check max participants
+    if (event.attendance.length >= event.maxParticipants) {
+      return res.status(400).json({ 
+        message: 'Event is full',
+        error: 'EVENT_FULL'
+      });
+    }
+    
+    // Add registration
+    event.attendance.push({
+      userId: userId,
+      status: event.requiresApproval ? 'Pending' : 'Approved',
+      registrationApproved: !event.requiresApproval,
+      registeredAt: new Date()
+    });
+    
+    await event.save();
+    
+    res.json({ 
+      message: event.requiresApproval 
+        ? 'Registration successful! Your registration is pending approval.'
+        : 'Registration successful! You are now registered for this event.',
+      eventId: event._id,
+      registrationStatus: event.requiresApproval ? 'Pending' : 'Approved'
+    });
+    
+  } catch (error) {
+    console.error('Error joining event:', error);
+    res.status(500).json({ message: 'Failed to join event', error: error.message });
+  }
+});
+
+// Create new event (Admin/Staff)
+router.post('/', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    
+    const {
+      title,
+      description,
+      date,
+      startTime,
+      endTime,
+      location,
+      hours,
+      maxParticipants,
+      departments,
+      isForAllDepartments,
+      requiresApproval,
+      isVisibleToStudents
+    } = req.body;
+    
+    // Validation
+    if (!title || !description || !date || !startTime || !endTime || !location) {
+      return res.status(400).json({ 
+        message: 'Missing required fields: title, description, date, startTime, endTime, location' 
+      });
+    }
+    
+    // Generate public registration token
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const publicRegistrationToken = `evt_${timestamp}_${randomString}`;
+    
+    const eventData = {
+      title,
+      description,
+      date: new Date(date),
+      startTime,
+      endTime,
+      location,
+      hours: hours || 1,
+      maxParticipants: maxParticipants || 100,
+      departments: departments || [],
+      isForAllDepartments: isForAllDepartments !== undefined ? isForAllDepartments : true,
+      image: req.file ? { url: req.file.path } : {},
+      status: 'Active',
+      isVisibleToStudents: isVisibleToStudents !== undefined ? isVisibleToStudents : true,
+      createdBy: req.user.userId || req.user.id || req.user._id,
+      requiresApproval: requiresApproval !== undefined ? requiresApproval : true,
+      publicRegistrationToken,
+      isPublicRegistrationEnabled: true,
+      attendance: []
+    };
+    
+    const newEvent = new Event(eventData);
+    await newEvent.save();
+    
+    res.status(201).json({
+      message: 'Event created successfully!',
+      event: newEvent
+    });
+    
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json({ message: 'Failed to create event', error: error.message });
+  }
+});
+
 // =======================
 // APPROVAL SYSTEM (Admin/Staff)
 // =======================
