@@ -203,7 +203,12 @@ router.patch(
   eventController.disapproveAttendance
 );
 
-// REMOVED: Generic /:eventId route moved to end to prevent conflicts
+// Get event attendance (Admin/Staff/Student - for chat access) - MUST come after specific attendance routes
+router.get(
+  '/:eventId/attendance',
+  authMiddleware,
+  eventController.getEventAttendance
+);
 
 // Get event capacity status (public)
 router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
@@ -445,13 +450,6 @@ router.use((err, req, res, next) => {
   
   res.status(500).json({ message: 'Internal server error' });
 });
-
-// Get event attendance (Admin/Staff/Student - for chat access) - MUST come before generic /:eventId route
-router.get(
-  '/:eventId/attendance',
-  authMiddleware,
-  eventController.getEventAttendance
-);
 
 // Get event details (public) - MUST come LAST to prevent conflicts with approval routes
 router.get('/:eventId', eventController.getEventDetails);

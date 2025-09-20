@@ -1697,7 +1697,13 @@ exports.approveRegistration = async (req, res) => {
     await event.save();
 
     // Send email notification to user about registration status change
+    console.log('🔍 DEBUG: Checking email sending conditions...');
+    console.log('🔍 DEBUG: attendance.userId:', attendance.userId);
+    console.log('🔍 DEBUG: attendance.userId.email:', attendance.userId?.email);
+    console.log('🔍 DEBUG: attendance.registrationApproved:', attendance.registrationApproved);
+    
     if (attendance.userId && attendance.userId.email) {
+      console.log('✅ DEBUG: Email conditions met, sending email...');
       // Send email asynchronously without blocking the response
       setImmediate(async () => {
         try {
@@ -1705,6 +1711,10 @@ exports.approveRegistration = async (req, res) => {
           const { getRegistrationApprovalTemplate, getRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
           
           // Check email configuration
+          console.log('🔍 DEBUG: Checking email configuration...');
+          console.log('🔍 DEBUG: EMAIL_USER:', process.env.EMAIL_USER);
+          console.log('🔍 DEBUG: EMAIL_PASS:', process.env.EMAIL_PASS ? '[SET]' : '[NOT SET]');
+          
           if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
             console.warn('⚠️ Email not configured - skipping registration email');
             return;
@@ -1742,6 +1752,11 @@ exports.approveRegistration = async (req, res) => {
             subject = `CHARISM - Your Registration Has Been Disapproved`;
           }
           
+          console.log('🔍 DEBUG: About to send email...');
+          console.log('🔍 DEBUG: Email to:', attendance.userId.email);
+          console.log('🔍 DEBUG: Subject:', subject);
+          console.log('🔍 DEBUG: Email content length:', emailContent?.length || 0);
+          
           const result = await sendEmail(
             attendance.userId.email,
             subject,
@@ -1749,6 +1764,8 @@ exports.approveRegistration = async (req, res) => {
             emailContent,
             true
           );
+          
+          console.log('🔍 DEBUG: Email send result:', result);
           
           if (result.success) {
             console.log(`✅ Registration ${attendance.registrationApproved ? 'approval' : 'disapproval'} email sent to ${attendance.userId.email}`);
@@ -1760,6 +1777,10 @@ exports.approveRegistration = async (req, res) => {
           // Don't fail the request if email fails
         }
       });
+    } else {
+      console.warn('⚠️ DEBUG: Email conditions not met - not sending email');
+      console.warn('⚠️ DEBUG: attendance.userId exists:', !!attendance.userId);
+      console.warn('⚠️ DEBUG: attendance.userId.email exists:', !!(attendance.userId?.email));
     }
 
     res.json({ 

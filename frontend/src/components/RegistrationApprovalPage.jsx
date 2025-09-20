@@ -18,6 +18,7 @@ function RegistrationApprovalPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('events'); // 'events' or 'registrations'
   const [actionLoading, setActionLoading] = useState({});
+  const [isVisible, setIsVisible] = useState(false);
 
   // Check user role
   const userRole = localStorage.getItem('role');
@@ -52,6 +53,7 @@ function RegistrationApprovalPage() {
   }, [eventSearchTerm, events]);
 
   useEffect(() => {
+    setIsVisible(true);
     loadEvents();
   }, []);
 
@@ -211,30 +213,33 @@ function RegistrationApprovalPage() {
           </div>
         </div>
 
-        <div className="registration-meta">
-          <div className="meta-item">
-            <span className="meta-label">Registered:</span>
-            <span className="meta-value">
-              {formatDateTimePhilippines(registration.registeredAt)}
-            </span>
-          </div>
-          {type === 'approved' && (
+        <div className="registration-content">
+          <div className="registration-meta">
             <div className="meta-item">
-              <span className="meta-label">Approved:</span>
+              <span className="meta-label">Registered:</span>
               <span className="meta-value">
-                {formatDateTimePhilippines(registration.registrationApprovedAt)}
+                {formatDateTimePhilippines(registration.registeredAt)}
               </span>
             </div>
-          )}
-          {type === 'disapproved' && registration.reason && (
-            <div className="meta-item full-width">
-              <span className="meta-label">Reason:</span>
-              <span className="meta-value reason">{registration.reason}</span>
-            </div>
-          )}
+            {type === 'approved' && (
+              <div className="meta-item">
+                <span className="meta-label">Approved:</span>
+                <span className="meta-value">
+                  {formatDateTimePhilippines(registration.registrationApprovedAt)}
+                </span>
+              </div>
+            )}
+            {type === 'disapproved' && registration.reason && (
+              <div className="meta-item full-width">
+                <span className="meta-label">Reason:</span>
+                <span className="meta-value reason">{registration.reason}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="registration-actions">
+          <div className="action-buttons">
           {type === 'pending' && (
             <>
               <button 
@@ -256,11 +261,32 @@ function RegistrationApprovalPage() {
             </>
           )}
           {type === 'approved' && (
-            <span className="approved-note">✅ Registration approved</span>
+            <>
+              <span className="approved-note">✅ Registration approved</span>
+              <button 
+                className="disapprove-btn"
+                onClick={() => handleDisapproveRegistration(event._id, userId._id, userId.name)}
+                disabled={actionLoading[`disapprove_${userId._id}`]}
+              >
+                <FaTimes />
+                <span>{actionLoading[`disapprove_${userId._id}`] ? 'Disapproving...' : 'Disapprove'}</span>
+              </button>
+            </>
           )}
           {type === 'disapproved' && (
-            <span className="disapproved-note">❌ Registration disapproved</span>
+            <>
+              <span className="disapproved-note">❌ Registration disapproved</span>
+              <button 
+                className="approve-btn"
+                onClick={() => handleApproveRegistration(event._id, userId._id, userId.name)}
+                disabled={actionLoading[`approve_${userId._id}`]}
+              >
+                <FaCheck />
+                <span>{actionLoading[`approve_${userId._id}`] ? 'Approving...' : 'Approve'}</span>
+              </button>
+            </>
           )}
+          </div>
         </div>
       </div>
     );
@@ -294,32 +320,87 @@ function RegistrationApprovalPage() {
         <div className="background-pattern"></div>
       </div>
       
-      <div className="registration-container">
-        <div className="page-header">
-          <h1 className="page-title">Event Registration Approval</h1>
-          <p className="page-subtitle">Review and approve student event registrations</p>
+      <div className={`registration-container ${isVisible ? 'visible' : ''}`}>
+        {/* Header */}
+        <div className="header-section">
+          <div className="header-content">
+            <div className="header-icon">
+              <div className="icon-symbol">📋</div>
+            </div>
+            <div className="header-text">
+              <h1 className="page-title">Registration Approval</h1>
+              <p className="page-subtitle">Review and approve student event registrations</p>
+            </div>
+          </div>
+          <div className="header-actions">
+            <button 
+              className="action-button secondary-button"
+              onClick={() => setViewMode('events')}
+            >
+              View Events
+            </button>
+          </div>
         </div>
 
       {viewMode === 'events' && (
         <div className="events-section">
-          <div className="search-controls-section">
+          {/* Search and Filter Section */}
+          <div className="search-filter-section">
             <div className="search-box">
-              <FaSearch className="search-icon" />
-              <input
-                className="search-input"
-                type="text"
-                placeholder="Search events..."
-                value={eventSearchTerm}
-                onChange={(e) => setEventSearchTerm(e.target.value)}
-              />
+              <div className="search-input-wrapper">
+                <input
+                  type="text"
+                  placeholder="Search events by title or description..."
+                  value={eventSearchTerm}
+                  onChange={(e) => setEventSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
             </div>
-            <button 
-              className="refresh-button"
-              onClick={loadEvents}
-            >
-              <FaSpinner className={`refresh-icon ${loading ? 'spinning' : ''}`} />
-              Refresh
-            </button>
+            
+            <div className="filter-box">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">All Events</option>
+                <option value="upcoming">🚀 Upcoming Events</option>
+                <option value="ongoing">🔄 Ongoing Events</option>
+                <option value="past">⏰ Past Events</option>
+              </select>
+            </div>
+            
+            {(eventSearchTerm || statusFilter) && (
+              <button 
+                className="clear-filters-btn"
+                onClick={() => {
+                  setEventSearchTerm('');
+                  setStatusFilter('');
+                }}
+                title="Clear all filters"
+              >
+                ✕ Clear Filters
+              </button>
+            )}
+          </div>
+
+          {/* Events Summary */}
+          <div className="events-summary">
+            <div className="summary-stats">
+              <div className="stat-item">
+                <span className="stat-number">{filteredEvents.length}</span>
+                <span className="stat-label">📅 Total Events</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">{filteredEvents.filter(e => safeLength(e.attendance) > 0).length}</span>
+                <span className="stat-label">👥 With Registrations</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">{filteredEvents.reduce((total, e) => total + safeLength(e.attendance), 0)}</span>
+                <span className="stat-label">📝 Total Registrations</span>
+              </div>
+            </div>
           </div>
 
           <div className="events-grid">
