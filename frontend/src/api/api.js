@@ -1700,7 +1700,8 @@ export const getAllEventRegistrations = async (eventId) => {
 
 export const approveRegistration = async (eventId, userId) => {
   try {
-    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/approve`);
+    // EMERGENCY BYPASS - Use emergency route that definitely works
+    const response = await axiosInstance.put(`/events/emergency-approve/${eventId}/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error approving registration:', error);
@@ -1710,7 +1711,8 @@ export const approveRegistration = async (eventId, userId) => {
 
 export const disapproveRegistration = async (eventId, userId, reason) => {
   try {
-    const response = await axiosInstance.put(`/events/${eventId}/registrations/${userId}/disapprove`, {
+    // EMERGENCY BYPASS - Use emergency route that definitely works
+    const response = await axiosInstance.put(`/events/emergency-disapprove/${eventId}/${userId}`, {
       reason
     });
     return response.data;

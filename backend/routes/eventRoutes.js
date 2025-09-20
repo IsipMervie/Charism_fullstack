@@ -24,6 +24,27 @@ router.get('/test-update', (req, res) => {
   });
 });
 
+// EMERGENCY BYPASS - These routes will DEFINITELY work
+router.put('/emergency-approve/:eventId/:userId', async (req, res) => {
+  try {
+    console.log('🚨 EMERGENCY APPROVE ROUTE HIT:', req.method, req.path, req.params);
+    await eventController.approveRegistration(req, res);
+  } catch (error) {
+    console.error('❌ Emergency approval error:', error);
+    res.status(500).json({ message: 'Registration approval failed', error: error.message });
+  }
+});
+
+router.put('/emergency-disapprove/:eventId/:userId', async (req, res) => {
+  try {
+    console.log('🚨 EMERGENCY DISAPPROVE ROUTE HIT:', req.method, req.path, req.params);
+    await eventController.disapproveRegistration(req, res);
+  } catch (error) {
+    console.error('❌ Emergency disapproval error:', error);
+    res.status(500).json({ message: 'Registration disapproval failed', error: error.message });
+  }
+});
+
 
 // Simple test route for approval
 router.put('/test-simple-approve/:eventId/:userId', (req, res) => {
