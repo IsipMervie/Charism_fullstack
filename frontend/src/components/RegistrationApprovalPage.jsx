@@ -457,7 +457,6 @@ function RegistrationApprovalPage() {
 
           <div className="registrations-filters">
             <div className="search-box">
-              <FaSearch className="search-icon" />
               <input
                 type="text"
                 placeholder="Search students..."
