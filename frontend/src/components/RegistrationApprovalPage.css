@@ -248,11 +248,12 @@
   transition: all 0.3s ease;
   background: #ffffff;
   color: #1e293b;
+  font-weight: 500;
 }
 
 [data-theme="dark"] .search-input {
-  background: #4a5568;
-  border-color: #718096;
+  background: #2d3748;
+  border-color: #4a5568;
   color: #f1f5f9;
 }
 
@@ -285,11 +286,12 @@
   background: #ffffff;
   color: #1e293b;
   cursor: pointer;
+  font-weight: 500;
 }
 
 [data-theme="dark"] .filter-select {
-  background: #4a5568;
-  border-color: #718096;
+  background: #2d3748;
+  border-color: #4a5568;
   color: #f1f5f9;
 }
 
@@ -642,18 +644,20 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 1.5rem;
-  background: #6c757d;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 4px -1px rgba(59, 130, 246, 0.3);
 }
 
 .back-button:hover {
-  background: #5a6268;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
 }
 
 .event-title {
@@ -1129,17 +1133,6 @@
   color: #bdc3c7;
 }
 
-[data-theme="dark"] .search-input,
-[data-theme="dark"] .filter-select {
-  background: #34495e;
-  border-color: #4a5f7a;
-  color: #ecf0f1;
-}
-
-[data-theme="dark"] .event-card {
-  background: #34495e;
-  color: #ecf0f1;
-}
 
 [data-theme="dark"] .event-title {
   color: #ecf0f1;

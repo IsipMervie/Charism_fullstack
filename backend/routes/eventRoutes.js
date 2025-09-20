@@ -5,35 +5,6 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const { uploadEventImage } = require('../utils/mongoFileStorage');
 
-// Debug middleware to log all requests
-router.use((req, res, next) => {
-  console.log('🔍 EVENT ROUTER REQUEST:', {
-    method: req.method,
-    url: req.url,
-    path: req.path,
-    originalUrl: req.originalUrl,
-    params: req.params,
-    query: req.query,
-    timestamp: new Date().toISOString()
-  });
-  
-  if (req.path.includes('approve') || req.path.includes('disapprove')) {
-    console.log('🚨 APPROVAL/DISAPPROVAL REQUEST:', {
-      method: req.method,
-      url: req.url,
-      path: req.path,
-      originalUrl: req.originalUrl,
-      params: req.params,
-      body: req.body,
-      headers: {
-        authorization: req.headers.authorization ? 'Bearer [REDACTED]' : 'None',
-        contentType: req.headers['content-type']
-      },
-      timestamp: new Date().toISOString()
-    });
-  }
-  next();
-});
 
 
 
@@ -58,34 +29,7 @@ router.get('/test-approval', (req, res) => {
   });
 });
 
-// Test route to check if approval routes are accessible
-router.put('/test-approve/:eventId/:userId', (req, res) => {
-  res.json({
-    message: 'Test approval route working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
 
-// Test route for attendance endpoints
-router.patch('/test-attendance/:eventId/:userId/approve', (req, res) => {
-  res.json({
-    message: 'Test attendance approval route working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
-
-router.patch('/test-attendance/:eventId/:userId/disapprove', (req, res) => {
-  res.json({
-    message: 'Test attendance disapproval route working',
-    eventId: req.params.eventId,
-    userId: req.params.userId,
-    timestamp: new Date().toISOString()
-  });
-});
 
 
 
@@ -216,10 +160,6 @@ router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
 // Approve registration (Admin/Staff) - MUST come before generic registrations route
 router.put(
   '/:eventId/registrations/:userId/approve',
-  (req, res, next) => {
-    console.log('🚀 REGISTRATION APPROVAL ROUTE HIT:', req.method, req.path, req.params);
-    next();
-  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.approveRegistration
@@ -228,10 +168,6 @@ router.put(
 // Disapprove registration (Admin/Staff) - MUST come before generic registrations route
 router.put(
   '/:eventId/registrations/:userId/disapprove',
-  (req, res, next) => {
-    console.log('🚀 REGISTRATION DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
-    next();
-  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.disapproveRegistration
