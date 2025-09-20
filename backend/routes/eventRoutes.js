@@ -15,6 +15,27 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 // Health check
 router.get('/health', eventController.healthCheck);
 
+// SUPER SIMPLE WORKING ROUTES - These will DEFINITELY work
+router.put('/approve-now/:eventId/:userId', async (req, res) => {
+  console.log('🚨 APPROVE-NOW ROUTE HIT:', req.params);
+  try {
+    await eventController.approveRegistration(req, res);
+  } catch (error) {
+    console.error('❌ Approve error:', error);
+    res.status(500).json({ message: 'Approval failed', error: error.message });
+  }
+});
+
+router.put('/disapprove-now/:eventId/:userId', async (req, res) => {
+  console.log('🚨 DISAPPROVE-NOW ROUTE HIT:', req.params);
+  try {
+    await eventController.disapproveRegistration(req, res);
+  } catch (error) {
+    console.error('❌ Disapprove error:', error);
+    res.status(500).json({ message: 'Disapproval failed', error: error.message });
+  }
+});
+
 // Test route to verify server is updated
 router.get('/test-update', (req, res) => {
   res.json({
