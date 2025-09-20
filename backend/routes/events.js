@@ -65,17 +65,27 @@ router.get('/:eventId', async (req, res) => {
 // Get event registrations (All authenticated users)
 router.get('/:eventId/registrations', authMiddleware, async (req, res) => {
   try {
+    console.log('🔍 Getting registrations for event:', req.params.eventId);
+    
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId)
       .populate('attendance.userId', 'name email role department academicYear year section');
     
     if (!event) {
+      console.log('❌ Event not found:', req.params.eventId);
       return res.status(404).json({ message: 'Event not found' });
     }
     
-    res.json(event.attendance);
+    console.log('✅ Event found:', event.title);
+    console.log('📊 Registrations count:', event.attendance.length);
+    console.log('📋 Registrations:', event.attendance);
+    
+    // Ensure we always return an array, even if empty
+    const registrations = event.attendance || [];
+    
+    res.json(registrations);
   } catch (error) {
-    console.error('Error getting registrations:', error);
+    console.error('❌ Error getting registrations:', error);
     res.status(500).json({ message: 'Failed to get registrations', error: error.message });
   }
 });
@@ -83,17 +93,26 @@ router.get('/:eventId/registrations', authMiddleware, async (req, res) => {
 // Get event participants (All authenticated users) - same as registrations
 router.get('/:eventId/participants', authMiddleware, async (req, res) => {
   try {
+    console.log('🔍 Getting participants for event:', req.params.eventId);
+    
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId)
       .populate('attendance.userId', 'name email role department academicYear year section');
     
     if (!event) {
+      console.log('❌ Event not found:', req.params.eventId);
       return res.status(404).json({ message: 'Event not found' });
     }
     
-    res.json(event.attendance);
+    console.log('✅ Event found:', event.title);
+    console.log('📊 Participants count:', event.attendance.length);
+    
+    // Ensure we always return an array, even if empty
+    const participants = event.attendance || [];
+    
+    res.json(participants);
   } catch (error) {
-    console.error('Error getting participants:', error);
+    console.error('❌ Error getting participants:', error);
     res.status(500).json({ message: 'Failed to get participants', error: error.message });
   }
 });
@@ -101,17 +120,26 @@ router.get('/:eventId/participants', authMiddleware, async (req, res) => {
 // Get event attendance (Frontend expects this route)
 router.get('/:eventId/attendance', authMiddleware, async (req, res) => {
   try {
+    console.log('🔍 Getting attendance for event:', req.params.eventId);
+    
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId)
       .populate('attendance.userId', 'name email role department academicYear year section');
     
     if (!event) {
+      console.log('❌ Event not found:', req.params.eventId);
       return res.status(404).json({ message: 'Event not found' });
     }
     
-    res.json(event.attendance);
+    console.log('✅ Event found:', event.title);
+    console.log('📊 Attendance count:', event.attendance.length);
+    
+    // Ensure we always return an array, even if empty
+    const attendance = event.attendance || [];
+    
+    res.json(attendance);
   } catch (error) {
-    console.error('Error getting attendance:', error);
+    console.error('❌ Error getting attendance:', error);
     res.status(500).json({ message: 'Failed to get attendance', error: error.message });
   }
 });
