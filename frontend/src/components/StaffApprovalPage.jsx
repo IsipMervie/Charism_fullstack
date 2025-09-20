@@ -193,7 +193,7 @@ function StaffApprovalPage() {
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
             {selectedStaff && (
-              <div className="mb-3">
+              <div className="mb-3 staff-details">
                 <h6>Staff Member Details:</h6>
                 <p><strong>Name:</strong> {selectedStaff.name}</p>
                 <p><strong>Email:</strong> {selectedStaff.email}</p>

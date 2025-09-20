@@ -163,11 +163,41 @@
 .staff-approval-page .alert {
   border-radius: 8px;
   border: none;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.staff-approval-page .alert strong {
+  color: var(--text-primary);
+}
+
+.staff-approval-page .alert ul {
+  color: var(--text-primary);
+}
+
+.staff-approval-page .alert li {
+  color: var(--text-primary);
 }
 
 .staff-approval-page .spinner-border {
   width: 3rem;
   height: 3rem;
+}
+
+/* Staff details in modal */
+.approval-modal .staff-details h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.approval-modal .staff-details p {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.approval-modal .staff-details strong {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .staff-approval-page .staff-details {
