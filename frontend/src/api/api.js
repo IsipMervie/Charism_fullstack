@@ -1849,7 +1849,8 @@ export const markEventAsNotCompleted = async (eventId) => {
 
 export const getEventByRegistrationToken = async (token) => {
   try {
-    const response = await axiosInstance.get(`/events/register/${token}`);
+    // WORKING SOLUTION - Use working registration token endpoint
+    const response = await axiosInstance.get(`/events/working-register/${token}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event by registration token:', error);

@@ -15,7 +15,90 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 // Health check
 router.get('/health', eventController.healthCheck);
 
-// WORKING SOLUTION - Direct routes that will definitely work
+// TEST REGISTRATION TOKEN ENDPOINT
+router.get('/test-token/:token', async (req, res) => {
+  console.log('🔍 TEST TOKEN ROUTE HIT:', req.params.token);
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findOne({ 
+      publicRegistrationToken: req.params.token 
+    });
+    
+    if (event) {
+      res.json({
+        message: 'Token found',
+        eventId: event._id,
+        title: event.title,
+        token: req.params.token,
+        isPublicRegistrationEnabled: event.isPublicRegistrationEnabled
+      });
+    } else {
+      res.status(404).json({
+        message: 'Token not found',
+        token: req.params.token
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error checking token',
+      error: error.message
+    });
+  }
+});
+
+// WORKING REGISTRATION TOKEN ENDPOINT
+router.get('/working-register/:token', async (req, res) => {
+  console.log('🚨 WORKING REGISTER TOKEN HIT:', req.params.token);
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findOne({ 
+      publicRegistrationToken: req.params.token 
+    }).populate('attendance.userId', 'name email department academicYear year section');
+    
+    if (!event) {
+      return res.status(404).json({ 
+        message: 'Event not found or public registration is not enabled for this event.' 
+      });
+    }
+    
+    if (!event.isPublicRegistrationEnabled) {
+      return res.status(404).json({ 
+        message: 'Public registration is not enabled for this event.' 
+      });
+    }
+    
+    if (event.status !== 'Active') {
+      return res.status(404).json({ 
+        message: 'Event is not active.' 
+      });
+    }
+    
+    // Return event details for registration
+    res.json({
+      _id: event._id,
+      title: event.title,
+      description: event.description,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      maxParticipants: event.maxParticipants,
+      hours: event.hours,
+      requiresApproval: event.requiresApproval,
+      isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,
+      status: event.status,
+      publicRegistrationToken: event.publicRegistrationToken
+    });
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ 
+      message: 'Error fetching event details.', 
+      error: error.message 
+    });
+  }
+});
+
+// WORKING SOLUTION - Direct routes that will definitely work WITH EMAILS
 router.put('/working-approve/:eventId/:userId', async (req, res) => {
   console.log('🚨 WORKING APPROVE HIT:', req.params);
   try {
@@ -23,7 +106,7 @@ router.put('/working-approve/:eventId/:userId', async (req, res) => {
     
     // Direct database update - bypass all middleware
     const Event = require('../models/Event');
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
@@ -34,10 +117,56 @@ router.put('/working-approve/:eventId/:userId', async (req, res) => {
       return res.status(404).json({ message: 'Registration not found.' });
     }
     
-    // Update registration status
+    // Update registration status - ONLY approve registration, NOT attendance
     attendance.registrationApproved = true;
-    attendance.status = 'Approved';
+    attendance.status = 'Pending'; // Keep as Pending until they actually attend
     await event.save();
+    
+    // Send email notification
+    if (attendance.userId && attendance.userId.email) {
+      console.log('📧 Sending registration approval email to:', attendance.userId.email);
+      
+      // Check email configuration
+      if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+        console.warn('⚠️ Email not configured - skipping registration approval email');
+      } else {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getRegistrationApprovalTemplate } = require('../utils/emailTemplates');
+          
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          const emailContent = getRegistrationApprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            eventDate,
+            event.location || 'TBD',
+            event.hours
+          );
+          
+          const emailResult = await sendEmail(
+            attendance.userId.email,
+            'CHARISM - Your Registration Has Been Approved',
+            '',
+            emailContent,
+            true
+          );
+          
+          if (emailResult && emailResult.success) {
+            console.log(`✅ Registration approval email sent to ${attendance.userId.email}`);
+          } else {
+            console.warn(`⚠️ Registration approval email failed: ${emailResult?.message || 'Unknown error'}`);
+          }
+        } catch (emailError) {
+          console.error('❌ Failed to send registration approval email:', emailError);
+        }
+      }
+    }
     
     console.log('✅ Registration approved successfully');
     res.json({ message: 'Registration approved successfully.' });
@@ -60,7 +189,7 @@ router.put('/working-disapprove/:eventId/:userId', async (req, res) => {
     
     // Direct database update - bypass all middleware
     const Event = require('../models/Event');
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
@@ -76,6 +205,52 @@ router.put('/working-disapprove/:eventId/:userId', async (req, res) => {
     attendance.status = 'Disapproved';
     attendance.reason = reason;
     await event.save();
+    
+    // Send email notification
+    if (attendance.userId && attendance.userId.email) {
+      console.log('📧 Sending registration disapproval email to:', attendance.userId.email);
+      
+      // Check email configuration
+      if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
+        console.warn('⚠️ Email not configured - skipping registration disapproval email');
+      } else {
+        try {
+          const sendEmail = require('../utils/sendEmail');
+          const { getRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
+          
+          const eventDate = event.date ? new Date(event.date).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }) : 'TBD';
+          
+          const emailContent = getRegistrationDisapprovalTemplate(
+            attendance.userId.name,
+            event.title,
+            eventDate,
+            event.location || 'TBD',
+            reason
+          );
+          
+          const emailResult = await sendEmail(
+            attendance.userId.email,
+            'CHARISM - Registration Update',
+            '',
+            emailContent,
+            true
+          );
+          
+          if (emailResult && emailResult.success) {
+            console.log(`✅ Registration disapproval email sent to ${attendance.userId.email}`);
+          } else {
+            console.warn(`⚠️ Registration disapproval email failed: ${emailResult?.message || 'Unknown error'}`);
+          }
+        } catch (emailError) {
+          console.error('❌ Failed to send registration disapproval email:', emailError);
+        }
+      }
+    }
     
     console.log('✅ Registration disapproved successfully');
     res.json({ message: 'Registration disapproved successfully.' });
