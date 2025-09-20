@@ -1700,8 +1700,7 @@ export const getAllEventRegistrations = async (eventId) => {
 
 export const approveRegistration = async (eventId, userId) => {
   try {
-    // WORKING SOLUTION - Direct database update
-    const response = await axiosInstance.put(`/events/working-approve/${eventId}/${userId}`);
+    const response = await axiosInstance.put(`/events/approve/${eventId}/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error approving registration:', error);
@@ -1711,8 +1710,7 @@ export const approveRegistration = async (eventId, userId) => {
 
 export const disapproveRegistration = async (eventId, userId, reason) => {
   try {
-    // WORKING SOLUTION - Direct database update
-    const response = await axiosInstance.put(`/events/working-disapprove/${eventId}/${userId}`, {
+    const response = await axiosInstance.put(`/events/disapprove/${eventId}/${userId}`, {
       reason
     });
     return response.data;
@@ -1849,8 +1847,7 @@ export const markEventAsNotCompleted = async (eventId) => {
 
 export const getEventByRegistrationToken = async (token) => {
   try {
-    // WORKING SOLUTION - Use working registration token endpoint
-    const response = await axiosInstance.get(`/events/working-register/${token}`);
+    const response = await axiosInstance.get(`/events/register/${token}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching event by registration token:', error);
