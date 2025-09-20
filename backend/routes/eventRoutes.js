@@ -24,6 +24,7 @@ router.get('/test-update', (req, res) => {
   });
 });
 
+
 // Simple test route for approval
 router.put('/test-simple-approve/:eventId/:userId', (req, res) => {
   res.json({
@@ -206,7 +207,15 @@ router.put('/test-registration-routes/:eventId/registrations/:userId/disapprove'
   });
 });
 
-// Approve registration (Admin/Staff) - WORKING VERSION
+// Get all registrations for an event (Admin/Staff) - Read Only - MUST come after specific routes
+router.get(
+  '/:eventId/registrations',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getAllEventRegistrations
+);
+
+// Approve registration (Admin/Staff) - WORKING VERSION - MUST come BEFORE /:eventId/edit
 router.put('/:eventId/registrations/:userId/approve', async (req, res) => {
   try {
     console.log('🚀 REGISTRATION APPROVAL ROUTE HIT:', req.method, req.path, req.params);
@@ -220,7 +229,7 @@ router.put('/:eventId/registrations/:userId/approve', async (req, res) => {
   }
 });
 
-// Disapprove registration (Admin/Staff) - WORKING VERSION
+// Disapprove registration (Admin/Staff) - WORKING VERSION - MUST come BEFORE /:eventId/edit
 router.put('/:eventId/registrations/:userId/disapprove', async (req, res) => {
   try {
     console.log('🚀 REGISTRATION DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
@@ -234,16 +243,7 @@ router.put('/:eventId/registrations/:userId/disapprove', async (req, res) => {
   }
 });
 
-// Get all registrations for an event (Admin/Staff) - Read Only - MUST come after specific routes
-router.get(
-  '/:eventId/registrations',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.getAllEventRegistrations
-);
-
-
-// Edit (update) event (Admin/Staff) - MUST come after specific routes
+// Edit (update) event (Admin/Staff) - MUST come AFTER specific routes
 router.put(
   '/:eventId/edit',
   authMiddleware,
