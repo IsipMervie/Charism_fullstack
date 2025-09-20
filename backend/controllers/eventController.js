@@ -1663,7 +1663,7 @@ exports.approveRegistration = async (req, res) => {
   try {
     const { eventId, userId } = req.params;
     
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     if (!event) {
       return res.status(404).json({ message: 'Event not found.' });
     }
@@ -1677,28 +1677,36 @@ exports.approveRegistration = async (req, res) => {
       return res.status(404).json({ message: 'Registration not found.' });
     }
 
-    if (attendance.registrationApproved) {
-      return res.status(400).json({ message: 'Registration is already approved.' });
-    }
-
-    // Approve the registration
-    attendance.registrationApproved = true;
-    attendance.registrationApprovedBy = req.user.userId;
+    // Allow toggling - if already approved, can be disapproved and vice versa
+    const wasApproved = attendance.registrationApproved;
+    
+    // Toggle approval status
+    attendance.registrationApproved = !wasApproved;
+    attendance.registrationApprovedBy = req.user.userId || req.user.id || req.user._id;
     attendance.registrationApprovedAt = new Date();
+    
+    // Update status based on approval
+    if (attendance.registrationApproved) {
+      attendance.status = 'Pending'; // Reset to pending when approved
+      attendance.reason = ''; // Clear any previous reason
+    } else {
+      attendance.status = 'Disapproved';
+      attendance.reason = 'Registration disapproved by admin/staff';
+    }
 
     await event.save();
 
-    // Send email notification to user about registration approval
+    // Send email notification to user about registration status change
     if (attendance.userId && attendance.userId.email) {
       // Send email asynchronously without blocking the response
       setImmediate(async () => {
         try {
           const sendEmail = require('../utils/sendEmail');
-          const { getRegistrationApprovalTemplate } = require('../utils/emailTemplates');
+          const { getRegistrationApprovalTemplate, getRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
           
           // Check email configuration
           if (!process.env.EMAIL_USER || process.env.EMAIL_PASS === 'your_email_password') {
-            console.warn('⚠️ Email not configured - skipping registration approval email');
+            console.warn('⚠️ Email not configured - skipping registration email');
             return;
           }
           
@@ -1710,35 +1718,55 @@ exports.approveRegistration = async (req, res) => {
             day: 'numeric'
           }) : 'TBD';
           
-          const emailContent = getRegistrationApprovalTemplate(
-            attendance.userId.name,
-            event.title,
-            eventDate,
-            event.location || 'TBD',
-            event.hours
-          );
+          let emailContent, subject;
+          
+          if (attendance.registrationApproved) {
+            // Approval email
+            emailContent = getRegistrationApprovalTemplate(
+              attendance.userId.name,
+              event.title,
+              eventDate,
+              event.location || 'TBD',
+              event.hours
+            );
+            subject = `CHARISM - Your Registration Has Been Approved`;
+          } else {
+            // Disapproval email
+            emailContent = getRegistrationDisapprovalTemplate(
+              attendance.userId.name,
+              event.title,
+              eventDate,
+              event.location || 'TBD',
+              attendance.reason || 'No specific reason provided'
+            );
+            subject = `CHARISM - Your Registration Has Been Disapproved`;
+          }
           
           const result = await sendEmail(
             attendance.userId.email,
-            `CHARISM - Your Registration Has Been Approved`,
+            subject,
             '',
             emailContent,
             true
           );
           
           if (result.success) {
-            console.log(`✅ Registration approval email sent to ${attendance.userId.email}`);
+            console.log(`✅ Registration ${attendance.registrationApproved ? 'approval' : 'disapproval'} email sent to ${attendance.userId.email}`);
           } else {
-            console.warn(`⚠️ Registration approval email failed: ${result.message}`);
+            console.warn(`⚠️ Registration ${attendance.registrationApproved ? 'approval' : 'disapproval'} email failed: ${result.message}`);
           }
         } catch (emailError) {
-          console.error('❌ Failed to send registration approval email:', emailError);
+          console.error('❌ Failed to send registration email:', emailError);
           // Don't fail the request if email fails
         }
       });
     }
 
-    res.json({ message: 'Registration approved successfully.' });
+    res.json({ 
+      message: `Registration ${attendance.registrationApproved ? 'approved' : 'disapproved'} successfully.`,
+      registrationApproved: attendance.registrationApproved,
+      status: attendance.status
+    });
   } catch (err) {
     console.error('Error in approveRegistration:', err);
     res.status(500).json({ message: 'Error approving registration.', error: err.message });

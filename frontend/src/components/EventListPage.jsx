@@ -1447,23 +1447,120 @@ function EventListPage() {
                         )}
                         
                         {role === 'Student' && isJoined && (
-                          <button 
-                            className="join-chat-button"
-                            onClick={() => navigate(`/events/${event._id}/chat`)}
-                          >
-                            <span className="button-icon">💬</span>
-                            Join Event
-                          </button>
+                          <div className="student-event-actions">
+                            {/* Time Status Display */}
+                            <div className="time-status-display">
+                              {att && (
+                                <>
+                                  {att.timeIn && (
+                                    <div className="time-status-item time-in-status">
+                                      <span className="status-icon">⏰</span>
+                                      <span className="status-text">
+                                        Time In: {new Date(att.timeIn).toLocaleTimeString('en-US', { 
+                                          hour: '2-digit', 
+                                          minute: '2-digit',
+                                          hour12: true 
+                                        })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {att.timeOut && (
+                                    <div className="time-status-item time-out-status">
+                                      <span className="status-icon">🏁</span>
+                                      <span className="status-text">
+                                        Time Out: {new Date(att.timeOut).toLocaleTimeString('en-US', { 
+                                          hour: '2-digit', 
+                                          minute: '2-digit',
+                                          hour12: true 
+                                        })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {att.timeIn && !att.timeOut && (
+                                    <div className="time-status-item active-status">
+                                      <span className="status-icon">🟢</span>
+                                      <span className="status-text">Currently Active</span>
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="student-action-buttons">
+                              {/* Time In/Out Buttons */}
+                              {!att?.timeIn && (
+                                <button 
+                                  className="time-action-button time-in-button"
+                                  onClick={() => handleTimeIn(event._id)}
+                                  disabled={loading}
+                                >
+                                  <span className="button-icon">⏰</span>
+                                  Time In
+                                </button>
+                              )}
+                              
+                              {att?.timeIn && !att?.timeOut && (
+                                <button 
+                                  className="time-action-button time-out-button"
+                                  onClick={() => handleTimeOut(event._id)}
+                                  disabled={loading}
+                                >
+                                  <span className="button-icon">🏁</span>
+                                  Time Out
+                                </button>
+                              )}
+
+                              {/* Join Chat Button */}
+                              <button 
+                                className="join-chat-button"
+                                onClick={() => navigate(`/events/${event._id}/chat`)}
+                              >
+                                <span className="button-icon">💬</span>
+                                Join Chat
+                              </button>
+                            </div>
+                          </div>
                         )}
                         
                         {(role === 'Admin' || role === 'Staff') && (
-                          <button 
-                            className="join-chat-button"
-                            onClick={() => navigate(`/events/${event._id}`)}
-                          >
-                            <span className="button-icon"></span>
-                            View
-                          </button>
+                          <div className="admin-staff-event-actions">
+                            {/* Event Statistics */}
+                            <div className="event-statistics">
+                              <div className="stat-item">
+                                <span className="stat-label">Participants:</span>
+                                <span className="stat-value">{approvedAttendanceCount}</span>
+                                {maxParticipants > 0 && (
+                                  <span className="stat-max">/ {maxParticipants}</span>
+                                )}
+                              </div>
+                              {pendingRegistrationsCount > 0 && (
+                                <div className="stat-item pending-stat">
+                                  <span className="stat-label">Pending:</span>
+                                  <span className="stat-value">{pendingRegistrationsCount}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="admin-staff-buttons">
+                              <button 
+                                className="admin-action-button view-button"
+                                onClick={() => navigate(`/events/${event._id}`)}
+                              >
+                                <span className="button-icon">👁️</span>
+                                View Details
+                              </button>
+                              
+                              <button 
+                                className="admin-action-button participants-button"
+                                onClick={() => navigate(`/events/${event._id}/participants`)}
+                              >
+                                <span className="button-icon">👥</span>
+                                Manage Participants
+                              </button>
+                            </div>
+                          </div>
                         )}
                       </div>
                     </div>
