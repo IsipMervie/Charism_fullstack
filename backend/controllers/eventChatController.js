@@ -10,6 +10,12 @@ const path = require('path');
 // Image content analysis function using AI/ML
 const analyzeImageContent = async (file) => {
   try {
+    // BYPASS: If image moderation is disabled, allow all images
+    if (process.env.DISABLE_IMAGE_MODERATION === 'true') {
+      console.log('📷 Image moderation disabled - allowing all images');
+      return { isInappropriate: false, confidence: 0, method: 'bypassed' };
+    }
+    
     // Method 1: Use Google Cloud Vision API (if available)
     if (process.env.GOOGLE_CLOUD_VISION_API_KEY) {
       return await analyzeWithGoogleVision(file);
@@ -25,12 +31,13 @@ const analyzeImageContent = async (file) => {
       return await analyzeWithAzureVision(file);
     }
     
-    // Method 4: Basic image analysis (fallback)
+    // Method 4: Basic image analysis (fallback) - NOW MUCH MORE LENIENT
     return await basicImageAnalysis(file);
     
   } catch (error) {
     console.error('Image analysis error:', error);
-    return { isInappropriate: false, confidence: 0, method: 'error' };
+    // If analysis fails, default to allowing the image
+    return { isInappropriate: false, confidence: 0, method: 'error_fallback' };
   }
 };
 
@@ -134,67 +141,49 @@ const analyzeWithAzureVision = async (file) => {
   };
 };
 
-// Enhanced image filtering (no external APIs needed)
+// Enhanced image filtering (no external APIs needed) - RELAXED VERSION
 const enhancedImageFiltering = async (file) => {
   try {
-    // Method 1: Check file characteristics that indicate inappropriate content
+    // Method 1: Check file characteristics that indicate inappropriate content (RELAXED)
     const suspiciousCharacteristics = {
-      // Very large files (often indicate high-resolution inappropriate content)
-      veryLargeFile: file.size > 3 * 1024 * 1024, // > 3MB
+      // Only flag extremely large files (> 10MB)
+      extremelyLargeFile: file.size > 10 * 1024 * 1024, // > 10MB
       
-      // Specific file size ranges that are common for inappropriate content
-      suspiciousSizeRange: file.size > 1.5 * 1024 * 1024 && file.size < 2.5 * 1024 * 1024, // 1.5-2.5MB range
+      // Only flag very small corrupted files
+      corruptedFile: file.size < 1024, // < 1KB (likely corrupted)
       
-      // Large GIFs (often animated inappropriate content)
-      largeGif: file.mimetype === 'image/gif' && file.size > 3 * 1024 * 1024,
-      
-      // Very small files (might be corrupted or inappropriate thumbnails)
-      suspiciouslySmall: file.size < 2048 && file.size > 1024, // 1-2KB range
-      
-      // PNG files with specific characteristics
-      suspiciousPng: file.mimetype === 'image/png' && file.size > 2 * 1024 * 1024,
-      
-      // JPEG files with specific characteristics  
-      suspiciousJpeg: file.mimetype === 'image/jpeg' && file.size > 2.5 * 1024 * 1024
+      // Only flag extremely large GIFs (> 10MB)
+      extremelyLargeGif: file.mimetype === 'image/gif' && file.size > 10 * 1024 * 1024
     };
     
     // Count suspicious characteristics
     const suspiciousCount = Object.values(suspiciousCharacteristics).filter(Boolean).length;
     
-    // Method 2: Check filename patterns more thoroughly
+    // Method 2: Check filename patterns (ONLY explicit inappropriate terms)
     const fileName = file.originalname.toLowerCase();
-    const suspiciousPatterns = [
-      // Explicit inappropriate terms
-      /nude|naked|sex|sexual|porn|xxx|adult|explicit|nsfw/i,
-      // Body parts
-      /breast|boob|tit|penis|dick|cock|pussy|vagina|ass|butt/i,
-      // Actions
-      /fuck|fucking|sex|sexual|masturbat|orgasm/i,
-      // Tagalog inappropriate terms
-      /puta|putang|gago|bobo|tanga|bastos/i,
-      // Common misspellings and variations
-      /p0rn|pr0n|nud3|s3x|f*ck|p*ta|g*go/i,
-      // Suspicious numbers or codes
-      /\d{4,}/, // Long number sequences (often used in inappropriate content)
-      /[a-z]{1,3}\d{3,}/i // Letter-number combinations
+    const explicitInappropriatePatterns = [
+      // Only the most explicit inappropriate terms
+      /porn|xxx|nsfw|explicit.*nude|nude.*explicit/i,
+      // Very explicit body parts
+      /penis|cock|pussy|vagina/i,
+      // Very explicit actions
+      /masturbat|orgasm/i
     ];
     
-    const hasSuspiciousPattern = suspiciousPatterns.some(pattern => pattern.test(fileName));
+    const hasExplicitPattern = explicitInappropriatePatterns.some(pattern => pattern.test(fileName));
     
-    // Method 3: Check file extension and size combinations
+    // Method 3: Check for corrupted or suspicious file types only
     const suspiciousCombinations = [
-      // Large files with common inappropriate extensions
-      file.size > 2 * 1024 * 1024 && /\.(jpg|jpeg|png)$/i.test(fileName),
-      // GIFs over certain size
-      file.mimetype === 'image/gif' && file.size > 2 * 1024 * 1024,
-      // WebP files (often used for inappropriate content)
-      file.mimetype === 'image/webp' && file.size > 1.5 * 1024 * 1024
+      // Only flag corrupted files
+      file.size < 1024 && /\.(jpg|jpeg|png|gif)$/i.test(fileName),
+      // Only flag non-image files disguised as images
+      !file.mimetype.startsWith('image/') && /\.(jpg|jpeg|png|gif)$/i.test(fileName)
     ];
     
     const hasSuspiciousCombination = suspiciousCombinations.some(Boolean);
     
-    // Determine if inappropriate
-    const isInappropriate = suspiciousCount >= 2 || hasSuspiciousPattern || hasSuspiciousCombination;
+    // Determine if inappropriate (MUCH MORE STRICT - need multiple flags)
+    const isInappropriate = (suspiciousCount >= 2 && hasExplicitPattern) || hasSuspiciousCombination;
     
     return {
       isInappropriate,
@@ -213,12 +202,57 @@ const enhancedImageFiltering = async (file) => {
     
   } catch (error) {
     console.error('Enhanced image filtering error:', error);
-    // If filtering fails, be conservative and block the image
+    // If filtering fails, default to allowing the image (more lenient approach)
     return {
-      isInappropriate: true,
-      reason: 'Image filtering failed - blocked for safety',
+      isInappropriate: false,
+      reason: 'Image filtering failed - allowing for safety',
       detectedContent: { error: error.message },
-      confidence: 50
+      confidence: 0
+    };
+  }
+};
+
+// Basic image analysis (fallback method) - VERY LENIENT
+const basicImageAnalysis = async (file) => {
+  try {
+    // Only check for obviously corrupted or malicious files
+    const fileName = file.originalname.toLowerCase();
+    
+    // Only flag if filename contains very explicit inappropriate terms
+    const explicitTerms = [
+      /porn|xxx|nsfw/i,
+      /penis|cock|pussy/i
+    ];
+    
+    const hasExplicitTerm = explicitTerms.some(pattern => pattern.test(fileName));
+    
+    // Only flag if file is extremely large (> 50MB) or corrupted (< 1KB)
+    const isCorrupted = file.size < 1024; // < 1KB
+    const isExtremelyLarge = file.size > 50 * 1024 * 1024; // > 50MB
+    
+    const isInappropriate = hasExplicitTerm || isCorrupted || isExtremelyLarge;
+    
+    return {
+      isInappropriate,
+      confidence: isInappropriate ? 90 : 0,
+      detectedContent: {
+        hasExplicitTerm,
+        isCorrupted,
+        isExtremelyLarge,
+        fileSize: file.size,
+        fileName: fileName
+      },
+      method: 'Basic Analysis (Lenient)'
+    };
+    
+  } catch (error) {
+    console.error('Basic image analysis error:', error);
+    // If analysis fails, allow the image
+    return {
+      isInappropriate: false,
+      confidence: 0,
+      detectedContent: { error: error.message },
+      method: 'Basic Analysis (Error Fallback)'
     };
   }
 };

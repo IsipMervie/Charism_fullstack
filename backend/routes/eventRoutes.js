@@ -201,6 +201,10 @@ router.put('/test-no-middleware/:eventId/registrations/:userId/approve', (req, r
 // Approve registration (Admin/Staff) - MUST come before generic registrations route
 router.put(
   '/:eventId/registrations/:userId/approve',
+  (req, res, next) => {
+    console.log('🚀 REGISTRATION APPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    next();
+  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.approveRegistration
@@ -209,6 +213,10 @@ router.put(
 // Disapprove registration (Admin/Staff) - MUST come before generic registrations route
 router.put(
   '/:eventId/registrations/:userId/disapprove',
+  (req, res, next) => {
+    console.log('🚀 REGISTRATION DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    next();
+  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.disapproveRegistration

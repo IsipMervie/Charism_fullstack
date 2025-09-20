@@ -10,7 +10,10 @@
  */
 export const safeFilter = (input, filterFn, fallback = []) => {
   if (!Array.isArray(input)) {
-    console.warn('safeFilter: Input is not an array:', input);
+    // Only log warning in development mode to reduce console noise
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('safeFilter: Input is not an array:', input);
+    }
     return fallback;
   }
   try {

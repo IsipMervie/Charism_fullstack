@@ -1663,19 +1663,37 @@ exports.approveRegistration = async (req, res) => {
   try {
     const { eventId, userId } = req.params;
     
+    console.log('🚀 APPROVE REGISTRATION CALLED:', { eventId, userId });
+    
     const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     if (!event) {
+      console.log('❌ Event not found:', eventId);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
     // Find the attendance record for this user
+    console.log('🔍 Looking for attendance record for userId:', userId);
+    console.log('📊 Event attendance records:', event.attendance.map(a => ({
+      userId: a.userId?._id || a.userId,
+      name: a.userId?.name || 'Unknown',
+      email: a.userId?.email || 'Unknown'
+    })));
+    
     const attendance = event.attendance.find(a => 
       a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
     );
 
     if (!attendance) {
+      console.log('❌ Registration not found for userId:', userId);
       return res.status(404).json({ message: 'Registration not found.' });
     }
+    
+    console.log('✅ Found attendance record:', {
+      userId: attendance.userId?._id || attendance.userId,
+      name: attendance.userId?.name || 'Unknown',
+      email: attendance.userId?.email || 'Unknown',
+      currentApprovalStatus: attendance.registrationApproved
+    });
 
     // Allow toggling - if already approved, can be disapproved and vice versa
     const wasApproved = attendance.registrationApproved;
@@ -1698,7 +1716,14 @@ exports.approveRegistration = async (req, res) => {
 
     // Send email notification to user about registration status change
     // Send email notification (using same pattern as working emails)
+    console.log('📧 Checking email sending conditions:', {
+      hasUserId: !!attendance.userId,
+      hasEmail: !!(attendance.userId && attendance.userId.email),
+      email: attendance.userId?.email || 'No email'
+    });
+    
     if (attendance.userId && attendance.userId.email) {
+      console.log('📧 Attempting to send email to:', attendance.userId.email);
       try {
         const sendEmail = require('../utils/sendEmail');
         const { getRegistrationApprovalTemplate, getRegistrationDisapprovalTemplate } = require('../utils/emailTemplates');
@@ -1768,23 +1793,41 @@ exports.disapproveRegistration = async (req, res) => {
     const { eventId, userId } = req.params;
     const { reason } = req.body;
     
+    console.log('🚀 DISAPPROVE REGISTRATION CALLED:', { eventId, userId, reason });
+    
     if (!reason || reason.trim() === '') {
       return res.status(400).json({ message: 'Reason for disapproval is required.' });
     }
     
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     if (!event) {
+      console.log('❌ Event not found:', eventId);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
     // Find the attendance record for this user
+    console.log('🔍 Looking for attendance record for userId:', userId);
+    console.log('📊 Event attendance records:', event.attendance.map(a => ({
+      userId: a.userId?._id || a.userId,
+      name: a.userId?.name || 'Unknown',
+      email: a.userId?.email || 'Unknown'
+    })));
+    
     const attendance = event.attendance.find(a => 
       a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
     );
 
     if (!attendance) {
+      console.log('❌ Registration not found for userId:', userId);
       return res.status(404).json({ message: 'Registration not found.' });
     }
+    
+    console.log('✅ Found attendance record:', {
+      userId: attendance.userId?._id || attendance.userId,
+      name: attendance.userId?.name || 'Unknown',
+      email: attendance.userId?.email || 'Unknown',
+      currentApprovalStatus: attendance.registrationApproved
+    });
 
     // Disapprove the registration
     attendance.registrationApproved = false;
@@ -1796,7 +1839,14 @@ exports.disapproveRegistration = async (req, res) => {
     await event.save();
 
     // Send email notification to user about registration disapproval
+    console.log('📧 Checking email sending conditions for disapproval:', {
+      hasUserId: !!attendance.userId,
+      hasEmail: !!(attendance.userId && attendance.userId.email),
+      email: attendance.userId?.email || 'No email'
+    });
+    
     if (attendance.userId && attendance.userId.email) {
+      console.log('📧 Attempting to send disapproval email to:', attendance.userId.email);
       // Send email notification (using same pattern as working emails)
       try {
         const sendEmail = require('../utils/sendEmail');

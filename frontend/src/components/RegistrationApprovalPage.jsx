@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { getEvents, getAllEventRegistrations, approveRegistration, disapproveRegistration } from '../api/api';
 import Swal from 'sweetalert2';
 import { FaSpinner, FaEye, FaArrowLeft, FaFilter, FaMapMarkerAlt, FaUsers, FaClock, FaBuilding, FaUserGraduate, FaCheck, FaTimes, FaChartBar, FaCalendarAlt, FaUserCheck, FaUserTimes, FaSearch, FaSync } from 'react-icons/fa';
-import { safeFilter, safeLength } from '../utils/arrayUtils';
+import { safeFilter, safeLength, safeMap } from '../utils/arrayUtils';
 import { formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import './RegistrationApprovalPage.css';
 
@@ -333,13 +333,7 @@ function RegistrationApprovalPage() {
                   </div>
                 </div>
                 <div className="header-actions">
-                  <button
-                    className="action-button secondary-button"
-                    onClick={() => setViewMode('events')}
-                  >
-                    <FaEye className="btn-icon" />
-                    View Events
-                  </button>
+                  {/* Header actions removed as requested */}
                 </div>
               </div>
 
@@ -504,120 +498,28 @@ function RegistrationApprovalPage() {
               <h2>Registrations for "{selectedEvent.title}"</h2>
               <p className="event-subtitle">{formatDatePhilippines(selectedEvent.date)} • {selectedEvent.location}</p>
             </div>
-            <div className="search-container">
-              <div className="search-input-group">
-                <FaSearch className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search students by name or email..."
-                  value={studentSearchTerm}
-                  onChange={(e) => setStudentSearchTerm(e.target.value)}
-                  className="modern-search-input"
-                />
-              </div>
+          </div>
+
+          {/* Registration Analytics removed as requested */}
+
+          <div className="registrations-search-section">
+            <div className="search-container-large">
+              <input
+                type="text"
+                placeholder="Search students by name or email..."
+                value={studentSearchTerm}
+                onChange={(e) => setStudentSearchTerm(e.target.value)}
+                className="large-search-input"
+              />
             </div>
           </div>
 
-          {/* Registration Analytics */}
-          <div className="registration-analytics">
-            <div className="analytics-card">
-              <div className="card-header">
-                <div className="card-icon">
-                  <FaUserCheck />
-                </div>
-                <div className="card-info">
-                  <h3>Approved</h3>
-                  <p>Registrations approved</p>
-                </div>
-              </div>
-              <div className="card-value">
-                {safeFilter(eventRegistrations, reg => reg.registrationApproved).length}
-              </div>
-            </div>
+          {/* Registration Analytics removed as requested */}
 
-            <div className="analytics-card">
-              <div className="card-header">
-                <div className="card-icon">
-                  <FaUserTimes />
-                </div>
-                <div className="card-info">
-                  <h3>Disapproved</h3>
-                  <p>Registrations disapproved</p>
-                </div>
-              </div>
-              <div className="card-value">
-                {safeFilter(eventRegistrations, reg => reg.reason).length}
-              </div>
-            </div>
-
-            <div className="analytics-card">
-              <div className="card-header">
-                <div className="card-icon">
-                  <FaClock />
-                </div>
-                <div className="card-info">
-                  <h3>Pending</h3>
-                  <p>Awaiting review</p>
-                </div>
-              </div>
-              <div className="card-value">
-                {safeFilter(eventRegistrations, reg => !reg.registrationApproved && !reg.reason).length}
-              </div>
-            </div>
-
-            <div className="analytics-card">
-              <div className="card-header">
-                <div className="card-icon">
-                  <FaUsers />
-                </div>
-                <div className="card-info">
-                  <h3>Total</h3>
-                  <p>All registrations</p>
-                </div>
-              </div>
-              <div className="card-value">{eventRegistrations.length}</div>
-            </div>
-          </div>
-
-          <div className="registrations-filters">
-            <div className="filter-container">
-              <div className="filter-input-group">
-                <FaFilter className="filter-icon" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="modern-filter-select"
-                >
-                  <option value="all">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="disapproved">Disapproved</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="registrations-summary">
-            <div className="summary-card pending">
-              <span className="count">{safeLength(eventRegistrations.registrations?.pending)}</span>
-              <span className="label">Pending</span>
-            </div>
-            <div className="summary-card approved">
-              <span className="count">{safeLength(eventRegistrations.registrations?.approved)}</span>
-              <span className="label">Approved</span>
-            </div>
-            <div className="summary-card disapproved">
-              <span className="count">{safeLength(eventRegistrations.registrations?.disapproved)}</span>
-              <span className="label">Disapproved</span>
-            </div>
-            <div className="summary-card total">
-              <span className="count">{eventRegistrations.registrations?.total || 0}</span>
-              <span className="label">Total</span>
-            </div>
-          </div>
+          {/* Registrations summary removed as requested */}
 
           <div className="registrations-grid">
-            {eventRegistrations.registrations?.pending?.map(registration => (
+            {safeMap(eventRegistrations.registrations?.pending, registration => (
               <RegistrationCard
                 key={registration._id}
                 registration={registration}
@@ -625,7 +527,7 @@ function RegistrationApprovalPage() {
                 type="pending"
               />
             ))}
-            {eventRegistrations.registrations?.approved?.map(registration => (
+            {safeMap(eventRegistrations.registrations?.approved, registration => (
               <RegistrationCard
                 key={registration._id}
                 registration={registration}
@@ -633,7 +535,7 @@ function RegistrationApprovalPage() {
                 type="approved"
               />
             ))}
-            {eventRegistrations.registrations?.disapproved?.map(registration => (
+            {safeMap(eventRegistrations.registrations?.disapproved, registration => (
               <RegistrationCard
                 key={registration._id}
                 registration={registration}

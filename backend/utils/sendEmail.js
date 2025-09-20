@@ -47,8 +47,16 @@ const createTransporter = () => {
  * @param {boolean} isNoReply - Whether this is a no-reply email (default: true)
  */
 const sendEmail = async (to, subject, text, html, isNoReply = true) => {
+  console.log('📧 SendEmail called with:', { to, subject, hasHtml: !!html, hasText: !!text });
+  
   if (!EMAIL_USER || EMAIL_PASS === 'your_email_password' || !EMAIL_USER.includes('@')) {
     console.warn('⚠️ Email not configured - skipping email send');
+    console.warn('📧 Email config check:', {
+      hasEmailUser: !!EMAIL_USER,
+      hasEmailPass: !!EMAIL_PASS,
+      emailUserValue: EMAIL_USER,
+      emailPassValue: EMAIL_PASS === 'your_email_password' ? 'DEFAULT_PASSWORD' : 'SET'
+    });
     return { success: false, message: 'Email not configured' };
   }
 
