@@ -52,6 +52,31 @@ function EventDetailsPage() {
       return null;
     }
   };
+
+  // Fetch event details function
+  const fetchEventDetails = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const role = getRole();
+      let eventData;
+      
+      if (role === 'admin' || role === 'staff') {
+        eventData = await getEventDetails(eventId);
+      } else {
+        eventData = await getPublicEventDetails(eventId);
+      }
+      
+      setEvent(eventData);
+      setIsUserApprovedForEvent(eventData.isUserApprovedForEvent || false);
+    } catch (error) {
+      console.error('Error fetching event details:', error);
+      setError(error.message || 'Failed to load event details');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const role = getRole();
 
@@ -64,41 +89,7 @@ function EventDetailsPage() {
 
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Use public API for unauthenticated users, authenticated API for logged-in users
-        const eventData = isAuthenticated 
-          ? await getEventDetails(eventId)
-          : await getPublicEventDetails(eventId);
-        setEvent(eventData);
-        setError('');
-        
-        // Check if user is approved for this event
-        if (isAuthenticated && eventData.attendance) {
-          const user = JSON.parse(localStorage.getItem('user') || '{}');
-          const userAttendance = eventData.attendance.find(att => 
-            (att.userId?._id || att.userId) === user.id
-          );
-          setIsUserApprovedForEvent(userAttendance?.registrationApproved || false);
-        }
-      } catch (err) {
-        console.error('Error fetching event:', err);
-        if (err.response?.status === 404) {
-          setError('Event not found');
-        } else if (err.response?.status === 403) {
-          setError('This event is not available for viewing');
-        } else if (err.response?.status === 401) {
-          setError('Authentication required to view this event');
-        } else {
-          setError('Error fetching event details');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    fetchEventDetails();
   }, [eventId, isAuthenticated]);
 
   useEffect(() => {
@@ -146,7 +137,7 @@ function EventDetailsPage() {
         await approveAttendance(eventId, userId);
         Swal.fire('Success', 'Attendance approved successfully!', 'success');
         // Reload event data
-        loadEventDetails();
+        fetchEventDetails();
       } catch (error) {
         Swal.fire('Error', error.message || 'Failed to approve attendance.', 'error');
       } finally {
@@ -218,7 +209,7 @@ function EventDetailsPage() {
         await disapproveAttendance(eventId, userId, reasonData.reason);
         Swal.fire('Success', 'Attendance disapproved successfully!', 'success');
         // Reload event data
-        loadEventDetails();
+        fetchEventDetails();
       } catch (error) {
         Swal.fire('Error', error.message || 'Failed to disapprove attendance.', 'error');
       } finally {

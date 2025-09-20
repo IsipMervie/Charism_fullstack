@@ -106,7 +106,7 @@ function EventParticipantsPage() {
       try {
         await approveAttendance(eventId, userId);
         Swal.fire('Success', 'Attendance approved successfully!', 'success');
-        loadParticipants();
+        fetchParticipants();
       } catch (error) {
         Swal.fire('Error', error.message || 'Failed to approve attendance.', 'error');
       } finally {
@@ -184,7 +184,7 @@ function EventParticipantsPage() {
       try {
         await disapproveAttendance(eventId, userId, reasonData.reason);
         Swal.fire('Success', 'Attendance disapproved successfully!', 'success');
-        loadParticipants();
+        fetchParticipants();
       } catch (error) {
         Swal.fire('Error', error.message || 'Failed to disapprove attendance.', 'error');
       } finally {
