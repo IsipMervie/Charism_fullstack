@@ -879,6 +879,14 @@ exports.joinEvent = async (req, res) => {
     }
 
     // Add user to attendance
+    console.log('📝 Creating attendance record:', {
+      userId: userId,
+      userIdType: typeof userId,
+      userIdString: userId?.toString(),
+      status: initialStatus,
+      registrationApproved: registrationApproved
+    });
+    
     event.attendance.push({
       userId: userId,
       status: initialStatus,
@@ -887,6 +895,8 @@ exports.joinEvent = async (req, res) => {
     });
 
     await event.save();
+    
+    console.log('✅ Attendance record created successfully');
     
     // Email notifications disabled
     
@@ -1358,17 +1368,56 @@ exports.approveAttendance = async (req, res) => {
   try {
     const { eventId, userId } = req.params;
 
+    console.log('🚀 APPROVE ATTENDANCE CALLED:', { eventId, userId });
+    console.log('🚀 Request URL:', req.url);
+    console.log('🚀 Request method:', req.method);
+    console.log('🚀 Request params:', req.params);
+
     const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     
     if (!event) {
+      console.log('❌ Event not found:', eventId);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    const attendance = event.attendance.find(a => 
-      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
-    );
+    console.log('🔍 Looking for attendance record for userId:', userId);
+    console.log('🔍 UserId type:', typeof userId);
+    console.log('🔍 UserId length:', userId?.length);
+    console.log('📊 Event attendance records:', event.attendance.map(a => ({
+      userId: a.userId?._id || a.userId,
+      userIdType: typeof (a.userId?._id || a.userId),
+      userIdString: (a.userId?._id || a.userId)?.toString(),
+      name: a.userId?.name || 'Unknown',
+      email: a.userId?.email || 'Unknown',
+      status: a.status
+    })));
+
+    // Try multiple ways to find the attendance record
+    const attendance = event.attendance.find(a => {
+      const attendanceUserId = a.userId?._id || a.userId;
+      const attendanceUserIdString = attendanceUserId?.toString();
+      const searchUserIdString = userId?.toString();
+      
+      console.log('🔍 Comparing:', {
+        attendanceUserId: attendanceUserId,
+        attendanceUserIdString: attendanceUserIdString,
+        searchUserId: userId,
+        searchUserIdString: searchUserIdString,
+        exactMatch: attendanceUserIdString === searchUserIdString,
+        looseMatch: attendanceUserIdString === userId || attendanceUserId === userId
+      });
+      
+      return attendanceUserIdString === searchUserIdString || 
+             attendanceUserIdString === userId || 
+             attendanceUserId === userId;
+    });
 
     if (!attendance) {
+      console.log('❌ Attendance record not found for userId:', userId);
+      console.log('📋 Available attendance records:', event.attendance.map(a => ({
+        userId: a.userId?._id || a.userId,
+        name: a.userId?.name || 'Unknown'
+      })));
       return res.status(404).json({ message: 'Attendance record not found.' });
     }
 
@@ -1459,6 +1508,12 @@ exports.disapproveAttendance = async (req, res) => {
     const { eventId, userId } = req.params;
     const { reason } = req.body; // Get the reason from the request body
     
+    console.log('🚀 DISAPPROVE ATTENDANCE CALLED:', { eventId, userId, reason });
+    console.log('🚀 Request URL:', req.url);
+    console.log('🚀 Request method:', req.method);
+    console.log('🚀 Request params:', req.params);
+    console.log('🚀 Request body:', req.body);
+    
     // Check if the reason is provided
     if (!reason) {
       return res.status(400).json({ message: 'Reason for disapproval is required.' });
@@ -1467,14 +1522,48 @@ exports.disapproveAttendance = async (req, res) => {
     const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
 
     if (!event) {
+      console.log('❌ Event not found:', eventId);
       return res.status(404).json({ message: 'Event not found.' });
     }
 
-    const attendance = event.attendance.find(a => 
-      a.userId.toString() === userId || (a.userId && a.userId.toString() === userId)
-    );
+    console.log('🔍 Looking for attendance record for userId:', userId);
+    console.log('🔍 UserId type:', typeof userId);
+    console.log('🔍 UserId length:', userId?.length);
+    console.log('📊 Event attendance records:', event.attendance.map(a => ({
+      userId: a.userId?._id || a.userId,
+      userIdType: typeof (a.userId?._id || a.userId),
+      userIdString: (a.userId?._id || a.userId)?.toString(),
+      name: a.userId?.name || 'Unknown',
+      email: a.userId?.email || 'Unknown',
+      status: a.status
+    })));
+    
+    // Try multiple ways to find the attendance record
+    const attendance = event.attendance.find(a => {
+      const attendanceUserId = a.userId?._id || a.userId;
+      const attendanceUserIdString = attendanceUserId?.toString();
+      const searchUserIdString = userId?.toString();
+      
+      console.log('🔍 Comparing:', {
+        attendanceUserId: attendanceUserId,
+        attendanceUserIdString: attendanceUserIdString,
+        searchUserId: userId,
+        searchUserIdString: searchUserIdString,
+        exactMatch: attendanceUserIdString === searchUserIdString,
+        looseMatch: attendanceUserIdString === userId || attendanceUserId === userId
+      });
+      
+      return attendanceUserIdString === searchUserIdString || 
+             attendanceUserIdString === userId || 
+             attendanceUserId === userId;
+    });
 
     if (!attendance) {
+      console.log('❌ Attendance record not found for userId:', userId);
+      console.log('📋 Available attendance records:', event.attendance.map(a => ({
+        userId: a.userId?._id || a.userId,
+        name: a.userId?.name || 'Unknown'
+      })));
       return res.status(404).json({ message: 'Attendance record not found.' });
     }
 
@@ -1664,6 +1753,10 @@ exports.approveRegistration = async (req, res) => {
     const { eventId, userId } = req.params;
     
     console.log('🚀 APPROVE REGISTRATION CALLED:', { eventId, userId });
+    console.log('🚀 Request URL:', req.url);
+    console.log('🚀 Request method:', req.method);
+    console.log('🚀 Request params:', req.params);
+    console.log('🚀 Request body:', req.body);
     
     const event = await Event.findById(eventId).populate('attendance.userId', 'name email');
     if (!event) {
@@ -1794,6 +1887,10 @@ exports.disapproveRegistration = async (req, res) => {
     const { reason } = req.body;
     
     console.log('🚀 DISAPPROVE REGISTRATION CALLED:', { eventId, userId, reason });
+    console.log('🚀 Request URL:', req.url);
+    console.log('🚀 Request method:', req.method);
+    console.log('🚀 Request params:', req.params);
+    console.log('🚀 Request body:', req.body);
     
     if (!reason || reason.trim() === '') {
       return res.status(400).json({ message: 'Reason for disapproval is required.' });
@@ -2712,6 +2809,25 @@ exports.getEventByRegistrationToken = async (req, res) => {
   try {
     const { token } = req.params;
     console.log('🔍 Getting event by registration token:', token);
+    console.log('🔍 Request URL:', req.url);
+    console.log('🔍 Request method:', req.method);
+    console.log('🔍 Request params:', req.params);
+    
+    // First, let's check if any event has this token (even if disabled)
+    const anyEvent = await Event.findOne({ 
+      publicRegistrationToken: token
+    });
+    
+    console.log('🔍 Any event with this token:', anyEvent ? 'Yes' : 'No');
+    if (anyEvent) {
+      console.log('🔍 Event details:', {
+        id: anyEvent._id,
+        title: anyEvent.title,
+        token: anyEvent.publicRegistrationToken,
+        enabled: anyEvent.isPublicRegistrationEnabled,
+        status: anyEvent.status
+      });
+    }
     
     const event = await Event.findOne({ 
       publicRegistrationToken: token,

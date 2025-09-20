@@ -49,6 +49,8 @@ router.get('/test-approval', (req, res) => {
   });
 });
 
+// REMOVED: Test routes moved to prevent conflicts with /:eventId route
+
 
 
 
@@ -62,20 +64,19 @@ router.get('/test-simple', (req, res) => {
 });
 
 
+// =======================
+// Public Event Registration Routes - MUST come FIRST to avoid conflicts
+// =======================
+
+// Get event by registration token (public) - MUST come before any /:eventId routes
+router.get('/register/:token', eventController.getEventByRegistrationToken);
+
 // Get all events (public) - MUST come before /:eventId routes
 router.get('/', eventController.getAllEvents);
 
 // =======================
 // CRITICAL: Approval/Disapproval routes MUST come first to avoid conflicts
 // =======================
-
-
-// =======================
-// Public Event Registration Routes
-// =======================
-
-// Get event by registration token (public)
-router.get('/register/:token', eventController.getEventByRegistrationToken);
 
 // Register for event using token (public - requires login)
 router.post('/register/:token', authMiddleware, eventController.registerForEventWithToken);
@@ -195,6 +196,18 @@ router.put('/test-no-middleware/:eventId/registrations/:userId/approve', (req, r
     userId: req.params.userId,
     method: req.method,
     path: req.path
+  });
+});
+
+// Test route for registration approval endpoints (no auth)
+router.put('/test-approval-endpoints/:eventId/registrations/:userId/approve', (req, res) => {
+  res.json({
+    message: 'Registration approval endpoint test working',
+    eventId: req.params.eventId,
+    userId: req.params.userId,
+    method: req.method,
+    path: req.path,
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -442,6 +455,29 @@ router.use((err, req, res, next) => {
   }
   
   res.status(500).json({ message: 'Internal server error' });
+});
+
+// =======================
+// Test Routes - MUST come BEFORE generic /:eventId route
+// =======================
+
+// Test route to verify registration token endpoint
+router.get('/test-register/:token', (req, res) => {
+  console.log('🔍 TEST-REGISTER ROUTE HIT:', req.params.token);
+  res.json({
+    message: 'Registration token endpoint is working',
+    token: req.params.token,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Alternative test route without parameters to debug
+router.get('/test-register-debug', (req, res) => {
+  console.log('🔍 TEST-REGISTER-DEBUG ROUTE HIT');
+  res.json({
+    message: 'Test register debug route working',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Get event details (public) - MUST come LAST to prevent conflicts with approval routes
