@@ -58,18 +58,19 @@ function EventParticipantsPage() {
     return statusText.toLowerCase().replace(/\s+/g, '-');
   };
 
-  useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        const data = await getEventParticipants(eventId);
-        setParticipants(data);
-        setLoading(false);
-      } catch (err) {
-        setLoading(false);
-        Swal.fire('Error', 'Could not load participants.', 'error');
-      }
-    };
+  const fetchParticipants = async () => {
+    try {
+      setLoading(true);
+      const data = await getEventParticipants(eventId);
+      setParticipants(data);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      Swal.fire('Error', 'Could not load participants.', 'error');
+    }
+  };
 
+  useEffect(() => {
     fetchParticipants();
   }, [eventId]);
 
