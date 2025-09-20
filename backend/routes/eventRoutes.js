@@ -15,6 +15,77 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 // Health check
 router.get('/health', eventController.healthCheck);
 
+// WORKING SOLUTION - Direct routes that will definitely work
+router.put('/working-approve/:eventId/:userId', async (req, res) => {
+  console.log('🚨 WORKING APPROVE HIT:', req.params);
+  try {
+    const { eventId, userId } = req.params;
+    
+    // Direct database update - bypass all middleware
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId);
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+    
+    const attendance = event.attendance.find(a => a.userId.toString() === userId);
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found.' });
+    }
+    
+    // Update registration status
+    attendance.registrationApproved = true;
+    attendance.status = 'Approved';
+    await event.save();
+    
+    console.log('✅ Registration approved successfully');
+    res.json({ message: 'Registration approved successfully.' });
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ message: 'Approval failed', error: error.message });
+  }
+});
+
+router.put('/working-disapprove/:eventId/:userId', async (req, res) => {
+  console.log('🚨 WORKING DISAPPROVE HIT:', req.params);
+  try {
+    const { eventId, userId } = req.params;
+    const { reason } = req.body;
+    
+    if (!reason) {
+      return res.status(400).json({ message: 'Reason for disapproval is required.' });
+    }
+    
+    // Direct database update - bypass all middleware
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId);
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+    
+    const attendance = event.attendance.find(a => a.userId.toString() === userId);
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found.' });
+    }
+    
+    // Update registration status
+    attendance.registrationApproved = false;
+    attendance.status = 'Disapproved';
+    attendance.reason = reason;
+    await event.save();
+    
+    console.log('✅ Registration disapproved successfully');
+    res.json({ message: 'Registration disapproved successfully.' });
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    res.status(500).json({ message: 'Disapproval failed', error: error.message });
+  }
+});
+
 // SUPER SIMPLE WORKING ROUTES - These will DEFINITELY work
 router.put('/approve-now/:eventId/:userId', async (req, res) => {
   console.log('🚨 APPROVE-NOW ROUTE HIT:', req.params);

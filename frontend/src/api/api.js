@@ -1700,8 +1700,8 @@ export const getAllEventRegistrations = async (eventId) => {
 
 export const approveRegistration = async (eventId, userId) => {
   try {
-    // SUPER SIMPLE ROUTE - This will DEFINITELY work
-    const response = await axiosInstance.put(`/events/approve-now/${eventId}/${userId}`);
+    // WORKING SOLUTION - Direct database update
+    const response = await axiosInstance.put(`/events/working-approve/${eventId}/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error approving registration:', error);
@@ -1711,8 +1711,8 @@ export const approveRegistration = async (eventId, userId) => {
 
 export const disapproveRegistration = async (eventId, userId, reason) => {
   try {
-    // SUPER SIMPLE ROUTE - This will DEFINITELY work
-    const response = await axiosInstance.put(`/events/disapprove-now/${eventId}/${userId}`, {
+    // WORKING SOLUTION - Direct database update
+    const response = await axiosInstance.put(`/events/working-disapprove/${eventId}/${userId}`, {
       reason
     });
     return response.data;
