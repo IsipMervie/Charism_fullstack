@@ -938,21 +938,40 @@ export const registerUser = async (name, email, password, userId, academicYear, 
 };
 
 // Create Event
-export const createEvent = async (formData) => {
+export const createEvent = async (eventData) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await axiosInstance.post('/events/', formData, {
+    console.log('🔍 Creating event with data:', eventData);
+    
+    // Convert FormData to JSON if needed
+    let jsonData = eventData;
+    if (eventData instanceof FormData) {
+      jsonData = {};
+      for (let [key, value] of eventData.entries()) {
+        jsonData[key] = value;
+      }
+    }
+    
+    console.log('📝 Sending JSON data:', jsonData);
+    
+    const response = await axiosInstance.post('/events/', jsonData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        'Content-Type': 'application/json',
       },
-      timeout: 60000, // 60 second timeout for file uploads
+      timeout: 60000,
     });
+    
+    console.log('✅ Event created successfully:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error('❌ Error creating event:', error);
+    console.error('❌ Error response:', error.response?.data);
+    console.error('❌ Error status:', error.response?.status);
+    
     if (error.response?.data?.message) {
       throw new Error(error.response.data.message);
+    }
+    if (error.response?.data?.missingFields) {
+      throw new Error(`Missing required fields: ${error.response.data.missingFields.join(', ')}`);
     }
     throw new Error('Failed to create event. Please try again.');
   }

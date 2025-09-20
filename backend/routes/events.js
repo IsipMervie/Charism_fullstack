@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
+const sendEmail = require('../utils/sendEmail');
+const User = require('../models/User');
 
 // =======================
 // CLEAN, SIMPLE EVENTS SYSTEM
@@ -195,6 +197,48 @@ router.post('/register/:token', authMiddleware, async (req, res) => {
     });
     
     await event.save();
+    
+    // Send registration confirmation email
+    try {
+      const user = await User.findById(userId);
+      if (user && user.email) {
+        const subject = `Event Registration Confirmed - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #007bff;">📝 Registration Confirmed!</h2>
+            <p>Dear ${user.name},</p>
+            <p>Thank you for registering for the event <strong>"${event.title}"</strong>. Your registration has been received and is pending approval.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Description:</strong> ${event.description}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Hours:</strong> ${event.hours}</p>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+              <h3>Next Steps:</h3>
+              <p>Your registration is currently <strong>pending approval</strong>. You will receive another email once your registration is approved or if any issues arise.</p>
+            </div>
+            
+            <p>Please keep this email for your records. If you have any questions, please contact the event organizer.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Registration confirmation email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send registration confirmation email:', emailError.message);
+    }
     
     res.json({ 
       message: 'Registration successful! Your registration is pending approval.',
@@ -443,6 +487,44 @@ router.put('/approve/:eventId/:userId', authMiddleware, async (req, res) => {
     
     await event.save();
     
+    // Send approval email notification
+    try {
+      const user = await User.findById(req.params.userId);
+      if (user && user.email) {
+        const subject = `Event Registration Approved - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #28a745;">✅ Registration Approved!</h2>
+            <p>Dear ${user.name},</p>
+            <p>Great news! Your registration for the event <strong>"${event.title}"</strong> has been approved.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Hours:</strong> ${event.hours}</p>
+            </div>
+            
+            <p>You can now attend the event. Please arrive on time and remember to time in and time out for attendance tracking.</p>
+            
+            <p>If you have any questions, please contact the event organizer.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Approval email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send approval email:', emailError.message);
+    }
+    
     res.json({ 
       message: 'Registration approved successfully!',
       eventId: event._id,
@@ -486,6 +568,48 @@ router.put('/disapprove/:eventId/:userId', authMiddleware, async (req, res) => {
     attendance.reason = reason;
     
     await event.save();
+    
+    // Send disapproval email notification
+    try {
+      const user = await User.findById(req.params.userId);
+      if (user && user.email) {
+        const subject = `Event Registration Update - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #dc3545;">⚠️ Registration Update</h2>
+            <p>Dear ${user.name},</p>
+            <p>We regret to inform you that your registration for the event <strong>"${event.title}"</strong> has not been approved.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+              <h3>Reason:</h3>
+              <p>${reason}</p>
+            </div>
+            
+            <p>If you believe this is an error or have questions, please contact the event organizer for clarification.</p>
+            
+            <p>We encourage you to register for other available events in the future.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Disapproval email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send disapproval email:', emailError.message);
+    }
     
     res.json({ 
       message: 'Registration disapproved successfully',
@@ -609,6 +733,44 @@ router.patch('/:eventId/approve-attendance/:userId', authMiddleware, async (req,
     
     await event.save();
     
+    // Send attendance approval email notification
+    try {
+      const user = await User.findById(req.params.userId);
+      if (user && user.email) {
+        const subject = `Attendance Approved - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #28a745;">✅ Attendance Approved!</h2>
+            <p>Dear ${user.name},</p>
+            <p>Congratulations! Your attendance for the event <strong>"${event.title}"</strong> has been approved.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Hours Earned:</strong> ${event.hours}</p>
+            </div>
+            
+            <p>Your community service hours have been successfully recorded. Thank you for your participation!</p>
+            
+            <p>If you have any questions, please contact the event organizer.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Attendance approval email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send attendance approval email:', emailError.message);
+    }
+    
     res.json({ 
       message: 'Attendance approved successfully!',
       eventId: event._id,
@@ -651,6 +813,49 @@ router.patch('/:eventId/disapprove-attendance/:userId', authMiddleware, async (r
     attendance.approvedAt = new Date();
     
     await event.save();
+    
+    // Send attendance disapproval email notification
+    try {
+      const user = await User.findById(req.params.userId);
+      if (user && user.email) {
+        const subject = `Attendance Update - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #dc3545;">⚠️ Attendance Update</h2>
+            <p>Dear ${user.name},</p>
+            <p>We regret to inform you that your attendance for the event <strong>"${event.title}"</strong> has not been approved.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Hours:</strong> ${event.hours}</p>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+              <h3>Reason:</h3>
+              <p>${reason}</p>
+            </div>
+            
+            <p>If you believe this is an error or have questions, please contact the event organizer for clarification.</p>
+            
+            <p>We encourage you to participate in future events.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Attendance disapproval email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send attendance disapproval email:', emailError.message);
+    }
     
     res.json({ 
       message: 'Attendance disapproved successfully',
@@ -770,6 +975,44 @@ router.patch('/:eventId/attendance/:userId/approve', authMiddleware, async (req,
     
     await event.save();
     
+    // Send attendance approval email notification
+    try {
+      const user = await User.findById(req.params.userId);
+      if (user && user.email) {
+        const subject = `Attendance Approved - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #28a745;">✅ Attendance Approved!</h2>
+            <p>Dear ${user.name},</p>
+            <p>Congratulations! Your attendance for the event <strong>"${event.title}"</strong> has been approved.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Hours Earned:</strong> ${event.hours}</p>
+            </div>
+            
+            <p>Your community service hours have been successfully recorded. Thank you for your participation!</p>
+            
+            <p>If you have any questions, please contact the event organizer.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Attendance approval email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send attendance approval email:', emailError.message);
+    }
+    
     res.json({ 
       message: 'Attendance approved successfully!',
       eventId: event._id,
@@ -812,6 +1055,49 @@ router.patch('/:eventId/attendance/:userId/disapprove', authMiddleware, async (r
     attendance.approvedAt = new Date();
     
     await event.save();
+    
+    // Send attendance disapproval email notification
+    try {
+      const user = await User.findById(req.params.userId);
+      if (user && user.email) {
+        const subject = `Attendance Update - ${event.title}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #dc3545;">⚠️ Attendance Update</h2>
+            <p>Dear ${user.name},</p>
+            <p>We regret to inform you that your attendance for the event <strong>"${event.title}"</strong> has not been approved.</p>
+            
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <h3>Event Details:</h3>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${event.startTime} - ${event.endTime}</p>
+              <p><strong>Location:</strong> ${event.location}</p>
+              <p><strong>Hours:</strong> ${event.hours}</p>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+              <h3>Reason:</h3>
+              <p>${reason}</p>
+            </div>
+            
+            <p>If you believe this is an error or have questions, please contact the event organizer for clarification.</p>
+            
+            <p>We encourage you to participate in future events.</p>
+            
+            <hr style="margin: 30px 0;">
+            <p style="color: #6c757d; font-size: 12px;">
+              This is an automated message from Charism Community Service System.
+            </p>
+          </div>
+        `;
+        
+        await sendEmail(user.email, subject, null, html);
+        console.log(`✅ Attendance disapproval email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send attendance disapproval email:', emailError.message);
+    }
     
     res.json({ 
       message: 'Attendance disapproved successfully',
