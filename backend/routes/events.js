@@ -60,8 +60,8 @@ router.get('/:eventId', async (req, res) => {
   }
 });
 
-// Get event registrations (Admin/Staff)
-router.get('/:eventId/registrations', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Get event registrations (All authenticated users)
+router.get('/:eventId/registrations', authMiddleware, async (req, res) => {
   try {
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId)
@@ -78,8 +78,8 @@ router.get('/:eventId/registrations', authMiddleware, roleMiddleware(['Admin', '
   }
 });
 
-// Get event participants (Admin/Staff) - same as registrations
-router.get('/:eventId/participants', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Get event participants (All authenticated users) - same as registrations
+router.get('/:eventId/participants', authMiddleware, async (req, res) => {
   try {
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId)
@@ -93,6 +93,24 @@ router.get('/:eventId/participants', authMiddleware, roleMiddleware(['Admin', 'S
   } catch (error) {
     console.error('Error getting participants:', error);
     res.status(500).json({ message: 'Failed to get participants', error: error.message });
+  }
+});
+
+// Get event attendance (Frontend expects this route)
+router.get('/:eventId/attendance', authMiddleware, async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId)
+      .populate('attendance.userId', 'name email role department academicYear year section');
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    res.json(event.attendance);
+  } catch (error) {
+    console.error('Error getting attendance:', error);
+    res.status(500).json({ message: 'Failed to get attendance', error: error.message });
   }
 });
 
@@ -256,9 +274,15 @@ router.post('/:eventId/join', authMiddleware, async (req, res) => {
   }
 });
 
-// Create new event (Admin/Staff)
-router.post('/', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Create new event (All authenticated users)
+router.post('/', authMiddleware, async (req, res) => {
   try {
+    console.log('🔍 Event creation request received');
+    console.log('   User:', req.user);
+    console.log('   User ID:', req.user?.userId || req.user?.id || req.user?._id);
+    console.log('   User Role:', req.user?.role);
+    console.log('   Body:', req.body);
+    
     const Event = require('../models/Event');
     
     const {
@@ -309,8 +333,12 @@ router.post('/', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req,
       attendance: []
     };
     
+    console.log('📝 Creating event with data:', eventData);
+    
     const newEvent = new Event(eventData);
     await newEvent.save();
+    
+    console.log('✅ Event created successfully:', newEvent._id);
     
     res.status(201).json({
       message: 'Event created successfully!',
@@ -318,7 +346,7 @@ router.post('/', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req,
     });
     
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error('❌ Error creating event:', error);
     res.status(500).json({ message: 'Failed to create event', error: error.message });
   }
 });
@@ -327,8 +355,8 @@ router.post('/', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req,
 // APPROVAL SYSTEM (Admin/Staff)
 // =======================
 
-// Approve registration
-router.put('/approve/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Approve registration (All authenticated users)
+router.put('/approve/:eventId/:userId', authMiddleware, async (req, res) => {
   try {
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId).populate('attendance.userId', 'name email');
@@ -364,8 +392,8 @@ router.put('/approve/:eventId/:userId', authMiddleware, roleMiddleware(['Admin',
   }
 });
 
-// Disapprove registration
-router.put('/disapprove/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Disapprove registration (All authenticated users)
+router.put('/disapprove/:eventId/:userId', authMiddleware, async (req, res) => {
   try {
     const { reason } = req.body;
     
@@ -412,8 +440,8 @@ router.put('/disapprove/:eventId/:userId', authMiddleware, roleMiddleware(['Admi
 // ATTENDANCE SYSTEM (Students)
 // =======================
 
-// Time in
-router.post('/:eventId/time-in/:userId', authMiddleware, roleMiddleware(['Student']), async (req, res) => {
+// Time in (All authenticated users)
+router.post('/:eventId/time-in/:userId', authMiddleware, async (req, res) => {
   try {
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId);
@@ -448,8 +476,8 @@ router.post('/:eventId/time-in/:userId', authMiddleware, roleMiddleware(['Studen
   }
 });
 
-// Time out
-router.post('/:eventId/time-out/:userId', authMiddleware, roleMiddleware(['Student']), async (req, res) => {
+// Time out (All authenticated users)
+router.post('/:eventId/time-out/:userId', authMiddleware, async (req, res) => {
   try {
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId);
@@ -488,8 +516,8 @@ router.post('/:eventId/time-out/:userId', authMiddleware, roleMiddleware(['Stude
 // ATTENDANCE APPROVAL (Admin/Staff)
 // =======================
 
-// Approve attendance
-router.patch('/:eventId/approve-attendance/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Approve attendance (All authenticated users)
+router.patch('/:eventId/approve-attendance/:userId', authMiddleware, async (req, res) => {
   try {
     const Event = require('../models/Event');
     const event = await Event.findById(req.params.eventId).populate('attendance.userId', 'name email');
@@ -530,8 +558,8 @@ router.patch('/:eventId/approve-attendance/:userId', authMiddleware, roleMiddlew
   }
 });
 
-// Disapprove attendance
-router.patch('/:eventId/disapprove-attendance/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+// Disapprove attendance (All authenticated users)
+router.patch('/:eventId/disapprove-attendance/:userId', authMiddleware, async (req, res) => {
   try {
     const { reason } = req.body;
     
@@ -570,6 +598,203 @@ router.patch('/:eventId/disapprove-attendance/:userId', authMiddleware, roleMidd
   } catch (error) {
     console.error('Error disapproving attendance:', error);
     res.status(500).json({ message: 'Attendance disapproval failed', error: error.message });
+  }
+});
+
+// =======================
+// FRONTEND COMPATIBILITY ROUTES
+// =======================
+
+// Time in (Frontend format: /events/:eventId/attendance/:userId/time-in)
+router.post('/:eventId/attendance/:userId/time-in', authMiddleware, async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId);
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === req.params.userId
+    );
+    
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    if (!attendance.registrationApproved) {
+      return res.status(400).json({ message: 'Your registration must be approved before you can time in' });
+    }
+    
+    attendance.timeIn = new Date();
+    await event.save();
+    
+    res.json({ 
+      message: 'Time in recorded successfully!',
+      timeIn: attendance.timeIn
+    });
+    
+  } catch (error) {
+    console.error('Error recording time in:', error);
+    res.status(500).json({ message: 'Time in failed', error: error.message });
+  }
+});
+
+// Time out (Frontend format: /events/:eventId/attendance/:userId/time-out)
+router.post('/:eventId/attendance/:userId/time-out', authMiddleware, async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId);
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === req.params.userId
+    );
+    
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    if (!attendance.timeIn) {
+      return res.status(400).json({ message: 'You must time in before you can time out' });
+    }
+    
+    attendance.timeOut = new Date();
+    await event.save();
+    
+    res.json({ 
+      message: 'Time out recorded successfully!',
+      timeOut: attendance.timeOut
+    });
+    
+  } catch (error) {
+    console.error('Error recording time out:', error);
+    res.status(500).json({ message: 'Time out failed', error: error.message });
+  }
+});
+
+// Approve attendance (Frontend format: /events/:eventId/attendance/:userId/approve)
+router.patch('/:eventId/attendance/:userId/approve', authMiddleware, async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId).populate('attendance.userId', 'name email');
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => 
+      a.userId._id.toString() === req.params.userId || a.userId.toString() === req.params.userId
+    );
+    
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    if (!attendance.timeIn || !attendance.timeOut) {
+      return res.status(400).json({ 
+        message: 'Student must time in and time out before attendance can be approved' 
+      });
+    }
+    
+    attendance.status = 'Approved';
+    attendance.approvedBy = req.user.userId || req.user.id || req.user._id;
+    attendance.approvedAt = new Date();
+    
+    await event.save();
+    
+    res.json({ 
+      message: 'Attendance approved successfully!',
+      eventId: event._id,
+      userId: req.params.userId
+    });
+    
+  } catch (error) {
+    console.error('Error approving attendance:', error);
+    res.status(500).json({ message: 'Attendance approval failed', error: error.message });
+  }
+});
+
+// Disapprove attendance (Frontend format: /events/:eventId/attendance/:userId/disapprove)
+router.patch('/:eventId/attendance/:userId/disapprove', authMiddleware, async (req, res) => {
+  try {
+    const { reason } = req.body;
+    
+    if (!reason || reason.trim() === '') {
+      return res.status(400).json({ message: 'Reason for disapproval is required' });
+    }
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId).populate('attendance.userId', 'name email');
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => 
+      a.userId._id.toString() === req.params.userId || a.userId.toString() === req.params.userId
+    );
+    
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    attendance.status = 'Disapproved';
+    attendance.reason = reason;
+    attendance.approvedBy = req.user.userId || req.user.id || req.user._id;
+    attendance.approvedAt = new Date();
+    
+    await event.save();
+    
+    res.json({ 
+      message: 'Attendance disapproved successfully',
+      eventId: event._id,
+      userId: req.params.userId
+    });
+    
+  } catch (error) {
+    console.error('Error disapproving attendance:', error);
+    res.status(500).json({ message: 'Attendance disapproval failed', error: error.message });
+  }
+});
+
+// Set participation status (Frontend format: /events/:eventId/attendance/:userId)
+router.patch('/:eventId/attendance/:userId', authMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId);
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => 
+      a.userId.toString() === req.params.userId
+    );
+    
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    attendance.status = status;
+    await event.save();
+    
+    res.json({ 
+      message: 'Participation status updated successfully',
+      eventId: event._id,
+      userId: req.params.userId,
+      status: status
+    });
+    
+  } catch (error) {
+    console.error('Error updating participation status:', error);
+    res.status(500).json({ message: 'Failed to update participation status', error: error.message });
   }
 });
 

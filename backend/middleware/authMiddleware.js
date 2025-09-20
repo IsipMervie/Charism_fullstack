@@ -17,16 +17,27 @@ const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization || '';
     const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
     
+    console.log('🔍 Auth middleware - Request URL:', req.originalUrl);
+    console.log('🔍 Auth middleware - Method:', req.method);
+    console.log('🔍 Auth middleware - Auth header present:', !!authHeader);
+    
     if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
+      console.log('❌ No token provided');
+      return res.status(401).json({ 
+        message: 'No token provided',
+        error: 'NO_TOKEN',
+        path: req.originalUrl
+      });
     }
 
+    console.log('🔍 Token found, verifying...');
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log('JWT decoded:', decoded);
-    console.log('JWT decoded.userId:', decoded.userId);
-    console.log('JWT decoded.id:', decoded.id);
-    console.log('JWT decoded._id:', decoded._id);
-    console.log('JWT decoded.role:', decoded.role);
+    console.log('✅ JWT decoded successfully:', {
+      userId: decoded.userId,
+      role: decoded.role,
+      email: decoded.email,
+      exp: new Date(decoded.exp * 1000)
+    });
     
     // Set both id and userId for compatibility with different controllers
     req.user = { 
@@ -38,20 +49,33 @@ const authMiddleware = (req, res, next) => {
       ...decoded 
     };
     
-    console.log('req.user set to:', req.user);
-    console.log('req.user.id:', req.user.id);
-    console.log('req.user.userId:', req.user.userId);
-    console.log('req.user._id:', req.user._id);
+    console.log('✅ req.user set successfully:', {
+      id: req.user.id,
+      userId: req.user.userId,
+      role: req.user.role
+    });
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
+    console.error('❌ Auth middleware error:', error.message);
     
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token expired' });
+      return res.status(401).json({ 
+        message: 'Token expired - please login again',
+        error: 'TOKEN_EXPIRED',
+        path: req.originalUrl
+      });
     } else if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Invalid token' });
+      return res.status(401).json({ 
+        message: 'Invalid token - please login again',
+        error: 'INVALID_TOKEN',
+        path: req.originalUrl
+      });
     } else {
-      return res.status(401).json({ message: 'Authentication failed' });
+      return res.status(401).json({ 
+        message: 'Authentication failed',
+        error: 'AUTH_FAILED',
+        path: req.originalUrl
+      });
     }
   }
 };
