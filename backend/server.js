@@ -795,7 +795,7 @@ app.use('/api/messages', require('./routes/messageRoutes'));
 console.log(' Messages routes loaded');
 app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
-app.use('/api/events', require('./routes/eventRoutes'));
+app.use('/api/events', require('./routes/events'));
 console.log(' Events routes loaded');
 
 
