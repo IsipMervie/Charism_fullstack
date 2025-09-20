@@ -213,28 +213,36 @@ router.get(
 // Get event capacity status (public)
 router.get('/:eventId/capacity', eventController.getEventCapacityStatus);
 
-// Get all registrations for an event (Admin/Staff) - Read Only
-router.get(
-  '/:eventId/registrations',
-  authMiddleware,
-  roleMiddleware('Admin', 'Staff'),
-  eventController.getAllEventRegistrations
-);
-
-// Approve registration (Admin/Staff)
+// Approve registration (Admin/Staff) - MUST come before generic registrations route
 router.put(
   '/:eventId/registrations/:userId/approve',
+  (req, res, next) => {
+    console.log('🚀 REGISTRATION APPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    next();
+  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.approveRegistration
 );
 
-// Disapprove registration (Admin/Staff)
+// Disapprove registration (Admin/Staff) - MUST come before generic registrations route
 router.put(
   '/:eventId/registrations/:userId/disapprove',
+  (req, res, next) => {
+    console.log('🚀 REGISTRATION DISAPPROVAL ROUTE HIT:', req.method, req.path, req.params);
+    next();
+  },
   authMiddleware,
   roleMiddleware('Admin', 'Staff'),
   eventController.disapproveRegistration
+);
+
+// Get all registrations for an event (Admin/Staff) - Read Only - MUST come after specific routes
+router.get(
+  '/:eventId/registrations',
+  authMiddleware,
+  roleMiddleware('Admin', 'Staff'),
+  eventController.getAllEventRegistrations
 );
 
 
