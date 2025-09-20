@@ -99,7 +99,7 @@ router.get('/working-register/:token', async (req, res) => {
 });
 
 // WORKING SOLUTION - Direct routes that will definitely work WITH EMAILS
-router.put('/working-approve/:eventId/:userId', async (req, res) => {
+router.put('/working-approve/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
   console.log('🚨 WORKING APPROVE HIT:', req.params);
   try {
     const { eventId, userId } = req.params;
@@ -119,6 +119,8 @@ router.put('/working-approve/:eventId/:userId', async (req, res) => {
     
     // Update registration status - ONLY approve registration, NOT attendance
     attendance.registrationApproved = true;
+    attendance.registrationApprovedBy = req.user.userId || req.user.id || req.user._id;
+    attendance.registrationApprovedAt = new Date();
     attendance.status = 'Pending'; // Keep as Pending until they actually attend
     await event.save();
     
@@ -177,7 +179,7 @@ router.put('/working-approve/:eventId/:userId', async (req, res) => {
   }
 });
 
-router.put('/working-disapprove/:eventId/:userId', async (req, res) => {
+router.put('/working-disapprove/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
   console.log('🚨 WORKING DISAPPROVE HIT:', req.params);
   try {
     const { eventId, userId } = req.params;
@@ -202,6 +204,8 @@ router.put('/working-disapprove/:eventId/:userId', async (req, res) => {
     
     // Update registration status
     attendance.registrationApproved = false;
+    attendance.registrationApprovedBy = req.user.userId || req.user.id || req.user._id;
+    attendance.registrationApprovedAt = new Date();
     attendance.status = 'Disapproved';
     attendance.reason = reason;
     await event.save();
@@ -262,7 +266,7 @@ router.put('/working-disapprove/:eventId/:userId', async (req, res) => {
 });
 
 // SUPER SIMPLE WORKING ROUTES - These will DEFINITELY work
-router.put('/approve-now/:eventId/:userId', async (req, res) => {
+router.put('/approve-now/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
   console.log('🚨 APPROVE-NOW ROUTE HIT:', req.params);
   try {
     await eventController.approveRegistration(req, res);
@@ -272,7 +276,7 @@ router.put('/approve-now/:eventId/:userId', async (req, res) => {
   }
 });
 
-router.put('/disapprove-now/:eventId/:userId', async (req, res) => {
+router.put('/disapprove-now/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
   console.log('🚨 DISAPPROVE-NOW ROUTE HIT:', req.params);
   try {
     await eventController.disapproveRegistration(req, res);
