@@ -1380,7 +1380,7 @@ function EventListPage() {
                             placeholder.style.display = 'flex';
                           }
                         }}
-                        onLoad={() => {
+                        onLoad={(e) => {
                           console.log('Image loaded successfully for event:', event.title);
                           e.target.style.opacity = '1';
                         }}
