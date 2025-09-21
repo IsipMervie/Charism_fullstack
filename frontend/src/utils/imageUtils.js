@@ -92,7 +92,7 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
-  if (!imageData) return null;
+  if (!imageData) return '/logo.png';
   
   // Handle MongoDB binary data with event ID
   if (imageData.data && imageData.contentType && eventId) {
@@ -106,7 +106,7 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   }
   
   // Fallback to general image handling
-  return getImageUrl(imageData, 'event');
+  return getImageUrl(imageData, 'event') || '/logo.png';
 };
 
 export const getLogoUrl = (imageData) => {

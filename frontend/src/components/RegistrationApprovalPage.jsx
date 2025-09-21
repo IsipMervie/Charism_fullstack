@@ -481,7 +481,7 @@ function RegistrationApprovalPage() {
               </div>
               <div className="card-value">
                 {filteredEvents.reduce((total, e) => 
-                  total + safeLength(e.attendance.filter(a => !a.registrationApproved && !a.reason)), 0
+                  total + safeLength((e.attendance || []).filter(a => !a.registrationApproved && !a.reason)), 0
                 )}
               </div>
             </div>

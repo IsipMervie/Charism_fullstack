@@ -677,12 +677,12 @@
   border-radius: 24px;
   box-shadow: 0 12px 40px var(--shadow-sm);
   border: 1px solid var(--border-primary);
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 380px;
+  min-height: 420px;
   margin-bottom: 2rem;
   backdrop-filter: blur(10px);
 }
@@ -1037,18 +1037,21 @@
 .user-details-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+  gap: 2rem;
+  padding: 1rem 0;
 }
 
 .detail-item {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1.5rem;
   background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
   border-radius: 12px;
   border: 1px solid var(--border-primary);
   transition: all var(--transition-normal);
+  min-height: 80px;
+  overflow: visible;
 }
 
 .detail-item:hover {
@@ -1073,17 +1076,19 @@
 }
 
 .detail-label {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.4;
 }
 
 .detail-value {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--text-primary);
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .user-stats-section {
@@ -2562,6 +2567,102 @@
 [data-theme="dark"] .toolbar-section {
   background: var(--bg-secondary) !important;
   border-color: var(--border-primary) !important;
+}
+
+/* Modal Dark Theme Overrides */
+[data-theme="dark"] .modal-content {
+  background: var(--bg-modal) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-header {
+  background: var(--bg-secondary) !important;
+  border-bottom-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-body {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-footer {
+  background: var(--bg-secondary) !important;
+  border-top-color: var(--border-primary) !important;
+}
+
+[data-theme="dark"] .form-control {
+  background: var(--bg-input) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-control:focus {
+  background: var(--bg-input) !important;
+  border-color: var(--border-focus) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 0.2rem var(--primary-focus) !important;
+}
+
+[data-theme="dark"] .form-select {
+  background: var(--bg-input) !important;
+  border-color: var(--border-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-select:focus {
+  background: var(--bg-input) !important;
+  border-color: var(--border-focus) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 0.2rem var(--primary-focus) !important;
+}
+
+[data-theme="dark"] .form-label {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .profile-content {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .profile-header {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+[data-theme="dark"] .profile-info h3 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .profile-info p {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .profile-details {
+  background: var(--bg-card) !important;
+  border-color: var(--border-primary) !important;
+}
+
+[data-theme="dark"] .profile-details h4 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .profile-details .detail-row {
+  border-bottom-color: var(--border-primary) !important;
+}
+
+[data-theme="dark"] .profile-details .detail-label {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .profile-details .detail-value {
+  color: var(--text-primary) !important;
 }
 
 /* Mobile button icon and text visibility fixes */
