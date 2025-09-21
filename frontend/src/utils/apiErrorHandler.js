@@ -54,3 +54,27 @@ export const retryRequest = async (requestFn, maxRetries = 3, delay = 1000) => {
     }
   }
 };
+
+// Setup global error handler for unhandled errors
+export const setupGlobalErrorHandler = () => {
+  // Handle unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    
+    // Handle API errors specifically
+    if (event.reason?.response) {
+      const errorInfo = handleApiError(event.reason, 'Global Handler');
+      console.error('Global API Error:', errorInfo);
+    }
+    
+    // Prevent the default handler (which would log to console)
+    event.preventDefault();
+  });
+
+  // Handle general errors
+  window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+  });
+
+  console.log('Global error handler initialized');
+};
