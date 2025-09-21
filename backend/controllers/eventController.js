@@ -388,6 +388,7 @@ exports.createEvent = async (req, res) => {
       // Store image data in MongoDB
       const imageInfo = getImageInfo(req.file);
       eventData.image = imageInfo;
+      console.log('📷 Image uploaded for new event:', title, 'Size:', req.file.size);
     } else {
       // Use default logo.png when no image is uploaded
       try {
@@ -480,35 +481,13 @@ exports.updateEvent = async (req, res) => {
       // Store new image data in MongoDB
       const imageInfo = getImageInfo(req.file);
       updateData.image = imageInfo;
+      console.log('📷 New image uploaded for event:', title, 'Size:', req.file.size);
     } else if (req.body.removeImage === 'true') {
       // Remove image if explicitly requested
       updateData.image = null;
-    } else if (!req.file && !req.body.removeImage) {
-      // If no new image and not removing, keep existing image or use default
-      const currentEvent = await Event.findById(req.params.eventId);
-      if (!currentEvent.image || !currentEvent.image.data) {
-        // Use default logo.png if no existing image
-        try {
-          const fs = require('fs');
-          const path = require('path');
-          const logoPath = path.join(__dirname, '../logo.png');
-          
-          if (fs.existsSync(logoPath)) {
-            const logoBuffer = fs.readFileSync(logoPath);
-            const imageInfo = {
-              data: logoBuffer,
-              contentType: 'image/png',
-              filename: 'logo.png',
-              size: logoBuffer.length
-            };
-            updateData.image = imageInfo;
-            console.log('📷 Using default logo.png for updated event:', title);
-          }
-        } catch (error) {
-          console.error('❌ Error loading default logo for update:', error.message);
-        }
-      }
+      console.log('🗑️ Image removed for event:', title);
     }
+    // If no new image and not removing, keep existing image (don't add default)
 
     const event = await Event.findByIdAndUpdate(
       req.params.eventId,
