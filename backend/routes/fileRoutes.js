@@ -67,6 +67,29 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     
     if (!event) {
       console.log('❌ Event not found:', eventId);
+      
+      // Serve default logo instead of 404
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const logoPath = path.join(__dirname, '../logo.png');
+        
+        if (fs.existsSync(logoPath)) {
+          const logoBuffer = fs.readFileSync(logoPath);
+          console.log('✅ Serving default logo for missing event:', eventId);
+          
+          res.set({
+            'Content-Type': 'image/png',
+            'Content-Length': logoBuffer.length,
+            'Cache-Control': 'public, max-age=31536000'
+          });
+          
+          return res.send(logoBuffer);
+        }
+      } catch (error) {
+        console.error('❌ Error loading default logo:', error.message);
+      }
+      
       return res.status(404).json({ 
         message: 'Event not found',
         error: 'EVENT_NOT_FOUND',
@@ -83,6 +106,29 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     // Defensive check for malformed image data
     if (!event.image) {
       console.log('❌ No image field in event:', event._id);
+      
+      // Serve default logo instead of 404
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const logoPath = path.join(__dirname, '../logo.png');
+        
+        if (fs.existsSync(logoPath)) {
+          const logoBuffer = fs.readFileSync(logoPath);
+          console.log('✅ Serving default logo for event without image:', event._id);
+          
+          res.set({
+            'Content-Type': 'image/png',
+            'Content-Length': logoBuffer.length,
+            'Cache-Control': 'public, max-age=31536000'
+          });
+          
+          return res.send(logoBuffer);
+        }
+      } catch (error) {
+        console.error('❌ Error loading default logo:', error.message);
+      }
+      
       return res.status(404).json({ 
         message: 'Event image not found',
         error: 'NO_IMAGE_FIELD',
@@ -101,6 +147,29 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     
     if (!hasFile(event.image)) {
       console.log('❌ Event image field does not contain valid file data:', event._id);
+      
+      // Serve default logo instead of 404
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const logoPath = path.join(__dirname, '../logo.png');
+        
+        if (fs.existsSync(logoPath)) {
+          const logoBuffer = fs.readFileSync(logoPath);
+          console.log('✅ Serving default logo for event:', event._id);
+          
+          res.set({
+            'Content-Type': 'image/png',
+            'Content-Length': logoBuffer.length,
+            'Cache-Control': 'public, max-age=31536000'
+          });
+          
+          return res.send(logoBuffer);
+        }
+      } catch (error) {
+        console.error('❌ Error loading default logo:', error.message);
+      }
+      
       return res.status(404).json({ 
         message: 'Event image not found',
         error: 'INVALID_IMAGE_DATA',
