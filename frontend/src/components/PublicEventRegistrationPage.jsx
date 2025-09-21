@@ -34,6 +34,23 @@ function PublicEventRegistrationPage() {
     try {
       setLoading(true);
       const eventData = await getEventByRegistrationToken(token);
+      
+      // Debug: Log event data to see what's available
+      console.log('🔍 Public Event Data:', {
+        eventId: eventData._id,
+        title: eventData.title,
+        currentParticipants: eventData.currentParticipants,
+        attendance: eventData.attendance,
+        attendanceLength: eventData.attendance?.length,
+        calculatedParticipants: eventData.attendance ? 
+          eventData.attendance.filter(a => 
+            a.registrationApproved === true || 
+            a.status === 'Approved' || 
+            a.status === 'Attended' || 
+            a.status === 'Completed'
+          ).length : 0
+      });
+      
       setEvent(eventData);
       
       // Check if user is already registered (if logged in)
@@ -240,7 +257,7 @@ function PublicEventRegistrationPage() {
           <div className="detail-item">
             <FaUsers className="icon" />
             <span>{event.hours} hours • {
-              event.attendance ? 
+              event.attendance && Array.isArray(event.attendance) ? 
                 event.attendance.filter(a => 
                   a.registrationApproved === true || 
                   a.status === 'Approved' || 

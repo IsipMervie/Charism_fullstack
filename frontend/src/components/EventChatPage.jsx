@@ -579,13 +579,27 @@ const EventChatPage = () => {
         // Add attendance data to event object
         eventData.attendance = attendanceData;
         
+        // Calculate approved participants count
+        const approvedParticipants = eventData?.attendance ? 
+          eventData.attendance.filter(a => 
+            a.registrationApproved === true || 
+            a.status === 'Approved' || 
+            a.status === 'Attended' || 
+            a.status === 'Completed'
+          ).length : 0;
+        
         console.log('📊 Event data loaded:', {
           eventId: eventData?._id,
           eventTitle: eventData?.title,
           hasAttendance: !!eventData?.attendance,
           attendanceLength: eventData?.attendance?.length || 0,
+          approvedParticipants: approvedParticipants,
           attendanceStructure: Array.isArray(eventData?.attendance) ? 'Array' : typeof eventData?.attendance,
-          sampleAttendance: eventData?.attendance?.slice(0, 2) || 'No attendance data'
+          sampleAttendance: eventData?.attendance?.slice(0, 2) || 'No attendance data',
+          attendanceDetails: eventData?.attendance?.map(a => ({
+            registrationApproved: a.registrationApproved,
+            status: a.status
+          })) || []
         });
         
         setEvent(eventData);
@@ -740,7 +754,16 @@ const EventChatPage = () => {
                 onClick={() => setActiveTab('participants')}
               >
                 <FaUsers />
-                <span>Participants <span className="participant-count">{participants.length || 0}</span></span>
+                <span>Participants <span className="participant-count">{
+                  event && event.attendance ? 
+                    event.attendance.filter(a => 
+                      a.registrationApproved === true || 
+                      a.status === 'Approved' || 
+                      a.status === 'Attended' || 
+                      a.status === 'Completed'
+                    ).length : 
+                    (participants.length || 0)
+                }</span></span>
               </button>
               <button 
                 className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
@@ -903,7 +926,16 @@ const EventChatPage = () => {
                         <FaUsers />
                         <div>
                           <label>Participants</label>
-                          <span>{participants.length || 0} joined</span>
+                          <span>{
+                            event && event.attendance ? 
+                              event.attendance.filter(a => 
+                                a.registrationApproved === true || 
+                                a.status === 'Approved' || 
+                                a.status === 'Attended' || 
+                                a.status === 'Completed'
+                              ).length : 
+                              (participants.length || 0)
+                          } approved participants</span>
                         </div>
                       </div>
                     </div>

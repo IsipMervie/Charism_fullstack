@@ -2890,6 +2890,24 @@ exports.getEventByRegistrationToken = async (req, res) => {
       });
     }
     
+    // Calculate approved participants count
+    const approvedParticipants = event.attendance ? 
+      event.attendance.filter(a => 
+        a.registrationApproved === true || 
+        a.status === 'Approved' || 
+        a.status === 'Attended' || 
+        a.status === 'Completed'
+      ).length : 0;
+    
+    console.log('📊 Participant count calculation:', {
+      totalAttendance: event.attendance?.length || 0,
+      approvedParticipants: approvedParticipants,
+      attendanceData: event.attendance?.map(a => ({
+        registrationApproved: a.registrationApproved,
+        status: a.status
+      }))
+    });
+    
     // Return basic event info for public view
     res.json({
       _id: event._id,
@@ -2902,7 +2920,8 @@ exports.getEventByRegistrationToken = async (req, res) => {
       location: event.location,
       hours: event.hours,
       maxParticipants: event.maxParticipants,
-      currentParticipants: event.attendance.length,
+      currentParticipants: approvedParticipants,
+      attendance: event.attendance, // Include attendance data for frontend calculation
       createdBy: event.createdBy,
       requiresApproval: event.requiresApproval,
       isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,

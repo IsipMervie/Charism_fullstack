@@ -108,6 +108,16 @@ function EventListPage() {
         
         // Test image URL accessibility
         const testImageUrl = getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id);
+        console.log('🔍 Image URL Construction Test:', {
+          eventId: eventsWithImages[0]._id,
+          eventTitle: eventsWithImages[0].title,
+          imageData: eventsWithImages[0].image,
+          constructedUrl: testImageUrl,
+          hasImageData: !!eventsWithImages[0].image,
+          hasDataField: !!(eventsWithImages[0].image?.data),
+          hasContentType: !!(eventsWithImages[0].image?.contentType)
+        });
+        
         if (testImageUrl) {
           fetch(testImageUrl, { method: 'HEAD' })
             .then(response => {
@@ -115,14 +125,12 @@ function EventListPage() {
                 url: testImageUrl,
                 status: response.status,
                 ok: response.ok,
-                contentType: response.headers.get('content-type')
+                contentType: response.headers.get('content-type'),
+                contentLength: response.headers.get('content-length')
               });
             })
             .catch(error => {
-              console.error('❌ Image URL test failed:', {
-                url: testImageUrl,
-                error: error.message
-              });
+              console.error('❌ Image URL test failed:', error);
             });
         }
       }
@@ -1391,7 +1399,11 @@ function EventListPage() {
                         className="event-image-img-horizontal"
                         loading="lazy"
                         onError={(e) => {
-                          console.log('Image failed to load for event:', event.title);
+                          console.error('❌ Image failed to load for event:', event.title, {
+                            imageUrl: e.target.src,
+                            eventId: event._id,
+                            imageData: event.image
+                          });
                           // Show a placeholder instead of another image
                           e.target.style.display = 'none';
                           const placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
@@ -1400,11 +1412,14 @@ function EventListPage() {
                           }
                         }}
                         onLoad={(e) => {
-                          console.log('Image loaded successfully for event:', event.title);
+                          console.log('✅ Image loaded successfully for event:', event.title, {
+                            imageUrl: e.target.src,
+                            eventId: event._id
+                          });
                           e.target.style.opacity = '1';
                         }}
                         style={{ 
-                          opacity: 0, 
+                          opacity: 1, 
                           transition: 'opacity 0.3s ease-in-out' 
                         }}
                       />
