@@ -10,18 +10,57 @@ const { uploadEventImage, getImageInfo } = require('../utils/mongoFileStorage');
 // CLEAN, SIMPLE EVENTS SYSTEM
 // =======================
 
-// Get all events
-router.get('/', authMiddleware, async (req, res) => {
+// Get all events (PUBLIC - for event listing)
+router.get('/public', async (req, res) => {
   try {
+    console.log('🔍 Public events request received');
+    
+    const Event = require('../models/Event');
+    const events = await Event.find({})
+      .select('title description date startTime endTime location hours status maxParticipants image departments isForAllDepartments isVisibleToStudents publicRegistrationToken')
+      .sort({ date: -1 });
+    
+    console.log(`✅ Found ${events.length} events for public listing`);
+    res.json({ events });
+  } catch (error) {
+    console.error('Error getting public events:', error);
+    res.status(500).json({ message: 'Failed to get events', error: error.message });
+  }
+});
+
+// Get all events (PUBLIC - basic event listing without authentication)
+router.get('/', async (req, res) => {
+  try {
+    console.log('🔍 Events request received (public access)');
+    
+    const Event = require('../models/Event');
+    const events = await Event.find({})
+      .select('title description date startTime endTime location hours status maxParticipants image departments isForAllDepartments isVisibleToStudents publicRegistrationToken')
+      .sort({ date: -1 });
+    
+    console.log(`✅ Found ${events.length} events for listing`);
+    res.json({ events });
+  } catch (error) {
+    console.error('Error getting events:', error);
+    res.status(500).json({ message: 'Failed to get events', error: error.message });
+  }
+});
+
+// Get all events with full data (AUTHENTICATED - for admin/staff)
+router.get('/admin', authMiddleware, async (req, res) => {
+  try {
+    console.log('🔍 Admin events request received');
+    
     const Event = require('../models/Event');
     const events = await Event.find({})
       .populate('attendance.userId', 'name email role department academicYear year section')
       .populate('createdBy', 'name')
       .sort({ date: -1 });
     
+    console.log(`✅ Found ${events.length} events with full data`);
     res.json({ events });
   } catch (error) {
-    console.error('Error getting events:', error);
+    console.error('Error getting admin events:', error);
     res.status(500).json({ message: 'Failed to get events', error: error.message });
   }
 });

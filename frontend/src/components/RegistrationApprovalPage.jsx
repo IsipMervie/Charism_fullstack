@@ -16,6 +16,7 @@ function RegistrationApprovalPage() {
   const [eventSearchTerm, setEventSearchTerm] = useState('');
   const [studentSearchTerm, setStudentSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [filteredRegistrations, setFilteredRegistrations] = useState(null);
   const [viewMode, setViewMode] = useState('events'); // 'events' or 'registrations'
   const [actionLoading, setActionLoading] = useState({});
   const [isVisible, setIsVisible] = useState(false);
@@ -52,6 +53,39 @@ function RegistrationApprovalPage() {
     setFilteredEvents(filtered);
   }, [eventSearchTerm, events]);
 
+  const filterRegistrations = useCallback(() => {
+    if (!eventRegistrations) {
+      setFilteredRegistrations(null);
+      return;
+    }
+
+    if (!studentSearchTerm.trim()) {
+      setFilteredRegistrations(eventRegistrations);
+      return;
+    }
+
+    const searchLower = studentSearchTerm.toLowerCase();
+    const filterRegistrationArray = (registrations) => {
+      return safeFilter(registrations, registration => 
+        registration.userId.name.toLowerCase().includes(searchLower) ||
+        (registration.userId.email && registration.userId.email.toLowerCase().includes(searchLower)) ||
+        (registration.userId.userId && registration.userId.userId.toLowerCase().includes(searchLower)) ||
+        (registration.userId.department && registration.userId.department.toLowerCase().includes(searchLower))
+      );
+    };
+
+    const filtered = {
+      ...eventRegistrations,
+      registrations: {
+        pending: filterRegistrationArray(eventRegistrations.registrations?.pending || []),
+        approved: filterRegistrationArray(eventRegistrations.registrations?.approved || []),
+        disapproved: filterRegistrationArray(eventRegistrations.registrations?.disapproved || [])
+      }
+    };
+
+    setFilteredRegistrations(filtered);
+  }, [studentSearchTerm, eventRegistrations]);
+
   useEffect(() => {
     setIsVisible(true);
     loadEvents();
@@ -60,6 +94,10 @@ function RegistrationApprovalPage() {
   useEffect(() => {
     filterEvents();
   }, [filterEvents]);
+
+  useEffect(() => {
+    filterRegistrations();
+  }, [filterRegistrations]);
 
   const loadEvents = async () => {
     try {
@@ -80,6 +118,7 @@ function RegistrationApprovalPage() {
       setLoadingRegistrations(true);
       const registrationsData = await getAllEventRegistrations(eventId);
       setEventRegistrations(registrationsData);
+      setFilteredRegistrations(registrationsData);
       setSelectedEvent(events.find(e => e._id === eventId));
       setViewMode('registrations');
     } catch (error) {
@@ -449,38 +488,62 @@ function RegistrationApprovalPage() {
           </div>
 
           <div className="events-grid">
-            {filteredEvents.map(event => (
-              <div key={event._id} className="event-card">
-                <div className="event-card-header">
-                  <h3 className="event-title">{event.title}</h3>
-                  <span className="event-date-badge">{formatDatePhilippines(event.date)}</span>
+            {filteredEvents.length === 0 ? (
+              <div className="no-results-container">
+                <div className="no-results-icon">
+                  <FaSearch />
                 </div>
-                <div className="event-meta">
-                  <div className="meta-item">
-                    <FaMapMarkerAlt className="meta-icon" />
-                    <span>{event.location}</span>
-                  </div>
-                  <div className="meta-item">
-                    <FaClock className="meta-icon" />
-                    <span>{event.startTime} - {event.endTime}</span>
-                  </div>
-                  <div className="meta-item">
-                    <FaUsers className="meta-icon" />
-                    <span>{safeLength(event.attendance)} registrations</span>
-                  </div>
-                </div>
-                <div className="event-actions">
+                <h3 className="no-results-title">No Events Found</h3>
+                <p className="no-results-message">
+                  {eventSearchTerm ? 
+                    `No events match your search for "${eventSearchTerm}". Try adjusting your search terms or filters.` :
+                    'No events are currently available.'
+                  }
+                </p>
+                {eventSearchTerm && (
                   <button
-                    className="view-registrations-btn"
-                    onClick={() => loadEventRegistrations(event._id)}
-                    disabled={loadingRegistrations}
+                    className="clear-search-btn"
+                    onClick={() => setEventSearchTerm('')}
                   >
-                    <FaEye className="btn-icon" />
-                    {loadingRegistrations ? 'Loading...' : 'View Registrations'}
+                    <FaSync className="btn-icon" />
+                    Clear Search
                   </button>
-                </div>
+                )}
               </div>
-            ))}
+            ) : (
+              filteredEvents.map(event => (
+                <div key={event._id} className="event-card">
+                  <div className="event-card-header">
+                    <h3 className="event-title">{event.title}</h3>
+                    <span className="event-date-badge">{formatDatePhilippines(event.date)}</span>
+                  </div>
+                  <div className="event-meta">
+                    <div className="meta-item">
+                      <FaMapMarkerAlt className="meta-icon" />
+                      <span>{event.location}</span>
+                    </div>
+                    <div className="meta-item">
+                      <FaClock className="meta-icon" />
+                      <span>{event.startTime} - {event.endTime}</span>
+                    </div>
+                    <div className="meta-item">
+                      <FaUsers className="meta-icon" />
+                      <span>{safeLength(event.attendance)} registrations</span>
+                    </div>
+                  </div>
+                  <div className="event-actions">
+                    <button
+                      className="view-registrations-btn"
+                      onClick={() => loadEventRegistrations(event._id)}
+                      disabled={loadingRegistrations}
+                    >
+                      <FaEye className="btn-icon" />
+                      {loadingRegistrations ? 'Loading...' : 'View Registrations'}
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -519,30 +582,67 @@ function RegistrationApprovalPage() {
           {/* Registrations summary removed as requested */}
 
           <div className="registrations-grid">
-            {safeMap(eventRegistrations.registrations?.pending, registration => (
-              <RegistrationCard
-                key={registration._id}
-                registration={registration}
-                event={selectedEvent}
-                type="pending"
-              />
-            ))}
-            {safeMap(eventRegistrations.registrations?.approved, registration => (
-              <RegistrationCard
-                key={registration._id}
-                registration={registration}
-                event={selectedEvent}
-                type="approved"
-              />
-            ))}
-            {safeMap(eventRegistrations.registrations?.disapproved, registration => (
-              <RegistrationCard
-                key={registration._id}
-                registration={registration}
-                event={selectedEvent}
-                type="disapproved"
-              />
-            ))}
+            {(() => {
+              const pendingRegistrations = filteredRegistrations?.registrations?.pending || [];
+              const approvedRegistrations = filteredRegistrations?.registrations?.approved || [];
+              const disapprovedRegistrations = filteredRegistrations?.registrations?.disapproved || [];
+              const totalFilteredRegistrations = pendingRegistrations.length + approvedRegistrations.length + disapprovedRegistrations.length;
+
+              if (totalFilteredRegistrations === 0) {
+                return (
+                  <div className="no-results-container">
+                    <div className="no-results-icon">
+                      <FaSearch />
+                    </div>
+                    <h3 className="no-results-title">No Students Found</h3>
+                    <p className="no-results-message">
+                      {studentSearchTerm ? 
+                        `No students match your search for "${studentSearchTerm}". Try adjusting your search terms.` :
+                        'No student registrations found for this event.'
+                      }
+                    </p>
+                    {studentSearchTerm && (
+                      <button
+                        className="clear-search-btn"
+                        onClick={() => setStudentSearchTerm('')}
+                      >
+                        <FaSync className="btn-icon" />
+                        Clear Search
+                      </button>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <>
+                  {safeMap(pendingRegistrations, registration => (
+                    <RegistrationCard
+                      key={registration._id}
+                      registration={registration}
+                      event={selectedEvent}
+                      type="pending"
+                    />
+                  ))}
+                  {safeMap(approvedRegistrations, registration => (
+                    <RegistrationCard
+                      key={registration._id}
+                      registration={registration}
+                      event={selectedEvent}
+                      type="approved"
+                    />
+                  ))}
+                  {safeMap(disapprovedRegistrations, registration => (
+                    <RegistrationCard
+                      key={registration._id}
+                      registration={registration}
+                      event={selectedEvent}
+                      type="disapproved"
+                    />
+                  ))}
+                </>
+              );
+            })()}
           </div>
         </div>
       )}

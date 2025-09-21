@@ -493,6 +493,9 @@ export const getEvents = async (retryCount = 0) => {
       }
     }
     
+    // Use public events endpoint (no authentication required)
+    console.log('🔐 Using public events endpoint: /events');
+    
     // Use shorter timeout for faster failure detection
     const response = await axiosInstance.get('/events', {
       timeout: 10000 // 10 seconds timeout
@@ -531,6 +534,11 @@ export const getEvents = async (retryCount = 0) => {
       console.warn('⚠️ Events API server error - backend issue');
     } else if (error.response?.status === 404) {
       console.warn('⚠️ Events API endpoint not found - routing issue');
+    }
+    
+    // If we get a 401 error, it means the endpoint requires authentication
+    if (error.response?.status === 401) {
+      console.warn('🔐 Events endpoint requires authentication - this should not happen with public endpoint');
     }
     
     // Retry logic for timeouts - but with exponential backoff
