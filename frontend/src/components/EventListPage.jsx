@@ -95,7 +95,11 @@ function EventListPage() {
       }
       
       // Debug: Check if events have image data
-      const eventsWithImages = eventsData.filter(event => event.image);
+      const eventsWithImages = eventsData.filter(event => 
+        event.image && 
+        event.image.data && 
+        event.image.data.length > 0
+      );
       console.log('🖼️ Events with images:', eventsWithImages.length);
       if (eventsWithImages.length > 0) {
         console.log('🔍 Sample event with image:', {

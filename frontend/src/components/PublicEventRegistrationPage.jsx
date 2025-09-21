@@ -193,7 +193,7 @@ function PublicEventRegistrationPage() {
     <div className="public-registration-container">
       <div className="event-card">
         {/* Event Image */}
-        {event.image && (
+        {event.image && event.image.data && event.image.data.length > 0 && (
           <div className="event-image-section">
             <img
               src={getEventImageUrl(event.image, event._id)}

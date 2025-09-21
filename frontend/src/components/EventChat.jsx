@@ -769,8 +769,12 @@ const EventChat = ({
                                           src={getImageUrlWithFallback(attachment.url)} 
                                           alt={attachment.originalName}
                                           className="attachment-image"
+                                          onLoad={() => {
+                                            console.log('✅ Event chat image loaded:', attachment.url);
+                                          }}
                                           onError={(e) => {
-                                            console.error('Failed to load image:', attachment.url);
+                                            console.error('❌ Failed to load event chat image:', attachment.url);
+                                            console.error('❌ Constructed URL:', getImageUrlWithFallback(attachment.url));
                                             setFailedImages(prev => new Set([...prev, attachment.url]));
                                             // Try fallback image
                                             if (e.target.src !== '/logo.png') {
@@ -778,9 +782,6 @@ const EventChat = ({
                                             } else {
                                               e.target.style.display = 'none';
                                             }
-                                          }}
-                                          onLoad={() => {
-                                            console.log('Image loaded successfully:', attachment.url);
                                           }}
                                           style={{ display: 'block' }}
                                           onClick={() => {
