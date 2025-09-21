@@ -518,11 +518,13 @@
   width: 100%;
   height: auto;
   max-height: 400px;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.3s ease;
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  background: var(--bg-secondary);
 }
 
 .event-image-fallback {
@@ -1814,11 +1816,13 @@
 .event-image-img-horizontal {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.3s ease;
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
+  background: var(--bg-secondary);
 }
 
 .event-card-horizontal:hover .event-image-img-horizontal {
