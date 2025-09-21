@@ -757,11 +757,16 @@ const EventChat = ({
                                           alt={attachment.originalName}
                                           className="attachment-image"
                                           onError={(e) => {
+                                            console.error('Failed to load image:', attachment.url);
                                             setFailedImages(prev => new Set([...prev, attachment.url]));
+                                            // Set a fallback src to prevent repeated error attempts
+                                            e.target.style.display = 'none';
                                           }}
                                           onLoad={() => {
+                                            console.log('Image loaded successfully:', attachment.url);
                                             // Image loaded successfully
                                           }}
+                                          style={{ display: 'block' }}
                                           onClick={() => {
                                             // Create fullscreen image modal
                                             const modal = document.createElement('div');

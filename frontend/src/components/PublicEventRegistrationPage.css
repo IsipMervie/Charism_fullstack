@@ -23,6 +23,10 @@
 
 .event-image-section {
   margin-bottom: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .event-image {
@@ -33,6 +37,9 @@
   object-fit: contain;
   border-radius: 15px;
   box-shadow: 0 10px 20px var(--shadow-md);
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .event-header h1 {

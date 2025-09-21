@@ -166,8 +166,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
-.image-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.image-frame img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  display: block !important; 
+  border-radius: var(--radius-lg);
+  visibility: visible !important;
+  opacity: 1 !important;
+}
 
 /* Form actions */
 .form-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }

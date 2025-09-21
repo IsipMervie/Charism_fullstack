@@ -184,7 +184,33 @@ function PublicEventRegistrationPage() {
               className="event-image"
               onError={(e) => {
                 console.error('Event image failed to load:', e.target.src);
+                // Hide the image and show a placeholder instead of completely hiding
                 e.target.style.display = 'none';
+                // Create a fallback placeholder
+                const placeholder = document.createElement('div');
+                placeholder.className = 'event-image-placeholder';
+                placeholder.innerHTML = `
+                  <div style="
+                    width: 100%;
+                    height: 200px;
+                    background: var(--bg-secondary);
+                    border: 2px dashed var(--border-primary);
+                    border-radius: 15px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    color: var(--text-secondary);
+                    font-size: 1.1rem;
+                  ">
+                    <div>📷</div>
+                    <div>Event Image</div>
+                  </div>
+                `;
+                e.target.parentNode.appendChild(placeholder);
+              }}
+              onLoad={() => {
+                console.log('Event image loaded successfully:', event.title);
               }}
             />
           </div>

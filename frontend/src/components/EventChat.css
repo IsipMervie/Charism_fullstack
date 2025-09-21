@@ -454,11 +454,15 @@
   max-width: 250px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
+  background: var(--bg-secondary);
+  min-height: 100px;
 }
 
 .image-container {
   position: relative;
   display: inline-block;
+  width: 100%;
+  height: auto;
 }
 
 .image-overlay {
@@ -474,6 +478,7 @@
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 12px;
+  pointer-events: none;
 }
 
 .image-container:hover .image-overlay {
@@ -553,6 +558,8 @@
   color: var(--text-secondary);
   gap: 0.75rem;
   min-height: 120px;
+  width: 100%;
+  text-align: center;
 }
 
 .image-fallback svg {
@@ -620,10 +627,26 @@
   display: block;
   cursor: pointer;
   transition: all 0.2s ease;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
 .attachment-image:hover {
   transform: scale(1.02);
+}
+
+/* Ensure images are visible and properly sized */
+.attachment-image {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Debug styles for image visibility */
+.image-container img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .image-info {
