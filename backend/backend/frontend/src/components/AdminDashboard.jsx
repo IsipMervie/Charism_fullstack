@@ -1,0 +1,233 @@
+// frontend/src/components/AdminDashboard.jsx
+// Simple but Creative Admin Dashboard Design
+
+import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { getAnalytics } from '../api/api';
+import { axiosInstance } from '../api/api';
+import { FaUsers, FaCalendarAlt, FaChartBar, FaTrophy, FaUserCheck, FaEnvelope, FaCog, FaBuilding, FaFile, FaUser } from 'react-icons/fa';
+
+import { getLogoUrl } from '../utils/imageUtils';
+
+import './AdminDashboard.css';
+
+function AdminDashboard() {
+  const navigate = useNavigate();
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [isVisible, setIsVisible] = useState(false);
+
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      setLoading(true);
+      try {
+        console.log('🔄 AdminDashboard: Fetching analytics data...');
+        const data = await getAnalytics();
+        console.log('✅ AdminDashboard: Analytics data received:', data);
+        setAnalytics(data);
+      } catch (err) {
+        console.error('AdminDashboard: Failed to fetch analytics:', err);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Database temporarily unavailable';
+        if (err.message.includes('timeout')) {
+          errorMessage = 'Request timed out - server may be slow';
+        } else if (err.message.includes('network')) {
+          errorMessage = 'Network error - check connection';
+        } else if (err.message.includes('multiple attempts')) {
+          errorMessage = 'Server temporarily unavailable';
+        }
+        
+        // Set default analytics with error message
+        setAnalytics({
+          totalUsers: 0,
+          totalEvents: 0,
+          totalMessages: 0,
+          totalAttendance: 0,
+          studentsCount: 0,
+          staffCount: 0,
+          adminCount: 0,
+          activeEvents: 0,
+          completedEvents: 0,
+          approvedAttendance: 0,
+          totalHours: 0,
+          message: errorMessage
+        });
+      }
+      setLoading(false);
+    };
+    fetchAnalytics();
+  }, []);
+
+
+
+
+
+
+  return (
+    <div className="admin-dashboard-page">
+      <div className="admin-dashboard-background">
+        <div className="background-pattern"></div>
+      </div>
+
+              <div className={`admin-dashboard-container ${isVisible ? 'visible' : ''}`}>
+          {/* Header Section */}
+          <div className="header-section">
+          <div className="header-content">
+            <div className="header-icon">
+              <div className="icon-symbol">⚙️</div>
+            </div>
+            <div className="header-text">
+              <h1 className="header-title">Admin Dashboard</h1>
+              <p className="header-subtitle">Welcome to the Admin Dashboard</p>
+            </div>
+          </div>
+          <div className="user-info">
+            <div className="user-badge">
+              <FaUser className="user-icon" />
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        {/* Actions Section */}
+        <div className="actions-section">
+          <div className="actions-header">
+            <h3 className="actions-title">
+              <FaCog className="actions-icon" />
+              Quick Actions
+            </h3>
+            <p className="actions-subtitle">Access all admin tools and features</p>
+          </div>
+          
+          <div className="actions-grid">
+            <div 
+              className="action-card"
+              onClick={() => navigate('/admin/manage-users')}
+            >
+              <div className="action-icon">
+                <FaUsers />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Manage Users</div>
+                <div className="action-description">Add, edit, and manage user accounts and permissions</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/admin/manage-events')}
+            >
+              <div className="action-icon">
+                <FaCalendarAlt />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Manage Events</div>
+                <div className="action-description">Create, edit, and manage community service events</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/analytics')}
+            >
+              <div className="action-icon">
+                <FaChartBar />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Analytics</div>
+                <div className="action-description">View detailed reports and statistics</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/students-40-hours')}
+            >
+              <div className="action-icon">
+                <FaTrophy />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Completed</div>
+                <div className="action-description">View students who completed 40 hours</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/admin/staff-approvals')}
+            >
+              <div className="action-icon">
+                <FaUserCheck />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Staff Approvals</div>
+                <div className="action-description">Review and approve staff registrations</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/admin/manage-messages')}
+            >
+              <div className="action-icon">
+                <FaEnvelope />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Manage Messages</div>
+                <div className="action-description">Handle contact form submissions and communications</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/admin/student-documentation')}
+            >
+              <div className="action-icon">
+                <FaFile />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Student Documentation</div>
+                <div className="action-description">Review and manage student documentation</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+
+            <div 
+              className="action-card"
+              onClick={() => navigate('/admin/registration-approvals')}
+            >
+              <div className="action-icon">
+                <FaUserCheck />
+              </div>
+              <div className="action-content">
+                <div className="action-title">Event Registration Management</div>
+                <div className="action-description">View student event registrations (read-only)</div>
+              </div>
+              <div className="action-arrow">→</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AdminDashboard;

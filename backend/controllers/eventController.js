@@ -390,29 +390,9 @@ exports.createEvent = async (req, res) => {
       eventData.image = imageInfo;
       console.log('📷 Image uploaded for new event:', title, 'Size:', req.file.size);
     } else {
-      // Use default logo.png when no image is uploaded
-      try {
-        const fs = require('fs');
-        const path = require('path');
-        const logoPath = path.join(__dirname, '../logo.png');
-        
-        if (fs.existsSync(logoPath)) {
-          const logoBuffer = fs.readFileSync(logoPath);
-          const imageInfo = {
-            data: logoBuffer,
-            contentType: 'image/png',
-            filename: 'logo.png',
-            size: logoBuffer.length
-          };
-          eventData.image = imageInfo;
-          console.log('📷 Using default logo.png for event:', title);
-        } else {
-          console.log('⚠️ Default logo.png not found, creating event without image');
-        }
-      } catch (error) {
-        console.error('❌ Error loading default logo:', error.message);
-        // Continue without image if logo loading fails
-      }
+      // Only use default logo.png if explicitly requested (not for every event)
+      console.log('📷 No image uploaded for event:', title, '- creating without image');
+      // Don't assign default image - let the frontend handle fallback
     }
 
     const event = new Event(eventData);

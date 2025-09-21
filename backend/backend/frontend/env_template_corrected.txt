@@ -1,0 +1,5 @@
+# CORRECTED FRONTEND ENVIRONMENT TEMPLATE
+# Copy this to .env in the frontend directory
+
+REACT_APP_API_URL=https://charism-api-xtw9.onrender.com/api
+NODE_ENV=production

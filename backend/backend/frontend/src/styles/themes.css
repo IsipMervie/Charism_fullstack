@@ -1,0 +1,646 @@
+/* frontend/src/styles/themes.css - Light and Dark Theme Variables */
+
+:root {
+  /* Light Theme Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-hover: #f8fafc;
+  --bg-input: #ffffff;
+  --bg-modal: #ffffff;
+  
+  /* Additional variables for EventParticipants */
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --border-light: #e5e7eb;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #6b7280;
+  --text-inverse: #ffffff;
+  
+  --border-primary: #e2e8f0;
+  --border-secondary: #f1f5f9;
+  --border-focus: #2563eb;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Color-specific shadows */
+  --primary-shadow: rgba(37, 99, 235, 0.35);
+  --primary-shadow-lg: rgba(37, 99, 235, 0.45);
+  --primary-focus: rgba(37, 99, 235, 0.15);
+  --secondary-shadow: rgba(107, 114, 128, 0.2);
+  --success-shadow: rgba(16, 185, 129, 0.3);
+  --success-shadow-lg: rgba(16, 185, 129, 0.4);
+  --error-shadow: rgba(239, 68, 68, 0.3);
+  --error-shadow-lg: rgba(239, 68, 68, 0.4);
+  --error-focus: rgba(239, 68, 68, 0.15);
+  --warning-shadow: rgba(245, 158, 11, 0.3);
+  --warning-shadow-lg: rgba(245, 158, 11, 0.4);
+  --info-shadow: rgba(14, 165, 233, 0.3);
+  --info-shadow-lg: rgba(14, 165, 233, 0.4);
+  
+  /* Brand Colors */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #dbeafe;
+  --primary-dark: #1e40af;
+  
+  --secondary: #64748b;
+  --secondary-hover: #475569;
+  --secondary-light: #f1f5f9;
+  --secondary-dark: #334155;
+  
+  --success: #10b981;
+  --success-hover: #059669;
+  --success-light: #d1fae5;
+  --success-dark: #047857;
+  
+  --warning: #f59e0b;
+  --warning-hover: #d97706;
+  --warning-light: #fef3c7;
+  --warning-dark: #b45309;
+  
+  --error: #ef4444;
+  --error-hover: #dc2626;
+  --error-light: #fee2e2;
+  --error-dark: #b91c1c;
+  
+  --info: #06b6d4;
+  --info-hover: #0891b2;
+  --info-light: #cffafe;
+  --info-dark: #0e7490;
+  
+  /* Status Colors */
+  --status-online: #10b981;
+  --status-offline: #6b7280;
+  --status-pending: #f59e0b;
+  --status-approved: #10b981;
+  --status-rejected: #ef4444;
+  
+  /* Navigation */
+  --nav-bg: #ffffff;
+  --nav-border: #e2e8f0;
+  --nav-text: #0f172a;
+  --nav-hover: #f8fafc;
+  
+  /* Form Elements */
+  --input-bg: #ffffff;
+  --input-border: #e2e8f0;
+  --input-border-focus: #2563eb;
+  --input-text: #0f172a;
+  --input-placeholder: #64748b;
+  
+  /* Buttons */
+  --btn-primary-bg: #2563eb;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #1d4ed8;
+  
+  --btn-secondary-bg: #f8fafc;
+  --btn-secondary-text: #1e293b;
+  --btn-secondary-hover: #f1f5f9;
+  
+  --btn-success-bg: #10b981;
+  --btn-success-text: #ffffff;
+  --btn-success-hover: #059669;
+  
+  --btn-warning-bg: #f59e0b;
+  --btn-warning-text: #ffffff;
+  --btn-warning-hover: #d97706;
+  
+  --btn-error-bg: #ef4444;
+  --btn-error-text: #ffffff;
+  --btn-error-hover: #dc2626;
+  
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  /* Typography */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-3xl: 1.875rem;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* Border radius */
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-2xl: 1rem;
+
+  /* Border colors */
+  --border-medium: #d1d5db;
+  --border-dark: #9ca3af;
+
+  /* Primary color variations */
+  --primary-color: #2563eb;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
+  --bg-input: #1e293b;
+  --bg-modal: #1e293b;
+  
+  /* Additional variables for EventParticipants - Dark Mode */
+  --white: #334155;
+  --gray-50: #334155;
+  --gray-100: #1e293b;
+  --border-light: #475569;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #0f172a;
+  
+  --border-primary: #334155;
+  --border-secondary: #475569;
+  --border-focus: #3b82f6;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  
+  /* Color-specific shadows for dark theme */
+  --primary-shadow: rgba(59, 130, 246, 0.35);
+  --primary-shadow-lg: rgba(59, 130, 246, 0.45);
+  --primary-focus: rgba(59, 130, 246, 0.15);
+  --secondary-shadow: rgba(148, 163, 184, 0.2);
+  --success-shadow: rgba(52, 211, 153, 0.3);
+  --success-shadow-lg: rgba(52, 211, 153, 0.4);
+  --error-shadow: rgba(248, 113, 113, 0.3);
+  --error-shadow-lg: rgba(248, 113, 113, 0.4);
+  --error-focus: rgba(248, 113, 113, 0.15);
+  --warning-shadow: rgba(251, 191, 36, 0.3);
+  --warning-shadow-lg: rgba(251, 191, 36, 0.4);
+  --info-shadow: rgba(34, 211, 238, 0.3);
+  --info-shadow-lg: rgba(34, 211, 238, 0.4);
+  
+  /* Brand Colors - Adjusted for dark theme */
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  
+  --secondary: #94a3b8;
+  --secondary-hover: #cbd5e1;
+  --secondary-light: #334155;
+  --secondary-dark: #64748b;
+  
+  --success: #34d399;
+  --success-hover: #10b981;
+  --success-light: #047857;
+  --success-dark: #059669;
+  
+  --warning: #fbbf24;
+  --warning-hover: #f59e0b;
+  --warning-light: #b45309;
+  --warning-dark: #d97706;
+  
+  --error: #f87171;
+  --error-hover: #ef4444;
+  --error-light: #b91c1c;
+  --error-dark: #dc2626;
+  
+  --info: #22d3ee;
+  --info-hover: #06b6d4;
+  --info-light: #0e7490;
+  --info-dark: #0891b2;
+  
+  /* Status Colors */
+  --status-online: #34d399;
+  --status-offline: #94a3b8;
+  --status-pending: #fbbf24;
+  --status-approved: #34d399;
+  --status-rejected: #f87171;
+  
+  /* Navigation */
+  --nav-bg: #1e293b;
+  --nav-border: #334155;
+  --nav-text: #ffffff;
+  --nav-hover: #334155;
+  
+  /* Form Elements */
+  --input-bg: #1e293b;
+  --input-border: #334155;
+  --input-border-focus: #3b82f6;
+  --input-text: #ffffff;
+  --input-placeholder: #cbd5e1;
+  
+  /* Buttons */
+  --btn-primary-bg: #3b82f6;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #2563eb;
+  
+  --btn-secondary-bg: #334155;
+  --btn-secondary-text: #f8fafc;
+  --btn-secondary-hover: #475569;
+  
+  --btn-success-bg: #34d399;
+  --btn-success-text: #0f172a;
+  --btn-success-hover: #10b981;
+  
+  --btn-warning-bg: #fbbf24;
+  --btn-warning-text: #0f172a;
+  --btn-warning-hover: #f59e0b;
+  
+  --btn-error-bg: #f87171;
+  --btn-error-text: #ffffff;
+  --btn-error-hover: #ef4444;
+
+  /* Spacing - same as light theme */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  /* Typography - same as light theme */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-3xl: 1.875rem;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* Border radius - same as light theme */
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-2xl: 1rem;
+
+  /* Border colors - adjusted for dark theme */
+  --border-medium: #4b5563;
+  --border-dark: #6b7280;
+
+  /* Primary color variations - adjusted for dark theme */
+  --primary-color: #3b82f6;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color var(--transition-normal),
+              border-color var(--transition-normal),
+              color var(--transition-normal),
+              box-shadow var(--transition-normal);
+}
+
+/* Ensure all text elements use theme colors */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+}
+
+p, span, div, label, small, strong, em, b, i {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+.text-muted {
+  color: var(--text-tertiary) !important;
+}
+
+/* Bootstrap and common class overrides */
+.text-dark {
+  color: var(--text-primary) !important;
+}
+
+.text-light {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted {
+  color: var(--text-tertiary) !important;
+}
+
+.lead {
+  color: var(--text-secondary) !important;
+}
+
+.display-1, .display-2, .display-3, .display-4 {
+  color: var(--text-primary) !important;
+}
+
+/* List items */
+li {
+  color: var(--text-primary);
+}
+
+/* Table text */
+td, th {
+  color: var(--text-primary);
+}
+
+/* Alert text */
+.alert {
+  color: var(--text-primary);
+}
+
+.alert-success {
+  color: var(--success-dark);
+}
+
+.alert-warning {
+  color: var(--warning-dark);
+}
+
+.alert-danger {
+  color: var(--error-dark);
+}
+
+.alert-info {
+  color: var(--info-dark);
+}
+
+/* Form elements */
+input, textarea, select {
+  color: var(--input-text) !important;
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder) !important;
+}
+
+/* Force all form elements to use theme colors */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="url"], 
+textarea, 
+select {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border) !important;
+}
+
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="password"]:focus, 
+input[type="number"]:focus, 
+input[type="search"]:focus, 
+input[type="tel"]:focus, 
+input[type="url"]:focus, 
+textarea:focus, 
+select:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+/* Links */
+a {
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+/* Buttons */
+button {
+  color: var(--btn-primary-text);
+}
+
+.btn-secondary {
+  color: var(--btn-secondary-text) !important;
+}
+
+/* Cards and containers */
+.card, .modal-content {
+  color: var(--text-primary);
+}
+
+.card-title, .modal-title {
+  color: var(--text-primary) !important;
+}
+
+.card-text, .modal-body {
+  color: var(--text-secondary);
+}
+
+/* Bootstrap form overrides */
+.form-control, .form-select {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border) !important;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border-focus) !important;
+  box-shadow: 0 0 0 3px var(--primary-focus) !important;
+}
+
+.form-control::placeholder {
+  color: var(--input-placeholder) !important;
+}
+
+/* Additional UI element overrides */
+.nav-link {
+  color: var(--nav-text) !important;
+}
+
+.nav-link:hover {
+  color: var(--primary) !important;
+}
+
+.dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dropdown-item:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-hover) !important;
+}
+
+.badge {
+  color: var(--text-primary) !important;
+}
+
+.badge-primary {
+  color: var(--text-inverse) !important;
+}
+
+.badge-secondary {
+  color: var(--text-inverse) !important;
+}
+
+.badge-success {
+  color: var(--text-inverse) !important;
+}
+
+.badge-warning {
+  color: var(--text-inverse) !important;
+}
+
+.badge-danger {
+  color: var(--text-inverse) !important;
+}
+
+.badge-info {
+  color: var(--text-inverse) !important;
+}
+
+/* Progress bars */
+.progress-bar {
+  color: var(--text-inverse) !important;
+}
+
+/* Pagination */
+.page-link {
+  color: var(--primary) !important;
+}
+
+.page-link:hover {
+  color: var(--primary-hover) !important;
+}
+
+.page-item.active .page-link {
+  color: var(--text-inverse) !important;
+}
+
+/* Tooltips */
+.tooltip {
+  color: var(--text-inverse) !important;
+}
+
+.tooltip-inner {
+  color: var(--text-inverse) !important;
+}
+
+/* Popovers */
+.popover {
+  color: var(--text-primary) !important;
+}
+
+.popover-header {
+  color: var(--text-primary) !important;
+}
+
+.popover-body {
+  color: var(--text-secondary) !important;
+}
+
+/* Global Checkbox Styling */
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+input[type="checkbox"]:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 0.2rem var(--primary-focus);
+  outline: none;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+/* Bootstrap Form Check Overrides */
+.form-check-input {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  border: 2px solid var(--border-primary) !important;
+  border-radius: 4px !important;
+  background-color: var(--bg-primary) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-dark) !important;
+  box-shadow: 0 0 0 0.2rem var(--primary-focus) !important;
+  outline: none !important;
+}
+
+.form-check-input:hover {
+  border-color: var(--primary) !important;
+  transform: scale(1.05) !important;
+}
+
+.form-check-label {
+  color: var(--text-primary) !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+}
+
+/* Disable transitions for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+  
+  input[type="checkbox"]:hover {
+    transform: none !important;
+  }
+  
+  .form-check-input:hover {
+    transform: none !important;
+  }
+}

@@ -1,0 +1,216 @@
+/* Import theme variables */
+@import '../styles/themes.css';
+
+/* Modern Responsive EditEventPage Design */
+
+.edit-event-container {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--gray-100) 100%);
+  padding: var(--space-8) var(--space-4);
+  margin-top: 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background decoration */
+.edit-event-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--primary-shadow) 0%, transparent 70%);
+  z-index: 1;
+}
+
+.edit-event-container::after {
+  content: '';
+  position: absolute;
+  bottom: -50%;
+  left: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--success-shadow) 0%, transparent 70%);
+  z-index: 1;
+}
+
+.edit-event-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--white);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  padding: var(--space-8);
+}
+
+.edit-event-header h2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.edit-event-header p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.edit-event-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.edit-event-form label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  margin: 0;
+  cursor: pointer;
+  border: 2px solid var(--border-primary);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+.checkbox-label input[type="checkbox"]:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 0.2rem var(--primary-focus);
+  outline: none;
+}
+
+.checkbox-label input[type="checkbox"]:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+.edit-event-form input,
+.edit-event-form textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background-color: var(--white);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.edit-event-form input:focus,
+.edit-event-form textarea:focus {
+  border-color: var(--primary-color);
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--primary-focus), var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.edit-event-form input:hover,
+.edit-event-form textarea:hover { border-color: var(--border-dark); }
+
+.form-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+  line-height: var(--leading-relaxed);
+}
+
+/* Image previews */
+.image-preview { display: flex; flex-direction: column; gap: var(--space-2); }
+.image-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: var(--gray-100);
+  border: 1px dashed var(--border-medium);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.image-frame img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain; 
+  object-position: center;
+  display: block !important; 
+  border-radius: var(--radius-lg);
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: var(--bg-secondary);
+}
+
+/* Form actions */
+.form-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.save-btn, .cancel-btn {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.save-btn { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: var(--white); }
+.save-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.cancel-btn { background-color: var(--white); border: 1px solid var(--border-medium); color: var(--text-primary); }
+.cancel-btn:hover { background-color: var(--gray-50); }
+
+/* Loading/error */
+.loading-section, .error-section { text-align: center; padding: var(--space-10); color: var(--text-secondary); }
+.loading-spinner { width: 2rem; height: 2rem; border: 2px solid var(--border-light); border-radius: 50%; border-top-color: var(--primary-color); margin: 0 auto var(--space-3); }
+.retry-btn { padding: var(--space-2) var(--space-4); border: 1px solid var(--border-medium); border-radius: var(--radius-md); background-color: var(--white); cursor: pointer; }
+.retry-btn:hover { background-color: var(--gray-50); }
+
+/* Responsive */
+@media (max-width: 767px) { .form-row { grid-template-columns: 1fr; } }
+
+/* High contrast mode */
+@media (prefers-contrast: high) { 
+  .edit-event-content { border: 2px solid var(--text-primary); } 
+  .save-btn, .cancel-btn { border: 2px solid var(--text-primary); } 
+}
+
