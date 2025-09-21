@@ -1367,18 +1367,31 @@ function EventListPage() {
                     {/* Event Image */}
                     <div className="event-image-horizontal">
                       <img 
-                        src={getEventImageUrl(event.image, event._id) || '/images/527595417_1167021392113223_2872992497207843477_n.jpg'} 
+                        src={getEventImageUrl(event.image, event._id)} 
                         alt={event.title}
                         className="event-image-img-horizontal"
                         loading="lazy"
                         onError={(e) => {
                           console.log('Image failed to load for event:', event.title);
-                          e.target.src = '/images/527595417_1167021392113223_2872992497207843477_n.jpg';
+                          // Show a placeholder instead of another image
+                          e.target.style.display = 'none';
+                          const placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
+                          if (placeholder) {
+                            placeholder.style.display = 'flex';
+                          }
                         }}
                         onLoad={() => {
                           console.log('Image loaded successfully for event:', event.title);
+                          e.target.style.opacity = '1';
+                        }}
+                        style={{ 
+                          opacity: 0, 
+                          transition: 'opacity 0.3s ease-in-out' 
                         }}
                       />
+                      <div className="event-image-placeholder" style={{ display: 'none' }}>
+                        <FaCalendar />
+                      </div>
                       {/* Status Badge */}
                       {eventStatus === 'completed' && (
                         <div className="status-badge-horizontal completed">

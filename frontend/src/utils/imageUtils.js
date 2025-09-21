@@ -92,17 +92,21 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
-  if (!imageData) return '/logo.png';
-  
   // Handle MongoDB binary data with event ID
-  if (imageData.data && imageData.contentType && eventId) {
+  if (imageData && imageData.data && imageData.contentType && eventId) {
     return `${BACKEND_URL}/files/event-image/${eventId}`;
   }
   
   // Handle legacy format with URL field
-  if (imageData.url && typeof imageData.url === 'string') {
+  if (imageData && imageData.url && typeof imageData.url === 'string') {
     const cleanPath = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
     return `${STATIC_URL}/uploads/${cleanPath}`;
+  }
+  
+  // If we have an eventId but no imageData, still try to serve from backend
+  // The backend will return a proper error if no image exists
+  if (eventId && !imageData) {
+    return `${BACKEND_URL}/files/event-image/${eventId}`;
   }
   
   // Fallback to general image handling
