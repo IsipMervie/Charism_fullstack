@@ -417,7 +417,10 @@ exports.sendMessageWithFiles = async (req, res) => {
       // 2. Attendance is approved (status: 'Approved')
       const isRegistered = event.attendance.some(att => 
         att.userId.toString() === userId && 
-        (att.registrationApproved || att.status === 'Approved')
+        (att.registrationApproved === true || 
+         att.status === 'Approved' || 
+         att.status === 'Attended' || 
+         att.status === 'Completed')
       );
       canAccessChat = isRegistered;
     }
@@ -848,7 +851,10 @@ exports.sendMessage = async (req, res) => {
       // 2. Attendance is approved (status: 'Approved')
       const isRegistered = event.attendance.some(att => 
         att.userId.toString() === userId && 
-        (att.registrationApproved || att.status === 'Approved')
+        (att.registrationApproved === true || 
+         att.status === 'Approved' || 
+         att.status === 'Attended' || 
+         att.status === 'Completed')
       );
       canAccessChat = isRegistered;
     }
@@ -932,7 +938,10 @@ exports.getMessages = async (req, res) => {
       // 2. Attendance is approved (status: 'Approved')
       const isRegistered = event.attendance.some(att => 
         att.userId.toString() === userId && 
-        (att.registrationApproved || att.status === 'Approved')
+        (att.registrationApproved === true || 
+         att.status === 'Approved' || 
+         att.status === 'Attended' || 
+         att.status === 'Completed')
       );
       canAccessChat = isRegistered;
     }
