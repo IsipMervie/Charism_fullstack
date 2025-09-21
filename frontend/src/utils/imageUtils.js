@@ -99,6 +99,12 @@ export const getEventImageUrl = (imageData, eventId = null) => {
     return `${BACKEND_URL}/files/event-image/${eventId}`;
   }
   
+  // Handle legacy format with URL field
+  if (imageData.url && typeof imageData.url === 'string') {
+    const cleanPath = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
+    return `${STATIC_URL}/uploads/${cleanPath}`;
+  }
+  
   // Fallback to general image handling
   return getImageUrl(imageData, 'event');
 };

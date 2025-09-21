@@ -4,6 +4,7 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const sendEmail = require('../utils/sendEmail');
 const User = require('../models/User');
+const { uploadEventImage, getImageInfo } = require('../utils/mongoFileStorage');
 
 // =======================
 // CLEAN, SIMPLE EVENTS SYSTEM
@@ -365,7 +366,18 @@ router.post('/:eventId/join', authMiddleware, async (req, res) => {
 });
 
 // Create new event (All authenticated users)
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, (req, res, next) => {
+  uploadEventImage(req, res, (err) => {
+    if (err) {
+      console.error('Multer error in event creation:', err);
+      return res.status(400).json({ 
+        message: 'Image upload error: ' + (err.message || 'Invalid file format or size'),
+        error: 'IMAGE_UPLOAD_ERROR'
+      });
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     console.log('🔍 Event creation request received');
     console.log('   User:', req.user);
@@ -476,7 +488,7 @@ router.post('/', authMiddleware, async (req, res) => {
       maxParticipants: maxParticipants || 100,
       departments: departments || [],
       isForAllDepartments: isForAllDepartments !== undefined ? isForAllDepartments : true,
-      image: req.file ? { url: req.file.path } : {},
+      image: req.file ? getImageInfo(req.file) : {},
       status: 'Active',
       isVisibleToStudents: isVisibleToStudents !== undefined ? isVisibleToStudents : true,
       createdBy: userId,
@@ -501,6 +513,96 @@ router.post('/', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('❌ Error creating event:', error);
     res.status(500).json({ message: 'Failed to create event', error: error.message });
+  }
+});
+
+// Update event (All authenticated users)
+router.put('/:eventId/edit', authMiddleware, (req, res, next) => {
+  uploadEventImage(req, res, (err) => {
+    if (err) {
+      console.error('Multer error in event update:', err);
+      return res.status(400).json({ 
+        message: 'Image upload error: ' + (err.message || 'Invalid file format or size'),
+        error: 'IMAGE_UPLOAD_ERROR'
+      });
+    }
+    next();
+  });
+}, async (req, res) => {
+  try {
+    console.log('🔍 Event update request received');
+    console.log('   Event ID:', req.params.eventId);
+    console.log('   User:', req.user);
+    console.log('   User ID:', req.user?.userId || req.user?.id || req.user?._id);
+    console.log('   Body:', req.body);
+    
+    const userId = req.user.userId || req.user.id || req.user._id;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId);
+    
+    if (!event) {
+      return res.status(404).json({ 
+        message: 'Event not found',
+        error: 'EVENT_NOT_FOUND'
+      });
+    }
+    
+    // Check if user has permission to edit this event
+    // Allow if user is admin, staff, or the creator of the event
+    if (req.user.role !== 'Admin' && req.user.role !== 'Staff' && event.createdBy.toString() !== userId.toString()) {
+      return res.status(403).json({ 
+        message: 'You do not have permission to edit this event',
+        error: 'INSUFFICIENT_PERMISSIONS'
+      });
+    }
+    
+    const {
+      title,
+      description,
+      date,
+      startTime,
+      endTime,
+      location,
+      hours,
+      maxParticipants,
+      departments,
+      isForAllDepartments,
+      requiresApproval,
+      isVisibleToStudents
+    } = req.body;
+    
+    // Update event fields
+    if (title) event.title = title;
+    if (description) event.description = description;
+    if (date) event.date = new Date(date);
+    if (startTime) event.startTime = startTime;
+    if (endTime) event.endTime = endTime;
+    if (location) event.location = location;
+    if (hours) event.hours = Number(hours);
+    if (maxParticipants) event.maxParticipants = Number(maxParticipants);
+    if (departments) event.departments = departments;
+    if (isForAllDepartments !== undefined) event.isForAllDepartments = isForAllDepartments === 'true';
+    if (requiresApproval !== undefined) event.requiresApproval = requiresApproval === 'true';
+    if (isVisibleToStudents !== undefined) event.isVisibleToStudents = isVisibleToStudents === 'true';
+    
+    // Update image if provided
+    if (req.file) {
+      event.image = getImageInfo(req.file);
+    }
+    
+    await event.save();
+    
+    console.log('✅ Event updated successfully:', event._id);
+    
+    res.json({
+      message: 'Event updated successfully!',
+      event: event
+    });
+    
+  } catch (error) {
+    console.error('❌ Error updating event:', error);
+    res.status(500).json({ message: 'Failed to update event', error: error.message });
   }
 });
 
