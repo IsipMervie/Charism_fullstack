@@ -572,12 +572,10 @@ const EventChatPage = () => {
         setError('');
         
         // Import the API functions
-        const { getEventDetails, getEventAttendance } = await import('../api/api');
+        const { getEventDetails } = await import('../api/api');
         const eventData = await getEventDetails(eventId);
-        const attendanceData = await getEventAttendance(eventId);
         
-        // Add attendance data to event object
-        eventData.attendance = attendanceData;
+        // getEventDetails already includes attendance data
         
         // Calculate approved participants count
         const approvedParticipants = eventData?.attendance ? 
@@ -593,29 +591,7 @@ const EventChatPage = () => {
           eventTitle: eventData?.title,
           hasAttendance: !!eventData?.attendance,
           attendanceLength: eventData?.attendance?.length || 0,
-          approvedParticipants: approvedParticipants,
-          attendanceStructure: Array.isArray(eventData?.attendance) ? 'Array' : typeof eventData?.attendance,
-          sampleAttendance: eventData?.attendance?.slice(0, 2) || 'No attendance data',
-          attendanceDetails: eventData?.attendance?.map(a => ({
-            registrationApproved: a.registrationApproved,
-            status: a.status,
-            userId: a.userId?._id || a.userId
-          })) || []
-        });
-        
-        // Debug participant count calculation
-        console.log('🔍 Participant count debug:', {
-          totalAttendance: eventData?.attendance?.length || 0,
-          approvedCount: approvedParticipants,
-          filterResults: eventData?.attendance?.map(a => ({
-            userId: a.userId?._id || a.userId,
-            registrationApproved: a.registrationApproved,
-            status: a.status,
-            isApproved: a.registrationApproved === true || 
-                      a.status === 'Approved' || 
-                      a.status === 'Attended' || 
-                      a.status === 'Completed'
-          })) || []
+          approvedParticipants: approvedParticipants
         });
         
         setEvent(eventData);

@@ -1,0 +1,15 @@
+# COPY THIS CONTENT TO YOUR .env.local FILE IN THE FRONTEND FOLDER
+
+# API URL for local development
+REACT_APP_API_URL=http://localhost:5000/api
+
+# Environment
+REACT_APP_ENV=development
+REACT_APP_VERSION=1.0.0
+GENERATE_SOURCEMAP=false
+
+# INSTRUCTIONS:
+# 1. Create a file named .env.local in your frontend folder
+# 2. Copy all the content above (without the # comments)
+# 3. Save the file
+# 4. Start your frontend with: npm start

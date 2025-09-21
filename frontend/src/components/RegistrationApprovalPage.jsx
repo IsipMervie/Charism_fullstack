@@ -466,7 +466,12 @@ function RegistrationApprovalPage() {
                   <p>All student registrations</p>
                 </div>
               </div>
-              <div className="card-value">{filteredEvents.reduce((total, e) => total + safeLength(e.attendance), 0)}</div>
+              <div className="card-value">{filteredEvents.reduce((total, e) => total + (e.attendance ? e.attendance.filter(a => 
+                a.registrationApproved === true || 
+                a.status === 'Approved' || 
+                a.status === 'Attended' || 
+                a.status === 'Completed'
+              ).length : 0), 0)}</div>
             </div>
 
             <div className="analytics-card">
@@ -528,7 +533,12 @@ function RegistrationApprovalPage() {
                     </div>
                     <div className="meta-item">
                       <FaUsers className="meta-icon" />
-                      <span>{safeLength(event.attendance)} registrations</span>
+                      <span>{event.attendance ? event.attendance.filter(a => 
+                        a.registrationApproved === true || 
+                        a.status === 'Approved' || 
+                        a.status === 'Attended' || 
+                        a.status === 'Completed'
+                      ).length : 0} registrations</span>
                     </div>
                   </div>
                   <div className="event-actions">

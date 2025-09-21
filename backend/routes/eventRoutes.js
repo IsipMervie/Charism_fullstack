@@ -3,6 +3,7 @@ const router = express.Router();
 const eventController = require('../controllers/eventController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
+const { uploadEventImage } = require('../utils/mongoFileStorage');
 
 // =======================
 // PUBLIC ROUTES (NO AUTH NEEDED)
@@ -418,6 +419,24 @@ router.get('/:eventId/participants', authMiddleware, roleMiddleware(['Admin', 'S
   }
 });
 
+// Get event attendance (for event chat)
+router.get('/:eventId/attendance', authMiddleware, async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const event = await Event.findById(req.params.eventId)
+      .populate('attendance.userId', 'name email');
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+    
+    res.json(event.attendance);
+  } catch (error) {
+    console.error('❌ Error getting event attendance:', error);
+    res.status(500).json({ message: 'Failed to get event attendance', error: error.message });
+  }
+});
+
 // Get event details (with auth check for public access)
 router.get('/:eventId', async (req, res) => {
   try {
@@ -454,5 +473,32 @@ router.get('/:eventId', async (req, res) => {
     res.status(500).json({ message: 'Failed to get event details', error: error.message });
   }
 });
+
+// =======================
+// ADMIN/STAFF ROUTES
+// =======================
+
+// Create Event (Admin/Staff only)
+router.post('/', 
+  authMiddleware, 
+  roleMiddleware(['Admin', 'Staff']),
+  uploadEventImage,
+  eventController.createEvent
+);
+
+// Update Event (Admin/Staff only)
+router.put('/:eventId', 
+  authMiddleware, 
+  roleMiddleware(['Admin', 'Staff']),
+  uploadEventImage,
+  eventController.updateEvent
+);
+
+// Delete Event (Admin/Staff only)
+router.delete('/:eventId', 
+  authMiddleware, 
+  roleMiddleware(['Admin', 'Staff']),
+  eventController.deleteEvent
+);
 
 module.exports = router;
