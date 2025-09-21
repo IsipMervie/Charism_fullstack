@@ -1344,10 +1344,29 @@ function EventListPage() {
                   return attUserId === userId;
                 });
 
-                // Calculate available slots and status - only count approved registrations
+                // Calculate available slots and status - count all approved participants
                 const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
-                const approvedAttendanceCount = safeFilter(attendance, a => a.registrationApproved === true).length;
-                const pendingRegistrationsCount = safeFilter(attendance, a => a.registrationApproved === false && a.status === 'Pending').length;
+                const approvedAttendanceCount = safeFilter(attendance, a => 
+                  a.registrationApproved === true || 
+                  a.status === 'Approved' || 
+                  a.status === 'Attended' || 
+                  a.status === 'Completed'
+                ).length;
+                
+                // Debug logging for participant count
+                console.log(`🔍 Event "${event.title}" participant count:`, {
+                  totalAttendance: attendance.length,
+                  approvedCount: approvedAttendanceCount,
+                  attendanceData: attendance.map(a => ({
+                    registrationApproved: a.registrationApproved,
+                    status: a.status,
+                    userId: a.userId?._id || a.userId
+                  }))
+                });
+                const pendingRegistrationsCount = safeFilter(attendance, a => 
+                  (a.registrationApproved === false && a.status === 'Pending') ||
+                  (a.status === 'Pending' && !a.registrationApproved)
+                ).length;
                 const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';
                 
                 // Check if event is available for registration (not completed, has slots, time hasn't passed)

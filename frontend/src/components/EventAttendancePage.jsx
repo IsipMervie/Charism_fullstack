@@ -609,7 +609,13 @@ const EventAttendancePage = memo(() => {
 
               // Calculate available slots and status
               const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
-              const attendanceCount = Array.isArray(event.attendance) ? event.attendance.length : 0;
+              const attendanceCount = Array.isArray(event.attendance) ? 
+                event.attendance.filter(a => 
+                  a.registrationApproved === true || 
+                  a.status === 'Approved' || 
+                  a.status === 'Attended' || 
+                  a.status === 'Completed'
+                ).length : 0;
               const availableSlots = maxParticipants > 0 ? maxParticipants - attendanceCount : 0;
               
               // Check if event is available for registration (not completed, has slots, time hasn't passed, and event has started)

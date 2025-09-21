@@ -99,6 +99,19 @@ const EventChat = ({
     return `${API_URL}${url}`;
   }, []);
 
+  // Enhanced image URL helper with fallback
+  const getImageUrlWithFallback = useCallback((url, fallbackUrl = '/logo.png') => {
+    if (!url) return fallbackUrl;
+    
+    try {
+      const fullUrl = getAttachmentUrl(url);
+      return fullUrl;
+    } catch (error) {
+      console.warn('Error constructing image URL:', error);
+      return fallbackUrl;
+    }
+  }, [getAttachmentUrl]);
+
   // Enhanced download function with better error handling and progress indication
   const downloadFile = useCallback(async (attachment) => {
     try {
@@ -753,18 +766,21 @@ const EventChat = ({
                                     {!failedImages.has(attachment.url) ? (
                                       <div className="image-container">
                                         <img 
-                                          src={getAttachmentUrl(attachment.url)} 
+                                          src={getImageUrlWithFallback(attachment.url)} 
                                           alt={attachment.originalName}
                                           className="attachment-image"
                                           onError={(e) => {
                                             console.error('Failed to load image:', attachment.url);
                                             setFailedImages(prev => new Set([...prev, attachment.url]));
-                                            // Set a fallback src to prevent repeated error attempts
-                                            e.target.style.display = 'none';
+                                            // Try fallback image
+                                            if (e.target.src !== '/logo.png') {
+                                              e.target.src = '/logo.png';
+                                            } else {
+                                              e.target.style.display = 'none';
+                                            }
                                           }}
                                           onLoad={() => {
                                             console.log('Image loaded successfully:', attachment.url);
-                                            // Image loaded successfully
                                           }}
                                           style={{ display: 'block' }}
                                           onClick={() => {

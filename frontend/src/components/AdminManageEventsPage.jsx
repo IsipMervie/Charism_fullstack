@@ -735,7 +735,12 @@ function AdminManageEventsPage() {
                                  {filteredEvents.map(event => {
                   const status = getEventStatus(event);
                   const maxParticipants = typeof event.maxParticipants === 'number' ? event.maxParticipants : 0;
-                  const approvedAttendanceCount = safeFilter(event.attendance, a => a.registrationApproved === true).length;
+                  const approvedAttendanceCount = safeFilter(event.attendance, a => 
+                    a.registrationApproved === true || 
+                    a.status === 'Approved' || 
+                    a.status === 'Attended' || 
+                    a.status === 'Completed'
+                  ).length;
 
 
                   const availableSlots = maxParticipants > 0 ? maxParticipants - approvedAttendanceCount : 'Unlimited';

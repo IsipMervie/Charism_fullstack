@@ -239,7 +239,16 @@ function PublicEventRegistrationPage() {
           
           <div className="detail-item">
             <FaUsers className="icon" />
-            <span>{event.hours} hours • {event.currentParticipants}/{event.maxParticipants || '∞'} participants</span>
+            <span>{event.hours} hours • {
+              event.attendance ? 
+                event.attendance.filter(a => 
+                  a.registrationApproved === true || 
+                  a.status === 'Approved' || 
+                  a.status === 'Attended' || 
+                  a.status === 'Completed'
+                ).length : 
+                (event.currentParticipants || 0)
+            }/{event.maxParticipants || '∞'} participants</span>
           </div>
         </div>
 

@@ -113,6 +113,24 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   return getImageUrl(imageData, 'event') || '/logo.png';
 };
 
+// Enhanced image loading with better error handling
+export const getImageUrlWithFallback = async (imageData, eventId = null, type = 'event') => {
+  const primaryUrl = type === 'event' ? getEventImageUrl(imageData, eventId) : getProfilePictureUrl(imageData, eventId);
+  
+  try {
+    // Check if image exists before returning URL
+    const response = await fetch(primaryUrl, { method: 'HEAD' });
+    if (response.ok) {
+      return primaryUrl;
+    }
+  } catch (error) {
+    console.warn('Primary image URL failed:', primaryUrl, error);
+  }
+  
+  // Return fallback URL
+  return '/logo.png';
+};
+
 export const getLogoUrl = (imageData) => {
   const baseUrl = getImageUrl(imageData, 'logo');
   if (!baseUrl) return null;
