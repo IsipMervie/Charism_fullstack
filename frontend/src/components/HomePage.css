@@ -177,6 +177,20 @@
   transition: transform 0.4s ease;
 }
 
+/* Global Virgin Mary image fix - applies to ALL screen sizes */
+.main-image-container img[alt*="Virgin Mary"],
+.main-image-container img[alt*="virgin mary"],
+.main-image-container img[alt*="Mary"],
+.main-image-container img[alt*="Blessed Virgin"],
+.main-image-container img[alt*="blessed virgin"] {
+  object-position: center top !important;
+  object-fit: contain !important;
+  background: var(--bg-secondary);
+  max-height: 100% !important;
+  width: auto !important;
+  height: 100% !important;
+}
+
 .main-image-container:hover .main-image {
   transform: scale(1.1);
 }
@@ -521,6 +535,20 @@
   .image-overlay p {
     font-size: 1rem;
   }
+  
+  /* Virgin Mary image fix for large screens */
+  .main-image-container img[alt*="Virgin Mary"],
+  .main-image-container img[alt*="virgin mary"],
+  .main-image-container img[alt*="Mary"],
+  .main-image-container img[alt*="Blessed Virgin"],
+  .main-image-container img[alt*="blessed virgin"] {
+    object-position: center top !important;
+    object-fit: contain !important;
+    background: var(--bg-secondary);
+    max-height: 100% !important;
+    width: auto !important;
+    height: 100% !important;
+  }
 }
 
 /* Tablet Landscape (1025px - 1200px) */
@@ -545,6 +573,20 @@
   .image-overlay p {
     font-size: 0.95rem;
   }
+  
+  /* Virgin Mary image fix for tablet landscape */
+  .main-image-container img[alt*="Virgin Mary"],
+  .main-image-container img[alt*="virgin mary"],
+  .main-image-container img[alt*="Mary"],
+  .main-image-container img[alt*="Blessed Virgin"],
+  .main-image-container img[alt*="blessed virgin"] {
+    object-position: center top !important;
+    object-fit: contain !important;
+    background: var(--bg-secondary);
+    max-height: 100% !important;
+    width: auto !important;
+    height: 100% !important;
+  }
 }
 
 /* Medium Tablets (901px - 1024px) */
@@ -560,6 +602,20 @@
   
   .side-image-container {
     border-radius: 13px;
+  }
+  
+  /* Virgin Mary image fix for medium tablets */
+  .main-image-container img[alt*="Virgin Mary"],
+  .main-image-container img[alt*="virgin mary"],
+  .main-image-container img[alt*="Mary"],
+  .main-image-container img[alt*="Blessed Virgin"],
+  .main-image-container img[alt*="blessed virgin"] {
+    object-position: center top !important;
+    object-fit: contain !important;
+    background: var(--bg-secondary);
+    max-height: 100% !important;
+    width: auto !important;
+    height: 100% !important;
   }
 }
 
@@ -621,10 +677,15 @@
   /* Specific fix for Virgin Mary image to prevent cropping */
   .main-image-container img[alt*="Virgin Mary"],
   .main-image-container img[alt*="virgin mary"],
-  .main-image-container img[alt*="Mary"] {
+  .main-image-container img[alt*="Mary"],
+  .main-image-container img[alt*="Blessed Virgin"],
+  .main-image-container img[alt*="blessed virgin"] {
     object-position: center top !important;
     object-fit: contain !important;
     background: var(--bg-secondary);
+    max-height: 100% !important;
+    width: auto !important;
+    height: 100% !important;
   }
   
   .image-overlay {
@@ -700,6 +761,20 @@
   
   .image-overlay-small p {
     font-size: 0.8rem;
+  }
+  
+  /* Virgin Mary image fix for mobile */
+  .slide-image[alt*="Virgin Mary"],
+  .slide-image[alt*="virgin mary"],
+  .slide-image[alt*="Mary"],
+  .slide-image[alt*="Blessed Virgin"],
+  .slide-image[alt*="blessed virgin"] {
+    object-position: center top !important;
+    object-fit: contain !important;
+    background: var(--bg-secondary);
+    max-height: 100% !important;
+    width: auto !important;
+    height: 100% !important;
   }
 }
 

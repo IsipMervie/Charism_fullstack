@@ -195,8 +195,8 @@ function PublicEventRegistrationPage() {
     <div className="public-registration-container">
       <div className="event-card">
         {/* Event Image */}
-        {event.image && (
-          <div className="event-image-section">
+        <div className="event-image-section">
+          {event.image ? (
             <img
               src={getEventImageUrl(event.image, event._id)}
               alt={event.title}
@@ -232,8 +232,27 @@ function PublicEventRegistrationPage() {
                 console.log('Event image loaded successfully:', event.title);
               }}
             />
-          </div>
-        )}
+          ) : (
+            <div className="event-image-placeholder">
+              <div style="
+                width: 100%;
+                height: 200px;
+                background: var(--bg-secondary);
+                border: 2px dashed var(--border-primary);
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-secondary);
+                font-size: 1.1rem;
+              ">
+                <div>📷</div>
+                <div>Event Image</div>
+              </div>
+            </div>
+          )}
+        </div>
         
         <div className="event-header">
           <h1>{event.title}</h1>
