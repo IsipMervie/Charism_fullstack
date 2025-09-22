@@ -18,7 +18,7 @@ router.get('/register/:token', async (req, res) => {
       publicRegistrationToken: req.params.token,
       isPublicRegistrationEnabled: true,
       status: 'Active'
-    });
+    }).populate('createdBy', 'name role');
     
     if (!event) {
       return res.status(404).json({ 
@@ -41,7 +41,8 @@ router.get('/register/:token', async (req, res) => {
       isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,
       status: event.status,
       image: event.image,
-      attendance: event.attendance
+      attendance: event.attendance,
+      createdBy: event.createdBy
     });
   } catch (error) {
     console.error('❌ Error in register token route:', error);

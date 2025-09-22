@@ -97,7 +97,15 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
-  console.log('🖼️ getEventImageUrl called:', { imageData, eventId, BACKEND_URL });
+  console.log('🖼️ getEventImageUrl called:', { 
+    imageData, 
+    eventId, 
+    BACKEND_URL,
+    hasImageData: !!imageData,
+    hasData: !!(imageData && imageData.data),
+    hasContentType: !!(imageData && imageData.contentType),
+    imageDataType: typeof imageData
+  });
   
   // Handle MongoDB binary data with event ID
   if (imageData && imageData.data && imageData.contentType && eventId) {
@@ -105,6 +113,11 @@ export const getEventImageUrl = (imageData, eventId = null) => {
     const fileBaseUrl = BACKEND_URL.replace('/api', '');
     const url = `${fileBaseUrl}/api/files/event-image/${eventId}`;
     console.log('✅ Constructed MongoDB image URL:', url);
+    console.log('🔍 Image data details:', {
+      dataLength: imageData.data.length,
+      contentType: imageData.contentType,
+      filename: imageData.filename
+    });
     return url;
   }
   
