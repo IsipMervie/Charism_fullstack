@@ -39,7 +39,9 @@ router.get('/register/:token', async (req, res) => {
       maxParticipants: event.maxParticipants,
       publicRegistrationToken: event.publicRegistrationToken,
       isPublicRegistrationEnabled: event.isPublicRegistrationEnabled,
-      status: event.status
+      status: event.status,
+      image: event.image,
+      attendance: event.attendance
     });
   } catch (error) {
     console.error('❌ Error in register token route:', error);

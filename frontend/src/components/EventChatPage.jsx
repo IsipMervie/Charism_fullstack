@@ -748,14 +748,9 @@ const EventChatPage = () => {
                 <FaUsers />
                 <span>Participants <span className="participant-count">{
                   event && event.attendance ? 
-                    event.attendance.filter(a => 
-                      a.registrationApproved === true || 
-                      a.status === 'Approved' || 
-                      a.status === 'Attended' || 
-                      a.status === 'Completed'
-                    ).length : 
+                    event.attendance.length : 
                     (participants.length || 0)
-                }</span></span>
+                } registrations</span></span>
               </button>
               <button 
                 className={`tab-button ${activeTab === 'info' ? 'active' : ''}`}
@@ -920,14 +915,9 @@ const EventChatPage = () => {
                           <label>Participants</label>
                           <span>{
                             event && event.attendance ? 
-                              event.attendance.filter(a => 
-                                a.registrationApproved === true || 
-                                a.status === 'Approved' || 
-                                a.status === 'Attended' || 
-                                a.status === 'Completed'
-                              ).length : 
+                              event.attendance.length : 
                               (participants.length || 0)
-                          } approved participants</span>
+                          } registrations</span>
                         </div>
                       </div>
                     </div>

@@ -1446,7 +1446,7 @@ function EventListPage() {
                       {/* Participants Count */}
                       <div className="participants-count-horizontal">
                         <FaUsers className="participants-icon" />
-                        <span>{approvedAttendanceCount}</span>
+                        <span>{attendance.length} registrations</span>
                       </div>
                       
                       {/* Event Details */}
