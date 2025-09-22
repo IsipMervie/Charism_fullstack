@@ -102,7 +102,8 @@ export const getEventImageUrl = (imageData, eventId = null) => {
     hasData: !!(imageData && imageData.data),
     hasContentType: !!(imageData && imageData.contentType),
     imageDataType: typeof imageData,
-    imageDataKeys: imageData ? Object.keys(imageData) : []
+    imageDataKeys: imageData ? Object.keys(imageData) : [],
+    fullImageData: imageData
   });
   
   // Handle MongoDB binary data with event ID

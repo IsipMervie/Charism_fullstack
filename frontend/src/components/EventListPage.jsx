@@ -1408,6 +1408,11 @@ function EventListPage() {
                             eventId: event._id,
                             imageData: event.image
                           });
+                          // Try fallback to default image
+                          if (!e.target.src.includes('/logo.png')) {
+                            e.target.src = '/logo.png';
+                            return;
+                          }
                           // Show a placeholder instead of another image
                           e.target.style.display = 'none';
                           const placeholder = e.target.parentElement.querySelector('.event-image-placeholder');

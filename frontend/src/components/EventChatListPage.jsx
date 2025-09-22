@@ -586,6 +586,16 @@ const EventChatListPage = () => {
                       loading="lazy"
                       decoding="async"
                       onError={(e) => {
+                        console.error('❌ Image failed to load for event:', event.title, {
+                          imageUrl: e.target.src,
+                          eventId: event._id,
+                          imageData: event.image
+                        });
+                        // Try fallback to default image
+                        if (!e.target.src.includes('/logo.png')) {
+                          e.target.src = '/logo.png';
+                          return;
+                        }
                         e.target.style.display = 'none';
                         e.target.nextSibling.style.display = 'flex';
                       }}
