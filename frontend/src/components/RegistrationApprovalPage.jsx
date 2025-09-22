@@ -498,7 +498,9 @@ function RegistrationApprovalPage() {
                 a.registrationApproved === true || 
                 a.status === 'Approved' || 
                 a.status === 'Attended' || 
-                a.status === 'Completed'
+                a.status === 'Completed' ||
+                a.status === 'Pending' ||
+                !a.status // Include registrations without status
               ).length : 0), 0)}</div>
             </div>
 
@@ -565,7 +567,9 @@ function RegistrationApprovalPage() {
                         a.registrationApproved === true || 
                         a.status === 'Approved' || 
                         a.status === 'Attended' || 
-                        a.status === 'Completed'
+                        a.status === 'Completed' ||
+                        a.status === 'Pending' ||
+                        !a.status // Include registrations without status
                       ).length : 0} registrations</span>
                     </div>
                   </div>
