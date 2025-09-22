@@ -406,7 +406,6 @@ function RegistrationApprovalPage() {
                   </div>
                 </div>
                 <div className="header-actions">
-                  {/* Header actions removed as requested */}
                 </div>
               </div>
 
@@ -611,7 +610,6 @@ function RegistrationApprovalPage() {
             </div>
           </div>
 
-          {/* Registration Analytics removed as requested */}
 
           <div className="registrations-search-section">
             <div className="search-container-large">
@@ -625,9 +623,7 @@ function RegistrationApprovalPage() {
             </div>
           </div>
 
-          {/* Registration Analytics removed as requested */}
 
-          {/* Registrations summary removed as requested */}
 
           <div className="registrations-grid">
             {(() => {

@@ -40,7 +40,6 @@ function AdminManageEventsPage() {
     const user = localStorage.getItem('user');
     
     if (!token || !user) {
-      console.log('❌ No authentication found');
       return false;
     }
     
@@ -50,21 +49,17 @@ function AdminManageEventsPage() {
       const now = Date.now() / 1000;
       
       if (tokenData.exp < now) {
-        console.log('❌ Token expired');
         return false;
       }
       
-      console.log('✅ Token valid');
       return true;
     } catch (error) {
-      console.log('❌ Invalid token format');
       return false;
     }
   };
 
   // Handle authentication errors
   const handleAuthError = () => {
-    console.log('🔐 Authentication error detected - redirecting to login');
     showWarning('Session Expired', 'Your session has expired. Please log in again.', {
       confirmButtonText: 'Log In',
       showCancelButton: false
@@ -90,7 +85,6 @@ function AdminManageEventsPage() {
           if (age > 60 * 60 * 1000) { // 1 hour
             sessionStorage.removeItem(key);
             sessionStorage.removeItem(timestampKey);
-            console.log(`🧹 Cleaned up old cache: ${key}`);
           }
         }
       });
@@ -102,7 +96,6 @@ function AdminManageEventsPage() {
   // Function to fetch full events data in background
   const fetchFullEvents = useCallback(async () => {
     try {
-      console.log('🔄 Fetching full events data in background...');
       const data = await getEvents();
       
       // Update with full data
@@ -120,7 +113,6 @@ function AdminManageEventsPage() {
         const cacheKey = `events_cache_${role}`;
         sessionStorage.setItem(cacheKey, JSON.stringify(data));
         sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
-        console.log('📦 Full events data cached successfully');
       } catch (cacheError) {
         console.warn('⚠️ Failed to cache full events data:', cacheError.message);
         // If caching fails, try to cache essential data instead
@@ -138,7 +130,6 @@ function AdminManageEventsPage() {
           const cacheKey = `events_cache_${role}`;
           sessionStorage.setItem(cacheKey, JSON.stringify(essentialData));
           sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
-          console.log('📦 Essential events data cached successfully');
         } catch (essentialCacheError) {
           console.warn('⚠️ Failed to cache even essential data:', essentialCacheError.message);
         }
@@ -151,11 +142,9 @@ function AdminManageEventsPage() {
   const fetchEvents = useCallback(async (retryCount = 0) => {
     // Prevent multiple simultaneous calls
     if (isFetching && retryCount === 0) {
-      console.log('⚠️ fetchEvents already in progress, skipping...');
       return;
     }
     
-    console.log('🔄 Starting fetchEvents, retry count:', retryCount);
     setIsFetching(true);
     setLoading(true);
     setError('');
@@ -164,7 +153,6 @@ function AdminManageEventsPage() {
       // Check if user is logged in
       const token = localStorage.getItem('token');
       if (!token) {
-        console.log('❌ No token found');
         setError('Please log in to view this page.');
         setLoading(false);
         setIsFetching(false);
@@ -175,10 +163,8 @@ function AdminManageEventsPage() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const role = user.role || localStorage.getItem('role');
       
-      console.log('👤 User role:', role);
       
       if (!role || (role !== 'Admin' && role !== 'Staff')) {
-        console.log('❌ Access denied for role:', role);
         setError(`Access denied. This page requires Admin or Staff role. Your current role is: ${role || 'Unknown'}`);
         setLoading(false);
         setIsFetching(false);
@@ -194,12 +180,10 @@ function AdminManageEventsPage() {
       if (cachedData && cacheTimestamp) {
         const cacheAge = Date.now() - parseInt(cacheTimestamp);
         if (cacheAge < 5000) { // 5 seconds to ensure fresh data
-          console.log('📦 Using cached events data');
           const parsedData = JSON.parse(cachedData);
           
           // Check if this is essential data (has limited fields) or full data
           if (parsedData.length > 0 && parsedData[0].description === undefined) {
-            console.log('📦 Using essential cached data, fetching full data...');
             // Essential data cached, fetch full data in background
             fetchFullEvents();
             setEvents(parsedData); // Show essential data immediately
@@ -216,13 +200,10 @@ function AdminManageEventsPage() {
         }
       }
 
-      console.log('🌐 Fetching events from API...');
       
       // Use the standard getEvents function with its built-in timeout
       const data = await getEvents();
       
-      console.log('✅ Events fetched successfully, count:', data?.length || 0);
-      console.log('📊 Events data sample:', data?.slice(0, 2)); // Log first 2 events for debugging
       
       // Cache only essential data to avoid quota exceeded errors
       try {

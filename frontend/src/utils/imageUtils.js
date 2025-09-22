@@ -11,7 +11,7 @@ const getBackendUrl = () => {
     
     // Production environment
     if (hostname === 'charism-ucb4.onrender.com' || hostname === 'charism.onrender.com') {
-      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
+      apiUrl = 'https://charism-backend.vercel.app/api';
     }
     // Local development
     else if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -19,7 +19,7 @@ const getBackendUrl = () => {
     }
     // Default to production for any other case
     else {
-      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
+      apiUrl = 'https://charism-backend.vercel.app/api';
     }
   }
   
@@ -34,8 +34,6 @@ const getBackendUrl = () => {
 const BACKEND_URL = getBackendUrl();
 const STATIC_URL = BACKEND_URL.replace('/api', '');
 
-console.log('🖼️ Image Utils - BACKEND_URL:', BACKEND_URL);
-console.log('🖼️ Image Utils - STATIC_URL:', STATIC_URL);
 
 export const getImageUrl = (imageData, type = 'general') => {
   if (!imageData) return null;
@@ -94,31 +92,11 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
-  console.log('🖼️ getEventImageUrl called:', { 
-    imageData, 
-    eventId, 
-    BACKEND_URL,
-    hasImageData: !!imageData,
-    hasData: !!(imageData && imageData.data),
-    hasContentType: !!(imageData && imageData.contentType),
-    imageDataType: typeof imageData,
-    imageDataKeys: imageData ? Object.keys(imageData) : [],
-    fullImageData: imageData
-  });
   
   // Handle MongoDB binary data with event ID
   if (imageData && imageData.data && imageData.contentType && eventId) {
     // Use the full backend URL for file serving
     const url = `${BACKEND_URL}/files/event-image/${eventId}`;
-    console.log('✅ Constructed MongoDB image URL:', url);
-    console.log('🔍 Image data details:', {
-      dataLength: imageData.data.length,
-      contentType: imageData.contentType,
-      filename: imageData.filename,
-      dataType: typeof imageData.data,
-      isArrayBuffer: imageData.data instanceof ArrayBuffer,
-      isUint8Array: imageData.data instanceof Uint8Array
-    });
     return url;
   }
   
@@ -126,7 +104,6 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   if (imageData && imageData.url && typeof imageData.url === 'string') {
     const cleanPath = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
     const url = `${STATIC_URL}/uploads/${cleanPath}`;
-    console.log('✅ Constructed legacy image URL:', url);
     return url;
   }
   
@@ -135,7 +112,6 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   if (eventId && !imageData) {
     // Use the full backend URL for file serving
     const url = `${BACKEND_URL}/files/event-image/${eventId}`;
-    console.log('⚠️ No image data, trying fallback URL:', url);
     return url;
   }
   
@@ -143,13 +119,11 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   if (typeof imageData === 'string' && imageData.length > 0) {
     const cleanPath = imageData.startsWith('/') ? imageData.slice(1) : imageData;
     const url = `${STATIC_URL}/uploads/${cleanPath}`;
-    console.log('✅ Constructed string image URL:', url);
     return url;
   }
   
   // Fallback to general image handling
   const fallbackUrl = getImageUrl(imageData, 'event') || '/logo.png';
-  console.log('⚠️ Using fallback image URL:', fallbackUrl);
   return fallbackUrl;
 };
 

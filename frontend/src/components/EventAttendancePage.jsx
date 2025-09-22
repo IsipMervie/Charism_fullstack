@@ -73,25 +73,14 @@ const EventAttendancePage = memo(() => {
 
   // Refresh events and joined events
   const refreshEvents = useCallback(async () => {
-    console.log('EventAttendancePage: refreshEvents called');
-    console.log('EventAttendancePage: Current state before refresh:', { 
-      eventsCount: events.length,
-      loading,
-      error 
-    });
     
     setLoading(true);
     try {
-      console.log('EventAttendancePage: Fetching events and settings...');
       const [eventsData, settingsData] = await Promise.all([
         getEvents(),
         getPublicSettings()
       ]);
       
-      console.log('EventAttendancePage: Received data:', { 
-        eventsCount: eventsData.length,
-        settingsData: !!settingsData 
-      });
       
       setEvents(eventsData);
       
@@ -111,10 +100,8 @@ const EventAttendancePage = memo(() => {
           )
           .map(event => event._id);
         setJoinedEvents(joined);
-        console.log('EventAttendancePage: Updated joined events:', joined);
       }
       
-      console.log('EventAttendancePage: Refresh completed successfully');
     } catch (err) {
       console.error('EventAttendancePage: Error refreshing events:', err);
       setError('Failed to load events. Please try again.');
@@ -124,7 +111,6 @@ const EventAttendancePage = memo(() => {
   }, [role, user._id]);
 
   useEffect(() => {
-    console.log('EventAttendancePage: useEffect triggered, role:', role);
     refreshEvents();
     // eslint-disable-next-line
   }, [role, refreshEvents]);
@@ -418,27 +404,17 @@ const EventAttendancePage = memo(() => {
     let matchesDepartment = true;
     if (role === 'Student') {
       const userDepartment = user.department;
-      console.log(`🔍 Department check for event "${event.title}":`, {
-        userDepartment,
-        eventDepartment: event.department,
-        eventDepartments: event.departments,
-        isForAllDepartments: event.isForAllDepartments
-      });
       
       if (event.isForAllDepartments) {
         matchesDepartment = true; // All departments can access
-        console.log(`✅ Event "${event.title}" is for all departments`);
       } else if (event.departments && event.departments.length > 0) {
         // Check if user's department is in the allowed departments array
         matchesDepartment = event.departments.includes(userDepartment);
-        console.log(`🔍 Event "${event.title}" departments: ${event.departments.join(', ')}, User: ${userDepartment}, Match: ${matchesDepartment}`);
       } else if (event.department) {
         // Check if user's department matches the single department
         matchesDepartment = event.department === userDepartment;
-        console.log(`🔍 Event "${event.title}" department: ${event.department}, User: ${userDepartment}, Match: ${matchesDepartment}`);
       } else {
         matchesDepartment = true; // No department restriction
-        console.log(`✅ Event "${event.title}" has no department restriction`);
       }
     }
     

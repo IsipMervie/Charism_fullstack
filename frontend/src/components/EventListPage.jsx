@@ -94,50 +94,6 @@ function EventListPage() {
         throw new Error('Invalid events data received');
       }
       
-      // Debug: Check if events have image data
-      const eventsWithImages = eventsData.filter(event => 
-        event.image && 
-        event.image.data && 
-        event.image.data.length > 0
-      );
-      console.log('🖼️ Events with images:', eventsWithImages.length);
-      if (eventsWithImages.length > 0) {
-        console.log('🔍 Sample event with image:', {
-          eventId: eventsWithImages[0]._id,
-          title: eventsWithImages[0].title,
-          imageData: eventsWithImages[0].image,
-          imageUrl: getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id),
-          backendUrl: process.env.REACT_APP_API_URL || 'auto-detected'
-        });
-        
-        // Test image URL accessibility
-        const testImageUrl = getEventImageUrl(eventsWithImages[0].image, eventsWithImages[0]._id);
-        console.log('🔍 Image URL Construction Test:', {
-          eventId: eventsWithImages[0]._id,
-          eventTitle: eventsWithImages[0].title,
-          imageData: eventsWithImages[0].image,
-          constructedUrl: testImageUrl,
-          hasImageData: !!eventsWithImages[0].image,
-          hasDataField: !!(eventsWithImages[0].image?.data),
-          hasContentType: !!(eventsWithImages[0].image?.contentType)
-        });
-        
-        if (testImageUrl) {
-          fetch(testImageUrl, { method: 'HEAD' })
-            .then(response => {
-              console.log('🖼️ Image URL test result:', {
-                url: testImageUrl,
-                status: response.status,
-                ok: response.ok,
-                contentType: response.headers.get('content-type'),
-                contentLength: response.headers.get('content-length')
-              });
-            })
-            .catch(error => {
-              console.error('❌ Image URL test failed:', error);
-            });
-        }
-      }
       
       setEvents(eventsData);
       hasLoadedRef.current = true;
@@ -1403,28 +1359,42 @@ function EventListPage() {
                         className="event-image-img-horizontal"
                         loading="lazy"
                         onError={(e) => {
-                          console.error('❌ Image failed to load for event:', event.title, {
-                            imageUrl: e.target.src,
-                            eventId: event._id,
-                            imageData: event.image
-                          });
-                          // Try fallback to default image
-                          if (!e.target.src.includes('/logo.png')) {
-                            e.target.src = '/logo.png';
-                            return;
-                          }
-                          // Show a placeholder instead of another image
+                          // Hide the broken image and show placeholder
                           e.target.style.display = 'none';
-                          const placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
-                          if (placeholder) {
-                            placeholder.style.display = 'flex';
+                          
+                          // Create or show placeholder
+                          let placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
+                          if (!placeholder) {
+                            placeholder = document.createElement('div');
+                            placeholder.className = 'event-image-placeholder';
+                            placeholder.innerHTML = `
+                              <div style="
+                                width: 100%;
+                                height: 100%;
+                                background: var(--bg-secondary);
+                                border: 2px dashed var(--border-primary);
+                                border-radius: 15px;
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+                                color: var(--text-secondary);
+                                font-size: 1.1rem;
+                              ">
+                                <div>📷</div>
+                                <div>Event Image</div>
+                              </div>
+                            `;
+                            e.target.parentElement.appendChild(placeholder);
                           }
+                          placeholder.style.display = 'flex';
                         }}
                         onLoad={(e) => {
-                          console.log('✅ Image loaded successfully for event:', event.title, {
-                            imageUrl: e.target.src,
-                            eventId: event._id
-                          });
+                          // Hide any placeholder when image loads successfully
+                          const placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
+                          if (placeholder) {
+                            placeholder.style.display = 'none';
+                          }
                           e.target.style.opacity = '1';
                         }}
                         style={{ 
