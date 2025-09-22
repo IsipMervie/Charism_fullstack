@@ -88,7 +88,11 @@ function RegistrationApprovalPage() {
 
   useEffect(() => {
     setIsVisible(true);
-    loadEvents();
+    // Add a small delay to ensure the component is fully mounted
+    const timer = setTimeout(() => {
+      loadEvents();
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -102,11 +106,19 @@ function RegistrationApprovalPage() {
   const loadEvents = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Loading events...');
       const eventsData = await getEvents();
+      console.log('✅ Events loaded successfully:', eventsData.length, 'events');
       setEvents(eventsData);
       setFilteredEvents(eventsData);
     } catch (error) {
-      console.error('Error loading events:', error);
+      console.error('❌ Error loading events:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config
+      });
       Swal.fire('Error', 'Failed to load events. Please try again.', 'error');
     } finally {
       setLoading(false);
@@ -116,13 +128,21 @@ function RegistrationApprovalPage() {
   const loadEventRegistrations = async (eventId) => {
     try {
       setLoadingRegistrations(true);
+      console.log('🔄 Loading registrations for event:', eventId);
       const registrationsData = await getAllEventRegistrations(eventId);
+      console.log('✅ Registrations loaded successfully:', registrationsData);
       setEventRegistrations(registrationsData);
       setFilteredRegistrations(registrationsData);
       setSelectedEvent(events.find(e => e._id === eventId));
       setViewMode('registrations');
     } catch (error) {
-      console.error('Error loading registrations:', error);
+      console.error('❌ Error loading registrations:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config
+      });
       Swal.fire('Error', 'Failed to load registrations. Please try again.', 'error');
     } finally {
       setLoadingRegistrations(false);
@@ -143,11 +163,19 @@ function RegistrationApprovalPage() {
     if (result.isConfirmed) {
       setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: true }));
       try {
+        console.log('🔄 Approving registration for user:', userId, 'event:', eventId);
         await approveRegistration(eventId, userId);
+        console.log('✅ Registration approved successfully');
         Swal.fire('Success', 'Registration approved successfully!', 'success');
         // Reload registrations
         loadEventRegistrations(eventId);
       } catch (error) {
+        console.error('❌ Error approving registration:', error);
+        console.error('Error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status
+        });
         Swal.fire('Error', error.message || 'Failed to approve registration.', 'error');
       } finally {
         setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: false }));

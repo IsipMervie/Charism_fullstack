@@ -115,7 +115,8 @@ export const getEventImageUrl = (imageData, eventId = null) => {
       contentType: imageData.contentType,
       filename: imageData.filename,
       dataType: typeof imageData.data,
-      isBuffer: imageData.data instanceof Buffer
+      isArrayBuffer: imageData.data instanceof ArrayBuffer,
+      isUint8Array: imageData.data instanceof Uint8Array
     });
     return url;
   }

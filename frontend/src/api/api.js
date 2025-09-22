@@ -1717,20 +1717,36 @@ export const getPendingRegistrationsForEvent = async (eventId) => {
 
 export const getAllEventRegistrations = async (eventId) => {
   try {
+    console.log('🔄 Fetching registrations for event:', eventId);
     const response = await axiosInstance.get(`/events/${eventId}/registrations`);
+    console.log('✅ Registrations fetched successfully:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching event registrations:', error);
+    console.error('❌ Error fetching event registrations:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      url: error.config?.url
+    });
     throw new Error('Failed to fetch event registrations. Please try again.');
   }
 };
 
 export const approveRegistration = async (eventId, userId) => {
   try {
+    console.log('🔄 Approving registration for user:', userId, 'event:', eventId);
     const response = await axiosInstance.put(`/events/approve/${eventId}/${userId}`);
+    console.log('✅ Registration approved successfully:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error approving registration:', error);
+    console.error('❌ Error approving registration:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      url: error.config?.url
+    });
     throw new Error('Failed to approve registration. Please try again.');
   }
 };
