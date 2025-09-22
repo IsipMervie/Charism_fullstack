@@ -258,7 +258,7 @@ function PublicEventRegistrationPage() {
             <FaUsers className="icon" />
             <span>{event.hours} hours • {
               event.attendance && Array.isArray(event.attendance) ? 
-              event.attendance.length : 
+              event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 
               (event.currentParticipants || 0)
             }/{event.maxParticipants || '∞'} registrations</span>
           </div>

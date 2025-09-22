@@ -92,25 +92,35 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
+  console.log('🖼️ getEventImageUrl called:', { imageData, eventId, BACKEND_URL });
+  
   // Handle MongoDB binary data with event ID
   if (imageData && imageData.data && imageData.contentType && eventId) {
-    return `${BACKEND_URL}/files/event-image/${eventId}`;
+    const url = `${BACKEND_URL}/files/event-image/${eventId}`;
+    console.log('✅ Constructed MongoDB image URL:', url);
+    return url;
   }
   
   // Handle legacy format with URL field
   if (imageData && imageData.url && typeof imageData.url === 'string') {
     const cleanPath = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
-    return `${STATIC_URL}/uploads/${cleanPath}`;
+    const url = `${STATIC_URL}/uploads/${cleanPath}`;
+    console.log('✅ Constructed legacy image URL:', url);
+    return url;
   }
   
   // If we have an eventId but no imageData, still try to serve from backend
   // The backend will return a proper error if no image exists
   if (eventId && !imageData) {
-    return `${BACKEND_URL}/files/event-image/${eventId}`;
+    const url = `${BACKEND_URL}/files/event-image/${eventId}`;
+    console.log('✅ Constructed fallback image URL:', url);
+    return url;
   }
   
   // Fallback to general image handling
-  return getImageUrl(imageData, 'event') || '/logo.png';
+  const fallbackUrl = getImageUrl(imageData, 'event') || '/logo.png';
+  console.log('⚠️ Using fallback image URL:', fallbackUrl);
+  return fallbackUrl;
 };
 
 // Enhanced image loading with better error handling

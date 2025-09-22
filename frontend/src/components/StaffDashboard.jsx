@@ -48,7 +48,7 @@ function StaffDashboard() {
         const totalEvents = events.length;
         const activeEvents = events.filter(event => event.status === 'Active').length;
         const totalParticipants = events.reduce((total, event) => {
-          return total + (event.attendance ? event.attendance.length : 0);
+          return total + (event.attendance ? event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 0);
         }, 0);
         const pendingApprovals = events.reduce((total, event) => {
           if (event.attendance) {

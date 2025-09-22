@@ -398,6 +398,9 @@ exports.createEvent = async (req, res) => {
     const event = new Event(eventData);
     await event.save();
     
+    // Populate the createdBy field to include user details
+    await event.populate('createdBy', 'name role');
+    
     res.status(201).json(event);
   } catch (err) {
     console.error('Error in createEvent:', err);
@@ -1209,7 +1212,15 @@ exports.getEventParticipantsPublic = async (req, res) => {
       }
     });
 
-    const participants = Array.from(uniqueParticipants.values()).map(att => ({
+    // Filter to only include approved participants for event chat
+    const approvedParticipants = Array.from(uniqueParticipants.values()).filter(att => 
+      att.registrationApproved === true || 
+      att.status === 'Approved' || 
+      att.status === 'Attended' || 
+      att.status === 'Completed'
+    );
+
+    const participants = approvedParticipants.map(att => ({
       _id: att.userId._id,
       name: att.userId.name || 'Unknown User',
       email: att.userId.email || 'No email provided',

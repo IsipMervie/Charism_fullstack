@@ -1446,7 +1446,7 @@ function EventListPage() {
                       {/* Participants Count */}
                       <div className="participants-count-horizontal">
                         <FaUsers className="participants-icon" />
-                        <span>{attendance.length} registrations</span>
+                        <span>{attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length} registrations</span>
                       </div>
                       
                       {/* Event Details */}

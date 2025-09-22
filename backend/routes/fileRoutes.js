@@ -49,6 +49,10 @@ router.get('/profile-picture/:userId', ensureDBConnection, async (req, res) => {
 
 // Serve event image
 router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
+  // Add CORS headers for image requests
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
   try {
     const { eventId } = req.params;
     

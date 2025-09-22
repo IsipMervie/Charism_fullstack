@@ -748,7 +748,7 @@ const EventChatPage = () => {
                 <FaUsers />
                 <span>Participants <span className="participant-count">{
                   event && event.attendance ? 
-                    event.attendance.length : 
+                    event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 
                     (participants.length || 0)
                 } registrations</span></span>
               </button>
@@ -915,7 +915,7 @@ const EventChatPage = () => {
                           <label>Participants</label>
                           <span>{
                             event && event.attendance ? 
-                              event.attendance.length : 
+                              event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 
                               (participants.length || 0)
                           } registrations</span>
                         </div>
