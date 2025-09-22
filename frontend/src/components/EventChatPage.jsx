@@ -34,7 +34,7 @@ import {
 } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import EventChat from './EventChat';
-import { getProfilePictureUrl } from '../utils/imageUtils';
+import { getProfilePictureUrl, getEventImageUrl } from '../utils/imageUtils';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import './EventChatPage.css';
 
@@ -622,6 +622,42 @@ const EventChatPage = () => {
     }
   }, [eventId]);
 
+  // Add polling mechanism to check for approval status updates
+  useEffect(() => {
+    // Only poll if user is a Student and doesn't have chat access yet
+    if (role === 'Student' && event && !canAccessChat(event)) {
+      console.log('🔄 Starting approval status polling for student...');
+      
+      const pollInterval = setInterval(async () => {
+        try {
+          const { getEventDetails } = await import('../api/api');
+          const eventData = await getEventDetails(eventId);
+          
+          // Check if user now has access
+          if (canAccessChat(eventData)) {
+            console.log('✅ Student approval detected! Refreshing event data...');
+            setEvent(eventData);
+            setError(''); // Clear any previous error
+            setShowChat(true); // Enable chat
+            
+            // Load updated participants
+            await loadParticipants();
+            
+            // Stop polling since we have access now
+            clearInterval(pollInterval);
+          }
+        } catch (err) {
+          console.error('Error polling for approval status:', err);
+        }
+      }, 5000); // Poll every 5 seconds
+
+      // Clean up interval on unmount or when access is granted
+      return () => {
+        clearInterval(pollInterval);
+      };
+    }
+  }, [eventId, event, role, user._id]);
+
   if (loading) {
     return (
       <div className="event-chat-page">
@@ -659,6 +695,36 @@ const EventChatPage = () => {
               <p>Please wait for admin/staff approval to join the chat.</p>
             </div>
           )}
+
+          {role === 'Student' && event && !canAccessChat(event) && (
+            <div className="chat-waiting-status">
+              <p>⏳ Waiting for approval to access chat...</p>
+              <p>We're checking for updates every few seconds. You can also refresh manually.</p>
+              <button 
+                className="refresh-approval-btn"
+                onClick={async () => {
+                  try {
+                    setLoading(true);
+                    const { getEventDetails } = await import('../api/api');
+                    const eventData = await getEventDetails(eventId);
+                    setEvent(eventData);
+                    
+                    if (canAccessChat(eventData)) {
+                      setError('');
+                      setShowChat(true);
+                      await loadParticipants();
+                    }
+                  } catch (err) {
+                    console.error('Error refreshing approval status:', err);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                🔄 Check Approval Status
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -693,6 +759,28 @@ const EventChatPage = () => {
         {/* Modern Header */}
         <header className="chat-page-header">
           <div className="header-left">
+            <div className="event-image-container">
+              <img 
+                src={getEventImageUrl(event.image, event._id)} 
+                alt={event.title}
+                className="event-header-image"
+                loading="lazy"
+                onError={(e) => {
+                  console.error('❌ Event header image failed to load:', {
+                    imageUrl: e.target.src,
+                    eventId: event._id,
+                    eventTitle: event.title
+                  });
+                  e.target.style.display = 'none';
+                }}
+                onLoad={(e) => {
+                  console.log('✅ Event header image loaded:', {
+                    imageUrl: e.target.src,
+                    eventId: event._id
+                  });
+                }}
+              />
+            </div>
             <div className="event-info">
               <h1 className="event-title">{event.title}</h1>
               <div className="event-status">
@@ -748,7 +836,13 @@ const EventChatPage = () => {
                 <FaUsers />
                 <span>Participants <span className="participant-count">{
                   event && event.attendance ? 
-                    event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 
+                    event.attendance.filter(a => 
+                      a.registrationApproved === true || 
+                      a.status === 'Approved' || 
+                      a.status === 'Attended' || 
+                      a.status === 'Completed' ||
+                      a.status === 'Pending' // Include pending registrations in count
+                    ).length : 
                     (participants.length || 0)
                 } registrations</span></span>
               </button>
@@ -915,7 +1009,13 @@ const EventChatPage = () => {
                           <label>Participants</label>
                           <span>{
                             event && event.attendance ? 
-                              event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 
+                              event.attendance.filter(a => 
+                                a.registrationApproved === true || 
+                                a.status === 'Approved' || 
+                                a.status === 'Attended' || 
+                                a.status === 'Completed' ||
+                                a.status === 'Pending' // Include pending registrations in count
+                              ).length : 
                               (participants.length || 0)
                           } registrations</span>
                         </div>

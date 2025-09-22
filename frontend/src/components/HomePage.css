@@ -481,19 +481,165 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
+/* Desktop and Tablet Layout */
+.desktop-only {
+  display: block;
+}
+
+/* Ensure desktop layout is visible on all screens above mobile */
+@media (min-width: 769px) {
+  .desktop-only {
+    display: block !important;
+  }
+  
+  .mobile-slideshow {
+    display: none !important;
+  }
+}
+
 /* Responsive Design */
-@media (max-width: 1024px) {
+
+/* Desktop Large (1201px+) - Ensure proper display on large screens */
+@media (min-width: 1201px) {
   .collage-container {
-    height: 450px;
+    height: 520px;
+    gap: 2.2rem;
+  }
+  
+  .main-image-container {
+    border-radius: 20px;
+  }
+  
+  .side-image-container {
+    border-radius: 15px;
+  }
+  
+  .image-overlay h3 {
+    font-size: 1.5rem;
+  }
+  
+  .image-overlay p {
+    font-size: 1rem;
+  }
+}
+
+/* Tablet Landscape (1025px - 1200px) */
+@media (max-width: 1200px) and (min-width: 1025px) {
+  .collage-container {
+    height: 480px;
+    gap: 1.8rem;
+  }
+  
+  .main-image-container {
+    border-radius: 18px;
+  }
+  
+  .side-image-container {
+    border-radius: 14px;
+  }
+  
+  .image-overlay h3 {
+    font-size: 1.4rem;
+  }
+  
+  .image-overlay p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Medium Tablets (901px - 1024px) */
+@media (max-width: 1024px) and (min-width: 901px) {
+  .collage-container {
+    height: 460px;
     gap: 1.5rem;
   }
   
   .main-image-container {
+    border-radius: 16px;
+  }
+  
+  .side-image-container {
+    border-radius: 13px;
+  }
+}
+
+/* Tablet Portrait (769px - 900px) */
+@media (max-width: 900px) and (min-width: 769px) {
+  .home-page {
+    padding: 1.5rem 1rem;
+  }
+  
+  .home-card {
+    padding: 2.5rem 2rem;
+    border-radius: 18px;
+  }
+  
+  .collage-container {
+    height: 420px;
+    gap: 1.25rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  
+  .main-image-container {
     border-radius: 15px;
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+  
+  .side-images {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    flex-direction: column;
+    gap: 1.25rem;
   }
   
   .side-image-container {
     border-radius: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  
+  /* Ensure images are visible and properly sized on tablets */
+  .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  
+  .side-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  
+  .image-overlay {
+    padding: 1.75rem 1.25rem 1.25rem;
+  }
+  
+  .image-overlay h3 {
+    font-size: 1.3rem;
+  }
+  
+  .image-overlay p {
+    font-size: 0.9rem;
+  }
+  
+  .image-overlay-small {
+    padding: 1.25rem 0.75rem 0.75rem;
+  }
+  
+  .image-overlay-small h4 {
+    font-size: 1rem;
+  }
+  
+  .image-overlay-small p {
+    font-size: 0.8rem;
   }
 }
 

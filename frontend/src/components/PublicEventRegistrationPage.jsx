@@ -48,7 +48,9 @@ function PublicEventRegistrationPage() {
             a.status === 'Approved' || 
             a.status === 'Attended' || 
             a.status === 'Completed'
-          ).length : 0
+          ).length : 0,
+        createdBy: eventData.createdBy,
+        createdByRole: eventData.createdBy?.role
       });
       
       setEvent(eventData);
@@ -258,7 +260,13 @@ function PublicEventRegistrationPage() {
             <FaUsers className="icon" />
             <span>{event.hours} hours • {
               event.attendance && Array.isArray(event.attendance) ? 
-              event.attendance.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length : 
+              event.attendance.filter(a => 
+                a.registrationApproved === true || 
+                a.status === 'Approved' || 
+                a.status === 'Attended' || 
+                a.status === 'Completed' ||
+                a.status === 'Pending' // Include pending registrations in count
+              ).length : 
               (event.currentParticipants || 0)
             }/{event.maxParticipants || '∞'} registrations</span>
           </div>
@@ -316,7 +324,11 @@ function PublicEventRegistrationPage() {
         </div>
 
         <div className="event-footer">
-          <p>Event organized by <strong>{event.createdBy?.role || 'Staff'}</strong></p>
+          <p>Event organized by <strong>{
+            event.createdBy?.role ? 
+              event.createdBy.role.charAt(0).toUpperCase() + event.createdBy.role.slice(1).toLowerCase() : 
+              (event.createdBy?.name || 'Staff')
+          }</strong></p>
           <p className="share-note">
             Share this link with others: <code>{process.env.REACT_APP_FRONTEND_URL || window.location.origin}/#/events/register/{token}</code>
           </p>

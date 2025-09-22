@@ -619,7 +619,13 @@ const EventChatListPage = () => {
                     <div className="event-meta">
                       <span className="participants-count">
                         <FaUsers />
-                        {event.attendance?.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length || 0}
+                        {event.attendance?.filter(a => 
+                          a.registrationApproved === true || 
+                          a.status === 'Approved' || 
+                          a.status === 'Attended' || 
+                          a.status === 'Completed' ||
+                          a.status === 'Pending' // Include pending registrations in count
+                        ).length || 0}
                       </span>
                     </div>
                   </div>

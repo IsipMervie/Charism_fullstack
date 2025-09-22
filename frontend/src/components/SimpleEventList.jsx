@@ -152,7 +152,13 @@ function SimpleEventList() {
                 
                 <div className="event-footer">
                   <span className="attendance-count">
-                    👥 {event.attendance?.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length || 0} participants
+                    👥 {event.attendance?.filter(a => 
+                      a.registrationApproved === true || 
+                      a.status === 'Approved' || 
+                      a.status === 'Attended' || 
+                      a.status === 'Completed' ||
+                      a.status === 'Pending' // Include pending registrations in count
+                    ).length || 0} participants
                   </span>
                   <span className="click-hint">Click to view details</span>
                 </div>
@@ -196,7 +202,13 @@ function SimpleEventList() {
               </div>
               
               <div className="event-detail">
-                <strong>Participants:</strong> {selectedEvent.attendance?.filter(a => a.registrationApproved === true || a.status === 'Approved' || a.status === 'Attended' || a.status === 'Completed').length || 0}
+                <strong>Participants:</strong> {selectedEvent.attendance?.filter(a => 
+                  a.registrationApproved === true || 
+                  a.status === 'Approved' || 
+                  a.status === 'Attended' || 
+                  a.status === 'Completed' ||
+                  a.status === 'Pending' // Include pending registrations in count
+                ).length || 0}
               </div>
               
               {selectedEvent.createdBy && (

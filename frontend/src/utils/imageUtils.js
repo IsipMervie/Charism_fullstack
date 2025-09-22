@@ -43,21 +43,20 @@ export const getImageUrl = (imageData, type = 'general') => {
     // Handle MongoDB binary data (new system)
     if (imageData.data && imageData.contentType) {
       // This is a MongoDB-stored image, use the file API endpoint
-      // Remove /api from BACKEND_URL for file serving
-      const fileBaseUrl = BACKEND_URL.replace('/api', '');
+      // Use the full backend URL for file serving
       switch (type) {
         case 'logo':
-          return `${fileBaseUrl}/api/files/school-logo`;
+          return `${BACKEND_URL}/files/school-logo`;
         case 'profile':
           // For profile pictures, we need the user ID, not the image ID
           // The imageData should contain the user ID or we need to pass it separately
-          return `${fileBaseUrl}/api/files/profile-picture/default`;
+          return `${BACKEND_URL}/files/profile-picture/default`;
         case 'event':
           // For event images, we need the event ID, not the image ID
           // The imageData should contain the event ID or we need to pass it separately
-          return `${fileBaseUrl}/api/files/event-image/default`;
+          return `${BACKEND_URL}/files/event-image/default`;
         default:
-          return `${fileBaseUrl}/api/files/${type}-image/default`;
+          return `${BACKEND_URL}/files/${type}-image/default`;
       }
     }
   
@@ -86,14 +85,12 @@ export const getImageUrl = (imageData, type = 'general') => {
 export const getProfilePictureUrl = (imageData, userId = null) => {
   // Handle MongoDB binary data with user ID
   if (imageData && imageData.data && imageData.contentType && userId) {
-    // Remove /api from BACKEND_URL for file serving
-    const fileBaseUrl = BACKEND_URL.replace('/api', '');
-    return `${fileBaseUrl}/api/files/profile-picture/${userId}`;
+    // Use the full backend URL for file serving
+    return `${BACKEND_URL}/files/profile-picture/${userId}`;
   }
   
   // Return default profile picture URL if no image data
-  const fileBaseUrl = BACKEND_URL.replace('/api', '');
-  return `${fileBaseUrl}/api/files/profile-picture/default`;
+  return `${BACKEND_URL}/files/profile-picture/default`;
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
@@ -104,19 +101,21 @@ export const getEventImageUrl = (imageData, eventId = null) => {
     hasImageData: !!imageData,
     hasData: !!(imageData && imageData.data),
     hasContentType: !!(imageData && imageData.contentType),
-    imageDataType: typeof imageData
+    imageDataType: typeof imageData,
+    imageDataKeys: imageData ? Object.keys(imageData) : []
   });
   
   // Handle MongoDB binary data with event ID
   if (imageData && imageData.data && imageData.contentType && eventId) {
-    // Remove /api from BACKEND_URL for file serving
-    const fileBaseUrl = BACKEND_URL.replace('/api', '');
-    const url = `${fileBaseUrl}/api/files/event-image/${eventId}`;
+    // Use the full backend URL for file serving
+    const url = `${BACKEND_URL}/files/event-image/${eventId}`;
     console.log('✅ Constructed MongoDB image URL:', url);
     console.log('🔍 Image data details:', {
       dataLength: imageData.data.length,
       contentType: imageData.contentType,
-      filename: imageData.filename
+      filename: imageData.filename,
+      dataType: typeof imageData.data,
+      isBuffer: imageData.data instanceof Buffer
     });
     return url;
   }
@@ -132,10 +131,17 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   // If we have an eventId but no imageData, still try to serve from backend
   // The backend will return a proper error if no image exists
   if (eventId && !imageData) {
-    // Remove /api from BACKEND_URL for file serving
-    const fileBaseUrl = BACKEND_URL.replace('/api', '');
-    const url = `${fileBaseUrl}/api/files/event-image/${eventId}`;
-    console.log('✅ Constructed fallback image URL:', url);
+    // Use the full backend URL for file serving
+    const url = `${BACKEND_URL}/files/event-image/${eventId}`;
+    console.log('⚠️ No image data, trying fallback URL:', url);
+    return url;
+  }
+  
+  // Handle string image data (filename)
+  if (typeof imageData === 'string' && imageData.length > 0) {
+    const cleanPath = imageData.startsWith('/') ? imageData.slice(1) : imageData;
+    const url = `${STATIC_URL}/uploads/${cleanPath}`;
+    console.log('✅ Constructed string image URL:', url);
     return url;
   }
   
