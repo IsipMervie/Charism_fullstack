@@ -343,11 +343,6 @@ function PublicEventRegistrationPage() {
         </div>
 
         <div className="event-footer">
-          <p>Event organized by <strong>{
-            event.createdBy?.role ? 
-              event.createdBy.role.charAt(0).toUpperCase() + event.createdBy.role.slice(1).toLowerCase() : 
-              (event.createdBy?.name || 'Staff')
-          }</strong></p>
           <p className="share-note">
             Share this link with others: <code>{process.env.REACT_APP_FRONTEND_URL || window.location.origin}/#/events/register/{token}</code>
           </p>

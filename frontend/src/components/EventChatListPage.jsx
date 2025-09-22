@@ -287,30 +287,43 @@ const EventChatListPage = () => {
 
 
   // Load events
-  useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        
-        const eventsData = await getEvents();
-        
-        
-        // Filter events that user can access chat for
-        const accessibleEvents = eventsData.filter(canAccessChat);
-        
-        setEvents(accessibleEvents);
-        
-      } catch (err) {
-        console.error('Error loading events:', err);
-        setError('Failed to load events. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadEvents = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const eventsData = await getEvents();
+      
+      // Filter events that user can access chat for
+      const accessibleEvents = eventsData.filter(canAccessChat);
+      
+      setEvents(accessibleEvents);
+      
+      console.log('📋 Loaded accessible events for chat:', accessibleEvents.length);
+      
+    } catch (err) {
+      console.error('Error loading events:', err);
+      setError('Failed to load events. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [canAccessChat]);
 
+  useEffect(() => {
     loadEvents();
-  }, []);
+  }, [loadEvents]);
+
+  // Auto-refresh every 30 seconds for students to see newly approved events
+  useEffect(() => {
+    if (role === 'Student') {
+      const interval = setInterval(() => {
+        console.log('🔄 Auto-refreshing events for student...');
+        loadEvents();
+      }, 30000); // 30 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [loadEvents, role]);
 
   const openEventChat = (eventId) => {
     navigate(`/event-chat/${eventId}`);
@@ -359,10 +372,11 @@ const EventChatListPage = () => {
           <div className="header-right">
             <button 
               className="refresh-button"
-              onClick={() => window.location.reload()}
+              onClick={loadEvents}
+              disabled={loading}
               title="Refresh events"
             >
-              <FaRedoAlt />
+              <FaRedoAlt className={loading ? 'spinning' : ''} />
             </button>
             
             <div className="view-controls">

@@ -166,7 +166,13 @@ function RegistrationApprovalPage() {
         console.log('🔄 Approving registration for user:', userId, 'event:', eventId);
         await approveRegistration(eventId, userId);
         console.log('✅ Registration approved successfully');
-        Swal.fire('Success', 'Registration approved successfully!', 'success');
+        Swal.fire({
+          title: 'Registration Approved!',
+          text: 'The student can now access the event chat.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#10b981'
+        });
         // Reload registrations
         loadEventRegistrations(eventId);
       } catch (error) {
