@@ -242,6 +242,21 @@ exports.getEventDetails = async (req, res) => {
         });
       }
       
+      // Check if user is approved for this event (for authenticated users)
+      let isUserApprovedForEvent = false;
+      if (req.user) {
+        const userId = req.user.userId || req.user.id || req.user._id;
+        const userAttendance = event.attendance.find(att => 
+          att.userId.toString() === userId.toString()
+        );
+        isUserApprovedForEvent = userAttendance ? (
+          userAttendance.registrationApproved === true || 
+          userAttendance.status === 'Approved' || 
+          userAttendance.status === 'Attended' || 
+          userAttendance.status === 'Completed'
+        ) : false;
+      }
+
       // Return limited event data for public viewing
       const publicEventData = {
         _id: event._id,
@@ -264,7 +279,8 @@ exports.getEventDetails = async (req, res) => {
         image: (typeof event.image === 'string' || !event.image || !event.image.data) ? null : event.image,
         imageUrl: (typeof event.image === 'string' || !event.image || !event.image.data) ? null : `/api/files/event-image/${event._id}`,
         // Don't include attendance data for public users
-        attendanceCount: event.attendance?.length || 0
+        attendanceCount: event.attendance?.length || 0,
+        isUserApprovedForEvent: isUserApprovedForEvent
       };
       
       return res.json(publicEventData);
@@ -305,8 +321,26 @@ exports.getEventDetails = async (req, res) => {
       console.log('✅ Admin/Staff user - full access granted');
     }
     
+    // Add isUserApprovedForEvent field for authenticated users
+    const currentUserId = req.user.userId || req.user.id || req.user._id;
+    const userAttendance = event.attendance.find(att => 
+      att.userId.toString() === currentUserId.toString()
+    );
+    const isUserApprovedForEvent = userAttendance ? (
+      userAttendance.registrationApproved === true || 
+      userAttendance.status === 'Approved' || 
+      userAttendance.status === 'Attended' || 
+      userAttendance.status === 'Completed'
+    ) : false;
+
+    // Add the approval status to the event object
+    const eventWithApprovalStatus = {
+      ...event.toObject(),
+      isUserApprovedForEvent: isUserApprovedForEvent
+    };
+
     console.log('✅ Access granted - sending event details');
-    res.json(event);
+    res.json(eventWithApprovalStatus);
   } catch (err) {
     console.error('❌ Error in getEventDetails:', err);
     
