@@ -193,7 +193,7 @@ function PublicEventRegistrationPage() {
     <div className="public-registration-container">
       <div className="event-card">
         {/* Event Image */}
-        {event.image && event.image.data && event.image.data.length > 0 && (
+        {event.image && (
           <div className="event-image-section">
             <img
               src={getEventImageUrl(event.image, event._id)}
@@ -258,14 +258,9 @@ function PublicEventRegistrationPage() {
             <FaUsers className="icon" />
             <span>{event.hours} hours • {
               event.attendance && Array.isArray(event.attendance) ? 
-                event.attendance.filter(a => 
-                  a.registrationApproved === true || 
-                  a.status === 'Approved' || 
-                  a.status === 'Attended' || 
-                  a.status === 'Completed'
-                ).length : 
-                (event.currentParticipants || 0)
-            }/{event.maxParticipants || '∞'} participants</span>
+              event.attendance.length : 
+              (event.currentParticipants || 0)
+            }/{event.maxParticipants || '∞'} registrations</span>
           </div>
         </div>
 
