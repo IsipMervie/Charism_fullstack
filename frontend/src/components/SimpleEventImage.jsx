@@ -31,7 +31,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // If no image data, use default
     if (!imageData) {
       console.log('⚠️ No image data, using default');
-      return 'https://charism-api-xtw9.onrender.com/images/default-event.jpg';
+      return 'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg';
     }
 
     // Try different patterns based on image data type
@@ -89,7 +89,6 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // Fallback to default - try multiple default image locations
     console.log('⚠️ No valid image pattern found, using default');
     const defaultImages = [
-      'https://charism-api-xtw9.onrender.com/images/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
       '/images/default-event.jpg',
@@ -102,36 +101,43 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
   const handleImageError = () => {
     console.error('❌ Image failed to load:', getImageSrc());
     
-    // Try fallback images
+    // Try fallback images in sequence
     const fallbackImages = [
-      'https://charism-api-xtw9.onrender.com/images/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
+      '/images/default-event.jpg',
       'https://via.placeholder.com/400x300/007bff/ffffff?text=Event+Image',
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K'
     ];
     
-    // Try the first fallback
-    if (fallbackImages.length > 0) {
-      console.log('🔄 Trying fallback image:', fallbackImages[0]);
+    // Try fallback images sequentially
+    const tryNextFallback = (index = 0) => {
+      if (index >= fallbackImages.length) {
+        console.log('❌ All fallback images failed, using SVG placeholder');
+        setCurrentImageUrl(fallbackImages[fallbackImages.length - 1]);
+        setIsLoading(false);
+        setImageError(true);
+        return;
+      }
+      
+      const fallbackUrl = fallbackImages[index];
+      console.log(`🔄 Trying fallback image ${index + 1}/${fallbackImages.length}:`, fallbackUrl);
+      
       const img = new Image();
       img.onload = () => {
-        console.log('✅ Fallback image loaded successfully');
-        setCurrentImageUrl(fallbackImages[0]);
+        console.log('✅ Fallback image loaded successfully:', fallbackUrl);
+        setCurrentImageUrl(fallbackUrl);
         setIsLoading(false);
         setImageError(false);
       };
       img.onerror = () => {
-        console.log('❌ Fallback image also failed, using SVG placeholder');
-        setCurrentImageUrl(fallbackImages[fallbackImages.length - 1]); // Use SVG as last resort
-        setIsLoading(false);
-        setImageError(true);
+        console.log(`❌ Fallback image ${index + 1} failed, trying next...`);
+        tryNextFallback(index + 1);
       };
-      img.src = fallbackImages[0];
-    } else {
-      setImageError(true);
-      setIsLoading(false);
-    }
+      img.src = fallbackUrl;
+    };
+    
+    tryNextFallback();
   };
 
   const handleImageLoad = () => {

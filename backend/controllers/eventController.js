@@ -249,12 +249,25 @@ exports.getEventDetails = async (req, res) => {
         const userAttendance = event.attendance.find(att => 
           att.userId.toString() === userId.toString()
         );
+        
+        console.log('🔍 Public Event Chat Access Debug:', {
+          currentUserId: userId,
+          userAttendance: userAttendance ? {
+            userId: userAttendance.userId,
+            registrationApproved: userAttendance.registrationApproved,
+            status: userAttendance.status
+          } : null,
+          totalAttendance: event.attendance.length
+        });
+        
         isUserApprovedForEvent = userAttendance ? (
           userAttendance.registrationApproved === true || 
           userAttendance.status === 'Approved' || 
           userAttendance.status === 'Attended' || 
           userAttendance.status === 'Completed'
         ) : false;
+        
+        console.log('✅ Public Event Chat Access Result:', isUserApprovedForEvent);
       }
 
       // Return limited event data for public viewing
@@ -326,12 +339,25 @@ exports.getEventDetails = async (req, res) => {
     const userAttendance = event.attendance.find(att => 
       att.userId.toString() === currentUserId.toString()
     );
+    
+    console.log('🔍 Chat Access Debug:', {
+      currentUserId,
+      userAttendance: userAttendance ? {
+        userId: userAttendance.userId,
+        registrationApproved: userAttendance.registrationApproved,
+        status: userAttendance.status
+      } : null,
+      totalAttendance: event.attendance.length
+    });
+    
     const isUserApprovedForEvent = userAttendance ? (
       userAttendance.registrationApproved === true || 
       userAttendance.status === 'Approved' || 
       userAttendance.status === 'Attended' || 
       userAttendance.status === 'Completed'
     ) : false;
+    
+    console.log('✅ Chat Access Result:', isUserApprovedForEvent);
 
     // Add the approval status to the event object
     const eventWithApprovalStatus = {
@@ -1433,6 +1459,7 @@ exports.approveAttendance = async (req, res) => {
     }
 
     attendance.status = 'Approved';
+    attendance.registrationApproved = true; // Set registration approval
     // Fix: Get user ID from the correct field
     const currentUserId = req.user.id || req.user.userId || req.user._id;
     attendance.approvedBy = currentUserId;

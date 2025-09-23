@@ -2,7 +2,7 @@
 // Simple but Creative Event Details Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getEventDetails, getPublicEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
+import { getEventDetails, getPublicEventDetails, approveRegistration, disapproveRegistration } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaCheck, FaTimes } from 'react-icons/fa';
@@ -134,19 +134,19 @@ function EventDetailsPage() {
     if (result.isConfirmed) {
       setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: true }));
       try {
-        await approveAttendance(eventId, userId);
-        Swal.fire('Success', 'Attendance approved successfully!', 'success');
+        await approveRegistration(eventId, userId);
+        Swal.fire('Success', 'Registration approved successfully!', 'success');
         // Reload event data
         fetchEventDetails();
       } catch (error) {
-        Swal.fire('Error', error.message || 'Failed to approve attendance.', 'error');
+        Swal.fire('Error', error.message || 'Failed to approve registration.', 'error');
       } finally {
         setActionLoading(prev => ({ ...prev, [`approve_${userId}`]: false }));
       }
     }
   };
 
-  const handleDisapproveAttendance = async (userId) => {
+  const handleDisapproveRegistration = async (userId) => {
     // Find the participant in the event
     const participant = event?.attendance?.find(p => p.userId._id === userId || p.userId === userId);
     
@@ -206,12 +206,12 @@ function EventDetailsPage() {
     if (reasonData) {
       setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: true }));
       try {
-        await disapproveAttendance(eventId, userId, reasonData.reason);
-        Swal.fire('Success', 'Attendance disapproved successfully!', 'success');
+        await disapproveRegistration(eventId, userId, reasonData.reason);
+        Swal.fire('Success', 'Registration disapproved successfully!', 'success');
         // Reload event data
         fetchEventDetails();
       } catch (error) {
-        Swal.fire('Error', error.message || 'Failed to disapprove attendance.', 'error');
+        Swal.fire('Error', error.message || 'Failed to disapprove registration.', 'error');
       } finally {
         setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: false }));
       }
@@ -456,7 +456,7 @@ function EventDetailsPage() {
                             <FaCheck /> {actionLoading[`approve_${attendance.userId?._id || attendance.userId}`] ? 'Approving...' : 'Approve'}
                           </button>
                           <button 
-                            onClick={() => handleDisapproveAttendance(attendance.userId?._id || attendance.userId)}
+                            onClick={() => handleDisapproveRegistration(attendance.userId?._id || attendance.userId)}
                             className="disapprove-button"
                             disabled={actionLoading[`disapprove_${attendance.userId?._id || attendance.userId}`]}
                           >
