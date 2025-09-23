@@ -28,7 +28,12 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     console.log('🖼️ SimpleEventImage:', {
       eventId,
       imageData,
-      eventTitle: event.title
+      eventTitle: event.title,
+      imageDataType: typeof imageData,
+      hasData: imageData?.data ? 'YES' : 'NO',
+      hasContentType: imageData?.contentType ? 'YES' : 'NO',
+      hasFilename: imageData?.filename ? 'YES' : 'NO',
+      dataLength: imageData?.data?.length || 0
     });
 
     // If no image data, use default SVG immediately
@@ -37,57 +42,39 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
       return defaultSVG;
     }
 
-    // Try to construct a valid image URL
-    let imageUrl = null;
+    // Check if image data is valid for serving
+    const hasValidImageData = imageData.data && 
+                             imageData.data.length > 0 && 
+                             imageData.contentType && 
+                             imageData.contentType.startsWith('image/');
 
-    // Try different patterns based on image data type
-    if (typeof imageData === 'string' && imageData.length > 0) {
-      // It's a filename
-      const filename = imageData.startsWith('/') ? imageData.slice(1) : imageData;
-      console.log('📁 Filename detected:', filename);
-      imageUrl = `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
-    } else if (imageData.url && typeof imageData.url === 'string') {
-      // It has a URL field
-      const url = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
-      console.log('🔗 URL detected:', url);
-      imageUrl = `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
-    } else if (imageData.data && imageData.contentType && eventId) {
-      // It's MongoDB binary data
-      console.log('🗄️ MongoDB binary data detected for event:', eventId);
-      imageUrl = `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
-    }
-
-    // If we have a valid image URL, return it, otherwise use default event image from backend
-    if (imageUrl) {
-      console.log('🖼️ Using image URL:', imageUrl);
-      return imageUrl;
+    if (hasValidImageData) {
+      // It's valid MongoDB binary data - use the event image endpoint
+      console.log('✅ Valid MongoDB binary data detected for event:', eventId);
+      return `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
     } else {
-      console.log('⚠️ No valid image pattern found, using default event image from backend');
-      return 'https://charism-api-xtw9.onrender.com/api/files/event-image/default';
+      // Image data is invalid, missing, or corrupted - use SVG fallback immediately
+      console.log('❌ Invalid image data detected, using SVG fallback immediately:', {
+        hasData: !!imageData.data,
+        dataLength: imageData.data?.length || 0,
+        hasContentType: !!imageData.contentType,
+        contentType: imageData.contentType,
+        hasFilename: !!imageData.filename,
+        filename: imageData.filename
+      });
+      
+      return defaultSVG;
     }
   };
 
   const handleImageError = () => {
     console.error('❌ Image failed to load:', getImageSrc());
     
-    // Try backend default image first, then SVG fallback
-    console.log('🔄 Trying backend default image...');
-    const backendDefaultUrl = 'https://charism-api-xtw9.onrender.com/api/files/event-image/default';
-    
-    const testImg = new Image();
-    testImg.onload = () => {
-      console.log('✅ Backend default image loaded successfully');
-      setCurrentImageUrl(backendDefaultUrl);
-      setIsLoading(false);
-      setImageError(false);
-    };
-    testImg.onerror = () => {
-      console.log('❌ Backend default image failed, using SVG fallback');
-      setCurrentImageUrl(defaultSVG);
-      setIsLoading(false);
-      setImageError(true);
-    };
-    testImg.src = backendDefaultUrl;
+    // Use SVG fallback immediately for better performance
+    console.log('🔄 Using SVG fallback immediately');
+    setCurrentImageUrl(defaultSVG);
+    setIsLoading(false);
+    setImageError(true);
   };
 
   const handleImageLoad = () => {

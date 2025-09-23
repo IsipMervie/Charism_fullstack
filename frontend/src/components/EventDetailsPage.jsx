@@ -8,6 +8,8 @@ import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaCheck, FaTimes } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import EventChat from './EventChat';
+import SimpleEventImage from './SimpleEventImage';
+import ImageDiagnostic from './ImageDiagnostic';
 
 import './EventDetailsPage.css';
 
@@ -459,6 +461,14 @@ function EventDetailsPage() {
 
         {/* Event Content */}
         <div className="event-content">
+          {/* Event Image */}
+          <div className="event-image-section">
+            <SimpleEventImage event={event} />
+          </div>
+          
+          {/* Image Diagnostic - for debugging */}
+          <ImageDiagnostic eventId={event._id} eventTitle={event.title} />
+          
           <div className="event-description">
             <h3>Event Description</h3>
             <p>{event.description || 'No description available.'}</p>
@@ -511,7 +521,7 @@ function EventDetailsPage() {
                       </button>
                     </div>
                   );
-                } else if (!userAttendance.registrationApproved) {
+                } else if (!userAttendance.registrationApproved && userAttendance.status !== 'Approved' && userAttendance.status !== 'Attended' && userAttendance.status !== 'Completed') {
                   // User joined but registration pending approval
                   return (
                     <div className="registration-pending-section">

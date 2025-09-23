@@ -68,6 +68,61 @@ router.get('/event-image/default', (req, res) => {
   res.send(defaultEventImage);
 });
 
+// Diagnostic endpoint to check image data
+router.get('/event-image/:eventId/debug', ensureDBConnection, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    // Validate ObjectId
+    if (!isValidObjectId(eventId)) {
+      return res.status(400).json({ 
+        message: 'Invalid event ID format',
+        error: 'INVALID_OBJECT_ID',
+        receivedId: eventId
+      });
+    }
+
+    const event = await Event.findById(eventId);
+    
+    if (!event) {
+      return res.status(404).json({ 
+        message: 'Event not found',
+        eventId: eventId
+      });
+    }
+    
+    const imageInfo = {
+      eventId: event._id,
+      eventTitle: event.title,
+      hasImage: !!event.image,
+      imageType: typeof event.image,
+      imageStructure: event.image ? {
+        hasData: !!event.image.data,
+        dataLength: event.image.data?.length || 0,
+        hasContentType: !!event.image.contentType,
+        contentType: event.image.contentType,
+        hasFilename: !!event.image.filename,
+        filename: event.image.filename,
+        hasUploadedAt: !!event.image.uploadedAt,
+        uploadedAt: event.image.uploadedAt
+      } : null,
+      isValidForServing: event.image && 
+                        event.image.data && 
+                        event.image.data.length > 0 && 
+                        event.image.contentType && 
+                        event.image.contentType.startsWith('image/')
+    };
+    
+    res.json(imageInfo);
+  } catch (error) {
+    console.error('Error in image debug endpoint:', error);
+    res.status(500).json({ 
+      message: 'Error checking image data',
+      error: error.message
+    });
+  }
+});
+
 // Serve event image
 router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
   // Add CORS headers for image requests
@@ -125,7 +180,13 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     console.log('✅ Event found:', { 
       eventId: event._id, 
       title: event.title,
-      hasImage: !!event.image 
+      hasImage: !!event.image,
+      imageType: typeof event.image,
+      hasData: event.image?.data ? 'YES' : 'NO',
+      hasContentType: event.image?.contentType ? 'YES' : 'NO',
+      hasFilename: event.image?.filename ? 'YES' : 'NO',
+      dataLength: event.image?.data?.length || 0,
+      contentType: event.image?.contentType || 'N/A'
     });
     
     // Defensive check for malformed image data

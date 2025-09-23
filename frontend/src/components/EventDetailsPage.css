@@ -3,6 +3,19 @@
 
 /* Simple but Creative Event Details Page Design */
 
+/* Event Image Section */
+.event-image-section {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.event-image-section img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .event-details-page {
   min-height: 100vh;
   background: var(--bg-primary);

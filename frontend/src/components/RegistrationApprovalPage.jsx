@@ -318,6 +318,12 @@ function RegistrationApprovalPage() {
                     </span>
                   </div>
                 )}
+                {!registration.timeIn && !registration.timeOut && (
+                  <div className="meta-item">
+                    <span className="meta-label">Time Status:</span>
+                    <span className="meta-value">No time recorded yet</span>
+                  </div>
+                )}
               </>
             )}
             {type === 'disapproved' && registration.reason && (

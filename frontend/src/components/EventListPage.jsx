@@ -1508,7 +1508,7 @@ function EventListPage() {
                           <div className="student-registration-status">
                             {att && (
                               <>
-                                {!att.registrationApproved ? (
+                                {!att.registrationApproved && att.status !== 'Approved' && att.status !== 'Attended' && att.status !== 'Completed' ? (
                                   <div className="registration-pending">
                                     <span className="status-icon">⏳</span>
                                     <span className="status-text">Registration Pending Approval</span>
