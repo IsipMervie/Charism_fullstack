@@ -1437,6 +1437,114 @@
   overflow: hidden;
 }
 
+/* Student Registration Section Styles */
+.student-registration-section {
+  margin: 2rem 0;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
+}
+
+.join-event-section,
+.registration-pending-section,
+.registration-approved-section {
+  text-align: center;
+}
+
+.join-event-section h4,
+.registration-pending-section h4,
+.registration-approved-section h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.join-event-section p,
+.registration-pending-section p,
+.registration-approved-section p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.join-event-button {
+  background: linear-gradient(135deg, var(--primary), var(--success));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px var(--primary-shadow);
+}
+
+.join-event-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--primary-shadow);
+}
+
+.join-event-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-icon {
+  font-size: 1rem;
+}
+
+.pending-status,
+.approved-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.pending-status {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.approved-status {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-icon {
+  font-size: 1rem;
+}
+
+.status-text {
+  font-weight: 600;
+}
+
+.time-info {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  border-radius: 8px;
+  border: 1px solid #e1bee7;
+}
+
+.time-info p {
+  margin: 0;
+  color: #4a148c;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 /* Responsive Chat Styles */
 @media (max-width: 768px) {
   .chat-button {
@@ -1446,5 +1554,15 @@
   
   .event-chat-section {
     margin-top: 1rem;
+  }
+  
+  .student-registration-section {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+  
+  .join-event-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
   }
 }

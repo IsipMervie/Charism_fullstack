@@ -295,12 +295,30 @@ function RegistrationApprovalPage() {
               </span>
             </div>
             {type === 'approved' && (
-              <div className="meta-item">
-                <span className="meta-label">Approved:</span>
-                <span className="meta-value">
-                  {formatDateTimePhilippines(registration.registrationApprovedAt)}
-                </span>
-              </div>
+              <>
+                <div className="meta-item">
+                  <span className="meta-label">Approved:</span>
+                  <span className="meta-value">
+                    {formatDateTimePhilippines(registration.registrationApprovedAt)}
+                  </span>
+                </div>
+                {registration.timeIn && (
+                  <div className="meta-item">
+                    <span className="meta-label">Time In:</span>
+                    <span className="meta-value">
+                      {formatDateTimePhilippines(registration.timeIn)}
+                    </span>
+                  </div>
+                )}
+                {registration.timeOut && (
+                  <div className="meta-item">
+                    <span className="meta-label">Time Out:</span>
+                    <span className="meta-value">
+                      {formatDateTimePhilippines(registration.timeOut)}
+                    </span>
+                  </div>
+                )}
+              </>
             )}
             {type === 'disapproved' && registration.reason && (
               <div className="meta-item full-width">

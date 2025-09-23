@@ -47,6 +47,27 @@ router.get('/profile-picture/:userId', ensureDBConnection, async (req, res) => {
   }
 });
 
+// Serve default event image
+router.get('/event-image/default', (req, res) => {
+  // Return a simple SVG default event image
+  const defaultEventImage = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#F5F5F5"/>
+    <path d="M175 125H225V175H175V125Z" fill="#CCCCCC"/>
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" x="180" y="130">
+      <circle cx="20" cy="20" r="18" stroke="#999999" stroke-width="2"/>
+      <path d="M26 16L34 24L26 32" stroke="#999999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <text x="200" y="220" text-anchor="middle" fill="#999999" font-family="Arial" font-size="14">Event Image</text>
+  </svg>`;
+  
+  res.set({
+    'Content-Type': 'image/svg+xml',
+    'Cache-Control': 'public, max-age=31536000'
+  });
+  
+  res.send(defaultEventImage);
+});
+
 // Serve event image
 router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
   // Add CORS headers for image requests

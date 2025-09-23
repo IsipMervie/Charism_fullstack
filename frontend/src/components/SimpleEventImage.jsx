@@ -31,7 +31,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // If no image data, use default
     if (!imageData) {
       console.log('⚠️ No image data, using default');
-      return 'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg';
+      return 'https://charism-api-xtw9.onrender.com/api/files/event-image/default';
     }
 
     // Try different patterns based on image data type
@@ -42,6 +42,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
       
       // Try different URL patterns with correct backend
       const patterns = [
+        `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`,
         `https://charism-api-xtw9.onrender.com/uploads/${filename}`,
         `https://charism-api-xtw9.onrender.com/files/${filename}`,
         `https://charism-api-xtw9.onrender.com/api/uploads/${filename}`,
@@ -59,6 +60,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
       console.log('🔗 URL detected:', url);
       
       const patterns = [
+        `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`,
         `https://charism-api-xtw9.onrender.com/uploads/${url}`,
         `https://charism-api-xtw9.onrender.com/files/${url}`,
         `https://charism-api-xtw9.onrender.com/api/uploads/${url}`,
@@ -89,7 +91,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // Fallback to default - try multiple default image locations
     console.log('⚠️ No valid image pattern found, using default');
     const defaultImages = [
-      'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
+      'https://charism-api-xtw9.onrender.com/api/files/event-image/default',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
       '/uploads/default-event.jpg',
@@ -104,7 +106,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     
     // Try fallback images in sequence
     const fallbackImages = [
-      'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
+      'https://charism-api-xtw9.onrender.com/api/files/event-image/default',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
       '/uploads/default-event.jpg',

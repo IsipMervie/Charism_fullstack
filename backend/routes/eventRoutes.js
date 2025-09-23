@@ -133,7 +133,7 @@ router.put('/approve/:eventId/:userId', authMiddleware, roleMiddleware(['Admin',
     attendance.registrationApproved = true;
     attendance.registrationApprovedBy = req.user.userId || req.user.id || req.user._id;
     attendance.registrationApprovedAt = new Date();
-    attendance.status = 'Pending'; // Keep as Pending until they attend
+    attendance.status = 'Approved'; // Set to Approved when registration is approved
     
     await event.save();
     

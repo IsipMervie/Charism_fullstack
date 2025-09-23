@@ -2,7 +2,7 @@
 // Simple but Creative Event Details Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getEventDetails, getPublicEventDetails, approveRegistration, disapproveRegistration } from '../api/api';
+import { getEventDetails, getPublicEventDetails, approveRegistration, disapproveRegistration, joinEvent } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaCheck, FaTimes } from 'react-icons/fa';
@@ -52,6 +52,8 @@ function EventDetailsPage() {
       return null;
     }
   };
+
+  const user = getUser();
 
   // Fetch event details function
   const fetchEventDetails = async () => {
@@ -215,6 +217,33 @@ function EventDetailsPage() {
       } finally {
         setActionLoading(prev => ({ ...prev, [`disapprove_${userId}`]: false }));
       }
+    }
+  };
+
+  const handleJoinEvent = async (eventId) => {
+    try {
+      setLoading(true);
+      await joinEvent(eventId);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: 'You have successfully registered for this event. Your registration is pending approval.',
+        confirmButtonText: 'OK'
+      });
+      
+      // Refresh event details to show updated status
+      fetchEventDetails();
+    } catch (error) {
+      console.error('Error joining event:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: error.message || 'Failed to register for this event. Please try again.',
+        confirmButtonText: 'OK'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -394,6 +423,63 @@ function EventDetailsPage() {
               <p>{event.requiresApproval ? 'Requires Approval' : 'Auto-approved'}</p>
             </div>
           </div>
+
+          {/* Student Registration Section */}
+          {isAuthenticated && role === 'Student' && user && (
+            <div className="student-registration-section">
+              {(() => {
+                const userId = user._id || user.id;
+                const userAttendance = event.attendance?.find(att => 
+                  att.userId && att.userId.toString() === userId?.toString()
+                );
+                
+                if (!userAttendance) {
+                  // User hasn't joined yet - show join button
+                  return (
+                    <div className="join-event-section">
+                      <h4>🎯 Join This Event</h4>
+                      <p>Register to participate in this community service event.</p>
+                      <button 
+                        onClick={() => handleJoinEvent(event._id)}
+                        className="join-event-button"
+                        disabled={loading}
+                      >
+                        <span className="button-icon">📝</span>
+                        Join Event
+                      </button>
+                    </div>
+                  );
+                } else if (!userAttendance.registrationApproved) {
+                  // User joined but registration pending approval
+                  return (
+                    <div className="registration-pending-section">
+                      <h4>⏳ Registration Pending Approval</h4>
+                      <p>Your registration is waiting for admin approval. You'll be notified once approved.</p>
+                      <div className="pending-status">
+                        <span className="status-icon">⏳</span>
+                        <span className="status-text">Pending Approval</span>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  // User is approved
+                  return (
+                    <div className="registration-approved-section">
+                      <h4>✅ Registration Approved</h4>
+                      <p>Your registration has been approved! You can now participate in this event.</p>
+                      <div className="approved-status">
+                        <span className="status-icon">✅</span>
+                        <span className="status-text">Approved</span>
+                      </div>
+                      <div className="time-info">
+                        <p>💡 <strong>Note:</strong> Use the Time In/Time Out buttons in the Events List page to record your attendance.</p>
+                      </div>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+          )}
 
           {/* Public Registration Notice */}
           {!isAuthenticated && event.isPublicRegistrationEnabled && (
