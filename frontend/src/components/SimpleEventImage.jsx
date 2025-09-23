@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentImageUrl, setCurrentImageUrl] = useState(null);
+
+  // Reset state when event changes
+  useEffect(() => {
+    setCurrentImageUrl(null);
+    setImageError(false);
+    setIsLoading(true);
+  }, [event]);
 
   // Simple approach: try a few common patterns and fallback to default
   const getImageSrc = () => {
+    // If we have a current image URL (from fallback), use it
+    if (currentImageUrl) return currentImageUrl;
+    
     if (!event) return '/images/default-event.jpg';
     
     const imageData = event.image;
