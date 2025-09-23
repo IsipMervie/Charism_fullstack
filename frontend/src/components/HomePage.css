@@ -183,7 +183,7 @@
 .main-image-container img[alt*="Mary"],
 .main-image-container img[alt*="Blessed Virgin"],
 .main-image-container img[alt*="blessed virgin"] {
-  object-position: center top !important;
+  object-position: center center !important;
   object-fit: contain !important;
   background: var(--bg-secondary);
   max-height: 100% !important;
@@ -536,13 +536,13 @@
     font-size: 1rem;
   }
   
-  /* Virgin Mary image fix for large screens */
+  /* Virgin Mary image fix for large screens - centered */
   .main-image-container img[alt*="Virgin Mary"],
   .main-image-container img[alt*="virgin mary"],
   .main-image-container img[alt*="Mary"],
   .main-image-container img[alt*="Blessed Virgin"],
   .main-image-container img[alt*="blessed virgin"] {
-    object-position: center top !important;
+    object-position: center center !important;
     object-fit: contain !important;
     background: var(--bg-secondary);
     max-height: 100% !important;
@@ -763,13 +763,13 @@
     font-size: 0.8rem;
   }
   
-  /* Virgin Mary image fix for mobile */
+  /* Virgin Mary image fix for mobile - centered */
   .slide-image[alt*="Virgin Mary"],
   .slide-image[alt*="virgin mary"],
   .slide-image[alt*="Mary"],
   .slide-image[alt*="Blessed Virgin"],
   .slide-image[alt*="blessed virgin"] {
-    object-position: center top !important;
+    object-position: center center !important;
     object-fit: contain !important;
     background: var(--bg-secondary);
     max-height: 100% !important;

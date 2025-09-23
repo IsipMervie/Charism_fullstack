@@ -637,36 +637,25 @@ const EventChatListPage = () => {
             return (
               <div key={event._id} className={`event-card ${viewMode}`}>
                 <div className="event-image">
-                  {event.image ? (
-                    <img 
-                      src={getEventImageUrl(event.image, event._id)} 
-                      alt={event.title}
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        console.error('❌ Image failed to load for event:', event.title, {
-                          imageUrl: e.target.src,
-                          eventId: event._id,
-                          imageData: event.image
-                        });
-                        // Try fallback to default image
-                        if (!e.target.src.includes('/logo.png')) {
-                          e.target.src = '/logo.png';
-                          return;
-                        }
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                      onLoad={(e) => {
-                        e.target.style.opacity = '1';
-                      }}
-                      style={{ 
-                        opacity: 0, 
-                        transition: 'opacity 0.3s ease-in-out' 
-                      }}
-                    />
-                  ) : null}
-                  <div className="event-image-placeholder" style={{ display: event.image ? 'none' : 'flex' }}>
+                  <img 
+                    src={event.image ? getEventImageUrl(event.image, event._id) : '/logo.png'} 
+                    alt={event.title}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      // Simply hide the broken image - CSS will show placeholder
+                      e.target.style.display = 'none';
+                    }}
+                    onLoad={(e) => {
+                      // Image loaded successfully
+                      e.target.style.opacity = '1';
+                    }}
+                    style={{ 
+                      opacity: 0, 
+                      transition: 'opacity 0.3s ease-in-out' 
+                    }}
+                  />
+                  <div className="event-image-placeholder">
                     <FaCalendar />
                   </div>
                   

@@ -92,11 +92,22 @@ export const getProfilePictureUrl = (imageData, userId = null) => {
 };
 
 export const getEventImageUrl = (imageData, eventId = null) => {
+  // Debug logging
+  console.log('🖼️ getEventImageUrl called:', {
+    eventId,
+    imageData,
+    hasImageData: !!imageData,
+    hasData: !!(imageData && imageData.data),
+    hasContentType: !!(imageData && imageData.contentType),
+    imageDataType: typeof imageData,
+    imageDataKeys: imageData ? Object.keys(imageData) : []
+  });
   
   // Handle MongoDB binary data with event ID
   if (imageData && imageData.data && imageData.contentType && eventId) {
     // Use the full backend URL for file serving
     const url = `${BACKEND_URL}/files/event-image/${eventId}`;
+    console.log('✅ Constructed MongoDB image URL:', url);
     return url;
   }
   
@@ -112,6 +123,7 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   if (eventId && !imageData) {
     // Use the full backend URL for file serving
     const url = `${BACKEND_URL}/files/event-image/${eventId}`;
+    console.log('⚠️ No image data, trying fallback URL:', url);
     return url;
   }
   
@@ -119,11 +131,13 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   if (typeof imageData === 'string' && imageData.length > 0) {
     const cleanPath = imageData.startsWith('/') ? imageData.slice(1) : imageData;
     const url = `${STATIC_URL}/uploads/${cleanPath}`;
+    console.log('✅ Constructed string image URL:', url);
     return url;
   }
   
   // Fallback to general image handling
   const fallbackUrl = getImageUrl(imageData, 'event') || '/logo.png';
+  console.log('⚠️ Using fallback image URL:', fallbackUrl);
   return fallbackUrl;
 };
 

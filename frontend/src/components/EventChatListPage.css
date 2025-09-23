@@ -549,6 +549,16 @@
   justify-content: center;
 }
 
+/* Hide placeholder when image is visible */
+.event-image:has(img:not([style*="display: none"])) .event-image-placeholder {
+  display: none;
+}
+
+/* Show placeholder when image is hidden or doesn't exist */
+.event-image:not(:has(img:not([style*="display: none"]))) .event-image-placeholder {
+  display: flex;
+}
+
 .event-image img {
   width: 100%;
   height: auto;
@@ -558,6 +568,9 @@
 }
 
 .event-image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, var(--primary-light), var(--info-light));
@@ -566,6 +579,7 @@
   justify-content: center;
   font-size: 3rem;
   color: var(--primary);
+  z-index: 1;
 }
 
 .event-overlay {
