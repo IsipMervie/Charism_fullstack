@@ -27,6 +27,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+/* Placeholder for when images fail to load */
+.event-image-section::after {
+  content: "📷 Event Image";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hide placeholder when image is visible */
+.event-image-section:has(.event-image:not([style*="display: none"]))::after {
+  display: none;
 }
 
 .event-image {

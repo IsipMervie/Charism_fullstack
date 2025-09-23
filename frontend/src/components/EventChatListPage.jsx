@@ -41,6 +41,12 @@ const EventChatListPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
+  // Circuit breaker to prevent infinite retry loops
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastRetryTime, setLastRetryTime] = useState(0);
+  const MAX_RETRIES = 3;
+  const RETRY_COOLDOWN = 60000; // 1 minute
+  
   // Search and filtering
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({
@@ -288,6 +294,15 @@ const EventChatListPage = () => {
 
   // Load events
   const loadEvents = useCallback(async () => {
+    // Check circuit breaker
+    const now = Date.now();
+    if (retryCount >= MAX_RETRIES && (now - lastRetryTime) < RETRY_COOLDOWN) {
+      console.warn('🚨 Circuit breaker OPEN - too many failures, skipping request');
+      setError('Too many failed attempts. Please wait a moment before trying again.');
+      setLoading(false);
+      return;
+    }
+    
     try {
       setLoading(true);
       setError('');
@@ -299,10 +314,17 @@ const EventChatListPage = () => {
       
       setEvents(accessibleEvents);
       
+      // Reset retry count on success
+      setRetryCount(0);
+      
       console.log('📋 Loaded accessible events for chat:', accessibleEvents.length);
       
     } catch (err) {
       console.error('Error loading events:', err);
+      
+      // Increment retry count
+      setRetryCount(prev => prev + 1);
+      setLastRetryTime(Date.now());
       
       // Provide more specific error messages
       if (err.code === 'ECONNABORTED') {
@@ -317,23 +339,26 @@ const EventChatListPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [canAccessChat]);
+  }, [canAccessChat, retryCount, lastRetryTime]);
 
   useEffect(() => {
     loadEvents();
-  }, [loadEvents]);
+  }, []); // Remove loadEvents from dependencies to prevent infinite loop
 
   // Auto-refresh every 30 seconds for students to see newly approved events
   useEffect(() => {
     if (role === 'Student') {
       const interval = setInterval(() => {
         console.log('🔄 Auto-refreshing events for student...');
-        loadEvents();
+        // Only refresh if not currently loading
+        if (!loading) {
+          loadEvents();
+        }
       }, 30000); // 30 seconds
 
       return () => clearInterval(interval);
     }
-  }, [loadEvents, role]);
+  }, [role, loading]); // Remove loadEvents from dependencies
 
   const openEventChat = (eventId) => {
     navigate(`/event-chat/${eventId}`);

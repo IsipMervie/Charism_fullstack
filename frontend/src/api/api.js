@@ -464,11 +464,11 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
   }
 };
 
-// Check server health quickly
+// Check server health with reasonable timeout
 export const checkServerHealth = async () => {
   try {
     const response = await axiosInstance.get('/ping', {
-      timeout: 3000 // 3 seconds timeout
+      timeout: 15000 // 15 seconds timeout for better reliability
     });
     return response.data.status === 'OK';
   } catch (error) {

@@ -185,42 +185,12 @@ function PublicEventRegistrationPage() {
               alt={event.title}
               className="event-image"
               onError={(e) => {
-                // Hide the broken image and show placeholder
+                // Simply hide the broken image - let CSS handle the placeholder
                 e.target.style.display = 'none';
-                
-                // Create or show placeholder
-                let placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
-                if (!placeholder) {
-                  placeholder = document.createElement('div');
-                  placeholder.className = 'event-image-placeholder';
-                  placeholder.innerHTML = `
-                    <div style="
-                      width: 100%;
-                      height: 200px;
-                      background: var(--bg-secondary);
-                      border: 2px dashed var(--border-primary);
-                      border-radius: 15px;
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      justify-content: center;
-                      color: var(--text-secondary);
-                      font-size: 1.1rem;
-                    ">
-                      <div>📷</div>
-                      <div>Event Image</div>
-                    </div>
-                  `;
-                  e.target.parentElement.appendChild(placeholder);
-                }
-                placeholder.style.display = 'flex';
               }}
               onLoad={(e) => {
-                // Hide any placeholder when image loads successfully
-                const placeholder = e.target.parentElement.querySelector('.event-image-placeholder');
-                if (placeholder) {
-                  placeholder.style.display = 'none';
-                }
+                // Image loaded successfully
+                e.target.style.opacity = '1';
               }}
             />
           ) : (
