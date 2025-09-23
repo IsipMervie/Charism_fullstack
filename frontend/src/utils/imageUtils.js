@@ -100,40 +100,58 @@ export const getEventImageUrl = (imageData, eventId = null) => {
     hasData: !!(imageData && imageData.data),
     hasContentType: !!(imageData && imageData.contentType),
     imageDataType: typeof imageData,
-    imageDataKeys: imageData ? Object.keys(imageData) : []
+    imageDataKeys: imageData ? Object.keys(imageData) : [],
+    BACKEND_URL,
+    STATIC_URL
   });
   
   // Handle MongoDB binary data with event ID
   if (imageData && imageData.data && imageData.contentType && eventId) {
-    // Use the full backend URL for file serving
-    const url = `${BACKEND_URL}/files/event-image/${eventId}`;
-    console.log('✅ Constructed MongoDB image URL:', url);
-    return url;
+    // Try multiple backend URLs for image serving
+    const urls = [
+      `${BACKEND_URL}/files/event-image/${eventId}`,
+      `${STATIC_URL}/files/event-image/${eventId}`,
+      `${STATIC_URL}/uploads/events/${eventId}`,
+      `${STATIC_URL}/uploads/${eventId}`
+    ];
+    console.log('✅ Constructed MongoDB image URLs:', urls);
+    return urls[0]; // Return the primary URL
   }
   
   // Handle legacy format with URL field
   if (imageData && imageData.url && typeof imageData.url === 'string') {
     const cleanPath = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
-    const url = `${STATIC_URL}/uploads/${cleanPath}`;
-    console.log('✅ Constructed legacy URL image URL:', url);
-    return url;
+    const urls = [
+      `${STATIC_URL}/uploads/${cleanPath}`,
+      `${BACKEND_URL}/uploads/${cleanPath}`,
+      cleanPath // Direct path
+    ];
+    console.log('✅ Constructed legacy URL image URLs:', urls);
+    return urls[0];
   }
   
   // If we have an eventId but no imageData, still try to serve from backend
-  // The backend will return a proper error if no image exists
   if (eventId && !imageData) {
-    // Use the full backend URL for file serving
-    const url = `${BACKEND_URL}/files/event-image/${eventId}`;
-    console.log('⚠️ No image data, trying fallback URL:', url);
-    return url;
+    const urls = [
+      `${BACKEND_URL}/files/event-image/${eventId}`,
+      `${STATIC_URL}/files/event-image/${eventId}`,
+      `${STATIC_URL}/uploads/events/${eventId}`,
+      `${STATIC_URL}/uploads/${eventId}`
+    ];
+    console.log('⚠️ No image data, trying fallback URLs:', urls);
+    return urls[0];
   }
   
   // Handle string image data (filename)
   if (typeof imageData === 'string' && imageData.length > 0) {
     const cleanPath = imageData.startsWith('/') ? imageData.slice(1) : imageData;
-    const url = `${STATIC_URL}/uploads/${cleanPath}`;
-    console.log('✅ Constructed string image URL:', url);
-    return url;
+    const urls = [
+      `${STATIC_URL}/uploads/${cleanPath}`,
+      `${BACKEND_URL}/uploads/${cleanPath}`,
+      cleanPath // Direct path
+    ];
+    console.log('✅ Constructed string image URLs:', urls);
+    return urls[0];
   }
   
   // Always return a default image URL for events

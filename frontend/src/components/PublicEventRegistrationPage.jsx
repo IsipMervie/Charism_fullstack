@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEventByRegistrationToken, registerForEventWithToken } from '../api/api';
 import { getEventImageUrl } from '../utils/imageUtils';
+import EventImage from './EventImage';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaSignInAlt, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
@@ -179,49 +180,11 @@ function PublicEventRegistrationPage() {
       <div className="event-card">
         {/* Event Image */}
         <div className="event-image-section">
-          {event.image ? (
-            <img
-              src={getEventImageUrl(event.image, event._id)}
-              alt={event.title}
-              className="event-image"
-              onError={(e) => {
-                console.error('❌ Event registration image failed to load:', {
-                  imageUrl: e.target.src,
-                  eventId: event._id,
-                  eventTitle: event.title,
-                  imageData: event.image
-                });
-                // Fallback to default image
-                e.target.src = '/images/default-event.jpg';
-              }}
-              onLoad={(e) => {
-                console.log('✅ Event registration image loaded:', {
-                  imageUrl: e.target.src,
-                  eventId: event._id
-                });
-                e.target.style.opacity = '1';
-              }}
-            />
-          ) : (
-            <div className="event-image-placeholder">
-              <div style={{
-                width: '100%',
-                height: '200px',
-                background: 'var(--bg-secondary)',
-                border: '2px dashed var(--border-primary)',
-                borderRadius: '15px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text-secondary)',
-                fontSize: '1.1rem'
-              }}>
-                <div>📷</div>
-                <div>Event Image</div>
-              </div>
-            </div>
-          )}
+          <EventImage 
+            event={event}
+            className="event-image"
+            alt={event.title}
+          />
         </div>
         
         <div className="event-header">

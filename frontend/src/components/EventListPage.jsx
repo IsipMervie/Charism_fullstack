@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload, FaSyncAlt } from 'react-icons/fa';
 import { formatTimeRange12Hour, formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
+import EventImage from './EventImage';
 import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../utils/arrayUtils';
 import './EventListPage.css';
 
@@ -1353,28 +1354,10 @@ function EventListPage() {
                   <div key={event._id} className="event-card">
                     {/* Event Image */}
                     <div className="event-image-horizontal">
-                      <img 
-                        src={getEventImageUrl(event.image, event._id)} 
-                        alt={event.title}
+                      <EventImage 
+                        event={event}
                         className="event-image-img-horizontal"
-                        loading="lazy"
-                        onError={(e) => {
-                          console.error('❌ Event image failed to load:', {
-                            imageUrl: e.target.src,
-                            eventId: event._id,
-                            eventTitle: event.title,
-                            imageData: event.image
-                          });
-                          // Fallback to default image
-                          e.target.src = '/images/default-event.jpg';
-                        }}
-                        onLoad={(e) => {
-                          console.log('✅ Event image loaded successfully:', {
-                            imageUrl: e.target.src,
-                            eventId: event._id
-                          });
-                          e.target.style.opacity = '1';
-                        }}
+                        alt={event.title}
                         style={{ 
                           opacity: 1, 
                           transition: 'opacity 0.3s ease-in-out' 

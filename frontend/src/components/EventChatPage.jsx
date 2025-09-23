@@ -35,6 +35,7 @@ import {
 import Swal from 'sweetalert2';
 import EventChat from './EventChat';
 import { getProfilePictureUrl, getEventImageUrl } from '../utils/imageUtils';
+import EventImage from './EventImage';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import './EventChatPage.css';
 
@@ -760,27 +761,10 @@ const EventChatPage = () => {
         <header className="chat-page-header">
           <div className="header-left">
             <div className="event-image-container">
-              <img 
-                src={getEventImageUrl(event.image, event._id)} 
-                alt={event.title}
+              <EventImage 
+                event={event}
                 className="event-header-image"
-                loading="lazy"
-                onError={(e) => {
-                  console.error('❌ Event header image failed to load:', {
-                    imageUrl: e.target.src,
-                    eventId: event._id,
-                    eventTitle: event.title,
-                    imageData: event.image
-                  });
-                  // Fallback to default image
-                  e.target.src = '/images/default-event.jpg';
-                }}
-                onLoad={(e) => {
-                  console.log('✅ Event header image loaded:', {
-                    imageUrl: e.target.src,
-                    eventId: event._id
-                  });
-                }}
+                alt={event.title}
               />
             </div>
             <div className="event-info">
