@@ -435,14 +435,6 @@ exports.sendMessageWithFiles = async (req, res) => {
         isRegistered,
         canAccessChat: isRegistered
       });
-      
-      const isRegistered = event.attendance.some(att => 
-        att.userId.toString() === userId && 
-        (att.registrationApproved === true || 
-         att.status === 'Approved' || 
-         att.status === 'Attended' || 
-         att.status === 'Completed')
-      );
       canAccessChat = isRegistered;
     }
     
