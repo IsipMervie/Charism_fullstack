@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { FaSearch, FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaExclamationTriangle, FaFilter, FaEye, FaDownload } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
+import SimpleEventImage from './SimpleEventImage';
 import './EventAttendancePage.css';
 
 const EventAttendancePage = memo(() => {
@@ -608,36 +609,18 @@ const EventAttendancePage = memo(() => {
               return (
                 <div key={event._id} className="event-card">
                   {/* Event Image */}
-                  {event.image && (
-                    <div className="event-image-wrapper">
-                      <img
-                        src={getEventImageUrl(event.image, event._id)}
-                        alt={event.title}
-                        className="event-image"
-                        onError={(e) => {
-                          console.error('❌ Event attendance image failed to load:', {
-                            imageUrl: e.target.src,
-                            eventId: event._id,
-                            eventTitle: event.title,
-                            imageData: event.image
-                          });
-                          // Fallback to default image
-                          e.target.src = '/images/default-event.jpg';
-                        }}
-                        onLoad={(e) => {
-                          console.log('✅ Event attendance image loaded:', {
-                            imageUrl: e.target.src,
-                            eventId: event._id
-                          });
-                        }}
-                      />
+                  <div className="event-image-wrapper">
+                    <SimpleEventImage 
+                      event={event}
+                      className="event-image"
+                      alt={event.title}
+                    />
                       <div className="event-status">
                         <span className={`status-badge ${getStatusColor(eventStatus)}`}>
                           {eventStatus.charAt(0).toUpperCase() + eventStatus.slice(1)}
                         </span>
                       </div>
                     </div>
-                  )}
 
                   {/* Event Content */}
                   <div className="event-content">

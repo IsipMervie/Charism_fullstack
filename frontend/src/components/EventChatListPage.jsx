@@ -33,6 +33,7 @@ import {
 import { getEvents } from '../api/api';
 import { formatTimeRange12Hour, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
+import SimpleEventImage from './SimpleEventImage';
 import './EventChatListPage.css';
 
 const EventChatListPage = () => {
@@ -637,30 +638,11 @@ const EventChatListPage = () => {
             return (
               <div key={event._id} className={`event-card ${viewMode}`}>
                 <div className="event-image">
-                  <img 
-                    src={event.image ? getEventImageUrl(event.image, event._id) : '/images/default-event.jpg'} 
+                  <SimpleEventImage 
+                    event={event}
                     alt={event.title}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      console.error('❌ Event chat list image failed to load:', {
-                        imageUrl: e.target.src,
-                        eventId: event._id,
-                        eventTitle: event.title,
-                        imageData: event.image
-                      });
-                      // Fallback to default image
-                      e.target.src = '/images/default-event.jpg';
-                    }}
-                    onLoad={(e) => {
-                      console.log('✅ Event chat list image loaded:', {
-                        imageUrl: e.target.src,
-                        eventId: event._id
-                      });
-                      e.target.style.opacity = '1';
-                    }}
                     style={{ 
-                      opacity: 0, 
+                      opacity: 1, 
                       transition: 'opacity 0.3s ease-in-out' 
                     }}
                   />
