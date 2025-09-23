@@ -155,7 +155,7 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   }
   
   // Always return a default image URL for events
-  const defaultUrl = '/images/default-event.jpg';
+  const defaultUrl = 'https://charism-api-xtw9.onrender.com/api/files/event-image/default';
   console.log('⚠️ Using default event image URL:', defaultUrl);
   return defaultUrl;
 };

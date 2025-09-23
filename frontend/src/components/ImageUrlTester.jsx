@@ -76,7 +76,7 @@ const ImageUrlTester = ({ event }) => {
     }
 
     // Test default image
-    testUrls.push('/images/default-event.jpg');
+    testUrls.push('https://charism-api-xtw9.onrender.com/api/files/event-image/default');
 
     console.log('🔍 Testing URLs:', testUrls);
 

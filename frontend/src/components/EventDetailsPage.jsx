@@ -72,6 +72,17 @@ function EventDetailsPage() {
       
       setEvent(eventData);
       setIsUserApprovedForEvent(eventData.isUserApprovedForEvent || false);
+      
+      // Debug logging for approval status
+      console.log('🔍 Event Details Debug:', {
+        eventId: eventData._id,
+        isUserApprovedForEvent: eventData.isUserApprovedForEvent,
+        userAttendance: eventData.attendance?.find(att => {
+          const userId = getUser()?._id || getUser()?.id;
+          return att.userId && att.userId.toString() === userId?.toString();
+        }),
+        totalAttendance: eventData.attendance?.length || 0
+      });
     } catch (error) {
       console.error('Error fetching event details:', error);
       setError(error.message || 'Failed to load event details');
@@ -92,6 +103,14 @@ function EventDetailsPage() {
 
   useEffect(() => {
     fetchEventDetails();
+    
+    // Set flag when user visits event details page
+    sessionStorage.setItem('wasOnEventDetails', 'true');
+    
+    // Cleanup function to remove flag when component unmounts
+    return () => {
+      // Don't remove flag here - let EventListPage handle it
+    };
   }, [eventId, isAuthenticated]);
 
   useEffect(() => {
@@ -138,8 +157,41 @@ function EventDetailsPage() {
       try {
         await approveRegistration(eventId, userId);
         Swal.fire('Success', 'Registration approved successfully!', 'success');
-        // Reload event data
-        fetchEventDetails();
+        // Force reload event data with cache busting
+        console.log('🔄 Force refreshing event details after approval...');
+        await fetchEventDetails();
+        
+        // Also update the local state immediately for better UX
+        setEvent(prevEvent => {
+          if (!prevEvent || !prevEvent.attendance) return prevEvent;
+          
+          const updatedAttendance = prevEvent.attendance.map(att => {
+            if (att.userId && (att.userId._id === userId || att.userId === userId)) {
+              console.log('🔄 Updating local attendance state for user:', userId);
+              return {
+                ...att,
+                registrationApproved: true,
+                registrationApprovedBy: getUser()?._id || getUser()?.id,
+                registrationApprovedAt: new Date(),
+                status: 'Approved'
+              };
+            }
+            return att;
+          });
+          
+          return {
+            ...prevEvent,
+            attendance: updatedAttendance
+          };
+        });
+        
+        setIsUserApprovedForEvent(true);
+        
+        // Notify other pages that data has changed
+        console.log('📢 Dispatching approval change event for EventListPage refresh');
+        window.dispatchEvent(new CustomEvent('eventApprovalChanged', { 
+          detail: { eventId, userId, approved: true } 
+        }));
       } catch (error) {
         Swal.fire('Error', error.message || 'Failed to approve registration.', 'error');
       } finally {
@@ -211,7 +263,12 @@ function EventDetailsPage() {
         await disapproveRegistration(eventId, userId, reasonData.reason);
         Swal.fire('Success', 'Registration disapproved successfully!', 'success');
         // Reload event data
-        fetchEventDetails();
+        await fetchEventDetails();
+        
+        // Notify other pages that data has changed
+        window.dispatchEvent(new CustomEvent('eventApprovalChanged', { 
+          detail: { eventId, userId, approved: false } 
+        }));
       } catch (error) {
         Swal.fire('Error', error.message || 'Failed to disapprove registration.', 'error');
       } finally {
@@ -233,7 +290,12 @@ function EventDetailsPage() {
       });
       
       // Refresh event details to show updated status
-      fetchEventDetails();
+      await fetchEventDetails();
+      
+      // Notify other pages that data has changed
+      window.dispatchEvent(new CustomEvent('eventApprovalChanged', { 
+        detail: { eventId, userId: user._id || user.id, approved: false, joined: true } 
+      }));
     } catch (error) {
       console.error('Error joining event:', error);
       Swal.fire({

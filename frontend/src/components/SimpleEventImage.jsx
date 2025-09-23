@@ -12,12 +12,15 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     setIsLoading(true);
   }, [event]);
 
-  // Simple approach: try a few common patterns and fallback to default
+  // Default SVG fallback - no network requests needed
+  const defaultSVG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
+
+  // Simple approach: try to get image URL or use SVG fallback immediately
   const getImageSrc = () => {
     // If we have a current image URL (from fallback), use it
     if (currentImageUrl) return currentImageUrl;
     
-    if (!event) return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
+    if (!event) return defaultSVG;
     
     const imageData = event.image;
     const eventId = event._id;
@@ -30,105 +33,61 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
 
     // If no image data, use default SVG immediately
     if (!imageData) {
-      console.log('⚠️ No image data, using default SVG');
-      return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
+      console.log('⚠️ No image data, using default SVG immediately');
+      return defaultSVG;
     }
+
+    // Try to construct a valid image URL
+    let imageUrl = null;
 
     // Try different patterns based on image data type
     if (typeof imageData === 'string' && imageData.length > 0) {
       // It's a filename
       const filename = imageData.startsWith('/') ? imageData.slice(1) : imageData;
       console.log('📁 Filename detected:', filename);
-      
-      // Try different URL patterns with correct backend
-      const patterns = [
-        `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`,
-        `https://charism-api-xtw9.onrender.com/uploads/${filename}`,
-        `https://charism-api-xtw9.onrender.com/files/${filename}`,
-        `https://charism-api-xtw9.onrender.com/api/uploads/${filename}`,
-        `/uploads/${filename}`,
-        `/images/${filename}`,
-        filename
-      ];
-      
-      return patterns[0]; // Return first pattern, error handler will try others
-    }
-    
-    if (imageData.url && typeof imageData.url === 'string') {
+      imageUrl = `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
+    } else if (imageData.url && typeof imageData.url === 'string') {
       // It has a URL field
       const url = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
       console.log('🔗 URL detected:', url);
-      
-      const patterns = [
-        `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`,
-        `https://charism-api-xtw9.onrender.com/uploads/${url}`,
-        `https://charism-api-xtw9.onrender.com/files/${url}`,
-        `https://charism-api-xtw9.onrender.com/api/uploads/${url}`,
-        `/uploads/${url}`,
-        `/images/${url}`,
-        url
-      ];
-      
-      return patterns[0];
-    }
-    
-    if (imageData.data && imageData.contentType && eventId) {
+      imageUrl = `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
+    } else if (imageData.data && imageData.contentType && eventId) {
       // It's MongoDB binary data
       console.log('🗄️ MongoDB binary data detected for event:', eventId);
-      
-      const patterns = [
-        `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`,
-        `https://charism-api-xtw9.onrender.com/files/event-image/${eventId}`,
-        `https://charism-api-xtw9.onrender.com/uploads/events/${eventId}`,
-        `https://charism-api-xtw9.onrender.com/uploads/${eventId}`,
-        `/uploads/events/${eventId}`,
-        `/uploads/${eventId}`
-      ];
-      
-      return patterns[0];
+      imageUrl = `https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}`;
     }
 
-    // Use SVG default immediately - no network requests needed
-    console.log('⚠️ No valid image pattern found, using default SVG');
-    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
+    // If we have a valid image URL, return it, otherwise use default event image from backend
+    if (imageUrl) {
+      console.log('🖼️ Using image URL:', imageUrl);
+      return imageUrl;
+    } else {
+      console.log('⚠️ No valid image pattern found, using default event image from backend');
+      return 'https://charism-api-xtw9.onrender.com/api/files/event-image/default';
+    }
   };
 
   const handleImageError = () => {
     console.error('❌ Image failed to load:', getImageSrc());
     
-    // Use SVG fallback immediately - no network requests needed
-    const fallbackImages = [
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K'
-    ];
+    // Try backend default image first, then SVG fallback
+    console.log('🔄 Trying backend default image...');
+    const backendDefaultUrl = 'https://charism-api-xtw9.onrender.com/api/files/event-image/default';
     
-    // Try fallback images sequentially
-    const tryNextFallback = (index = 0) => {
-      if (index >= fallbackImages.length) {
-        console.log('❌ All fallback images failed, using SVG placeholder');
-        setCurrentImageUrl(fallbackImages[fallbackImages.length - 1]);
-        setIsLoading(false);
-        setImageError(true);
-        return;
-      }
-      
-      const fallbackUrl = fallbackImages[index];
-      console.log(`🔄 Trying fallback image ${index + 1}/${fallbackImages.length}:`, fallbackUrl);
-      
-      const img = new Image();
-      img.onload = () => {
-        console.log('✅ Fallback image loaded successfully:', fallbackUrl);
-        setCurrentImageUrl(fallbackUrl);
-        setIsLoading(false);
-        setImageError(false);
-      };
-      img.onerror = () => {
-        console.log(`❌ Fallback image ${index + 1} failed, trying next...`);
-        tryNextFallback(index + 1);
-      };
-      img.src = fallbackUrl;
+    const testImg = new Image();
+    testImg.onload = () => {
+      console.log('✅ Backend default image loaded successfully');
+      setCurrentImageUrl(backendDefaultUrl);
+      setIsLoading(false);
+      setImageError(false);
     };
-    
-    tryNextFallback();
+    testImg.onerror = () => {
+      console.log('❌ Backend default image failed, using SVG fallback');
+      setCurrentImageUrl(defaultSVG);
+      setIsLoading(false);
+      setImageError(true);
+    };
+    testImg.src = backendDefaultUrl;
   };
 
   const handleImageLoad = () => {

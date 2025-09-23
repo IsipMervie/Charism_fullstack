@@ -205,6 +205,9 @@ function EventListPage() {
   // Manual refresh function for user-triggered refreshes
   const handleManualRefresh = useCallback(() => {
     hasLoadedRef.current = false;
+    // Clear cache to force fresh data
+    sessionStorage.removeItem('events-cache');
+    sessionStorage.removeItem('events-cache-timestamp');
     refreshEvents();
   }, [refreshEvents]);
 
@@ -326,19 +329,40 @@ function EventListPage() {
     
     // Add focus event listener to refresh data when user returns to the page (with debouncing)
     const handleFocus = () => {
-      // Only refresh if it's been more than 30 seconds since last refresh
+      // Check if user was on event details page (where approval might have happened)
+      const wasOnEventDetails = sessionStorage.getItem('wasOnEventDetails');
       const lastRefresh = localStorage.getItem('lastEventsRefresh');
       const now = Date.now();
-      if (!lastRefresh || (now - parseInt(lastRefresh)) > 30000) {
+      
+      // Force refresh if user was on event details page OR if it's been more than 30 seconds
+      if (wasOnEventDetails || !lastRefresh || (now - parseInt(lastRefresh)) > 30000) {
         localStorage.setItem('lastEventsRefresh', now.toString());
+        sessionStorage.removeItem('wasOnEventDetails'); // Clear the flag
         handleManualRefresh();
       }
     };
     
+    // Also check immediately on mount if user came from event details page
+    const wasOnEventDetails = sessionStorage.getItem('wasOnEventDetails');
+    if (wasOnEventDetails) {
+      console.log('🔄 User came from event details page, refreshing events data...');
+      sessionStorage.removeItem('wasOnEventDetails');
+      setTimeout(() => handleManualRefresh(), 100); // Small delay to ensure component is mounted
+    }
+    
     window.addEventListener('focus', handleFocus);
+    
+    // Listen for approval changes from other pages
+    const handleApprovalChange = (event) => {
+      console.log('🔄 Event approval changed, refreshing events data...', event.detail);
+      console.log('📊 Current events count before refresh:', events.length);
+      handleManualRefresh();
+    };
+    window.addEventListener('eventApprovalChanged', handleApprovalChange);
     
     return () => {
       window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('eventApprovalChanged', handleApprovalChange);
       clearTimeout(timeoutId);
     };
   }, []); // Remove refreshEvents dependency to prevent infinite loop
@@ -1343,7 +1367,15 @@ function EventListPage() {
                   isJoined,
                   hasAttendance: !!att,
                   registrationApproved: att?.registrationApproved,
-                  status: att?.status
+                  status: att?.status,
+                  userId,
+                  userEmail: user.email,
+                  attendanceData: att ? {
+                    userId: att.userId?._id || att.userId,
+                    email: att.userId?.email || att.email,
+                    registrationApproved: att.registrationApproved,
+                    status: att.status
+                  } : null
                 });
 
                 // Calculate available slots and status - count all approved participants
