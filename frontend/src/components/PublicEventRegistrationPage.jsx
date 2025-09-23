@@ -185,29 +185,38 @@ function PublicEventRegistrationPage() {
               alt={event.title}
               className="event-image"
               onError={(e) => {
-                // Simply hide the broken image - let CSS handle the placeholder
-                e.target.style.display = 'none';
+                console.error('❌ Event registration image failed to load:', {
+                  imageUrl: e.target.src,
+                  eventId: event._id,
+                  eventTitle: event.title,
+                  imageData: event.image
+                });
+                // Fallback to default image
+                e.target.src = '/images/default-event.jpg';
               }}
               onLoad={(e) => {
-                // Image loaded successfully
+                console.log('✅ Event registration image loaded:', {
+                  imageUrl: e.target.src,
+                  eventId: event._id
+                });
                 e.target.style.opacity = '1';
               }}
             />
           ) : (
             <div className="event-image-placeholder">
-              <div style="
-                width: 100%;
-                height: 200px;
-                background: var(--bg-secondary);
-                border: 2px dashed var(--border-primary);
-                border-radius: 15px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                color: var(--text-secondary);
-                font-size: 1.1rem;
-              ">
+              <div style={{
+                width: '100%',
+                height: '200px',
+                background: 'var(--bg-secondary)',
+                border: '2px dashed var(--border-primary)',
+                borderRadius: '15px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text-secondary)',
+                fontSize: '1.1rem'
+              }}>
                 <div>📷</div>
                 <div>Event Image</div>
               </div>

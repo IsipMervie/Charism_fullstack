@@ -769,9 +769,11 @@ const EventChatPage = () => {
                   console.error('❌ Event header image failed to load:', {
                     imageUrl: e.target.src,
                     eventId: event._id,
-                    eventTitle: event.title
+                    eventTitle: event.title,
+                    imageData: event.image
                   });
-                  e.target.style.display = 'none';
+                  // Fallback to default image
+                  e.target.src = '/images/default-event.jpg';
                 }}
                 onLoad={(e) => {
                   console.log('✅ Event header image loaded:', {

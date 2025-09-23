@@ -115,6 +115,7 @@ export const getEventImageUrl = (imageData, eventId = null) => {
   if (imageData && imageData.url && typeof imageData.url === 'string') {
     const cleanPath = imageData.url.startsWith('/') ? imageData.url.slice(1) : imageData.url;
     const url = `${STATIC_URL}/uploads/${cleanPath}`;
+    console.log('✅ Constructed legacy URL image URL:', url);
     return url;
   }
   
@@ -135,10 +136,10 @@ export const getEventImageUrl = (imageData, eventId = null) => {
     return url;
   }
   
-  // Fallback to general image handling
-  const fallbackUrl = getImageUrl(imageData, 'event') || '/logo.png';
-  console.log('⚠️ Using fallback image URL:', fallbackUrl);
-  return fallbackUrl;
+  // Always return a default image URL for events
+  const defaultUrl = '/images/default-event.jpg';
+  console.log('⚠️ Using default event image URL:', defaultUrl);
+  return defaultUrl;
 };
 
 // Enhanced image loading with better error handling

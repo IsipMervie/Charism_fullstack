@@ -611,9 +611,25 @@ const EventAttendancePage = memo(() => {
                   {event.image && (
                     <div className="event-image-wrapper">
                       <img
-                                                    src={getEventImageUrl(event.image, event._id)}
+                        src={getEventImageUrl(event.image, event._id)}
                         alt={event.title}
                         className="event-image"
+                        onError={(e) => {
+                          console.error('❌ Event attendance image failed to load:', {
+                            imageUrl: e.target.src,
+                            eventId: event._id,
+                            eventTitle: event.title,
+                            imageData: event.image
+                          });
+                          // Fallback to default image
+                          e.target.src = '/images/default-event.jpg';
+                        }}
+                        onLoad={(e) => {
+                          console.log('✅ Event attendance image loaded:', {
+                            imageUrl: e.target.src,
+                            eventId: event._id
+                          });
+                        }}
                       />
                       <div className="event-status">
                         <span className={`status-badge ${getStatusColor(eventStatus)}`}>

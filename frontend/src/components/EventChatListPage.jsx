@@ -638,16 +638,25 @@ const EventChatListPage = () => {
               <div key={event._id} className={`event-card ${viewMode}`}>
                 <div className="event-image">
                   <img 
-                    src={event.image ? getEventImageUrl(event.image, event._id) : '/logo.png'} 
+                    src={event.image ? getEventImageUrl(event.image, event._id) : '/images/default-event.jpg'} 
                     alt={event.title}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
-                      // Simply hide the broken image - CSS will show placeholder
-                      e.target.style.display = 'none';
+                      console.error('❌ Event chat list image failed to load:', {
+                        imageUrl: e.target.src,
+                        eventId: event._id,
+                        eventTitle: event.title,
+                        imageData: event.image
+                      });
+                      // Fallback to default image
+                      e.target.src = '/images/default-event.jpg';
                     }}
                     onLoad={(e) => {
-                      // Image loaded successfully
+                      console.log('✅ Event chat list image loaded:', {
+                        imageUrl: e.target.src,
+                        eventId: event._id
+                      });
                       e.target.style.opacity = '1';
                     }}
                     style={{ 

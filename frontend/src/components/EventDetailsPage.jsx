@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { getEventDetails, getPublicEventDetails, approveAttendance, disapproveAttendance } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaShare, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaCheck, FaTimes } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import EventChat from './EventChat';
 
@@ -353,14 +353,6 @@ function EventDetailsPage() {
               </button>
             )}
             
-            {/* Share button for all users */}
-            <button 
-              onClick={() => handleShareEvent(event)}
-              className="action-button share-button"
-            >
-              <FaShare className="button-icon" />
-              <span>Share</span>
-            </button>
             
             
             {!isAuthenticated && (
@@ -433,13 +425,6 @@ function EventDetailsPage() {
                   className="participants-button"
                 >
                   View Participants
-                </button>
-                <button 
-                  onClick={() => handleShareEvent(event)}
-                  className="action-button share-button"
-                >
-                  <FaShare className="button-icon" />
-                  <span>Share</span>
                 </button>
               </div>
             </div>

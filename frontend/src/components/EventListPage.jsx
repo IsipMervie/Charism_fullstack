@@ -1359,11 +1359,20 @@ function EventListPage() {
                         className="event-image-img-horizontal"
                         loading="lazy"
                         onError={(e) => {
-                          // Simply hide the broken image - let CSS handle the placeholder
-                          e.target.style.display = 'none';
+                          console.error('❌ Event image failed to load:', {
+                            imageUrl: e.target.src,
+                            eventId: event._id,
+                            eventTitle: event.title,
+                            imageData: event.image
+                          });
+                          // Fallback to default image
+                          e.target.src = '/images/default-event.jpg';
                         }}
                         onLoad={(e) => {
-                          // Image loaded successfully
+                          console.log('✅ Event image loaded successfully:', {
+                            imageUrl: e.target.src,
+                            eventId: event._id
+                          });
                           e.target.style.opacity = '1';
                         }}
                         style={{ 

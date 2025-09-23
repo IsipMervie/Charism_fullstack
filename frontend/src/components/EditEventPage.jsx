@@ -221,7 +221,25 @@ function EditEventPage() {
               <div className="current-image image-preview">
                 <p>Current Image:</p>
                 <div className="image-frame">
-                  <img src={getEventImageUrl(event.image, event._id)} alt="Current event" />
+                  <img 
+                    src={getEventImageUrl(event.image, event._id)} 
+                    alt="Current event"
+                    onError={(e) => {
+                      console.error('❌ Edit event image failed to load:', {
+                        imageUrl: e.target.src,
+                        eventId: event._id,
+                        imageData: event.image
+                      });
+                      // Fallback to default image
+                      e.target.src = '/images/default-event.jpg';
+                    }}
+                    onLoad={(e) => {
+                      console.log('✅ Edit event image loaded:', {
+                        imageUrl: e.target.src,
+                        eventId: event._id
+                      });
+                    }}
+                  />
                 </div>
               </div>
             )}
