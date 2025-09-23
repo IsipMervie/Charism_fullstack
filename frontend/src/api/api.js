@@ -14,7 +14,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // Reduced to 15 seconds for faster failure detection
+  timeout: 30000, // Increased to 30 seconds for better reliability
 });
 
 // Simple request interceptor to add token
@@ -477,9 +477,23 @@ export const checkServerHealth = async () => {
   }
 };
 
+// Circuit breaker for events API
+let eventsApiFailureCount = 0;
+let lastEventsApiFailure = 0;
+const CIRCUIT_BREAKER_THRESHOLD = 5; // 5 consecutive failures
+const CIRCUIT_BREAKER_TIMEOUT = 60000; // 1 minute
+
 // Events
 export const getEvents = async (retryCount = 0) => {
-  const maxRetries = 2;
+  const maxRetries = 3; // Increased retries
+  
+  // Check circuit breaker
+  const now = Date.now();
+  if (eventsApiFailureCount >= CIRCUIT_BREAKER_THRESHOLD && 
+      (now - lastEventsApiFailure) < CIRCUIT_BREAKER_TIMEOUT) {
+    console.warn('🚨 Events API circuit breaker OPEN - too many failures, skipping request');
+    return [];
+  }
   
   try {
     console.log(`🔄 Fetching events from API... (attempt ${retryCount + 1}/${maxRetries + 1})`);
@@ -496,9 +510,9 @@ export const getEvents = async (retryCount = 0) => {
     // Use public events endpoint (no authentication required)
     console.log('🔐 Using public events endpoint: /events');
     
-    // Use shorter timeout for faster failure detection
+    // Use longer timeout for better reliability
     const response = await axiosInstance.get('/events', {
-      timeout: 10000 // 10 seconds timeout
+      timeout: 30000 // 30 seconds timeout for better reliability
     });
     
     console.log('✅ Events API response received');
@@ -509,6 +523,9 @@ export const getEvents = async (retryCount = 0) => {
       dataType: typeof response.data,
       isArray: Array.isArray(response.data)
     });
+    
+    // Reset circuit breaker on success
+    eventsApiFailureCount = 0;
     
     // Ensure we always return an array
     const data = response.data;
@@ -524,6 +541,10 @@ export const getEvents = async (retryCount = 0) => {
     }
   } catch (error) {
     console.error(`❌ Error fetching events (attempt ${retryCount + 1}):`, error);
+    
+    // Track failures for circuit breaker
+    eventsApiFailureCount++;
+    lastEventsApiFailure = Date.now();
     
     // Handle specific error types
     if (error.code === 'ECONNABORTED') {
@@ -543,7 +564,7 @@ export const getEvents = async (retryCount = 0) => {
     
     // Retry logic for timeouts - but with exponential backoff
     if (retryCount < maxRetries && (error.code === 'ECONNABORTED' || error.response?.status >= 500)) {
-      const delay = Math.min(1000 * Math.pow(2, retryCount), 5000); // Exponential backoff, max 5 seconds
+      const delay = Math.min(2000 * Math.pow(2, retryCount), 10000); // Exponential backoff, max 10 seconds
       console.log(`🔄 Retrying in ${delay/1000} seconds... (${retryCount + 1}/${maxRetries})`);
       await new Promise(resolve => setTimeout(resolve, delay));
       return getEvents(retryCount + 1);

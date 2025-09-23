@@ -566,17 +566,6 @@ function RegistrationApprovalPage() {
                       <FaClock className="meta-icon" />
                       <span>{event.startTime} - {event.endTime}</span>
                     </div>
-                    <div className="meta-item">
-                      <FaUsers className="meta-icon" />
-                      <span>{event.attendance ? event.attendance.filter(a => 
-                        a.registrationApproved === true || 
-                        a.status === 'Approved' || 
-                        a.status === 'Attended' || 
-                        a.status === 'Completed' ||
-                        a.status === 'Pending' ||
-                        !a.status // Include registrations without status
-                      ).length : 0} registrations</span>
-                    </div>
                   </div>
                   <div className="event-actions">
                     <button

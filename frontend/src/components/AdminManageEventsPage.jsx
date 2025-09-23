@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEvents, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache, clearAllCache } from '../api/api';
+import { getEvents, getEventsWithUserData, deleteEvent, getAllEventAttachments, toggleEventVisibility, markEventAsCompleted, markEventAsNotCompleted, clearCache, clearAllCache } from '../api/api';
 import Swal from 'sweetalert2';
 import { showConfirm, showError, showSuccess, showWarning } from '../utils/sweetAlertUtils';
 import { FaCalendar, FaClock, FaUsers, FaMapMarkerAlt, FaEdit, FaEye, FaTrash, FaEyeSlash, FaShare } from 'react-icons/fa';
@@ -96,7 +96,16 @@ function AdminManageEventsPage() {
   // Function to fetch full events data in background
   const fetchFullEvents = useCallback(async () => {
     try {
-      const data = await getEvents();
+      // Get user role for appropriate endpoint
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const userRole = userData.role || localStorage.getItem('role') || 'Admin';
+      
+      let data;
+      if (userRole === 'Admin' || userRole === 'Staff') {
+        data = await getEventsWithUserData();
+      } else {
+        data = await getEvents();
+      }
       
       // Update with full data
       setEvents(data);
@@ -105,12 +114,12 @@ function AdminManageEventsPage() {
       cleanupCache();
       
       // Get user role for cache key
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const role = user.role || localStorage.getItem('role') || 'Admin';
+      const userData2 = JSON.parse(localStorage.getItem('user') || '{}');
+      const userRole2 = userData2.role || localStorage.getItem('role') || 'Admin';
       
       // Try to cache full data (might fail due to size, that's ok)
       try {
-        const cacheKey = `events_cache_${role}`;
+        const cacheKey = `events_cache_${userRole2}`;
         sessionStorage.setItem(cacheKey, JSON.stringify(data));
         sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
       } catch (cacheError) {
@@ -127,7 +136,7 @@ function AdminManageEventsPage() {
             maxParticipants: event.maxParticipants,
             attendance: event.attendance ? event.attendance.length : 0
           }));
-          const cacheKey = `events_cache_${role}`;
+          const cacheKey = `events_cache_${userRole2}`;
           sessionStorage.setItem(cacheKey, JSON.stringify(essentialData));
           sessionStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
         } catch (essentialCacheError) {
@@ -201,8 +210,15 @@ function AdminManageEventsPage() {
       }
 
       
-      // Use the standard getEvents function with its built-in timeout
-      const data = await getEvents();
+      // Use the appropriate API endpoint based on user role
+      let data;
+      if (role === 'Admin' || role === 'Staff') {
+        // Use admin/staff endpoint for full event data
+        data = await getEventsWithUserData();
+      } else {
+        // Fallback to public endpoint
+        data = await getEvents();
+      }
       
       
       // Cache only essential data to avoid quota exceeded errors

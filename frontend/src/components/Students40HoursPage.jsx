@@ -74,7 +74,7 @@ function Students40HoursPage() {
       let apiUrl = process.env.REACT_APP_API_URL || 
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
           ? 'http://localhost:10000/api' 
-          : 'https://charism-api-xtw9.onrender.com/api');
+          : 'https://charism-backend.vercel.app/api');
       
       // Ensure API URL always ends with /api
       if (!apiUrl.endsWith('/api')) {

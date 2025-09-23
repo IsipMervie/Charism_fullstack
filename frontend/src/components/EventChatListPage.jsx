@@ -303,7 +303,17 @@ const EventChatListPage = () => {
       
     } catch (err) {
       console.error('Error loading events:', err);
-      setError('Failed to load events. Please try again.');
+      
+      // Provide more specific error messages
+      if (err.code === 'ECONNABORTED') {
+        setError('Server is taking too long to respond. Please check your connection and try again.');
+      } else if (err.response?.status === 503) {
+        setError('Server is temporarily unavailable. Please try again in a few minutes.');
+      } else if (err.code === 'ERR_NETWORK') {
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError('Failed to load events. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -346,12 +356,21 @@ const EventChatListPage = () => {
           <div className="error-icon">⚠️</div>
           <h2>Error Loading Events</h2>
           <p>{error}</p>
-          <button 
-            className="retry-button"
-            onClick={() => window.location.reload()}
-          >
-            Try Again
-          </button>
+          <div className="error-actions">
+            <button 
+              className="retry-button"
+              onClick={loadEvents}
+              disabled={loading}
+            >
+              {loading ? 'Retrying...' : 'Try Again'}
+            </button>
+            <button 
+              className="refresh-button"
+              onClick={() => window.location.reload()}
+            >
+              Refresh Page
+            </button>
+          </div>
         </div>
       </div>
     );
