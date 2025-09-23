@@ -1302,15 +1302,48 @@ function EventListPage() {
                   userId = localStorage.getItem('userId');
                 }
                 
+                // Debug logging for user detection
+                console.log(`🔍 Checking user registration for event "${event.title}":`, {
+                  userId,
+                  userEmail: user.email,
+                  userFromStorage: localStorage.getItem('userEmail'),
+                  attendanceCount: event.attendance?.length || 0
+                });
+                
                 const attendance = safeGetAttendance(event);
                 const att = attendance.find(a => {
                   const attUserId = a.userId?._id || a.userId;
-                  return attUserId === userId;
+                  const attUserEmail = a.userId?.email || a.email;
+                  const matchesId = attUserId === userId;
+                  const matchesEmail = attUserEmail === user.email || attUserEmail === localStorage.getItem('userEmail');
+                  
+                  if (matchesId || matchesEmail) {
+                    console.log(`✅ Found matching attendance:`, {
+                      attUserId,
+                      attUserEmail,
+                      registrationApproved: a.registrationApproved,
+                      status: a.status,
+                      matchesId,
+                      matchesEmail
+                    });
+                  }
+                  
+                  return matchesId || matchesEmail;
                 });
                 
                 const isJoined = attendance.some(a => {
                   const attUserId = a.userId?._id || a.userId;
-                  return attUserId === userId;
+                  const attUserEmail = a.userId?.email || a.email;
+                  return attUserId === userId || 
+                         attUserEmail === user.email || 
+                         attUserEmail === localStorage.getItem('userEmail');
+                });
+                
+                console.log(`📊 Registration status for "${event.title}":`, {
+                  isJoined,
+                  hasAttendance: !!att,
+                  registrationApproved: att?.registrationApproved,
+                  status: att?.status
                 });
 
                 // Calculate available slots and status - count all approved participants

@@ -31,7 +31,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // If no image data, use default
     if (!imageData) {
       console.log('⚠️ No image data, using default');
-      return 'https://charism-api-xtw9.onrender.com/images/default-event.jpg';
+      return 'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg';
     }
 
     // Try different patterns based on image data type
@@ -89,11 +89,11 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // Fallback to default - try multiple default image locations
     console.log('⚠️ No valid image pattern found, using default');
     const defaultImages = [
-      'https://charism-api-xtw9.onrender.com/images/default-event.jpg',
+      'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
+      '/uploads/default-event.jpg',
       '/images/default-event.jpg',
-      'https://via.placeholder.com/400x300/007bff/ffffff?text=Event+Image',
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K'
     ];
     return defaultImages[0];
@@ -104,11 +104,11 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     
     // Try fallback images in sequence
     const fallbackImages = [
-      'https://charism-api-xtw9.onrender.com/images/default-event.jpg',
+      'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
+      '/uploads/default-event.jpg',
       '/images/default-event.jpg',
-      'https://via.placeholder.com/400x300/007bff/ffffff?text=Event+Image',
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xNzUgMTI1SDIyNVYxNzVIMTc1VjEyNVoiIGZpbGw9IiNDQ0NDQ0MiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxODAiIHk9IjEzMCI+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjE4IiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMjYgMTZMMzQgMjRMMjYgMzIiIHN0cm9rZT0iIzk5OTk5OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cjx0ZXh0IHg9IjIwMCIgeT0iMjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5OTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkV2ZW50IEltYWdlPC90ZXh0Pgo8L3N2Zz4K'
     ];
     

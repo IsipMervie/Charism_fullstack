@@ -415,6 +415,27 @@ exports.sendMessageWithFiles = async (req, res) => {
       // Students can access chat if they are registered and either:
       // 1. Registration is approved (registrationApproved: true), OR
       // 2. Attendance is approved (status: 'Approved')
+      console.log(`🔍 Checking chat access for student ${userId} in event ${eventId}:`);
+      console.log(`Event attendance:`, event.attendance.map(a => ({
+        userId: a.userId.toString(),
+        registrationApproved: a.registrationApproved,
+        status: a.status,
+        email: a.userId?.email
+      })));
+      
+      const isRegistered = event.attendance.some(att => 
+        att.userId.toString() === userId && 
+        (att.registrationApproved === true || 
+         att.status === 'Approved' || 
+         att.status === 'Attended' || 
+         att.status === 'Completed')
+      );
+      
+      console.log(`📊 Chat access result for student ${userId}:`, {
+        isRegistered,
+        canAccessChat: isRegistered
+      });
+      
       const isRegistered = event.attendance.some(att => 
         att.userId.toString() === userId && 
         (att.registrationApproved === true || 
@@ -426,6 +447,7 @@ exports.sendMessageWithFiles = async (req, res) => {
     }
     
     if (!canAccessChat) {
+      console.log(`❌ Chat access denied for user ${userId} in event ${eventId}`);
       return res.status(403).json({ message: 'You must be registered and approved for this event to participate in chat.' });
     }
 
