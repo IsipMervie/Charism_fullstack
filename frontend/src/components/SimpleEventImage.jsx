@@ -31,7 +31,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // If no image data, use default
     if (!imageData) {
       console.log('⚠️ No image data, using default');
-      return 'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg';
+      return 'https://charism-api-xtw9.onrender.com/images/default-event.jpg';
     }
 
     // Try different patterns based on image data type
@@ -89,6 +89,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     // Fallback to default - try multiple default image locations
     console.log('⚠️ No valid image pattern found, using default');
     const defaultImages = [
+      'https://charism-api-xtw9.onrender.com/images/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
       '/images/default-event.jpg',
@@ -103,6 +104,7 @@ const SimpleEventImage = ({ event, className = '', alt = '', style = {} }) => {
     
     // Try fallback images in sequence
     const fallbackImages = [
+      'https://charism-api-xtw9.onrender.com/images/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/uploads/default-event.jpg',
       'https://charism-api-xtw9.onrender.com/files/default-event.jpg',
       '/images/default-event.jpg',

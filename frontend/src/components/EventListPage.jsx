@@ -1440,6 +1440,26 @@ function EventListPage() {
                         )}
                         
                         {role === 'Student' && isJoined && (
+                          <div className="student-registration-status">
+                            {att && (
+                              <>
+                                {!att.registrationApproved ? (
+                                  <div className="registration-pending">
+                                    <span className="status-icon">⏳</span>
+                                    <span className="status-text">Registration Pending Approval</span>
+                                  </div>
+                                ) : (
+                                  <div className="registration-approved">
+                                    <span className="status-icon">✅</span>
+                                    <span className="status-text">Registration Approved</span>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        )}
+                        
+                        {role === 'Student' && isJoined && att?.registrationApproved && (
                           <div className="student-event-actions">
                             {/* Time Status Display */}
                             <div className="time-status-display">

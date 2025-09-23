@@ -2046,6 +2046,50 @@
   font-weight: 600;
 }
 
+/* Student Registration Status */
+.student-registration-status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.registration-pending {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border: 1px solid #ffc107;
+  color: #856404;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.registration-approved {
+  background: linear-gradient(135deg, #d4edda, #a8e6cf);
+  border: 1px solid #28a745;
+  color: #155724;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.registration-pending .status-icon,
+.registration-approved .status-icon {
+  font-size: 1.2rem;
+}
+
+.registration-pending .status-text,
+.registration-approved .status-text {
+  font-size: 0.9rem;
+}
+
 .student-action-buttons {
   display: flex;
   flex-direction: column;
