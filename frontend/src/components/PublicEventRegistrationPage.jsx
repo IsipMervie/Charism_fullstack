@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEventByRegistrationToken, registerForEventWithToken } from '../api/api';
 import { getEventImageUrl } from '../utils/imageUtils';
-import EventImage from './EventImage';
+import SimpleEventImage from './SimpleEventImage';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaSignInAlt, FaUserPlus, FaCheckCircle } from 'react-icons/fa';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
@@ -180,7 +180,7 @@ function PublicEventRegistrationPage() {
       <div className="event-card">
         {/* Event Image */}
         <div className="event-image-section">
-          <EventImage 
+          <SimpleEventImage 
             event={event}
             className="event-image"
             alt={event.title}

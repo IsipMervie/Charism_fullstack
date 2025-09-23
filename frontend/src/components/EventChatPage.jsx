@@ -35,7 +35,7 @@ import {
 import Swal from 'sweetalert2';
 import EventChat from './EventChat';
 import { getProfilePictureUrl, getEventImageUrl } from '../utils/imageUtils';
-import EventImage from './EventImage';
+import SimpleEventImage from './SimpleEventImage';
 import { formatTimeRange12Hour } from '../utils/timeUtils';
 import './EventChatPage.css';
 
@@ -761,7 +761,7 @@ const EventChatPage = () => {
         <header className="chat-page-header">
           <div className="header-left">
             <div className="event-image-container">
-              <EventImage 
+              <SimpleEventImage 
                 event={event}
                 className="event-header-image"
                 alt={event.title}

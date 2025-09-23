@@ -11,7 +11,7 @@ const getBackendUrl = () => {
     
     // Production environment
     if (hostname === 'charism-ucb4.onrender.com' || hostname === 'charism.onrender.com') {
-      apiUrl = 'https://charism-backend.vercel.app/api';
+      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
     }
     // Local development
     else if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -19,7 +19,7 @@ const getBackendUrl = () => {
     }
     // Default to production for any other case
     else {
-      apiUrl = 'https://charism-backend.vercel.app/api';
+      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
     }
   }
   

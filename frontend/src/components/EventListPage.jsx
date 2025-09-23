@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaEye, FaTimes, FaDownload, FaSyncAlt } from 'react-icons/fa';
 import { formatTimeRange12Hour, formatDateTimePhilippines, formatDatePhilippines } from '../utils/timeUtils';
 import { getEventImageUrl } from '../utils/imageUtils';
-import EventImage from './EventImage';
+import SimpleEventImage from './SimpleEventImage';
 import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../utils/arrayUtils';
 import './EventListPage.css';
 
@@ -1354,7 +1354,7 @@ function EventListPage() {
                   <div key={event._id} className="event-card">
                     {/* Event Image */}
                     <div className="event-image-horizontal">
-                      <EventImage 
+                      <SimpleEventImage 
                         event={event}
                         className="event-image-img-horizontal"
                         alt={event.title}
