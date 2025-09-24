@@ -47,7 +47,7 @@ router.get('/profile-picture/:userId', ensureDBConnection, async (req, res) => {
   }
 });
 
-// Serve default event image
+// Serve default event image - FIXED VERSION
 router.get('/event-image/default', (req, res) => {
   // Return a simple SVG default event image
   const defaultEventImage = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
@@ -62,7 +62,8 @@ router.get('/event-image/default', (req, res) => {
   
   res.set({
     'Content-Type': 'image/svg+xml',
-    'Cache-Control': 'public, max-age=31536000'
+    'Cache-Control': 'public, max-age=31536000',
+    'Access-Control-Allow-Origin': '*'
   });
   
   res.send(defaultEventImage);
