@@ -436,6 +436,12 @@ input[type="submit"].register-button:hover,
   margin-bottom: 10px;
 }
 
+/* Dark mode adjustments for better contrast */
+[data-theme="dark"] .verification-reminder {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--info);
+}
+
 .reminder-icon {
   font-size: 1.25rem;
   color: var(--primary);
@@ -480,6 +486,12 @@ input[type="submit"].register-button:hover,
   margin: 20px 0;
 }
 
+/* Dark mode adjustments for email verification box */
+[data-theme="dark"] .email-verification-box {
+  background: rgba(34, 211, 238, 0.1);
+  border-color: var(--info);
+}
+
 .verification-title {
   color: var(--info-dark);
   margin-bottom: 15px;
@@ -490,10 +502,20 @@ input[type="submit"].register-button:hover,
   font-weight: 600;
 }
 
+/* Dark mode adjustments for verification title */
+[data-theme="dark"] .verification-title {
+  color: var(--info);
+}
+
 .verification-important {
   color: var(--info-dark);
   margin-bottom: 15px;
   font-size: 15px;
+}
+
+/* Dark mode adjustments for verification important text */
+[data-theme="dark"] .verification-important {
+  color: var(--text-primary);
 }
 
 .email-address-box {
@@ -511,6 +533,11 @@ input[type="submit"].register-button:hover,
   font-weight: 600;
 }
 
+/* Dark mode adjustments for email label */
+[data-theme="dark"] .email-label {
+  color: var(--text-primary);
+}
+
 .email-value {
   color: var(--info);
   margin: 5px 0 0 0;
@@ -526,6 +553,11 @@ input[type="submit"].register-button:hover,
   font-size: 14px;
 }
 
+/* Dark mode adjustments for verification steps */
+[data-theme="dark"] .verification-steps {
+  color: var(--text-primary);
+}
+
 .verification-steps li {
   margin-bottom: 8px;
   line-height: 1.5;
@@ -539,6 +571,12 @@ input[type="submit"].register-button:hover,
   margin: 20px 0;
 }
 
+/* Dark mode adjustments for staff approval box */
+[data-theme="dark"] .staff-approval-box {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: var(--warning);
+}
+
 .approval-title {
   color: var(--warning-dark);
   margin-bottom: 10px;
@@ -549,10 +587,20 @@ input[type="submit"].register-button:hover,
   font-weight: 600;
 }
 
+/* Dark mode adjustments for approval title */
+[data-theme="dark"] .approval-title {
+  color: var(--warning);
+}
+
 .approval-note {
   color: var(--warning-dark);
   font-size: 14px;
   margin: 0;
+}
+
+/* Dark mode adjustments for approval note */
+[data-theme="dark"] .approval-note {
+  color: var(--text-primary);
 }
 
 .help-text {
@@ -638,6 +686,19 @@ input[type="submit"].register-button:hover,
   border: 1px solid var(--error-light);
 }
 
+/* Dark mode adjustments for password match indicators */
+[data-theme="dark"] .password-match-indicator.match {
+  background-color: rgba(52, 211, 153, 0.15);
+  color: var(--success);
+  border-color: var(--success);
+}
+
+[data-theme="dark"] .password-match-indicator.mismatch {
+  background-color: rgba(248, 113, 113, 0.15);
+  color: var(--error);
+  border-color: var(--error);
+}
+
 .form-input.password-match {
   border-color: var(--success) !important;
   box-shadow: 0 0 0 1px var(--success) !important;
@@ -646,4 +707,15 @@ input[type="submit"].register-button:hover,
 .form-input.password-mismatch {
   border-color: var(--error) !important;
   box-shadow: 0 0 0 1px var(--error) !important;
+}
+
+/* Dark mode adjustments for password input styling */
+[data-theme="dark"] .form-input.password-match {
+  border-color: var(--success) !important;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2) !important;
+}
+
+[data-theme="dark"] .form-input.password-mismatch {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.2) !important;
 }
