@@ -1508,15 +1508,15 @@ function EventListPage() {
                           <div className="student-registration-status">
                             {att && (
                               <>
-                                {!att.registrationApproved && att.status !== 'Approved' && att.status !== 'Attended' && att.status !== 'Completed' ? (
-                                  <div className="registration-pending">
-                                    <span className="status-icon">⏳</span>
-                                    <span className="status-text">Registration Pending Approval</span>
-                                  </div>
-                                ) : (
+                                {att.registrationApproved === true || att.status === 'Approved' || att.status === 'Attended' || att.status === 'Completed' ? (
                                   <div className="registration-approved">
                                     <span className="status-icon">✅</span>
                                     <span className="status-text">Registration Approved</span>
+                                  </div>
+                                ) : (
+                                  <div className="registration-pending">
+                                    <span className="status-icon">⏳</span>
+                                    <span className="status-text">Registration Pending Approval</span>
                                   </div>
                                 )}
                               </>
@@ -1524,7 +1524,7 @@ function EventListPage() {
                           </div>
                         )}
                         
-                        {role === 'Student' && isJoined && att?.registrationApproved && (
+                        {role === 'Student' && isJoined && (
                           <div className="student-event-actions">
                             {/* Time Status Display */}
                             <div className="time-status-display">
@@ -1566,7 +1566,7 @@ function EventListPage() {
 
                             {/* Action Buttons */}
                             <div className="student-action-buttons">
-                              {/* Time In/Out Buttons */}
+                              {/* Time In/Out Buttons - Available for all joined students */}
                               {!att?.timeIn && (
                                 <button 
                                   className="time-action-button time-in-button"
@@ -1589,14 +1589,16 @@ function EventListPage() {
                                 </button>
                               )}
 
-                              {/* Join Chat Button */}
-                              <button 
-                                className="join-chat-button"
-                                onClick={() => navigate(`/events/${event._id}/chat`)}
-                              >
-                                <span className="button-icon">💬</span>
-                                Join Chat
-                              </button>
+                              {/* Join Chat Button - Only for approved students */}
+                              {att?.registrationApproved && (
+                                <button 
+                                  className="join-chat-button"
+                                  onClick={() => navigate(`/events/${event._id}/chat`)}
+                                >
+                                  <span className="button-icon">💬</span>
+                                  Join Chat
+                                </button>
+                              )}
                             </div>
                           </div>
                         )}

@@ -149,33 +149,25 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     if (!event) {
       console.log('❌ Event not found:', eventId);
       
-      // Serve default logo instead of 404
-      try {
-        const fs = require('fs');
-        const path = require('path');
-        const logoPath = path.join(__dirname, '../logo.png');
-        
-        if (fs.existsSync(logoPath)) {
-          const logoBuffer = fs.readFileSync(logoPath);
-          console.log('✅ Serving default logo for missing event:', eventId);
-          
-          res.set({
-            'Content-Type': 'image/png',
-            'Content-Length': logoBuffer.length,
-            'Cache-Control': 'public, max-age=31536000'
-          });
-          
-          return res.send(logoBuffer);
-        }
-      } catch (error) {
-        console.error('❌ Error loading default logo:', error.message);
-      }
+      // Serve default SVG instead of logo
+      console.log('✅ Serving default SVG for missing event:', eventId);
+      const defaultSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+        <rect width="400" height="300" fill="#F5F5F5"/>
+        <path d="M175 125H225V175H175V125Z" fill="#CCCCCC"/>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" x="180" y="130">
+          <circle cx="20" cy="20" r="18" stroke="#999999" stroke-width="2"/>
+          <path d="M26 16L34 24L26 32" stroke="#999999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <text x="200" y="220" text-anchor="middle" fill="#999999" font-family="Arial" font-size="14">Event Image</text>
+      </svg>`;
       
-      return res.status(404).json({ 
-        message: 'Event not found',
-        error: 'EVENT_NOT_FOUND',
-        eventId: eventId
+      res.set({
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=31536000',
+        'Access-Control-Allow-Origin': '*'
       });
+      
+      return res.send(defaultSVG);
     }
     
     console.log('✅ Event found:', { 
@@ -194,33 +186,25 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     if (!event.image) {
       console.log('❌ No image field in event:', event._id);
       
-      // Serve default logo instead of 404
-      try {
-        const fs = require('fs');
-        const path = require('path');
-        const logoPath = path.join(__dirname, '../logo.png');
-        
-        if (fs.existsSync(logoPath)) {
-          const logoBuffer = fs.readFileSync(logoPath);
-          console.log('✅ Serving default logo for event without image:', event._id);
-          
-          res.set({
-            'Content-Type': 'image/png',
-            'Content-Length': logoBuffer.length,
-            'Cache-Control': 'public, max-age=31536000'
-          });
-          
-          return res.send(logoBuffer);
-        }
-      } catch (error) {
-        console.error('❌ Error loading default logo:', error.message);
-      }
+      // Serve default SVG for event without image
+      console.log('✅ Serving default SVG for event without image:', event._id);
+      const defaultSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+        <rect width="400" height="300" fill="#F5F5F5"/>
+        <path d="M175 125H225V175H175V125Z" fill="#CCCCCC"/>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" x="180" y="130">
+          <circle cx="20" cy="20" r="18" stroke="#999999" stroke-width="2"/>
+          <path d="M26 16L34 24L26 32" stroke="#999999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <text x="200" y="220" text-anchor="middle" fill="#999999" font-family="Arial" font-size="14">Event Image</text>
+      </svg>`;
       
-      return res.status(404).json({ 
-        message: 'Event image not found',
-        error: 'NO_IMAGE_FIELD',
-        eventId: event._id
+      res.set({
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=31536000',
+        'Access-Control-Allow-Origin': '*'
       });
+      
+      return res.send(defaultSVG);
     }
     
     if (typeof event.image === 'string') {
@@ -235,33 +219,25 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
     if (!hasFile(event.image)) {
       console.log('❌ Event image field does not contain valid file data:', event._id);
       
-      // Serve default logo instead of 404
-      try {
-        const fs = require('fs');
-        const path = require('path');
-        const logoPath = path.join(__dirname, '../logo.png');
-        
-        if (fs.existsSync(logoPath)) {
-          const logoBuffer = fs.readFileSync(logoPath);
-          console.log('✅ Serving default logo for event:', event._id);
-          
-          res.set({
-            'Content-Type': 'image/png',
-            'Content-Length': logoBuffer.length,
-            'Cache-Control': 'public, max-age=31536000'
-          });
-          
-          return res.send(logoBuffer);
-        }
-      } catch (error) {
-        console.error('❌ Error loading default logo:', error.message);
-      }
+      // Serve default SVG for invalid image data
+      console.log('✅ Serving default SVG for event with invalid image data:', event._id);
+      const defaultSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+        <rect width="400" height="300" fill="#F5F5F5"/>
+        <path d="M175 125H225V175H175V125Z" fill="#CCCCCC"/>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" x="180" y="130">
+          <circle cx="20" cy="20" r="18" stroke="#999999" stroke-width="2"/>
+          <path d="M26 16L34 24L26 32" stroke="#999999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <text x="200" y="220" text-anchor="middle" fill="#999999" font-family="Arial" font-size="14">Event Image</text>
+      </svg>`;
       
-      return res.status(404).json({ 
-        message: 'Event image not found',
-        error: 'INVALID_IMAGE_DATA',
-        eventId: event._id
+      res.set({
+        'Content-Type': 'image/svg+xml',
+        'Cache-Control': 'public, max-age=31536000',
+        'Access-Control-Allow-Origin': '*'
       });
+      
+      return res.send(defaultSVG);
     }
 
     const { data, contentType } = event.image;

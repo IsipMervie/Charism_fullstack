@@ -138,50 +138,243 @@ const getEventRegistrationApprovalTemplate = (userName, eventTitle, eventDate, e
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Registration Approved - CHARISM</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    .email-container {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .email-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .email-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #27ae60, #2ecc71);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .tagline {
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+    }
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      margin: 20px 0;
+      box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+    }
+    .success-badge::before {
+      content: '🎉';
+      margin-right: 8px;
+      font-size: 18px;
+    }
+    .event-card {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border: none;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .event-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      border-radius: 0 2px 2px 0;
+    }
+    .event-title {
+      color: #2c3e50;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.3px;
+    }
+    .event-detail {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .event-detail-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      opacity: 0.7;
+    }
+    .next-steps {
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      border: none;
+    }
+    .next-steps h3 {
+      color: #1976d2;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+    }
+    .next-steps h3::before {
+      content: '📋';
+      margin-right: 8px;
+    }
+    .next-steps ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #424242;
+    }
+    .next-steps li {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .confirmation-banner {
+      background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .confirmation-banner p {
+      margin: 0;
+      color: #27ae60;
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirmation-banner p::before {
+      content: '✅';
+      margin-right: 8px;
+      font-size: 18px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 16px 32px;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+      transition: all 0.3s ease;
+      margin: 20px 0;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(52, 152, 219, 0.4);
+    }
+    .footer-message {
+      text-align: center;
+      margin: 32px 0;
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
-      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Event Registration Approved</p>
-    </div>
-    
-    <div style="margin-bottom: 25px;">
-      <p>Hello ${userName || 'there'},</p>
-      <p>Great news! Your registration for the following community service event has been <strong style="color: #27ae60;">approved</strong>:</p>
-    </div>
-    
-    <div style="background-color: #f8f9fa; border-left: 4px solid #27ae60; padding: 20px; margin: 20px 0; border-radius: 4px;">
-      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Event Details</h3>
-      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
-      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
-      <p style="margin: 5px 0;"><strong>Location:</strong> ${eventLocation || 'TBD'}</p>
-      <p style="margin: 5px 0;"><strong>Service Hours:</strong> ${eventHours} hours</p>
-    </div>
-    
-    <div style="margin-bottom: 25px;">
-      <h3 style="color: #2c3e50;">What's Next?</h3>
-      <ul style="color: #555;">
-        <li>Make sure to arrive on time for the event</li>
-        <li>Bring any required materials or documentation</li>
-        <li>Check the event details for any specific requirements</li>
-        <li>Remember to time in and time out during the event</li>
-      </ul>
-    </div>
-    
-    <div style="background-color: #e8f5e8; border: 1px solid #27ae60; padding: 15px; border-radius: 4px; margin: 20px 0;">
-      <p style="margin: 0; color: #27ae60; font-weight: bold;">
-        ✅ Your registration is confirmed! You can now participate in this event.
+<body>
+  <div class="email-container">
+    <div class="email-card">
+      <div class="header">
+        <div class="logo">CHARISM</div>
+        <p class="tagline">Community Service Management System</p>
+        <div class="success-badge">Registration Approved</div>
+      </div>
+      
+      <p style="font-size: 16px; color: #2c3e50; margin-bottom: 24px;">
+        Hello <strong>${userName || 'there'}</strong>,
       </p>
-    </div>
-    
-    <div style="text-align: center; margin: 30px 0;">
-      <p style="color: #7f8c8d; font-size: 14px;">
-        Thank you for your commitment to community service!
+      
+      <p style="font-size: 16px; color: #555; margin-bottom: 32px;">
+        Great news! Your registration for the following community service event has been <strong style="color: #27ae60;">approved</strong>:
       </p>
+      
+      <div class="event-card">
+        <h3 class="event-title">${eventTitle}</h3>
+        <div class="event-detail">
+          <span class="event-detail-icon">📅</span>
+          <strong>Date:</strong> ${eventDate}
+        </div>
+        <div class="event-detail">
+          <span class="event-detail-icon">📍</span>
+          <strong>Location:</strong> ${eventLocation || 'TBD'}
+        </div>
+        <div class="event-detail">
+          <span class="event-detail-icon">⏱️</span>
+          <strong>Service Hours:</strong> ${eventHours} hours
+        </div>
+      </div>
+      
+      <div class="confirmation-banner">
+        <p>Your registration is confirmed! You can now participate in this event.</p>
+      </div>
+      
+      <div class="next-steps">
+        <h3>What's Next?</h3>
+        <ul>
+          <li>Make sure to arrive on time for the event</li>
+          <li>Bring any required materials or documentation</li>
+          <li>Check the event details for any specific requirements</li>
+          <li>Remember to time in and time out during the event</li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" class="cta-button">
+          View Event Details
+        </a>
+      </div>
+      
+      <div class="footer-message">
+        Thank you for your commitment to community service! 🌟
+      </div>
+      
+      ${getNoReplyFooter()}
     </div>
-    
-    ${getNoReplyFooter()}
   </div>
 </body>
 </html>
@@ -197,55 +390,273 @@ const getEventRegistrationDisapprovalTemplate = (userName, eventTitle, eventDate
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Registration Update - CHARISM</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    .email-container {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+      min-height: 100vh;
+    }
+    .email-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .email-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .tagline {
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+    }
+    .update-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      margin: 20px 0;
+      box-shadow: 0 8px 20px rgba(243, 156, 18, 0.3);
+    }
+    .update-badge::before {
+      content: '📝';
+      margin-right: 8px;
+      font-size: 18px;
+    }
+    .event-card {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border: none;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .event-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border-radius: 0 2px 2px 0;
+    }
+    .event-title {
+      color: #2c3e50;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.3px;
+    }
+    .event-detail {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .event-detail-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      opacity: 0.7;
+    }
+    .status-banner {
+      background: linear-gradient(135deg, #fdf2f2, #fce4e4);
+      border: none;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .status-banner h3 {
+      color: #e74c3c;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status-banner h3::before {
+      content: '❌';
+      margin-right: 8px;
+      font-size: 20px;
+    }
+    .status-banner p {
+      margin: 0;
+      color: #e74c3c;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .reason-card {
+      background: linear-gradient(135deg, #fff5f5, #ffeaea);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0;
+      border-left: 4px solid #e74c3c;
+    }
+    .reason-card h3 {
+      color: #2c3e50;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+    }
+    .reason-card h3::before {
+      content: '💬';
+      margin-right: 8px;
+    }
+    .reason-text {
+      color: #555;
+      font-size: 15px;
+      margin: 0;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+    }
+    .next-steps {
+      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      border: none;
+    }
+    .next-steps h3 {
+      color: #856404;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+    }
+    .next-steps h3::before {
+      content: '🚀';
+      margin-right: 8px;
+    }
+    .next-steps ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #856404;
+    }
+    .next-steps li {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 16px 32px;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+      transition: all 0.3s ease;
+      margin: 20px 0;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(52, 152, 219, 0.4);
+    }
+    .footer-message {
+      text-align: center;
+      margin: 32px 0;
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
-      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Event Registration Update</p>
-    </div>
-    
-    <div style="margin-bottom: 25px;">
-      <p>Hello ${userName || 'there'},</p>
-      <p>We wanted to inform you about an update regarding your registration for the following community service event:</p>
-    </div>
-    
-    <div style="background-color: #f8f9fa; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0; border-radius: 4px;">
-      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Event Details</h3>
-      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
-      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
-    </div>
-    
-    <div style="background-color: #fdf2f2; border: 1px solid #e74c3c; padding: 15px; border-radius: 4px; margin: 20px 0;">
-      <h3 style="color: #e74c3c; margin: 0 0 10px 0;">Registration Status</h3>
-      <p style="margin: 0; color: #e74c3c; font-weight: bold;">
-        ❌ Your registration for this event has been disapproved.
-      </p>
-    </div>
-    
-    <div style="margin-bottom: 25px;">
-      <h3 style="color: #2c3e50;">Reason for Disapproval</h3>
-      <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #e74c3c;">
-        <p style="margin: 0; color: #555;">${reason}</p>
+<body>
+  <div class="email-container">
+    <div class="email-card">
+      <div class="header">
+        <div class="logo">CHARISM</div>
+        <p class="tagline">Community Service Management System</p>
+        <div class="update-badge">Registration Update</div>
       </div>
-    </div>
-    
-    <div style="margin-bottom: 25px;">
-      <h3 style="color: #2c3e50;">What's Next?</h3>
-      <ul style="color: #555;">
-        <li>You can register for other available community service events</li>
-        <li>Make sure to meet all requirements before registering for future events</li>
-        <li>Contact the event organizer if you have any questions</li>
-      </ul>
-    </div>
-    
-    <div style="text-align: center; margin: 30px 0;">
-      <p style="color: #7f8c8d; font-size: 14px;">
-        We encourage you to continue participating in community service opportunities.
+      
+      <p style="font-size: 16px; color: #2c3e50; margin-bottom: 24px;">
+        Hello <strong>${userName || 'there'}</strong>,
       </p>
+      
+      <p style="font-size: 16px; color: #555; margin-bottom: 32px;">
+        We wanted to inform you about an update regarding your registration for the following community service event:
+      </p>
+      
+      <div class="event-card">
+        <h3 class="event-title">${eventTitle}</h3>
+        <div class="event-detail">
+          <span class="event-detail-icon">📅</span>
+          <strong>Date:</strong> ${eventDate}
+        </div>
+      </div>
+      
+      <div class="status-banner">
+        <h3>Registration Status</h3>
+        <p>Your registration for this event has been disapproved.</p>
+      </div>
+      
+      <div class="reason-card">
+        <h3>Reason for Disapproval</h3>
+        <p class="reason-text">${reason}</p>
+      </div>
+      
+      <div class="next-steps">
+        <h3>What's Next?</h3>
+        <ul>
+          <li>You can register for other available community service events</li>
+          <li>Make sure to meet all requirements before registering for future events</li>
+          <li>Contact the event organizer if you have any questions</li>
+        </ul>
+      </div>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" class="cta-button">
+          View Other Events
+        </a>
+      </div>
+      
+      <div class="footer-message">
+        We encourage you to continue participating in community service opportunities! 💪
+      </div>
+      
+      ${getNoReplyFooter()}
     </div>
-    
-    ${getNoReplyFooter()}
   </div>
 </body>
 </html>
@@ -713,117 +1124,242 @@ const getEventRegistrationConfirmationTemplate = (studentName, eventTitle, event
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Registration Confirmation</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    .email-container {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
-      color: #333;
+      color: #1a1a1a;
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #f8f9fa;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
     }
-    .container {
-      background-color: white;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    .email-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .email-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3498db, #2980b9);
     }
     .header {
       text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #007bff;
+      margin-bottom: 40px;
+      position: relative;
     }
     .logo {
-      font-size: 28px;
-      font-weight: bold;
-      color: #007bff;
-      margin-bottom: 10px;
+      font-size: 32px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .tagline {
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
     }
     .success-icon {
-      font-size: 48px;
-      color: #28a745;
-      margin-bottom: 20px;
+      font-size: 64px;
+      margin: 20px 0;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+    .confirmation-title {
+      color: #27ae60;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.3px;
     }
     .event-details {
-      background-color: #f8f9fa;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      border-left: 4px solid #007bff;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border: none;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .event-details::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      border-radius: 0 2px 2px 0;
+    }
+    .event-title {
+      color: #2c3e50;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.3px;
+    }
+    .event-detail {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .event-detail-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      opacity: 0.7;
     }
     .status-badge {
-      background-color: ${requiresApproval ? '#ffc107' : '#28a745'};
+      background: linear-gradient(135deg, ${requiresApproval ? '#f39c12, #e67e22' : '#27ae60, #2ecc71'});
       color: white;
-      padding: 10px 20px;
-      border-radius: 25px;
-      font-weight: bold;
-      display: inline-block;
-      margin: 15px 0;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      margin: 16px 0;
+      box-shadow: 0 8px 20px rgba(${requiresApproval ? '243, 156, 18' : '39, 174, 96'}, 0.3);
+    }
+    .status-badge::before {
+      content: '${requiresApproval ? '⏳' : '✅'}';
+      margin-right: 8px;
+      font-size: 18px;
     }
     .next-steps {
-      background-color: #e7f3ff;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      border-left: 4px solid #007bff;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      border: none;
     }
-    .footer {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #e0e0e0;
-      font-size: 12px;
-      color: #666;
+    .next-steps h3 {
+      color: #1976d2;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+    }
+    .next-steps h3::before {
+      content: '📋';
+      margin-right: 8px;
+    }
+    .next-steps ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #424242;
+    }
+    .next-steps li {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .footer-message {
+      text-align: center;
+      margin: 32px 0;
+      color: #7f8c8d;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 16px 32px;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+      transition: all 0.3s ease;
+      margin: 20px 0;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(52, 152, 219, 0.4);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo">CHARISM</div>
-      <div class="success-icon">🎉</div>
-      <h1 style="color: #28a745; margin: 0;">Registration Confirmed!</h1>
-    </div>
-    
-    <p>Dear <strong>${studentName}</strong>,</p>
-    
-    <p>Thank you for registering for our event! Your registration has been successfully recorded.</p>
-    
-    <div class="event-details">
-      <h3 style="margin-top: 0; color: #007bff;">Event Details:</h3>
-      <p><strong>Event:</strong> ${eventTitle}</p>
-      <p><strong>Date:</strong> ${eventDate}</p>
-      <p><strong>Location:</strong> ${eventLocation || 'TBD'}</p>
-      <div class="status-badge">
-        ${requiresApproval ? '⏳ Pending Approval' : '✅ Auto-Approved'}
+  <div class="email-container">
+    <div class="email-card">
+      <div class="header">
+        <div class="logo">CHARISM</div>
+        <p class="tagline">Community Service Management System</p>
+        <div class="success-icon">🎉</div>
+        <h1 class="confirmation-title">Registration Confirmed!</h1>
       </div>
+      
+      <p style="font-size: 16px; color: #2c3e50; margin-bottom: 24px;">
+        Dear <strong>${studentName}</strong>,
+      </p>
+      
+      <p style="font-size: 16px; color: #555; margin-bottom: 32px;">
+        Thank you for registering for our event! Your registration has been successfully recorded.
+      </p>
+      
+      <div class="event-details">
+        <h3 class="event-title">Event Details</h3>
+        <div class="event-detail">
+          <span class="event-detail-icon">🎯</span>
+          <strong>Event:</strong> ${eventTitle}
+        </div>
+        <div class="event-detail">
+          <span class="event-detail-icon">📅</span>
+          <strong>Date:</strong> ${eventDate}
+        </div>
+        <div class="event-detail">
+          <span class="event-detail-icon">📍</span>
+          <strong>Location:</strong> ${eventLocation || 'TBD'}
+        </div>
+        <div class="status-badge">
+          ${requiresApproval ? 'Pending Approval' : 'Auto-Approved'}
+        </div>
+      </div>
+      
+      <div class="next-steps">
+        <h3>What's Next?</h3>
+        ${requiresApproval ? `
+        <ul>
+          <li>Your registration is pending approval from staff/admin</li>
+          <li>You will receive an email notification once your registration is reviewed</li>
+          <li>Please wait for approval before attending the event</li>
+          <li>Check your "My Participants" page for updates</li>
+        </ul>
+        ` : `
+        <ul>
+          <li>Your registration has been automatically approved</li>
+          <li>You can now attend the event</li>
+          <li>Remember to time in and time out during the event</li>
+          <li>Check your "My Participants" page for event details</li>
+        </ul>
+        `}
+      </div>
+      
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}" class="cta-button">
+          View Event Details
+        </a>
+      </div>
+      
+      <div class="footer-message">
+        We look forward to seeing you at the event! 🌟<br>
+        <strong>Best regards,<br>CHARISM Team</strong>
+      </div>
+      
+      ${getNoReplyFooter()}
     </div>
-    
-    <div class="next-steps">
-      <h3 style="margin-top: 0; color: #007bff;">What's Next?</h3>
-      ${requiresApproval ? `
-      <ul>
-        <li>Your registration is pending approval from staff/admin</li>
-        <li>You will receive an email notification once your registration is reviewed</li>
-        <li>Please wait for approval before attending the event</li>
-        <li>Check your "My Participants" page for updates</li>
-      </ul>
-      ` : `
-      <ul>
-        <li>Your registration has been automatically approved</li>
-        <li>You can now attend the event</li>
-        <li>Remember to time in and time out during the event</li>
-        <li>Check your "My Participants" page for event details</li>
-      </ul>
-      `}
-    </div>
-    
-    <p>We look forward to seeing you at the event!</p>
-    
-    <p>Best regards,<br>
-    <strong>CHARISM Team</strong></p>
-    
-    ${getNoReplyFooter()}
   </div>
 </body>
 </html>

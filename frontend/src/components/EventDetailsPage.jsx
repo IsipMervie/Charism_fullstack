@@ -521,7 +521,7 @@ function EventDetailsPage() {
                       </button>
                     </div>
                   );
-                } else if (!userAttendance.registrationApproved && userAttendance.status !== 'Approved' && userAttendance.status !== 'Attended' && userAttendance.status !== 'Completed') {
+                } else if (userAttendance.registrationApproved !== true && userAttendance.status !== 'Approved' && userAttendance.status !== 'Attended' && userAttendance.status !== 'Completed') {
                   // User joined but registration pending approval
                   return (
                     <div className="registration-pending-section">
