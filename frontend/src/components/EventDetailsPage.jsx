@@ -76,7 +76,7 @@ function EventDetailsPage() {
       setIsUserApprovedForEvent(eventData.isUserApprovedForEvent || false);
       
       // Debug logging for approval status
-      console.log('🔍 Event Details Debug:', {
+      console.log('🔍 [FIXED VERSION] Event Details Debug:', {
         eventId: eventData._id,
         isUserApprovedForEvent: eventData.isUserApprovedForEvent,
         userAttendance: eventData.attendance?.find(att => {

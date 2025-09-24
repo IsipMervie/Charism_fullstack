@@ -1363,7 +1363,7 @@ function EventListPage() {
                          attUserEmail === localStorage.getItem('userEmail');
                 });
                 
-                console.log(`📊 Registration status for "${event.title}":`, {
+                console.log(`📊 [FIXED VERSION] Registration status for "${event.title}":`, {
                   isJoined,
                   hasAttendance: !!att,
                   registrationApproved: att?.registrationApproved,

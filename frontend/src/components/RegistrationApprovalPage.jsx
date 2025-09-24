@@ -304,7 +304,7 @@ function RegistrationApprovalPage() {
                 </div>
                 {registration.timeIn && (
                   <div className="meta-item">
-                    <span className="meta-label">Time In:</span>
+                    <span className="meta-label">⏰ Time In:</span>
                     <span className="meta-value">
                       {formatDateTimePhilippines(registration.timeIn)}
                     </span>
@@ -312,7 +312,7 @@ function RegistrationApprovalPage() {
                 )}
                 {registration.timeOut && (
                   <div className="meta-item">
-                    <span className="meta-label">Time Out:</span>
+                    <span className="meta-label">🏁 Time Out:</span>
                     <span className="meta-value">
                       {formatDateTimePhilippines(registration.timeOut)}
                     </span>
