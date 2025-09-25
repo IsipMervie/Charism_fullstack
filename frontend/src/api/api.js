@@ -14,7 +14,7 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Increased to 30 seconds for better reliability
+  timeout: 60000, // Increased to 60 seconds for better reliability
 });
 
 // Simple request interceptor to add token
@@ -87,7 +87,7 @@ export const testApiConnection = async () => {
     // Use a shorter timeout for health checks
     const healthCheckInstance = axios.create({
       baseURL: API_URL,
-      timeout: 10000, // 10 seconds for health check
+      timeout: 15000, // 15 seconds for health check
     });
     
     const response = await healthCheckInstance.get('/health');
@@ -939,6 +939,15 @@ export const loginUser = async (email, password) => {
 
 export const registerUser = async (name, email, password, userId, academicYear, year, section, role, department) => {
   try {
+    // Test connection first
+    console.log('🔍 Testing API connection before registration...');
+    const connectionTest = await testApiConnection();
+    if (!connectionTest.success) {
+      console.error('❌ API connection failed:', connectionTest.error);
+      throw new Error(`Cannot connect to server: ${connectionTest.error}`);
+    }
+    console.log('✅ API connection successful, proceeding with registration...');
+    
     const payload = {
       name,
       email,
