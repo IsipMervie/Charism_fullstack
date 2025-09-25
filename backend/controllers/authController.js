@@ -19,6 +19,11 @@ const { generateVerificationLink, generatePasswordResetLink } = require('../util
 
 // Register a new user
 exports.register = async (req, res) => {
+  // Set CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
   const { name, email, password, role, userId, academicYear, year, section, department } = req.body;
   
   try {
@@ -120,6 +125,11 @@ exports.register = async (req, res) => {
 
 // Login user
 exports.login = async (req, res) => {
+  // Set CORS headers
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
   const { email, password } = req.body;
   try {
     console.log('🔍 Login attempt for:', email);
