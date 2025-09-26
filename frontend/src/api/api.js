@@ -8,49 +8,28 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Simple fetch-based API client to avoid CORS issues completely
-export const apiCall = async (url, options = {}) => {
-  const defaultOptions = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    mode: 'cors',
-    cache: 'no-cache',
-  };
+// Simple axios instance with proper CORS configuration
+export const axiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
+  timeout: 60000,
+  withCredentials: true, // Enable credentials for CORS
+  crossDomain: true
+});
 
-  const config = { ...defaultOptions, ...options };
-  
-  if (config.body && typeof config.body === 'object') {
-    config.body = JSON.stringify(config.body);
+
+// Request interceptor for logging
+axiosInstance.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-
-  try {
-    const response = await fetch(`${API_URL}${url}`, config);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return { data, status: response.status };
-  } catch (error) {
-    console.error('API call failed:', error);
-    throw error;
-  }
-};
-
-// Keep axios for backward compatibility but use fetch internally
-export const axiosInstance = {
-  get: (url, config) => apiCall(url, { method: 'GET', ...config }),
-  post: (url, data, config) => apiCall(url, { method: 'POST', body: data, ...config }),
-  put: (url, data, config) => apiCall(url, { method: 'PUT', body: data, ...config }),
-  delete: (url, config) => apiCall(url, { method: 'DELETE', ...config }),
-};
-
-
-// No interceptors needed with fetch API
+);
 
 // Test API connection function
 

@@ -94,7 +94,7 @@ const FeedbackPage = () => {
       const feedback = await getUserFeedback();
       setUserFeedback(feedback);
     } catch (err) {
-      console.error('Error fetching feedback:', err);
+      // Error fetching feedback
     } finally {
       setLoadingHistory(false);
     }
@@ -135,9 +135,7 @@ const FeedbackPage = () => {
       // Send feedback email notification
       try {
         await sendFeedbackEmail(formData);
-        console.log('✅ Feedback email sent successfully');
       } catch (emailError) {
-        console.error('Failed to send feedback email:', emailError);
         // Don't show error to user as feedback was still submitted
       }
       

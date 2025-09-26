@@ -89,81 +89,15 @@ app.use((req, res, next) => {
 
 
 
-// EMERGENCY CORS FIX - Force headers on every request
-app.use((req, res, next) => {
-  // Force CORS headers on EVERY response
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'false');
-  
-  // Handle preflight requests immediately
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
-
-// CORS configuration - SIMPLIFIED to avoid credentials issues
+// SINGLE CORS CONFIGURATION - NO CONFLICTS
 app.use(cors({
-  origin: '*', // Allow all origins since we disabled credentials
-  credentials: false, // DISABLE credentials to avoid CORS issues
+  origin: 'https://charism-ucb4.onrender.com',
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  optionsSuccessStatus: 200
 }));
-
-// Handle preflight requests - EMERGENCY FIX
-app.options('*', (req, res) => {
-  console.log('🚨 OPTIONS request received:', req.url);
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'false');
-  res.status(200).end();
-});
-
-// Additional CORS headers for all responses - EMERGENCY FIX
-app.use((req, res, next) => {
-  console.log('🚨 Request received:', req.method, req.url);
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'false');
-  
-  if (req.method === 'OPTIONS') {
-    console.log('🚨 OPTIONS handled in middleware');
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
-
-// Handle preflight requests - SIMPLIFIED
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'false');
-  res.status(200).end();
-});
-
-// SIMPLE CORS HEADERS
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
 
 // Simple health check endpoint
 app.get('/health', (req, res) => {
@@ -203,37 +137,13 @@ app.get('/api/ping', (req, res) => {
   });
 });
 
-// EMERGENCY TEST ENDPOINT - Simple CORS test
+// Simple test endpoint
 app.get('/api/test', (req, res) => {
-  console.log('🚨 TEST endpoint called');
-  // Force CORS headers
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
   res.json({
     status: 'SUCCESS',
-    message: 'Emergency test endpoint working!',
+    message: 'Test endpoint working!',
     timestamp: new Date().toISOString(),
-    cors: 'FIXED',
-    server: 'RUNNING',
-    version: '3.0.0 - EMERGENCY CORS FIX DEPLOYED'
-  });
-});
-
-// EMERGENCY CORS TEST ENDPOINT
-app.post('/api/cors-test', (req, res) => {
-  console.log('🚨 CORS TEST POST endpoint called');
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  res.json({
-    status: 'SUCCESS',
-    message: 'CORS POST test working!',
-    timestamp: new Date().toISOString(),
-    cors: 'FIXED',
-    method: 'POST'
+    server: 'RUNNING'
   });
 });
 
@@ -297,41 +207,7 @@ app.use('/api/images', express.static(path.join(__dirname, 'images')));
 // Specific route for chat files
 app.use('/api/uploads/chat-files', express.static(path.join(__dirname, 'uploads/chat-files')));
 
-// Add CORS headers to static files
-app.use('/uploads', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
-app.use('/api/uploads', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
-app.use('/images', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
-app.use('/api/images', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
-app.use('/api/uploads/chat-files', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+// Static files - CORS handled by main middleware
 
 // Health check for uploads folder
 app.get('/api/uploads-health', (req, res) => {
