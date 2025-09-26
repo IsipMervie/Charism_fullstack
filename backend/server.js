@@ -89,21 +89,71 @@ app.use((req, res, next) => {
 
 
 
-// EMERGENCY CORS FIX - Allow all origins
+// CORS configuration - Fixed for credentials
 app.use(cors({
-  origin: '*',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://charism-ucb4.onrender.com',
+      'https://charism.onrender.com',
+      'http://localhost:3000',
+      'http://localhost:3001'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // For production, default to main frontend URL
+      callback(null, 'https://charism-ucb4.onrender.com');
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
   exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
 }));
 
-// Handle preflight requests
-app.options('*', cors());
+// Handle preflight requests with proper CORS
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://charism-ucb4.onrender.com',
+    'https://charism.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ];
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(200).end();
+});
 
 // Additional CORS headers for all responses
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://charism-ucb4.onrender.com',
+    'https://charism.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ];
+  
+  // Check if origin is allowed
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -116,8 +166,27 @@ app.use((req, res, next) => {
   next();
 });
 
-// Handle preflight requests
-app.options('*', cors());
+// Handle preflight requests with proper CORS
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://charism-ucb4.onrender.com',
+    'https://charism.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ];
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(200).end();
+});
 
 // SIMPLE CORS HEADERS
 app.use((req, res, next) => {
