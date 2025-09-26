@@ -149,7 +149,7 @@ app.get('/api/test', (req, res) => {
 
 // TEST APPROVAL ENDPOINT - Direct test
 app.put('/api/test-approval/:eventId/registrations/:userId/approve', (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
@@ -338,7 +338,7 @@ if (require.main === module) {
 app.get('/', (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     
     res.json({
       status: 'OK',
@@ -413,7 +413,7 @@ app.get('/api/health', (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
@@ -446,7 +446,7 @@ app.get('/api/health/db', async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     
     const dbStatus = mongoose.connection.readyState;
@@ -515,7 +515,7 @@ app.get('/api/health/email', (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     
     const emailConfig = {
@@ -553,7 +553,7 @@ app.get('/api/db-status', async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
@@ -635,7 +635,7 @@ app.get('/api/db-status', async (req, res) => {
 app.get('/api/test', (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     
     res.json({
       status: 'OK',
@@ -655,7 +655,7 @@ app.get('/api/test', (req, res) => {
 app.get('/api/frontend-test', (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     
     res.json({
       status: 'OK',
@@ -706,7 +706,7 @@ app.get('/api/cors-test', (req, res) => {
 app.get('/api/status', (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
     
     const { mongoose } = require('./config/db');
     
