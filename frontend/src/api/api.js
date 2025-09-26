@@ -723,6 +723,23 @@ export const joinEvent = async (eventId) => {
   }
 };
 
+export const registerForEvent = async (eventId) => {
+  try {
+    const response = await axiosInstance.post(`/events/${eventId}/register`);
+    return response.data;
+  } catch (error) {
+    console.error('Error registering for event:', error);
+    if (error.response?.status === 401) {
+      throw new Error('Please log in to register for this event.');
+    } else if (error.response?.status === 404) {
+      throw new Error('Event not found.');
+    } else if (error.response?.status === 400) {
+      throw new Error(error.response.data.message || 'Registration failed. Please try again.');
+    }
+    throw new Error('Failed to register for event. Please try again.');
+  }
+};
+
 export const timeIn = async (eventId) => {
   try {
     const userId = getUserId();
@@ -1666,6 +1683,16 @@ export const generateBulkCertificates = async (userIds) => {
 };
 
 // Contact Us
+export const contactUs = async (contactData) => {
+  try {
+    const response = await axiosInstance.post('/contact-us', contactData);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending contact message:', error);
+    throw new Error('Failed to send message. Please try again.');
+  }
+};
+
 export const submitContactForm = async (contactData) => {
   try {
     const response = await axiosInstance.post('/contact-us', contactData);
@@ -2169,5 +2196,96 @@ export const deleteFeedback = async (feedbackId) => {
   } catch (error) {
     console.error('Error deleting feedback:', error);
     throw new Error('Failed to delete feedback. Please try again.');
+  }
+};
+
+// Missing API functions - FIXED
+export const updateProfile = async (profileData) => {
+  try {
+    const response = await axiosInstance.put('/users/profile', profileData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    throw new Error('Failed to update profile. Please try again.');
+  }
+};
+
+export const uploadFile = async (file, type = 'general') => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    
+    const response = await axiosInstance.post('/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw new Error('Failed to upload file. Please try again.');
+  }
+};
+
+// Additional missing API functions
+export const unregisterFromEvent = async (eventId) => {
+  try {
+    const response = await axiosInstance.delete(`/events/${eventId}/unregister`);
+    return response.data;
+  } catch (error) {
+    console.error('Error unregistering from event:', error);
+    throw new Error('Failed to unregister from event. Please try again.');
+  }
+};
+
+export const approveUser = async (userId, approvalData) => {
+  try {
+    const response = await axiosInstance.put(`/admin/users/${userId}/approve`, approvalData);
+    return response.data;
+  } catch (error) {
+    console.error('Error approving user:', error);
+    throw new Error('Failed to approve user. Please try again.');
+  }
+};
+
+export const sendContactEmail = async (contactData) => {
+  try {
+    const response = await axiosInstance.post('/contact-us/send', contactData);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending contact email:', error);
+    throw new Error('Failed to send contact email. Please try again.');
+  }
+};
+
+export const sendFeedbackEmail = async (feedbackData) => {
+  try {
+    const response = await axiosInstance.post('/feedback/send', feedbackData);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending feedback email:', error);
+    throw new Error('Failed to send feedback email. Please try again.');
+  }
+};
+
+export const sendEventNotification = async (eventId, notificationData) => {
+  try {
+    const response = await axiosInstance.post(`/events/${eventId}/notify`, notificationData);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending event notification:', error);
+    throw new Error('Failed to send event notification. Please try again.');
+  }
+};
+
+// Get all events (alias for getEvents)
+export const getAllEvents = async (searchTerm = '') => {
+  try {
+    const response = await axiosInstance.get(`/events?search=${searchTerm}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all events:', error);
+    throw new Error('Failed to fetch events. Please try again.');
   }
 };

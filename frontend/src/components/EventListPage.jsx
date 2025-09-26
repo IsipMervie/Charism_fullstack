@@ -13,6 +13,7 @@ import { safeFilter, safeMap, safeSet, safeSpread, safeGetAttendance } from '../
 import './EventListPage.css';
 
 function EventListPage() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,13 +22,78 @@ function EventListPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [joinedEvents, setJoinedEvents] = useState([]);
   
+  // Get user info
+  const getUser = () => {
+    try {
+      const userStr = localStorage.getItem('user');
+      return userStr ? JSON.parse(userStr) : null;
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  const getRole = () => {
+    try {
+      return localStorage.getItem('role') || 'student';
+    } catch (e) {
+      return 'student';
+    }
+  };
+  
+  const user = getUser();
+  const role = getRole();
+  
   // Use ref to prevent infinite loops
   const isLoadingRef = useRef(false);
   const hasLoadedRef = useRef(false);
 
-  const navigate = useNavigate();
-  const role = localStorage.getItem('role');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  // Filter events based on current filter
+  const filterEvents = (eventsList) => {
+    if (!eventsList) return [];
+    
+    switch (filter) {
+      case 'upcoming':
+        return eventsList.filter(event => new Date(event.date) > new Date());
+      case 'past':
+        return eventsList.filter(event => new Date(event.date) < new Date());
+      case 'today':
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return eventsList.filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate >= today && eventDate < tomorrow;
+        });
+      case 'joined':
+        return eventsList.filter(event => 
+          joinedEvents.some(joined => joined.eventId === event._id)
+        );
+      default:
+        return eventsList;
+    }
+  };
+
+  // Search events based on search term
+  const searchEvents = (eventsList) => {
+    if (!searchTerm.trim()) return eventsList;
+    
+    const term = searchTerm.toLowerCase();
+    return eventsList.filter(event => 
+      event.title?.toLowerCase().includes(term) ||
+      event.description?.toLowerCase().includes(term) ||
+      event.location?.toLowerCase().includes(term) ||
+      event.organizer?.toLowerCase().includes(term)
+    );
+  };
+
+  // Navigate to event details
+  const navigateToEvent = (eventId) => {
+    navigate(`/events/${eventId}`);
+  };
+
+  // Navigate to event details (alias for compatibility)
+  const navigation = navigateToEvent;
   
 
   

@@ -4,6 +4,70 @@ const User = require('../models/User');
 const Event = require('../models/Event');
 const Message = require('../models/Message');
 
+// Send admin notification
+const sendAdminNotification = async (subject, message, adminEmail = null) => {
+  try {
+    const sendEmail = require('../utils/sendEmail');
+    
+    const emailContent = `
+      <h2>Admin Notification</h2>
+      <p><strong>Subject:</strong> ${subject}</p>
+      <p><strong>Message:</strong></p>
+      <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+        ${message}
+      </div>
+      <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+    `;
+    
+    const targetEmail = adminEmail || process.env.ADMIN_EMAIL || 'admin@charism.edu.ph';
+    await sendEmail(targetEmail, `Admin Notification: ${subject}`, '', emailContent, true);
+    
+    console.log(`✅ Admin notification sent: ${subject}`);
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+  }
+};
+
+// Send system alert
+const sendSystemAlert = async (alertType, message, severity = 'medium') => {
+  try {
+    const sendEmail = require('../utils/sendEmail');
+    
+    const severityColors = {
+      low: '#28a745',
+      medium: '#ffc107',
+      high: '#fd7e14',
+      critical: '#dc3545'
+    };
+    
+    const color = severityColors[severity] || '#ffc107';
+    
+    const emailContent = `
+      <h2 style="color: ${color};">System Alert - ${alertType}</h2>
+      <p><strong>Severity:</strong> <span style="color: ${color}; font-weight: bold;">${severity.toUpperCase()}</span></p>
+      <p><strong>Alert Type:</strong> ${alertType}</p>
+      <p><strong>Message:</strong></p>
+      <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; border-left: 4px solid ${color};">
+        ${message}
+      </div>
+      <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+      <p><strong>System:</strong> CHARISM Community Service Management System</p>
+    `;
+    
+    await sendEmail(
+      process.env.ADMIN_EMAIL || 'admin@charism.edu.ph',
+      `System Alert: ${alertType} - ${severity.toUpperCase()}`,
+      '',
+      emailContent,
+      true
+    );
+    
+    console.log(`✅ System alert sent: ${alertType} (${severity})`);
+  } catch (error) {
+    console.error('Error sending system alert:', error);
+  }
+};
+
 // Admin Dashboard Analytics
 exports.getAdminDashboard = async (req, res) => {
   try {
@@ -21,8 +85,34 @@ exports.getAdminDashboard = async (req, res) => {
       totalAttendance: totalAttendance[0]?.total || 0,
       totalMessages
     });
+    
+    // Send admin notification for dashboard access
+    await sendAdminNotification(
+      'Admin Dashboard Accessed',
+      `Admin dashboard was accessed by user ID: ${req.user.id} at ${new Date().toLocaleString()}`
+    );
   } catch (err) {
+    // Send system alert for errors
+    await sendSystemAlert(
+      'Admin Dashboard Error',
+      `Error fetching dashboard analytics: ${err.message}`,
+      'high'
+    );
+    
     res.status(500).json({ message: 'Error fetching dashboard analytics', error: err.message });
+  }
+};
+
+// Add systemAlert trigger function
+exports.triggerSystemAlert = async (req, res) => {
+  try {
+    const { alertType, message, severity } = req.body;
+    
+    await sendSystemAlert(alertType, message, severity);
+    
+    res.json({ message: 'System alert sent successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error sending system alert', error: err.message });
   }
 };
 
@@ -402,15 +492,35 @@ exports.approveStaff = async (req, res) => {
 
     // Send approval email
     const sendEmail = require('../utils/sendEmail');
-    const emailContent = `
-      <p>Hello ${staffMember.name},</p>
-      <p>Your CHARISM account has been approved by an administrator.</p>
-      <p>You can now log in to your account and access the system.</p>
-      ${approvalNotes ? `<p><strong>Notes:</strong> ${approvalNotes}</p>` : ''}
-      <p>Thank you for your patience.</p>
-    `;
+    const { getStaffApprovalTemplate } = require('../utils/emailTemplates');
+    
+    const emailContent = getStaffApprovalTemplate(staffMember.name, true);
+    await sendEmail(staffMember.email, 'Account Approved - CHARISM', '', emailContent, true);
 
-    await sendEmail(staffMember.email, 'Account Approved', 'Your account has been approved', emailContent);
+    // Send userApproval notification to admin
+    try {
+      const adminNotificationContent = `
+        <h2>User Approval Notification</h2>
+        <p>A staff member has been approved:</p>
+        <ul>
+          <li><strong>Name:</strong> ${staffMember.name}</li>
+          <li><strong>Email:</strong> ${staffMember.email}</li>
+          <li><strong>Role:</strong> ${staffMember.role}</li>
+          <li><strong>Approved By:</strong> Admin</li>
+          <li><strong>Approval Date:</strong> ${new Date().toLocaleString()}</li>
+        </ul>
+      `;
+      
+      await sendEmail(
+        process.env.ADMIN_EMAIL || 'admin@charism.edu.ph',
+        'User Approval Notification - CHARISM',
+        '',
+        adminNotificationContent,
+        true
+      );
+    } catch (emailError) {
+      console.error('Error sending userApproval notification:', emailError);
+    }
 
     res.json({ message: 'Staff member approved successfully' });
   } catch (err) {
@@ -444,14 +554,10 @@ exports.rejectStaff = async (req, res) => {
 
     // Send rejection email
     const sendEmail = require('../utils/sendEmail');
-    const emailContent = `
-      <p>Hello ${staffMember.name},</p>
-      <p>Your CHARISM account application has been reviewed and unfortunately, it has been rejected.</p>
-      ${approvalNotes ? `<p><strong>Reason:</strong> ${approvalNotes}</p>` : ''}
-      <p>If you believe this is an error, please contact the administrator.</p>
-    `;
-
-    await sendEmail(staffMember.email, 'Account Application Rejected', 'Your account application has been rejected', emailContent);
+    const { getStaffApprovalTemplate } = require('../utils/emailTemplates');
+    
+    const emailContent = getStaffApprovalTemplate(staffMember.name, false);
+    await sendEmail(staffMember.email, 'Account Application Rejected - CHARISM', '', emailContent, true);
 
     res.json({ message: 'Staff member rejected successfully' });
   } catch (err) {

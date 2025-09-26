@@ -2,6 +2,8 @@
 
 const User = require('../models/User');
 const { uploadProfilePicture, getImageInfo, hasFile } = require('../utils/mongoFileStorage');
+const sendEmail = require('../utils/sendEmail');
+const { getRegistrationTemplate, getLoginTemplate } = require('../utils/emailTemplates');
 
 // Get all users (Admin only, with optional search/filter)
 exports.getUsers = async (req, res) => {
@@ -21,6 +23,85 @@ exports.getUsers = async (req, res) => {
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching users', error: err.message });
+  }
+};
+
+// Get user profile
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId || req.user.id || req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching profile', error: err.message });
+  }
+};
+
+// Update user profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id || req.user._id;
+    const { name, email, userId: newUserId, academicYear, year, section, department } = req.body;
+    
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (newUserId) updateData.userId = newUserId;
+    if (academicYear) updateData.academicYear = academicYear;
+    if (year) updateData.year = year;
+    if (section) updateData.section = section;
+    if (department) updateData.department = department;
+    
+    const user = await User.findByIdAndUpdate(userId, updateData, { new: true }).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Send profile update email notification
+    try {
+      const emailContent = getRegistrationTemplate(user.name, 'Profile Updated', new Date().toLocaleDateString());
+      const emailResult = await sendEmail(user.email, 'Profile Updated - CHARISM', '', emailContent, true);
+      if (emailResult && emailResult.success) {
+        console.log('Profile update email sent successfully to:', user.email);
+      }
+    } catch (emailError) {
+      console.error('Failed to send profile update email:', emailError);
+    }
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating profile', error: err.message });
+  }
+};
+
+// Change user password
+exports.changePassword = async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id || req.user._id;
+    const { currentPassword, newPassword } = req.body;
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Verify current password
+    const bcrypt = require('bcryptjs');
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+    
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+    user.password = hashedNewPassword;
+    await user.save();
+    
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error changing password', error: err.message });
   }
 };
 

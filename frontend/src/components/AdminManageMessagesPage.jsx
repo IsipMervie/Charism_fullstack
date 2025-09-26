@@ -22,6 +22,33 @@ function AdminManageMessagesPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [updatingReply, setUpdatingReply] = useState(false);
 
+  // Get messages data
+  const getMessages = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllContactMessages();
+      setMessages(response);
+      return response;
+    } catch (error) {
+      console.error('Error getting messages:', error);
+      setError('Failed to load messages');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update message data
+  const updateMessage = async (messageId, updateData) => {
+    try {
+      const response = await axiosInstance.put(`/contact-us/${messageId}`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating message:', error);
+      throw error;
+    }
+  };
+
   // Ensure messages is always an array
   const safeMessages = Array.isArray(messages) ? messages : [];
   

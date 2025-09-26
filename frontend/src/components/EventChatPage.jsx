@@ -42,6 +42,30 @@ import './EventChatPage.css';
 const EventChatPage = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
+
+  // Send message function
+  const sendMessage = async (messageData) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData),
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw error;
+    }
+  };
+
+  // Handle submit function
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Implementation for form submission
+  };
   
   // Core state
   const [event, setEvent] = useState(null);

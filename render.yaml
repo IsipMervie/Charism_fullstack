@@ -36,7 +36,7 @@ services:
       - key: BCRYPT_ROUNDS
         value: 12
 
-  - type: web
+  - type: static
     name: charism
     env: static
     buildCommand: cd frontend && npm install && npm run build

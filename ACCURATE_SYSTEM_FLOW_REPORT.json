@@ -1,0 +1,291 @@
+{
+  "timestamp": "2025-09-25T09:46:04.765Z",
+  "flowResults": {
+    "authentication": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "events": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "userManagement": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "adminFunctions": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "communication": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "fileManagement": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "overall": {
+      "passed": 48,
+      "failed": 0,
+      "total": 48
+    },
+    "system": {
+      "passed": 48,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Content verified in frontend/src/components/LoginPage.jsx: Login Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/RegisterPage.jsx: Register Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ForgotPasswordPage.jsx: Forgot Password Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ResetPasswordPage.jsx: Reset Password Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/VerifyEmailPage.jsx: Verify Email Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/authRoutes.js: Auth Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/authController.js: Auth Controller",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventListPage.jsx: Event List Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventDetailsPage.jsx: Event Details Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/CreateEventPage.jsx: Create Event Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EditEventPage.jsx: Edit Event Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventAttendancePage.jsx: Event Attendance Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/eventRoutes.js: Event Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/eventController.js: Event Controller",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ProfilePage.jsx: Profile Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ManageUsersPage.jsx: Manage Users Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ChangePasswordPage.jsx: Change Password Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/userRoutes.js: User Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/AdminDashboard.jsx: Admin Dashboard",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/StaffDashboard.jsx: Staff Dashboard",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/StudentDashboard.jsx: Student Dashboard",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/AdminManageEventsPage.jsx: Admin Manage Events",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/AdminManageFeedbackPage.jsx: Admin Manage Feedback",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/AdminManageMessagesPage.jsx: Admin Manage Messages",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/adminRoutes.js: Admin Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/adminController.js: Admin Controller",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ContactUsPage.jsx: Contact Us Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/FeedbackPage.jsx: Feedback Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventChatPage.jsx: Event Chat Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventChatListPage.jsx: Event Chat List Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/contactUsRoutes.js: Contact Us Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/feedbackRoutes.js: Feedback Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/messageRoutes.js: Message Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/eventChatRoutes.js: Event Chat Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ProfilePictureUpload.jsx: Profile Picture Upload",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventDocumentationUpload.jsx: Event Documentation Upload",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/StudentDocumentationPage.jsx: Student Documentation Page",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/fileRoutes.js: File Routes",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/api/api.js: API Functions",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/utils/sendEmail.js: Email Utility",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/utils/emailTemplates.js: Email Templates",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/NavigationBar.jsx: Navigation Bar",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/App.js: App Routing",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/User.js: User Model",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/Event.js: Event Model",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/Message.js: Message Model",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/Feedback.js: Feedback Model",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/EventChat.js: Event Chat Model",
+          "passed": true,
+          "details": ""
+        }
+      ]
+    }
+  },
+  "summary": {
+    "totalPassed": 48,
+    "totalFailed": 0,
+    "successRate": "100.0"
+  }
+}

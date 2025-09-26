@@ -5,9 +5,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { 
   FaUser, FaEnvelope, FaUserTie, FaIdCard, FaGraduationCap, 
   FaBuilding, FaCalendar, FaCrown, FaUserGraduate,
-  FaCheckCircle, FaUsers
+  FaCheckCircle, FaUsers, FaEdit, FaSave, FaTimes
 } from 'react-icons/fa';
-import { axiosInstance } from '../api/api';
+import { axiosInstance, updateProfile } from '../api/api';
 import { getProfilePictureUrl } from '../utils/imageUtils';
 import './ProfilePage.css';
 
@@ -24,6 +24,58 @@ function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  
+  // Form state for editing
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    userId: '',
+    academicYear: '',
+    department: '',
+    year: '',
+    section: ''
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+    
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Email is invalid';
+    }
+    
+    if (!formData.userId.trim()) {
+      errors.userId = 'User ID is required';
+    }
+    
+    if (!formData.academicYear.trim()) {
+      errors.academicYear = 'Academic Year is required';
+    }
+    
+    if (!formData.department.trim()) {
+      errors.department = 'Department is required';
+    }
+    
+    if (!formData.year.trim()) {
+      errors.year = 'Year is required';
+    }
+    
+    if (!formData.section.trim()) {
+      errors.section = 'Section is required';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
   
   // Profile picture state - just for display
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
@@ -124,6 +176,96 @@ function ProfilePage() {
   // Manual refresh function
   const handleManualRefresh = async () => {
     await loadProfileData(true);
+  };
+
+  // Form handling functions
+  const handleEditClick = () => {
+    setFormData({
+      name,
+      email,
+      userId,
+      academicYear,
+      department,
+      year,
+      section
+    });
+    setIsEditing(true);
+    setFormErrors({});
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setFormData({
+      name: '',
+      email: '',
+      userId: '',
+      academicYear: '',
+      department: '',
+      year: '',
+      section: ''
+    });
+    setFormErrors({});
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setSubmitting(true);
+    
+    try {
+      const response = await updateProfile(formData);
+      
+      // Update local state
+      setName(formData.name);
+      setEmail(formData.email);
+      setUserId(formData.userId);
+      setAcademicYear(formData.academicYear);
+      setDepartment(formData.department);
+      setYear(formData.year);
+      setSection(formData.section);
+      
+      // Update localStorage
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      Object.assign(user, formData);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      setIsEditing(false);
+      setMessage('Profile updated successfully!');
+      setTimeout(() => setMessage(''), 3000);
+      
+      // Dispatch event for other components
+      window.dispatchEvent(new CustomEvent('profileUpdated', {
+        detail: { profileData: formData }
+      }));
+      
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setMessage('Failed to update profile. Please try again.');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // Check if profile is in sync with backend
@@ -379,86 +521,237 @@ function ProfilePage() {
               Profile Information
             </h2>
             <p className="details-subtitle">Your account details and preferences</p>
-          </div>
-
-          <div className="details-grid">
-            <div className="detail-card">
-              <div className="detail-header">
-                <FaUser className="detail-icon" />
-                <span className="detail-label">Full Name</span>
-              </div>
-              <div className="detail-value">{name || 'Not provided'}</div>
-            </div>
-
-            <div className="detail-card">
-              <div className="detail-header">
-                <FaEnvelope className="detail-icon" />
-                <span className="detail-label">Email Address</span>
-              </div>
-              <div className="detail-value">{email || 'Not provided'}</div>
-            </div>
-
-            <div className="detail-card">
-              <div className="detail-header">
-                <FaIdCard className="detail-icon" />
-                <span className="detail-label">User ID</span>
-              </div>
-              <div className="detail-value">{userId || 'Not provided'}</div>
-            </div>
-
-            <div className="detail-card">
-              <div className="detail-header">
-                <FaUserTie className="detail-icon" />
-                <span className="detail-label">Account Role</span>
-              </div>
-              <div className="detail-value">
-                <span className="role-display" style={{ color: getRoleColor(role) }}>
-                  {getRoleIcon(role)}
-                  {getRoleBadge(role)}
-                </span>
-              </div>
-            </div>
-
-            {academicYear && (
-              <div className="detail-card">
-                <div className="detail-header">
-                  <FaGraduationCap className="detail-icon" />
-                  <span className="detail-label">Academic Year</span>
-                </div>
-                <div className="detail-value">{academicYear}</div>
-              </div>
-            )}
-
-            {department && (
-              <div className="detail-card">
-                <div className="detail-header">
-                  <FaBuilding className="detail-icon" />
-                  <span className="detail-label">Department</span>
-                </div>
-                <div className="detail-value">{department}</div>
-              </div>
-            )}
-
-            {year && (
-              <div className="detail-card">
-                <div className="detail-header">
-                  <FaUserGraduate className="detail-icon" />
-                  <span className="detail-label">Year Level</span>
-                </div>
-                <div className="detail-value">{year}</div>
-              </div>
-            )}
-
-            {section && (
-              <div className="detail-card">
-                <div className="detail-header">
-                  <FaUsers className="detail-icon" />
-                  <span className="detail-label">Section</span>
-                </div>
-                <div className="detail-value">{section}</div>
-              </div>
+            {!isEditing && (
+              <button 
+                className="edit-profile-button"
+                onClick={handleEditClick}
+                title="Edit Profile"
+              >
+                <FaEdit className="button-icon" />
+                Edit Profile
+              </button>
             )}
           </div>
+
+          {isEditing ? (
+            <form onSubmit={handleFormSubmit} className="profile-edit-form">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="name" className="form-label">
+                    <FaUser className="form-icon" />
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className={`form-input ${formErrors.name ? 'error' : ''}`}
+                    placeholder="Enter your full name"
+                  />
+                  {formErrors.name && <span className="error-message">{formErrors.name}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="email" className="form-label">
+                    <FaEnvelope className="form-icon" />
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`form-input ${formErrors.email ? 'error' : ''}`}
+                    placeholder="Enter your email"
+                  />
+                  {formErrors.email && <span className="error-message">{formErrors.email}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="userId" className="form-label">
+                    <FaIdCard className="form-icon" />
+                    User ID *
+                  </label>
+                  <input
+                    type="text"
+                    id="userId"
+                    name="userId"
+                    value={formData.userId}
+                    onChange={handleInputChange}
+                    className={`form-input ${formErrors.userId ? 'error' : ''}`}
+                    placeholder="Enter your user ID"
+                  />
+                  {formErrors.userId && <span className="error-message">{formErrors.userId}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="academicYear" className="form-label">
+                    <FaGraduationCap className="form-icon" />
+                    Academic Year
+                  </label>
+                  <input
+                    type="text"
+                    id="academicYear"
+                    name="academicYear"
+                    value={formData.academicYear}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Enter academic year"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="department" className="form-label">
+                    <FaBuilding className="form-icon" />
+                    Department
+                  </label>
+                  <input
+                    type="text"
+                    id="department"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Enter department"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="year" className="form-label">
+                    <FaUserGraduate className="form-icon" />
+                    Year Level
+                  </label>
+                  <input
+                    type="text"
+                    id="year"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Enter year level"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="section" className="form-label">
+                    <FaUsers className="form-icon" />
+                    Section
+                  </label>
+                  <input
+                    type="text"
+                    id="section"
+                    name="section"
+                    value={formData.section}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Enter section"
+                  />
+                </div>
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="cancel-button"
+                  disabled={submitting}
+                >
+                  <FaTimes className="button-icon" />
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="save-button"
+                  disabled={submitting}
+                >
+                  <FaSave className="button-icon" />
+                  {submitting ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="details-grid">
+              <div className="detail-card">
+                <div className="detail-header">
+                  <FaUser className="detail-icon" />
+                  <span className="detail-label">Full Name</span>
+                </div>
+                <div className="detail-value">{name || 'Not provided'}</div>
+              </div>
+
+              <div className="detail-card">
+                <div className="detail-header">
+                  <FaEnvelope className="detail-icon" />
+                  <span className="detail-label">Email Address</span>
+                </div>
+                <div className="detail-value">{email || 'Not provided'}</div>
+              </div>
+
+              <div className="detail-card">
+                <div className="detail-header">
+                  <FaIdCard className="detail-icon" />
+                  <span className="detail-label">User ID</span>
+                </div>
+                <div className="detail-value">{userId || 'Not provided'}</div>
+              </div>
+
+              <div className="detail-card">
+                <div className="detail-header">
+                  <FaUserTie className="detail-icon" />
+                  <span className="detail-label">Account Role</span>
+                </div>
+                <div className="detail-value">
+                  <span className="role-display" style={{ color: getRoleColor(role) }}>
+                    {getRoleIcon(role)}
+                    {getRoleBadge(role)}
+                  </span>
+                </div>
+              </div>
+
+              {academicYear && (
+                <div className="detail-card">
+                  <div className="detail-header">
+                    <FaGraduationCap className="detail-icon" />
+                    <span className="detail-label">Academic Year</span>
+                  </div>
+                  <div className="detail-value">{academicYear}</div>
+                </div>
+              )}
+
+              {department && (
+                <div className="detail-card">
+                  <div className="detail-header">
+                    <FaBuilding className="detail-icon" />
+                    <span className="detail-label">Department</span>
+                  </div>
+                  <div className="detail-value">{department}</div>
+                </div>
+              )}
+
+              {year && (
+                <div className="detail-card">
+                  <div className="detail-header">
+                    <FaUserGraduate className="detail-icon" />
+                    <span className="detail-label">Year Level</span>
+                  </div>
+                  <div className="detail-value">{year}</div>
+                </div>
+              )}
+
+              {section && (
+                <div className="detail-card">
+                  <div className="detail-header">
+                    <FaUsers className="detail-icon" />
+                    <span className="detail-label">Section</span>
+                  </div>
+                  <div className="detail-value">{section}</div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Success Message */}

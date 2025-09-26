@@ -1,371 +1,254 @@
-// backend/controllers/authController.js
-
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const sendEmail = require('../utils/sendEmail');
-const { getEmailVerificationTemplate, getPasswordResetTemplate } = require('../utils/emailTemplates');
+const { getEmailVerificationTemplate, getPasswordResetTemplate, getRegistrationTemplate, getLoginTemplate } = require('../utils/emailTemplates');
 const User = require('../models/User');
-
-// Use environment variable for JWT secret, with fallback for development only
-const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? 'fallback_jwt_secret_for_production' : 'your_jwt_secret');
-
-// Validate JWT secret is available
-if (!JWT_SECRET) {
-  console.error('❌ JWT_SECRET environment variable is required in production!');
-  console.error('🚨 Using fallback JWT secret - this is not secure for production!');
-}
-
 const { generateVerificationLink, generatePasswordResetLink } = require('../utils/emailLinkGenerator');
 
-// Register a new user
-exports.register = async (req, res) => {
-  // Set CORS headers
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  const { name, email, password, role, userId, academicYear, year, section, department } = req.body;
-  
+console.log('✅ All dependencies loaded');
+
+// Register function
+const register = async (req, res) => {
   try {
-    // Validate required fields
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ 
-        message: 'Missing required fields: name, email, password, and role are required' 
-      });
-    }
-
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(400).json({ 
-        message: 'Password must be at least 8 characters long' 
-      });
-    }
-
-    // Validate role
-    if (!['Admin', 'Staff', 'Student'].includes(role)) {
-      return res.status(400).json({ 
-        message: 'Invalid role. Must be Admin, Staff, or Student' 
-      });
-    }
+    const { name, email, password, userId, academicYear, year, section, department } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User with this email already exists' });
+      return res.status(400).json({ message: 'User already exists' });
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12); // Increased security
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    let userData = {
+    // Create user
+    const user = new User({
       name,
       email,
       password: hashedPassword,
-      role,
       userId,
-      isVerified: false,
-    };
+      academicYear,
+      year,
+      section,
+      department,
+      role: 'Student',
+      status: 'pending'
+    });
 
-    if (role === 'Student') {
-      userData.academicYear = academicYear;
-      userData.year = year;
-      userData.section = section;
-      userData.department = department;
-      userData.isApproved = true; // Students are auto-approved
-      userData.approvalStatus = 'approved';
-    } else if (role === 'Staff') {
-      userData.department = department;
-      userData.isApproved = false; // Staff need admin approval
-      userData.approvalStatus = 'pending';
-    } else if (role === 'Admin') {
-      userData.isApproved = true; // Admins are auto-approved
-      userData.approvalStatus = 'approved';
-    }
+    await user.save();
 
-    const newUser = new User(userData);
-    await newUser.save();
-
-    console.log(`✅ User registered successfully: ${email} (${role})`);
-
-    // Email verification with better error handling and no-reply
+    // Send email verification
     try {
-      const token = jwt.sign({ 
-        userId: newUser._id, 
-        role: newUser.role,
-        email: newUser.email 
-      }, JWT_SECRET, { expiresIn: '24h' }); // Extended to 24 hours
+      const verificationToken = jwt.sign(
+        { userId: user._id, email: user.email },
+        process.env.JWT_SECRET || 'mysecretkey123456789',
+        { expiresIn: '24h' }
+      );
       
-      const verificationUrl = generateVerificationLink(token);
-      
-      const emailContent = getEmailVerificationTemplate(verificationUrl, name);
-
-      const emailResult = await sendEmail(newUser.email, 'Welcome to CHARISM - Verify Your Email', '', emailContent, true); // true = no-reply
-      
-      if (emailResult && emailResult.success) {
-        console.log('Verification email sent successfully to:', newUser.email);
-      } else {
-        console.warn('Email service not configured, but user created successfully');
-      }
+      const verificationLink = `${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}/verify-email?token=${verificationToken}`;
+      const emailContent = getEmailVerificationTemplate(verificationLink, name);
+      await sendEmail(email, 'Verify Your Email - CHARISM', '', emailContent, true);
+      console.log('✅ Email verification sent to:', email);
     } catch (emailError) {
-      console.error('Failed to send verification email:', emailError);
-      // Don't fail registration if email fails
+      console.error('Failed to send email verification:', emailError);
     }
 
-    let responseMessage = 'Registration successful, please verify your email';
-    if (role === 'Staff') {
-      responseMessage += '. Your account will be reviewed by an administrator.';
+    // Send registration confirmation email
+    try {
+      const emailContent = getRegistrationTemplate(name, 'Welcome to CHARISM', new Date().toLocaleDateString());
+      await sendEmail(email, 'Welcome to CHARISM Community Service', '', emailContent, true);
+      console.log('✅ Registration email sent to:', email);
+    } catch (emailError) {
+      console.error('Failed to send registration email:', emailError);
     }
 
-    res.status(201).json({ message: responseMessage });
-  } catch (err) {
-    console.error('Registration error:', err);
-    res.status(500).json({ message: 'Error registering user', error: err.message });
+    res.status(201).json({ message: 'Registration successful', user: { id: user._id, email: user.email } });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Registration failed', error: error.message });
   }
 };
 
-// Login user
-exports.login = async (req, res) => {
-  // Set CORS headers
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  const { email, password } = req.body;
+// Login function
+const login = async (req, res) => {
   try {
-    console.log('🔍 Login attempt for:', email);
-    console.log('📊 Request body:', { email, password: password ? '[HIDDEN]' : 'undefined' });
-    
-    // Check if database is connected using lazy connection
-    const { getLazyConnection } = require('../config/db');
-    console.log('🔄 Attempting database connection...');
-    
-    const isConnected = await getLazyConnection();
-    console.log('📊 Database connection result:', isConnected);
-    
-    if (!isConnected) {
-      console.log('❌ Database not connected during login attempt');
-      return res.status(500).json({ 
-        message: 'Database connection not ready. Please try again.',
-        error: 'Database not connected'
-      });
-    }
+    const { email, password } = req.body;
 
-    console.log('✅ Database connected, searching for user...');
+    // Find user
     const user = await User.findOne({ email });
-    
     if (!user) {
-      console.log('❌ User not found:', email);
-      return res.status(400).json({ message: 'User not found' });
-    }
-    
-    console.log('✅ User found:', { 
-      id: user._id, 
-      role: user.role, 
-      isVerified: user.isVerified,
-      isApproved: user.isApproved,
-      hasPassword: !!user.password,
-      passwordLength: user.password ? user.password.length : 0,
-      passwordStartsWithHash: user.password ? user.password.startsWith('$2b$') : false
-    });
-    
-    if (!user.isVerified) {
-      console.log('❌ User not verified:', email);
-      return res.status(401).json({ message: 'Please verify your email before logging in.' });
-    }
-
-    // Check if staff user is approved
-    if (user.role === 'Staff' && !user.isApproved) {
-      console.log('❌ Staff user not approved:', email);
-      return res.status(401).json({ 
-        message: 'Your account is pending admin approval. Please wait for approval before logging in.' 
-      });
-    }
-
-    // Validate password field
-    if (!user.password) {
-      console.log('❌ User has no password field:', email);
-      return res.status(500).json({ 
-        message: 'Account configuration error. Please contact administrator.',
-        error: 'Missing password field'
-      });
-    }
-
-    if (!user.password.startsWith('$2b$')) {
-      console.log('❌ User password not properly hashed:', email);
-      return res.status(500).json({ 
-        message: 'Account configuration error. Please contact administrator.',
-        error: 'Invalid password format'
-      });
-    }
-
-    console.log('🔐 Checking password...');
-    const isMatch = await bcrypt.compare(password, user.password);
-    
-    if (!isMatch) {
-      console.log('❌ Invalid password for:', email);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    console.log('✅ Password verified, generating token...');
-    const token = jwt.sign({ 
-      userId: user._id, 
-      role: user.role,
-      email: user.email 
-    }, JWT_SECRET, { expiresIn: '1h' });
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-    console.log('✅ Login successful for:', email);
-    res.status(200).json({
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'mysecretkey123456789',
+      { expiresIn: '24h' }
+    );
+
+    // Send login notification email
+    try {
+      const loginTime = new Date().toLocaleString();
+      const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown';
+      const emailContent = getLoginTemplate(user.name, loginTime, ipAddress);
+      await sendEmail(user.email, 'Login Notification - CHARISM', '', emailContent, true);
+      console.log('✅ Login notification email sent to:', user.email);
+    } catch (emailError) {
+      console.error('Failed to send login notification email:', emailError);
+    }
+
+    res.json({
       message: 'Login successful',
       token,
       user: {
-        _id: user._id,
+        id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        academicYear: user.academicYear,
-        year: user.year,
-        section: user.section,
-        department: user.department,
-        userId: user.userId,
-        isApproved: user.isApproved,
-        approvalStatus: user.approvalStatus,
+        status: user.status
       }
     });
-  } catch (err) {
-    console.error('❌ Login error:', err);
-    console.error('❌ Error stack:', err.stack);
-    console.error('❌ Error details:', {
-      name: err.name,
-      message: err.message,
-      code: err.code,
-      email: email
-    });
-    res.status(500).json({ 
-      message: 'Error logging in', 
-      error: err.message,
-      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Login failed', error: error.message });
   }
 };
 
-// Verify user's email
-exports.verifyEmail = async (req, res) => {
-  const { token } = req.params;
+// Forgot password function
+const forgotPassword = async (req, res) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.userId;
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    if (user.isVerified) return res.status(200).json({ message: 'Email is already verified' });
+    const { email } = req.body;
 
-    user.isVerified = true;
-    await user.save();
-
-    res.status(200).json({ message: 'Email successfully verified' });
-  } catch (err) {
-    res.status(400).json({ message: 'Invalid or expired token' });
-  }
-};
-
-// Change password
-exports.changePassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-  const userId = req.user.id;
-
-  try {
-    // Validate new password length
-    if (newPassword.length < 8) {
-      return res.status(400).json({ message: 'New password must be at least 8 characters long' });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
     }
 
+    // Generate reset token
+    const resetToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET || 'mysecretkey123456789',
+      { expiresIn: '1h' }
+    );
+
+    // Save reset token to user
+    user.resetToken = resetToken;
+    user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    // Send password reset email
+    try {
+      const resetLink = generatePasswordResetLink(resetToken);
+      const emailContent = getPasswordResetTemplate(user.name, resetLink);
+      await sendEmail(user.email, 'Password Reset - CHARISM', '', emailContent, true);
+      console.log('✅ Password reset email sent to:', user.email);
+    } catch (emailError) {
+      console.error('Failed to send password reset email:', emailError);
+    }
+
+    res.json({ message: 'Password reset email sent' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ message: 'Failed to send reset email', error: error.message });
+  }
+};
+
+// Reset password function
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mysecretkey123456789');
+    const user = await User.findById(decoded.userId);
+
+    if (!user || user.resetToken !== token || user.resetTokenExpiry < Date.now()) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update user
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+    await user.save();
+
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ message: 'Password reset failed', error: error.message });
+  }
+};
+
+// Verify email function
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mysecretkey123456789');
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+
+    // Mark email as verified
+    user.emailVerified = true;
+    await user.save();
+
+    res.json({ message: 'Email verified successfully' });
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({ message: 'Email verification failed', error: error.message });
+  }
+};
+
+// Change password function
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.userId || req.user.id || req.user._id;
+
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect' });
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
 
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
     user.password = hashedNewPassword;
     await user.save();
 
     res.json({ message: 'Password changed successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error changing password', error: err.message });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({ message: 'Password change failed', error: error.message });
   }
 };
 
-// Forgot password with enhanced email and no-reply
-exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      // Don't reveal if user exists or not for security
-      return res.json({ message: 'If an account with that email exists, a password reset link has been sent.' });
-    }
+console.log('✅ All functions defined');
 
-    const token = jwt.sign({ 
-      userId: user._id, 
-      role: user.role,
-      email: user.email 
-    }, JWT_SECRET, { expiresIn: '1h' });
-    
-    const resetUrl = generatePasswordResetLink(token);
-    
-    const emailContent = getPasswordResetTemplate(resetUrl, user.name);
-
-    try {
-      const emailResult = await sendEmail(user.email, 'CHARISM - Password Reset Request', '', emailContent, true); // true = no-reply
-      
-      if (emailResult && emailResult.success) {
-        console.log('Password reset email sent successfully to:', user.email);
-        res.json({ message: 'Password reset email sent successfully. Please check your inbox.' });
-      } else {
-        console.warn('Email service not configured');
-        res.status(500).json({ message: 'Email service not available. Please contact administrator.' });
-      }
-    } catch (emailError) {
-      console.error('Failed to send password reset email:', emailError);
-      res.status(500).json({ message: 'Failed to send password reset email. Please try again later.' });
-    }
-  } catch (err) {
-    console.error('Forgot password error:', err);
-    res.status(500).json({ message: 'Error processing password reset request', error: err.message });
-  }
-};
-
-// Reset password
-exports.resetPassword = async (req, res) => {
-  // Accept token either from route param or request body for flexibility
-  const tokenFromParams = req.params?.token;
-  const tokenFromBody = req.body?.token;
-  const token = tokenFromParams || tokenFromBody;
-
-  // Accept password field as 'newPassword' or 'password' (frontend variations)
-  const providedNewPassword = req.body?.newPassword || req.body?.password;
-
-  if (!token) {
-    return res.status(400).json({ message: 'Missing token' });
-  }
-  if (!providedNewPassword) {
-    return res.status(400).json({ message: 'Missing new password' });
-  }
-  if (providedNewPassword.length < 8) {
-    return res.status(400).json({ message: 'New password must be at least 8 characters long' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.userId;
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    const hashedPassword = await bcrypt.hash(providedNewPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    res.json({ message: 'Password reset successfully' });
-  } catch (err) {
-    res.status(400).json({ message: 'Invalid or expired token' });
-  }
+module.exports = {
+  register,
+  login,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+  changePassword
 };

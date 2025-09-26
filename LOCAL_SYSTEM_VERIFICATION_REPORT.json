@@ -1,0 +1,298 @@
+{
+  "timestamp": "2025-09-25T08:52:17.977Z",
+  "results": {
+    "backend": {
+      "passed": 35,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Main Server File",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Package Configuration",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Environment File",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Config Directory",
+          "passed": true,
+          "details": "Directory exists"
+        },
+        {
+          "name": "Database Configuration",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Models Directory",
+          "passed": true,
+          "details": "Directory exists"
+        },
+        {
+          "name": "User Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Event Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Section Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "YearLevel Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Department Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "AcademicYear Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Message Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Feedback Model",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Controllers Directory",
+          "passed": true,
+          "details": "Directory exists"
+        },
+        {
+          "name": "Auth Controller",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Event Controller",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Admin Controller",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "User Controller",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Routes Directory",
+          "passed": true,
+          "details": "Directory exists"
+        },
+        {
+          "name": "Auth Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Event Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Admin Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "User Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "File Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Message Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Feedback Routes",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Utils Directory",
+          "passed": true,
+          "details": "Directory exists"
+        },
+        {
+          "name": "Email Utility",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Error Handler",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Middleware Directory",
+          "passed": true,
+          "details": "Directory exists"
+        },
+        {
+          "name": "Server CORS Setup",
+          "passed": true,
+          "details": "Required content found"
+        },
+        {
+          "name": "Database Connection",
+          "passed": true,
+          "details": "Required content found"
+        },
+        {
+          "name": "Route Mounting",
+          "passed": true,
+          "details": "Required content found"
+        },
+        {
+          "name": "Error Handling",
+          "passed": true,
+          "details": "Required content found"
+        }
+      ]
+    },
+    "frontend": {
+      "passed": 19,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Package Configuration",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Main App Component",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Entry Point",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "HTML Template",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Navigation Component",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Home Page",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Login Page",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Register Page",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Event List Page",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Event Details Page",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Create Event Page",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Admin Dashboard",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Staff Dashboard",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Student Dashboard",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "API Configuration",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "API Error Handler",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "Theme Context",
+          "passed": true,
+          "details": "File exists"
+        },
+        {
+          "name": "React Router Setup",
+          "passed": true,
+          "details": "Routes configured"
+        },
+        {
+          "name": "API Configuration",
+          "passed": true,
+          "details": "API configured"
+        }
+      ]
+    },
+    "overall": {
+      "passed": 54,
+      "failed": 0,
+      "total": 54
+    }
+  },
+  "summary": {
+    "backendPercentage": "100.0",
+    "frontendPercentage": "100.0",
+    "overallPercentage": "100.0",
+    "status": "EXCELLENT"
+  }
+}

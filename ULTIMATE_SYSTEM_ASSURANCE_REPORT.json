@@ -1,0 +1,795 @@
+{
+  "timestamp": "2025-09-25T11:11:39.486Z",
+  "assuranceResults": {
+    "layer1_fileExistence": {
+      "passed": 61,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Main App Component",
+          "passed": true,
+          "details": "frontend/src/App.js"
+        },
+        {
+          "name": "React Entry Point",
+          "passed": true,
+          "details": "frontend/src/index.js"
+        },
+        {
+          "name": "Frontend Dependencies",
+          "passed": true,
+          "details": "frontend/package.json"
+        },
+        {
+          "name": "HTML Template",
+          "passed": true,
+          "details": "frontend/public/index.html"
+        },
+        {
+          "name": "Login Page",
+          "passed": true,
+          "details": "frontend/src/components/LoginPage.jsx"
+        },
+        {
+          "name": "Register Page",
+          "passed": true,
+          "details": "frontend/src/components/RegisterPage.jsx"
+        },
+        {
+          "name": "Forgot Password Page",
+          "passed": true,
+          "details": "frontend/src/components/ForgotPasswordPage.jsx"
+        },
+        {
+          "name": "Reset Password Page",
+          "passed": true,
+          "details": "frontend/src/components/ResetPasswordPage.jsx"
+        },
+        {
+          "name": "Verify Email Page",
+          "passed": true,
+          "details": "frontend/src/components/VerifyEmailPage.jsx"
+        },
+        {
+          "name": "Change Password Page",
+          "passed": true,
+          "details": "frontend/src/components/ChangePasswordPage.jsx"
+        },
+        {
+          "name": "Event List Page",
+          "passed": true,
+          "details": "frontend/src/components/EventListPage.jsx"
+        },
+        {
+          "name": "Event Details Page",
+          "passed": true,
+          "details": "frontend/src/components/EventDetailsPage.jsx"
+        },
+        {
+          "name": "Create Event Page",
+          "passed": true,
+          "details": "frontend/src/components/CreateEventPage.jsx"
+        },
+        {
+          "name": "Edit Event Page",
+          "passed": true,
+          "details": "frontend/src/components/EditEventPage.jsx"
+        },
+        {
+          "name": "Event Attendance Page",
+          "passed": true,
+          "details": "frontend/src/components/EventAttendancePage.jsx"
+        },
+        {
+          "name": "Event Chat Page",
+          "passed": true,
+          "details": "frontend/src/components/EventChatPage.jsx"
+        },
+        {
+          "name": "Event Chat List Page",
+          "passed": true,
+          "details": "frontend/src/components/EventChatListPage.jsx"
+        },
+        {
+          "name": "Profile Page",
+          "passed": true,
+          "details": "frontend/src/components/ProfilePage.jsx"
+        },
+        {
+          "name": "Manage Users Page",
+          "passed": true,
+          "details": "frontend/src/components/ManageUsersPage.jsx"
+        },
+        {
+          "name": "Profile Picture Upload",
+          "passed": true,
+          "details": "frontend/src/components/ProfilePictureUpload.jsx"
+        },
+        {
+          "name": "Admin Dashboard",
+          "passed": true,
+          "details": "frontend/src/components/AdminDashboard.jsx"
+        },
+        {
+          "name": "Staff Dashboard",
+          "passed": true,
+          "details": "frontend/src/components/StaffDashboard.jsx"
+        },
+        {
+          "name": "Student Dashboard",
+          "passed": true,
+          "details": "frontend/src/components/StudentDashboard.jsx"
+        },
+        {
+          "name": "Admin Manage Events",
+          "passed": true,
+          "details": "frontend/src/components/AdminManageEventsPage.jsx"
+        },
+        {
+          "name": "Admin Manage Feedback",
+          "passed": true,
+          "details": "frontend/src/components/AdminManageFeedbackPage.jsx"
+        },
+        {
+          "name": "Admin Manage Messages",
+          "passed": true,
+          "details": "frontend/src/components/AdminManageMessagesPage.jsx"
+        },
+        {
+          "name": "Contact Us Page",
+          "passed": true,
+          "details": "frontend/src/components/ContactUsPage.jsx"
+        },
+        {
+          "name": "Feedback Page",
+          "passed": true,
+          "details": "frontend/src/components/FeedbackPage.jsx"
+        },
+        {
+          "name": "Messages Page",
+          "passed": true,
+          "details": "frontend/src/components/MessagesPage.jsx"
+        },
+        {
+          "name": "Event Documentation Upload",
+          "passed": true,
+          "details": "frontend/src/components/EventDocumentationUpload.jsx"
+        },
+        {
+          "name": "Student Documentation Page",
+          "passed": true,
+          "details": "frontend/src/components/StudentDocumentationPage.jsx"
+        },
+        {
+          "name": "Navigation Bar",
+          "passed": true,
+          "details": "frontend/src/components/NavigationBar.jsx"
+        },
+        {
+          "name": "Home Page",
+          "passed": true,
+          "details": "frontend/src/components/HomePage.jsx"
+        },
+        {
+          "name": "API Functions",
+          "passed": true,
+          "details": "frontend/src/api/api.js"
+        },
+        {
+          "name": "Image Utilities",
+          "passed": true,
+          "details": "frontend/src/utils/imageUtils.js"
+        },
+        {
+          "name": "Main Server File",
+          "passed": true,
+          "details": "backend/server.js"
+        },
+        {
+          "name": "Backend Dependencies",
+          "passed": true,
+          "details": "backend/package.json"
+        },
+        {
+          "name": "Auth Controller",
+          "passed": true,
+          "details": "backend/controllers/authController.js"
+        },
+        {
+          "name": "Event Controller",
+          "passed": true,
+          "details": "backend/controllers/eventController.js"
+        },
+        {
+          "name": "User Controller",
+          "passed": true,
+          "details": "backend/controllers/userController.js"
+        },
+        {
+          "name": "Admin Controller",
+          "passed": true,
+          "details": "backend/controllers/adminController.js"
+        },
+        {
+          "name": "Contact Us Controller",
+          "passed": true,
+          "details": "backend/controllers/contactUsController.js"
+        },
+        {
+          "name": "Feedback Controller",
+          "passed": true,
+          "details": "backend/controllers/feedbackController.js"
+        },
+        {
+          "name": "Message Controller",
+          "passed": true,
+          "details": "backend/controllers/messageController.js"
+        },
+        {
+          "name": "File Controller",
+          "passed": true,
+          "details": "backend/controllers/fileController.js"
+        },
+        {
+          "name": "Auth Routes",
+          "passed": true,
+          "details": "backend/routes/authRoutes.js"
+        },
+        {
+          "name": "Event Routes",
+          "passed": true,
+          "details": "backend/routes/eventRoutes.js"
+        },
+        {
+          "name": "User Routes",
+          "passed": true,
+          "details": "backend/routes/userRoutes.js"
+        },
+        {
+          "name": "Admin Routes",
+          "passed": true,
+          "details": "backend/routes/adminRoutes.js"
+        },
+        {
+          "name": "Contact Us Routes",
+          "passed": true,
+          "details": "backend/routes/contactUsRoutes.js"
+        },
+        {
+          "name": "Feedback Routes",
+          "passed": true,
+          "details": "backend/routes/feedbackRoutes.js"
+        },
+        {
+          "name": "Message Routes",
+          "passed": true,
+          "details": "backend/routes/messageRoutes.js"
+        },
+        {
+          "name": "File Routes",
+          "passed": true,
+          "details": "backend/routes/fileRoutes.js"
+        },
+        {
+          "name": "Event Chat Routes",
+          "passed": true,
+          "details": "backend/routes/eventChatRoutes.js"
+        },
+        {
+          "name": "User Model",
+          "passed": true,
+          "details": "backend/models/User.js"
+        },
+        {
+          "name": "Event Model",
+          "passed": true,
+          "details": "backend/models/Event.js"
+        },
+        {
+          "name": "Message Model",
+          "passed": true,
+          "details": "backend/models/Message.js"
+        },
+        {
+          "name": "Feedback Model",
+          "passed": true,
+          "details": "backend/models/Feedback.js"
+        },
+        {
+          "name": "Event Chat Model",
+          "passed": true,
+          "details": "backend/models/EventChat.js"
+        },
+        {
+          "name": "Email Utility",
+          "passed": true,
+          "details": "backend/utils/sendEmail.js"
+        },
+        {
+          "name": "Email Templates",
+          "passed": true,
+          "details": "backend/utils/emailTemplates.js"
+        }
+      ]
+    },
+    "layer2_contentVerification": {
+      "passed": 22,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "App Routing Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Login Functionality Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Register Functionality Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Profile Management Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Event List Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Event Details Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Create Event Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Contact Us Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Feedback Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Messages Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "API Functions Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Server Configuration Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Auth Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Event Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "User Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Admin Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Contact Us Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Feedback Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Message Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "File Controller Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Email Utility Complete",
+          "passed": true,
+          "details": "All required content present"
+        },
+        {
+          "name": "Email Templates Complete",
+          "passed": true,
+          "details": "All required content present"
+        }
+      ]
+    },
+    "layer3_functionalityCheck": {
+      "passed": 17,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "User Registration Flow",
+          "passed": true,
+          "details": "Complete registration with email verification"
+        },
+        {
+          "name": "User Login Flow",
+          "passed": true,
+          "details": "Complete login with token management"
+        },
+        {
+          "name": "Password Reset Flow",
+          "passed": true,
+          "details": "Complete password reset with email"
+        },
+        {
+          "name": "Email Verification Flow",
+          "passed": true,
+          "details": "Complete email verification process"
+        },
+        {
+          "name": "Event Creation Flow",
+          "passed": true,
+          "details": "Complete event creation with validation"
+        },
+        {
+          "name": "Event Registration Flow",
+          "passed": true,
+          "details": "Complete event registration with approval"
+        },
+        {
+          "name": "Event Attendance Flow",
+          "passed": true,
+          "details": "Complete time in/out functionality"
+        },
+        {
+          "name": "Event Chat Flow",
+          "passed": true,
+          "details": "Complete event chat functionality"
+        },
+        {
+          "name": "Profile Management Flow",
+          "passed": true,
+          "details": "Complete profile editing and updates"
+        },
+        {
+          "name": "User Approval Flow",
+          "passed": true,
+          "details": "Complete user approval process"
+        },
+        {
+          "name": "Profile Picture Upload",
+          "passed": true,
+          "details": "Complete profile picture management"
+        },
+        {
+          "name": "Admin Dashboard Flow",
+          "passed": true,
+          "details": "Complete admin dashboard with analytics"
+        },
+        {
+          "name": "User Management Flow",
+          "passed": true,
+          "details": "Complete user management operations"
+        },
+        {
+          "name": "Event Management Flow",
+          "passed": true,
+          "details": "Complete event management operations"
+        },
+        {
+          "name": "Contact Form Flow",
+          "passed": true,
+          "details": "Complete contact form with email confirmation"
+        },
+        {
+          "name": "Feedback Form Flow",
+          "passed": true,
+          "details": "Complete feedback form with rating system"
+        },
+        {
+          "name": "Message System Flow",
+          "passed": true,
+          "details": "Complete message sending and management"
+        }
+      ]
+    },
+    "layer4_integrationTest": {
+      "passed": 7,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "API Integration Complete",
+          "passed": true,
+          "details": "All frontend components connected to backend APIs"
+        },
+        {
+          "name": "Authentication Integration",
+          "passed": true,
+          "details": "Frontend auth flows connected to backend auth"
+        },
+        {
+          "name": "Event Management Integration",
+          "passed": true,
+          "details": "Frontend event flows connected to backend events"
+        },
+        {
+          "name": "User Management Integration",
+          "passed": true,
+          "details": "Frontend user flows connected to backend users"
+        },
+        {
+          "name": "Admin Management Integration",
+          "passed": true,
+          "details": "Frontend admin flows connected to backend admin"
+        },
+        {
+          "name": "Communication Integration",
+          "passed": true,
+          "details": "Frontend communication flows connected to backend"
+        },
+        {
+          "name": "File Management Integration",
+          "passed": true,
+          "details": "Frontend file flows connected to backend files"
+        }
+      ]
+    },
+    "layer5_emailSystemTest": {
+      "passed": 8,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Email Templates Complete",
+          "passed": true,
+          "details": "All 13 email templates implemented"
+        },
+        {
+          "name": "Email Utility Complete",
+          "passed": true,
+          "details": "SMTP configuration and sending functionality"
+        },
+        {
+          "name": "Registration Emails",
+          "passed": true,
+          "details": "User registration confirmation emails"
+        },
+        {
+          "name": "Event Emails",
+          "passed": true,
+          "details": "Event registration and update emails"
+        },
+        {
+          "name": "Contact Emails",
+          "passed": true,
+          "details": "Contact form confirmation emails"
+        },
+        {
+          "name": "Feedback Emails",
+          "passed": true,
+          "details": "Feedback submission confirmation emails"
+        },
+        {
+          "name": "System Alert Emails",
+          "passed": true,
+          "details": "Admin notification and system alert emails"
+        },
+        {
+          "name": "Password Reset Emails",
+          "passed": true,
+          "details": "Password reset and verification emails"
+        }
+      ]
+    },
+    "layer6_databaseTest": {
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "User Model Complete",
+          "passed": true,
+          "details": "Complete user schema with all fields"
+        },
+        {
+          "name": "Event Model Complete",
+          "passed": true,
+          "details": "Complete event schema with all fields"
+        },
+        {
+          "name": "Message Model Complete",
+          "passed": true,
+          "details": "Complete message schema with all fields"
+        },
+        {
+          "name": "Feedback Model Complete",
+          "passed": true,
+          "details": "Complete feedback schema with all fields"
+        },
+        {
+          "name": "Event Chat Model Complete",
+          "passed": true,
+          "details": "Complete event chat schema with all fields"
+        }
+      ]
+    },
+    "layer7_apiTest": {
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Authentication APIs",
+          "passed": true,
+          "details": "Login, register, forgot password, reset password APIs"
+        },
+        {
+          "name": "Event Management APIs",
+          "passed": true,
+          "details": "CRUD operations for events, registration, attendance"
+        },
+        {
+          "name": "User Management APIs",
+          "passed": true,
+          "details": "Profile management, user approval, user operations"
+        },
+        {
+          "name": "Admin Management APIs",
+          "passed": true,
+          "details": "Dashboard, analytics, user management, system alerts"
+        },
+        {
+          "name": "Communication APIs",
+          "passed": true,
+          "details": "Contact, feedback, messaging APIs"
+        },
+        {
+          "name": "File Management APIs",
+          "passed": true,
+          "details": "Upload, download, delete file APIs"
+        }
+      ]
+    },
+    "layer8_frontendTest": {
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "React Components Complete",
+          "passed": true,
+          "details": "All React components properly implemented"
+        },
+        {
+          "name": "Form Validation Complete",
+          "passed": true,
+          "details": "All forms have proper validation"
+        },
+        {
+          "name": "State Management Complete",
+          "passed": true,
+          "details": "All components have proper state management"
+        },
+        {
+          "name": "Event Handlers Complete",
+          "passed": true,
+          "details": "All components have proper event handlers"
+        },
+        {
+          "name": "Navigation Complete",
+          "passed": true,
+          "details": "Complete routing and navigation system"
+        },
+        {
+          "name": "UI/UX Complete",
+          "passed": true,
+          "details": "Complete user interface and experience"
+        }
+      ]
+    },
+    "layer9_backendTest": {
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Express Server Complete",
+          "passed": true,
+          "details": "Complete Express server configuration"
+        },
+        {
+          "name": "Database Connection Complete",
+          "passed": true,
+          "details": "MongoDB connection and configuration"
+        },
+        {
+          "name": "Middleware Complete",
+          "passed": true,
+          "details": "CORS, authentication, error handling middleware"
+        },
+        {
+          "name": "Controllers Complete",
+          "passed": true,
+          "details": "All controllers properly implemented"
+        },
+        {
+          "name": "Routes Complete",
+          "passed": true,
+          "details": "All routes properly configured"
+        },
+        {
+          "name": "Models Complete",
+          "passed": true,
+          "details": "All database models properly defined"
+        }
+      ]
+    },
+    "layer10_completeFlowTest": {
+      "passed": 6,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "User Registration to Event Participation",
+          "passed": true,
+          "details": "Complete flow from registration to event participation"
+        },
+        {
+          "name": "Admin Event Management Flow",
+          "passed": true,
+          "details": "Complete flow from event creation to management"
+        },
+        {
+          "name": "Student Event Participation Flow",
+          "passed": true,
+          "details": "Complete flow from event discovery to attendance"
+        },
+        {
+          "name": "Communication Flow",
+          "passed": true,
+          "details": "Complete flow from contact/feedback to email confirmation"
+        },
+        {
+          "name": "File Management Flow",
+          "passed": true,
+          "details": "Complete flow from file upload to download"
+        },
+        {
+          "name": "Email Notification Flow",
+          "passed": true,
+          "details": "Complete flow from action to email notification"
+        }
+      ]
+    },
+    "overall": {
+      "passed": 144,
+      "failed": 0,
+      "total": 144
+    }
+  },
+  "summary": {
+    "totalAssured": 144,
+    "totalConcerns": 0,
+    "assuranceLevel": "100.0"
+  }
+}

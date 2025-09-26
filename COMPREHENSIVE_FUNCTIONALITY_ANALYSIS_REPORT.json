@@ -1,0 +1,563 @@
+{
+  "timestamp": "2025-09-25T09:13:22.296Z",
+  "results": {
+    "buttons": {
+      "passed": 26,
+      "failed": 4,
+      "tests": [
+        {
+          "name": "LoginPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "RegisterPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "EventListPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "EventDetailsPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "CreateEventPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "AdminDashboard Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "StaffDashboard Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "StudentDashboard Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "ContactUsPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "FeedbackPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "ProfilePage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "SettingsPage Buttons",
+          "passed": true,
+          "details": "Buttons found"
+        },
+        {
+          "name": "NavigationBar Click Handlers",
+          "passed": true,
+          "details": "Click handlers found"
+        },
+        {
+          "name": "NavigationBar Navigation Buttons",
+          "passed": true,
+          "details": "Navigation buttons found"
+        },
+        {
+          "name": "NavigationBar Action Buttons",
+          "passed": false,
+          "details": "No action buttons"
+        },
+        {
+          "name": "EventListPage Click Handlers",
+          "passed": true,
+          "details": "Click handlers found"
+        },
+        {
+          "name": "EventListPage Navigation Buttons",
+          "passed": true,
+          "details": "Navigation buttons found"
+        },
+        {
+          "name": "EventListPage Action Buttons",
+          "passed": true,
+          "details": "Action buttons found"
+        },
+        {
+          "name": "EventDetailsPage Click Handlers",
+          "passed": true,
+          "details": "Click handlers found"
+        },
+        {
+          "name": "EventDetailsPage Navigation Buttons",
+          "passed": true,
+          "details": "Navigation buttons found"
+        },
+        {
+          "name": "EventDetailsPage Action Buttons",
+          "passed": true,
+          "details": "Action buttons found"
+        },
+        {
+          "name": "AdminDashboard Click Handlers",
+          "passed": true,
+          "details": "Click handlers found"
+        },
+        {
+          "name": "AdminDashboard Navigation Buttons",
+          "passed": true,
+          "details": "Navigation buttons found"
+        },
+        {
+          "name": "AdminDashboard Action Buttons",
+          "passed": false,
+          "details": "No action buttons"
+        },
+        {
+          "name": "StaffDashboard Click Handlers",
+          "passed": true,
+          "details": "Click handlers found"
+        },
+        {
+          "name": "StaffDashboard Navigation Buttons",
+          "passed": true,
+          "details": "Navigation buttons found"
+        },
+        {
+          "name": "StaffDashboard Action Buttons",
+          "passed": false,
+          "details": "No action buttons"
+        },
+        {
+          "name": "StudentDashboard Click Handlers",
+          "passed": true,
+          "details": "Click handlers found"
+        },
+        {
+          "name": "StudentDashboard Navigation Buttons",
+          "passed": true,
+          "details": "Navigation buttons found"
+        },
+        {
+          "name": "StudentDashboard Action Buttons",
+          "passed": false,
+          "details": "No action buttons"
+        }
+      ]
+    },
+    "forms": {
+      "passed": 30,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "LoginPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "RegisterPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "EventListPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "EventDetailsPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "CreateEventPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "AdminDashboard Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "StaffDashboard Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "StudentDashboard Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "ContactUsPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "FeedbackPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "ProfilePage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "SettingsPage Forms",
+          "passed": true,
+          "details": "Forms found"
+        },
+        {
+          "name": "LoginPage Form Validation",
+          "passed": true,
+          "details": "Validation found"
+        },
+        {
+          "name": "LoginPage Form Submission",
+          "passed": true,
+          "details": "Submission handling found"
+        },
+        {
+          "name": "LoginPage Form Fields",
+          "passed": true,
+          "details": "Form fields found"
+        },
+        {
+          "name": "RegisterPage Form Validation",
+          "passed": true,
+          "details": "Validation found"
+        },
+        {
+          "name": "RegisterPage Form Submission",
+          "passed": true,
+          "details": "Submission handling found"
+        },
+        {
+          "name": "RegisterPage Form Fields",
+          "passed": true,
+          "details": "Form fields found"
+        },
+        {
+          "name": "CreateEventPage Form Validation",
+          "passed": true,
+          "details": "Validation found"
+        },
+        {
+          "name": "CreateEventPage Form Submission",
+          "passed": true,
+          "details": "Submission handling found"
+        },
+        {
+          "name": "CreateEventPage Form Fields",
+          "passed": true,
+          "details": "Form fields found"
+        },
+        {
+          "name": "ContactUsPage Form Validation",
+          "passed": true,
+          "details": "Validation found"
+        },
+        {
+          "name": "ContactUsPage Form Submission",
+          "passed": true,
+          "details": "Submission handling found"
+        },
+        {
+          "name": "ContactUsPage Form Fields",
+          "passed": true,
+          "details": "Form fields found"
+        },
+        {
+          "name": "FeedbackPage Form Validation",
+          "passed": true,
+          "details": "Validation found"
+        },
+        {
+          "name": "FeedbackPage Form Submission",
+          "passed": true,
+          "details": "Submission handling found"
+        },
+        {
+          "name": "FeedbackPage Form Fields",
+          "passed": true,
+          "details": "Form fields found"
+        },
+        {
+          "name": "ProfilePage Form Validation",
+          "passed": true,
+          "details": "Validation found"
+        },
+        {
+          "name": "ProfilePage Form Submission",
+          "passed": true,
+          "details": "Submission handling found"
+        },
+        {
+          "name": "ProfilePage Form Fields",
+          "passed": true,
+          "details": "Form fields found"
+        }
+      ]
+    },
+    "emails": {
+      "passed": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Auth Email Integration",
+          "passed": true,
+          "details": "Email integration found"
+        }
+      ]
+    },
+    "flows": {
+      "passed": 42,
+      "failed": 2,
+      "tests": [
+        {
+          "name": "authController Controller",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "eventController Controller",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "adminController Controller",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "userController Controller",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "authRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "eventRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "adminRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "userRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "fileRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "messageRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "feedbackRoutes Routes",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "Email Utility",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "Email Templates",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "LoginPage API Integration",
+          "passed": false,
+          "details": "No API calls found"
+        },
+        {
+          "name": "RegisterPage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "EventListPage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "EventDetailsPage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "CreateEventPage API Integration",
+          "passed": false,
+          "details": "No API calls found"
+        },
+        {
+          "name": "AdminDashboard API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "StaffDashboard API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "StudentDashboard API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "ContactUsPage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "FeedbackPage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "ProfilePage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "SettingsPage API Integration",
+          "passed": true,
+          "details": "API calls found"
+        },
+        {
+          "name": "API Configuration",
+          "passed": true,
+          "details": "Required functionality found"
+        },
+        {
+          "name": "login API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "register API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "getEvents API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "createEvent API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "updateEvent API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "deleteEvent API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "registerForEvent API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "getUserProfile API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "updateProfile API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "uploadFile API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "sendMessage API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "submitFeedback API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "contactUs API Function",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Login Flow",
+          "passed": true,
+          "details": "Login flow implemented"
+        },
+        {
+          "name": "Registration Flow",
+          "passed": true,
+          "details": "Registration flow implemented"
+        },
+        {
+          "name": "Event List Flow",
+          "passed": true,
+          "details": "Event list flow implemented"
+        },
+        {
+          "name": "Event Details Flow",
+          "passed": true,
+          "details": "Event details flow implemented"
+        },
+        {
+          "name": "Admin Flow",
+          "passed": true,
+          "details": "Admin flow implemented"
+        }
+      ]
+    },
+    "overall": {
+      "passed": 99,
+      "failed": 6,
+      "total": 105
+    }
+  },
+  "summary": {
+    "overallPercentage": 94.3,
+    "status": "EXCELLENT"
+  }
+}

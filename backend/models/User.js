@@ -29,6 +29,14 @@ const userSchema = new mongoose.Schema({
     filename: { type: String },       // Original filename
     uploadedAt: { type: Date }
   },
+  // Hours tracking for students
+  totalHours: { type: Number, default: 0 }, // Total community service hours
+  attendanceHours: [{ 
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+    hours: { type: Number },
+    approvedAt: { type: Date },
+    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  }],
   // Add more fields as needed for your profile
 }, { timestamps: true });
 

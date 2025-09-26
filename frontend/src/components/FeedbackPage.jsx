@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Form, Alert, Spinner, Badge } from 'react-bootstrap';
 import { FaComment, FaPaperPlane, FaLightbulb, FaBug, FaStar, FaExclamationTriangle } from 'react-icons/fa';
-import { submitFeedback, getUserFeedback } from '../api/api';
+import { submitFeedback, getUserFeedback, sendFeedbackEmail } from '../api/api';
 import Swal from 'sweetalert2';
 import './FeedbackPage.css';
 
@@ -12,14 +12,81 @@ const FeedbackPage = () => {
     category: 'general',
     priority: 'medium',
     userEmail: '',
-    userName: ''
+    userName: '',
+    rating: 5
   });
   const [loading, setLoading] = useState(false);
   const [userFeedback, setUserFeedback] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.subject.trim()) {
+      errors.subject = 'Subject is required';
+    }
+    
+    if (!formData.message.trim()) {
+      errors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      errors.message = 'Message must be at least 10 characters';
+    }
+    
+    if (!formData.userEmail.trim()) {
+      errors.userEmail = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.userEmail)) {
+      errors.userEmail = 'Email is invalid';
+    }
+    
+    if (!formData.userName.trim()) {
+      errors.userName = 'Name is required';
+    }
+    
+    if (formData.rating < 1 || formData.rating > 5) {
+      errors.rating = 'Please select a rating between 1 and 5';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  // Handle rating change
+  const handleRatingChange = (rating) => {
+    setFormData(prev => ({
+      ...prev,
+      rating: rating
+    }));
+    
+    // Clear rating error
+    if (formErrors.rating) {
+      setFormErrors(prev => ({
+        ...prev,
+        rating: ''
+      }));
+    }
+  };
 
   const fetchUserFeedback = useCallback(async () => {
     try {
@@ -47,25 +114,15 @@ const FeedbackPage = () => {
     }
   }, [user._id, user.email, user.name, fetchUserFeedback]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.subject.trim() || !formData.message.trim()) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-
-    // For public users, require email and name
-    if (!user._id && (!formData.userEmail.trim() || !formData.userName.trim())) {
-      setError('Please provide your name and email address.');
+    if (!validateForm()) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please fix the errors in the form.',
+        icon: 'warning'
+      });
       return;
     }
 
@@ -74,6 +131,15 @@ const FeedbackPage = () => {
       setError('');
       
       await submitFeedback(formData);
+      
+      // Send feedback email notification
+      try {
+        await sendFeedbackEmail(formData);
+        console.log('✅ Feedback email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send feedback email:', emailError);
+        // Don't show error to user as feedback was still submitted
+      }
       
       Swal.fire({
         icon: 'success',

@@ -1,0 +1,193 @@
+{
+  "timestamp": "2025-09-25T09:06:49.001Z",
+  "config": {
+    "BACKEND_URL": "https://charism-api-xtw9.onrender.com",
+    "FRONTEND_URL": "https://charism-ucb4.onrender.com",
+    "TIMEOUT": 10000
+  },
+  "results": {
+    "buttons": {
+      "passed": 5,
+      "failed": 7,
+      "tests": [
+        {
+          "name": "Login Button",
+          "passed": false,
+          "details": "Login button not working"
+        },
+        {
+          "name": "Forgot Password Button",
+          "passed": true,
+          "details": "Forgot password button working"
+        },
+        {
+          "name": "Send Contact Button",
+          "passed": false,
+          "details": "Send contact button failed"
+        },
+        {
+          "name": "Admin Dashboard Button",
+          "passed": true,
+          "details": "Properly protected"
+        },
+        {
+          "name": "Users List Button",
+          "passed": true,
+          "details": "Properly protected"
+        },
+        {
+          "name": "Analytics Button",
+          "passed": true,
+          "details": "Properly protected"
+        },
+        {
+          "name": "File Upload Button",
+          "passed": false,
+          "details": "Upload endpoint working"
+        },
+        {
+          "name": "Submit Feedback Button",
+          "passed": false,
+          "details": "Submit feedback button failed"
+        },
+        {
+          "name": "Home Page Navigation",
+          "passed": true,
+          "details": "Navigation working"
+        },
+        {
+          "name": "Events Page Navigation",
+          "passed": false,
+          "details": "Navigation failed"
+        },
+        {
+          "name": "Contact Page Navigation",
+          "passed": false,
+          "details": "Navigation failed"
+        },
+        {
+          "name": "Feedback Page Navigation",
+          "passed": false,
+          "details": "Navigation failed"
+        }
+      ]
+    },
+    "forms": {
+      "passed": 0,
+      "failed": 5,
+      "tests": [
+        {
+          "name": "Registration Form",
+          "passed": false,
+          "details": "Form submission failed"
+        },
+        {
+          "name": "Login Form",
+          "passed": false,
+          "details": "Login form failed"
+        },
+        {
+          "name": "Contact Form",
+          "passed": false,
+          "details": "Contact form failed"
+        },
+        {
+          "name": "File Upload Form",
+          "passed": false,
+          "details": "Upload form working"
+        },
+        {
+          "name": "Feedback Form",
+          "passed": false,
+          "details": "Feedback form failed"
+        }
+      ]
+    },
+    "emails": {
+      "passed": 1,
+      "failed": 2,
+      "tests": [
+        {
+          "name": "Email Configuration",
+          "passed": false,
+          "details": "Email config failed"
+        },
+        {
+          "name": "Forgot Password Email",
+          "passed": true,
+          "details": "Forgot password email sent"
+        },
+        {
+          "name": "Contact Form Email",
+          "passed": false,
+          "details": "Contact form email failed"
+        }
+      ]
+    },
+    "flows": {
+      "passed": 1,
+      "failed": 9,
+      "tests": [
+        {
+          "name": "Registration Form Submit",
+          "passed": false,
+          "details": "Error: timeout of 10000ms exceeded (ERROR)"
+        },
+        {
+          "name": "Login Form Submit",
+          "passed": false,
+          "details": "Error: timeout of 10000ms exceeded (ERROR)"
+        },
+        {
+          "name": "Email Configuration Check",
+          "passed": false,
+          "details": "Error: timeout of 10000ms exceeded (ERROR)"
+        },
+        {
+          "name": "Forgot Password Email",
+          "passed": true,
+          "details": "Status: 200"
+        },
+        {
+          "name": "Contact Form Email",
+          "passed": false,
+          "details": "Error: timeout of 10000ms exceeded (ERROR)"
+        },
+        {
+          "name": "Admin Dashboard Access",
+          "passed": false,
+          "details": "Error: Request failed with status code 401 (401)"
+        },
+        {
+          "name": "Users List Button",
+          "passed": false,
+          "details": "Error: Request failed with status code 401 (401)"
+        },
+        {
+          "name": "Analytics Button",
+          "passed": false,
+          "details": "Error: Request failed with status code 401 (401)"
+        },
+        {
+          "name": "File Upload Button",
+          "passed": false,
+          "details": "Error: Request failed with status code 404 (404)"
+        },
+        {
+          "name": "Feedback Form Submit",
+          "passed": false,
+          "details": "Error: Request failed with status code 404 (404)"
+        }
+      ]
+    },
+    "overall": {
+      "passed": 7,
+      "failed": 23,
+      "total": 30
+    }
+  },
+  "summary": {
+    "overallPercentage": 23.3,
+    "status": "CRITICAL"
+  }
+}

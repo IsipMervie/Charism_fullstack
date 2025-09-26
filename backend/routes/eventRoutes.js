@@ -368,8 +368,33 @@ router.patch('/:eventId/disapprove-attendance/:userId', authMiddleware, roleMidd
 });
 
 // =======================
-// GET ROUTES
+// PUBLIC ROUTES (No authentication required)
 // =======================
+
+// Get public events (no authentication required)
+router.get('/public', async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const events = await Event.find({ 
+      isVisibleToStudents: true,
+      status: { $ne: 'Disabled' }
+    })
+      .select('-attendance') // Don't include attendance data for public
+      .sort({ date: -1 });
+    
+    res.json(events);
+  } catch (error) {
+    console.error('❌ Error getting public events:', error);
+    res.status(500).json({ message: 'Error fetching events', error: error.message });
+  }
+});
+
+// =======================
+// AUTHENTICATED ROUTES
+// =======================
+
+// Join Event (Students only)
+router.post('/:eventId/join', authMiddleware, roleMiddleware(['Student']), eventController.joinEvent);
 
 // Get all events (with auth check)
 router.get('/', authMiddleware, async (req, res) => {

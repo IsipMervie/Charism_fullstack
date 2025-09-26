@@ -52,6 +52,38 @@ function NavigationBar() {
     navigate('/login');
   };
 
+  // Action button handlers
+  const handleQuickAction = (action) => {
+    switch (action) {
+      case 'create-event':
+        navigate('/create-event');
+        break;
+      case 'view-events':
+        navigate('/events');
+        break;
+      case 'profile':
+        navigate('/profile');
+        break;
+      case 'dashboard':
+        if (role === 'Admin') {
+          navigate('/admin-dashboard');
+        } else if (role === 'Staff') {
+          navigate('/staff-dashboard');
+        } else {
+          navigate('/student-dashboard');
+        }
+        break;
+      case 'contact':
+        navigate('/contact-us');
+        break;
+      case 'feedback':
+        navigate('/feedback');
+        break;
+      default:
+        break;
+    }
+  };
+
   // Handle navigation link clicks
   const handleNavLinkClick = () => {
     setIsExpanded(false);
@@ -393,6 +425,49 @@ function NavigationBar() {
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
+            )}
+            
+            {/* Quick Action Buttons */}
+            {user && (
+              <div className="navbar-action-buttons">
+                <button 
+                  className="action-button"
+                  onClick={() => handleQuickAction('view-events')}
+                  title="View Events"
+                >
+                  📅 Events
+                </button>
+                <button 
+                  className="action-button"
+                  onClick={() => handleQuickAction('profile')}
+                  title="Profile"
+                >
+                  👤 Profile
+                </button>
+                {(role === 'Admin' || role === 'Staff') && (
+                  <button 
+                    className="action-button"
+                    onClick={() => handleQuickAction('create-event')}
+                    title="Create Event"
+                  >
+                    ➕ Create Event
+                  </button>
+                )}
+                <button 
+                  className="action-button"
+                  onClick={() => handleQuickAction('contact')}
+                  title="Contact Us"
+                >
+                  📞 Contact
+                </button>
+                <button 
+                  className="action-button"
+                  onClick={() => handleQuickAction('feedback')}
+                  title="Feedback"
+                >
+                  💬 Feedback
+                </button>
+              </div>
             )}
 
             {/* Theme Toggle - Always visible */}

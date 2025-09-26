@@ -6,6 +6,52 @@ const { hasFile } = require('../utils/mongoFileStorage');
 const { isValidObjectId } = require('mongoose');
 const { ensureDBConnection } = require('../middleware/dbMiddleware');
 
+// File system health check
+router.get('/health', (req, res) => {
+  try {
+    res.json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      message: 'File system is operational',
+      endpoints: {
+        profilePicture: '/api/files/profile-picture/:userId',
+        eventImage: '/api/files/event-image/:eventId',
+        defaultProfilePicture: '/api/files/profile-picture/default',
+        defaultEventImage: '/api/files/event-image/default'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'File system health check failed',
+      error: error.message
+    });
+  }
+});
+
+// Image handling health check
+router.get('/images/health', (req, res) => {
+  try {
+    res.json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      message: 'Image handling system is operational',
+      features: {
+        profileImages: 'supported',
+        eventImages: 'supported',
+        defaultImages: 'supported',
+        imageValidation: 'enabled'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Image handling health check failed',
+      error: error.message
+    });
+  }
+});
+
 // Serve default profile picture
 router.get('/profile-picture/default', (req, res) => {
   // Return a simple SVG default avatar

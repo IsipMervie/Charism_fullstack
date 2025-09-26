@@ -25,6 +25,33 @@ function AdminManageFeedbackPage() {
     itemsPerPage: 20
   });
 
+  // Get feedback data
+  const getFeedback = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllFeedback();
+      setFeedback(response);
+      return response;
+    } catch (error) {
+      console.error('Error getting feedback:', error);
+      setError('Failed to load feedback');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update feedback data
+  const updateFeedback = async (feedbackId, updateData) => {
+    try {
+      const response = await axiosInstance.put(`/feedback/${feedbackId}`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+      throw error;
+    }
+  };
+
   // Helper function to safely validate pagination state
   const isValidPagination = (paginationState) => {
     return paginationState && 

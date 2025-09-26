@@ -485,6 +485,113 @@ app.get('/api/health', (req, res) => {
   }
 });
 
+// Database health endpoint
+app.get('/api/health/db', async (req, res) => {
+  try {
+    console.log('🔍 Database health check requested from:', req.ip || req.connection.remoteAddress);
+    
+    // Set proper headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    
+    const dbStatus = mongoose.connection.readyState;
+    let message = '';
+    
+    switch (dbStatus) {
+      case 0:
+        message = 'disconnected';
+        break;
+      case 1:
+        message = 'connected';
+        break;
+      case 2:
+        message = 'connecting';
+        break;
+      case 3:
+        message = 'disconnecting';
+        break;
+      default:
+        message = 'unknown';
+    }
+
+    // Try to ping the database
+    let pingResult = 'unknown';
+    if (dbStatus === 1) {
+      try {
+        await mongoose.connection.db.admin().ping();
+        pingResult = 'success';
+      } catch (pingError) {
+        pingResult = 'failed';
+        console.error('Database ping failed:', pingError);
+      }
+    }
+
+    const healthData = {
+      status: dbStatus === 1 ? 'OK' : 'ERROR',
+      timestamp: new Date().toISOString(),
+      database: {
+        readyState: dbStatus,
+        status: message,
+        ping: pingResult,
+        host: mongoose.connection.host || 'unknown',
+        name: mongoose.connection.name || 'unknown'
+      }
+    };
+    
+    console.log('✅ Database health check response:', healthData);
+    res.json(healthData);
+  } catch (error) {
+    console.error('❌ Database health check error:', error);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Database health check failed',
+      error: error.message 
+    });
+  }
+});
+
+// Email health endpoint
+app.get('/api/health/email', (req, res) => {
+  try {
+    console.log('🔍 Email health check requested from:', req.ip || req.connection.remoteAddress);
+    
+    // Set proper headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    
+    const emailConfig = {
+      EMAIL_USER: process.env.EMAIL_USER ? 'configured' : 'not configured',
+      EMAIL_PASS: process.env.EMAIL_PASS ? 'configured' : 'not configured',
+      EMAIL_SERVICE: process.env.EMAIL_SERVICE || 'not configured'
+    };
+    
+    const healthData = {
+      status: emailConfig.EMAIL_USER === 'configured' && emailConfig.EMAIL_PASS === 'configured' ? 'OK' : 'WARNING',
+      timestamp: new Date().toISOString(),
+      email: emailConfig,
+      message: emailConfig.EMAIL_USER === 'configured' && emailConfig.EMAIL_PASS === 'configured' ? 'Email service configured' : 'Email service not fully configured'
+    };
+    
+    console.log('✅ Email health check response:', healthData);
+    res.json(healthData);
+  } catch (error) {
+    console.error('❌ Email health check error:', error);
+    res.status(500).json({ 
+      status: 'ERROR', 
+      message: 'Email health check failed',
+      error: error.message 
+    });
+  }
+});
+
 // Database status endpoint
 app.get('/api/db-status', async (req, res) => {
   try {
@@ -813,7 +920,7 @@ app.use('/api/messages', require('./routes/messageRoutes'));
 console.log(' Messages routes loaded');
 app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
-app.use('/api/events', require('./routes/events'));
+app.use('/api/events', require('./routes/eventRoutes'));
 console.log(' Events routes loaded');
 
 

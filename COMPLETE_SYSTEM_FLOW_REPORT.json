@@ -1,0 +1,76 @@
+{
+  "timestamp": "2025-09-25T09:40:53.441Z",
+  "flowResults": {
+    "authentication": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "events": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "userManagement": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "adminFunctions": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "communication": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "fileManagement": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "overall": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "system": {
+      "passed": 0,
+      "failed": 5,
+      "tests": [
+        {
+          "name": "File missing: frontend/src/components/MessagesPage.jsx",
+          "passed": false,
+          "details": "Create the missing file: frontend/src/components/MessagesPage.jsx"
+        },
+        {
+          "name": "File missing: backend/routes/contactRoutes.js",
+          "passed": false,
+          "details": "Create the missing file: backend/routes/contactRoutes.js"
+        },
+        {
+          "name": "File missing: frontend/src/components/FileUploadPage.jsx",
+          "passed": false,
+          "details": "Create the missing file: frontend/src/components/FileUploadPage.jsx"
+        },
+        {
+          "name": "File missing: backend/controllers/fileController.js",
+          "passed": false,
+          "details": "Create the missing file: backend/controllers/fileController.js"
+        },
+        {
+          "name": "File missing: backend/models/Attendance.js",
+          "passed": false,
+          "details": "Create the missing file: backend/models/Attendance.js"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "totalPassed": 0,
+    "totalFailed": 5,
+    "successRate": "0.0"
+  }
+}

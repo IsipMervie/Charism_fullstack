@@ -19,6 +19,36 @@ const EventAttendancePage = memo(() => {
   const role = localStorage.getItem('role');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   
+  // Get attendance data
+  const getAttendance = async (eventId) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}/attendance`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error getting attendance:', error);
+      throw error;
+    }
+  };
+
+  // Update attendance data
+  const updateAttendance = async (eventId, attendanceData) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}/attendance`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(attendanceData),
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error updating attendance:', error);
+      throw error;
+    }
+  };
+  
   // PDF Filter options
   const [pdfFilters, setPdfFilters] = useState({
     status: '',

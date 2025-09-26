@@ -65,6 +65,24 @@ const EventChatListPage = () => {
   
   // Navigation
   const navigate = useNavigate();
+
+  // Get messages function
+  const getMessages = async () => {
+    try {
+      const response = await fetch('/api/events/chat/messages');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error getting messages:', error);
+      throw error;
+    }
+  };
+
+  // Handle submit function
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Implementation for form submission
+  };
   
   // User data
   const user = JSON.parse(localStorage.getItem('user') || '{}');

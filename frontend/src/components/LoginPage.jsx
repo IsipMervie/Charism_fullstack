@@ -13,7 +13,47 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
+
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = 'Email is invalid';
+    }
+    
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    if (name === 'email') {
+      setEmail(value);
+    } else if (name === 'password') {
+      setPassword(value);
+    }
+    
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
 
   useEffect(() => {
     setIsVisible(true);
@@ -21,6 +61,12 @@ function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      showWarning('Validation Error', 'Please fix the errors in the form.');
+      return;
+    }
+    
     setLoading(true);
     
     // Test API connection first
@@ -185,28 +231,34 @@ function LoginPage() {
               <div className="input-wrapper">
                 <Form.Control
                   type="email"
+                  name="email"
                   placeholder="Your email address"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={handleInputChange}
+                  isInvalid={!!formErrors.email}
                   required
                   className="form-input"
                 />
                 <div className="input-focus-line"></div>
               </div>
+              {formErrors.email && <div className="error-message">{formErrors.email}</div>}
             </div>
 
             <div className="form-field">
               <div className="input-wrapper">
                 <Form.Control
                   type="password"
+                  name="password"
                   placeholder="Your password"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={handleInputChange}
+                  isInvalid={!!formErrors.password}
                   required
                   className="form-input"
                 />
                 <div className="input-focus-line"></div>
               </div>
+              {formErrors.password && <div className="error-message">{formErrors.password}</div>}
             </div>
 
             <Button 

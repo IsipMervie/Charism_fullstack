@@ -27,7 +27,107 @@ function RegisterPage() {
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
+
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!name.trim()) {
+      errors.name = 'Name is required';
+    }
+    
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = 'Email is invalid';
+    }
+    
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    
+    if (!confirmPassword.trim()) {
+      errors.confirmPassword = 'Please confirm your password';
+    } else if (password !== confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+    
+    if (!userId.trim()) {
+      errors.userId = 'User ID is required';
+    }
+    
+    if (!academicYear.trim()) {
+      errors.academicYear = 'Academic Year is required';
+    }
+    
+    if (!year.trim()) {
+      errors.year = 'Year is required';
+    }
+    
+    if (!section.trim()) {
+      errors.section = 'Section is required';
+    }
+    
+    if (!department.trim()) {
+      errors.department = 'Department is required';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Update state based on field name
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'email':
+        setEmail(value);
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+      case 'confirmPassword':
+        setConfirmPassword(value);
+        break;
+      case 'userId':
+        setUserId(value);
+        break;
+      case 'academicYear':
+        setAcademicYear(value);
+        break;
+      case 'year':
+        setYear(value);
+        break;
+      case 'section':
+        setSection(value);
+        break;
+      case 'department':
+        setDepartment(value);
+        break;
+      case 'role':
+        setRole(value);
+        break;
+      default:
+        break;
+    }
+    
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
 
   useEffect(() => {
     setIsVisible(true);
@@ -71,6 +171,15 @@ function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please fix the errors in the form.',
+        icon: 'warning'
+      });
+      return;
+    }
 
     if (!email.endsWith('@ua.edu.ph')) {
       Swal.fire({ icon: 'error', title: 'Invalid Email', text: 'Please use a valid @ua.edu.ph email address.' });

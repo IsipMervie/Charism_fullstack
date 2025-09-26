@@ -1738,6 +1738,610 @@ const getAttendanceDisapprovalTemplate = (userName, eventTitle, eventDate, reaso
 </html>
 `;
 
+// Additional email template functions that were missing
+const getRegistrationTemplate = (userName, eventTitle, eventDate) => {
+  return getEventRegistrationConfirmationTemplate(userName, eventTitle, eventDate, '', false);
+};
+
+const getLoginTemplate = (userName) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Notification - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
+      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Login Notification</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <p>Hello ${userName || 'there'},</p>
+      <p>This is to notify you that your account was accessed recently. If this was you, no action is needed.</p>
+    </div>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 14px; color: #856404;">
+        <strong>Security Notice:</strong> If you did not log in recently, please change your password immediately.
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+};
+
+const getForgotPasswordTemplate = (userName, resetLink) => {
+  return getPasswordResetTemplate(resetLink, userName);
+};
+
+const getResetPasswordTemplate = (userName) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset Successful - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #27ae60; margin: 0;">CHARISM</h1>
+      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Password Reset Successful</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <p>Hello ${userName || 'there'},</p>
+      <p>Your password has been successfully reset. You can now log in with your new password.</p>
+    </div>
+    
+    <div style="background-color: #e8f5e8; border: 1px solid #27ae60; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 14px; color: #27ae60; font-weight: bold;">
+        ✅ Your password has been successfully updated.
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+};
+
+const getEventRegistrationTemplate = (userName, eventTitle, eventDate) => {
+  return getEventRegistrationConfirmationTemplate(userName, eventTitle, eventDate, '', true);
+};
+
+const getEventApprovalTemplate = (userName, eventTitle, eventDate) => {
+  return getEventRegistrationApprovalTemplate(userName, eventTitle, eventDate, '', '');
+};
+
+const getEventNotificationTemplate = (userName, eventTitle, eventDate, message) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Notification - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #2c3e50; margin: 0;">CHARISM</h1>
+      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Event Notification</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <p>Hello ${userName || 'there'},</p>
+      <p>We have an important update about the event you're registered for:</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #3498db; padding: 20px; margin: 20px 0;">
+      <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${eventTitle}</h3>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #0c5460; margin: 0 0 10px 0;">Message:</h4>
+      <p style="margin: 0; color: #0c5460;">${message}</p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+};
+
+const getEventUpdateTemplate = (userName, eventTitle, eventDate, changes) => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Update - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 30px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #f39c12; margin: 0;">CHARISM</h1>
+      <p style="color: #7f8c8d; margin: 10px 0 0 0;">Event Update</p>
+    </div>
+    
+    <div style="margin-bottom: 25px;">
+      <p>Hello ${userName || 'there'},</p>
+      <p>The following event has been updated:</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border-left: 4px solid #f39c12; padding: 20px; margin: 20px 0;">
+      <h3 style="margin: 0 0 10px 0; color: #2c3e50;">${eventTitle}</h3>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+    </div>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #856404; margin: 0 0 10px 0;">Changes Made:</h4>
+      <p style="margin: 0; color: #856404;">${changes}</p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+};
+
+const getContactUsTemplate = (name, email, message) => {
+  return getContactSubmissionTemplate(name, email, message, '');
+};
+
+const getFeedbackTemplate = (userName, subject, message) => {
+  return getFeedbackSubmissionTemplate(userName, subject, message, 'general', 'medium', '');
+};
+
+// Essential missing templates for approval/disapproval
+
+// User Approval Template
+const getUserApprovalTemplate = (userName, adminName, approvalDate) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Account Approved - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Account Approved!</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Welcome to CHARISM!</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">✅ Account Status: APPROVED</h3>
+      <p style="margin: 0; color: #155724;">Your account has been successfully approved and is now active!</p>
+    </div>
+    
+    <p>You can now:</p>
+    <ul style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db;">
+      <li>Log in to your account</li>
+      <li>Browse and register for community service events</li>
+      <li>Track your attendance and hours</li>
+      <li>Access all student features</li>
+    </ul>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0; color: #856404;">
+        <strong>Approved by:</strong> ${adminName}<br>
+        <strong>Approval Date:</strong> ${approvalDate}
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// User Rejection Template
+const getUserRejectionTemplate = (userName, adminName, rejectionReason, rejectionDate) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Account Update - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">📋 Account Update</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Account Status Update</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #721c24; margin: 0 0 10px 0;">❌ Account Status: REJECTED</h3>
+      <p style="margin: 0; color: #721c24;">Your account registration has been rejected.</p>
+    </div>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #856404; margin: 0 0 10px 0;">Reason for Rejection:</h4>
+      <p style="margin: 0; color: #856404;">${rejectionReason}</p>
+    </div>
+    
+    <div style="background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #0c5460; margin: 0 0 10px 0;">What you can do:</h4>
+      <ul style="margin: 0; color: #0c5460;">
+        <li>Review your registration information</li>
+        <li>Contact the administration for clarification</li>
+        <li>Submit a new registration with corrected information</li>
+      </ul>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0; color: #6c757d;">
+        <strong>Rejected by:</strong> ${adminName}<br>
+        <strong>Rejection Date:</strong> ${rejectionDate}
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Event Cancellation Template
+const getEventCancellationTemplate = (userName, eventTitle, eventDate, cancellationReason) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Event Cancelled - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">❌ Event Cancelled</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Event Cancellation Notice</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #721c24; margin: 0 0 10px 0;">Event Cancelled</h3>
+      <p style="margin: 0; color: #721c24;">We regret to inform you that the following event has been cancelled:</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Event Details</h3>
+      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+    </div>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #856404; margin: 0 0 10px 0;">Cancellation Reason:</h4>
+      <p style="margin: 0; color: #856404;">${cancellationReason}</p>
+    </div>
+    
+    <div style="background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #0c5460; margin: 0 0 10px 0;">What happens next:</h4>
+      <ul style="margin: 0; color: #0c5460;">
+        <li>Your registration has been automatically cancelled</li>
+        <li>You will receive a refund if applicable</li>
+        <li>Look out for future events that may interest you</li>
+      </ul>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Event Reminder Template
+const getEventReminderTemplate = (userName, eventTitle, eventDate, eventTime, eventLocation) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Event Reminder - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">⏰ Event Reminder</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Don't Miss Your Event!</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">📅 Event Reminder</h3>
+      <p style="margin: 0; color: #155724;">This is a friendly reminder about your upcoming community service event.</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Event Details</h3>
+      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+      <p style="margin: 5px 0;"><strong>Time:</strong> ${eventTime}</p>
+      <p style="margin: 5px 0;"><strong>Location:</strong> ${eventLocation}</p>
+    </div>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #856404; margin: 0 0 10px 0;">Important Reminders:</h4>
+      <ul style="margin: 0; color: #856404;">
+        <li>Arrive on time for the event</li>
+        <li>Remember to time in when you arrive</li>
+        <li>Time out when you leave</li>
+        <li>Bring any required materials</li>
+      </ul>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Attendance Confirmation Template
+const getAttendanceConfirmationTemplate = (userName, eventTitle, eventDate, timeIn, timeOut, totalHours) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Attendance Confirmed - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">✅ Attendance Confirmed</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Thank You for Your Service!</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">✅ Attendance Recorded</h3>
+      <p style="margin: 0; color: #155724;">Your attendance has been successfully recorded and confirmed!</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Attendance Details</h3>
+      <p style="margin: 5px 0;"><strong>Event:</strong> ${eventTitle}</p>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${eventDate}</p>
+      <p style="margin: 5px 0;"><strong>Time In:</strong> ${timeIn}</p>
+      <p style="margin: 5px 0;"><strong>Time Out:</strong> ${timeOut}</p>
+      <p style="margin: 5px 0;"><strong>Total Hours:</strong> ${totalHours} hours</p>
+    </div>
+    
+    <div style="background-color: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #0c5460; margin: 0 0 10px 0;">What's Next:</h4>
+      <ul style="margin: 0; color: #0c5460;">
+        <li>Your hours will be added to your community service record</li>
+        <li>You can view your total hours in your profile</li>
+        <li>Keep participating in more community service events</li>
+      </ul>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Profile Update Template
+const getProfileUpdateTemplate = (userName, updatedFields, updateDate) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Profile Updated - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">👤 Profile Updated</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Profile Update Confirmation</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">✅ Profile Successfully Updated</h3>
+      <p style="margin: 0; color: #155724;">Your profile information has been updated successfully.</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Updated Fields</h3>
+      <ul style="margin: 0; color: #2c3e50;">
+        ${updatedFields.map(field => `<li>${field}</li>`).join('')}
+      </ul>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0; color: #6c757d;">
+        <strong>Update Date:</strong> ${updateDate}
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Password Change Template
+const getPasswordChangeTemplate = (userName, changeDate, ipAddress) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Password Changed - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">🔒 Password Changed</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Password Change Confirmation</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">✅ Password Successfully Changed</h3>
+      <p style="margin: 0; color: #155724;">Your password has been changed successfully.</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Change Details</h3>
+      <p style="margin: 5px 0;"><strong>Change Date:</strong> ${changeDate}</p>
+      <p style="margin: 5px 0;"><strong>IP Address:</strong> ${ipAddress}</p>
+    </div>
+    
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <h4 style="color: #856404; margin: 0 0 10px 0;">Security Notice:</h4>
+      <p style="margin: 0; color: #856404;">If you did not make this change, please contact us immediately and consider changing your password again.</p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Welcome Template
+const getWelcomeTemplate = (userName, loginDate) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Welcome Back - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">👋 Welcome Back!</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Welcome to CHARISM</h2>
+    
+    <p>Dear <strong>${userName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">🎉 Welcome to CHARISM!</h3>
+      <p style="margin: 0; color: #155724;">Thank you for joining our community service management system.</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">What you can do:</h3>
+      <ul style="margin: 0; color: #2c3e50;">
+        <li>Browse and register for community service events</li>
+        <li>Track your attendance and service hours</li>
+        <li>Connect with other students and staff</li>
+        <li>Access your profile and update information</li>
+      </ul>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0; color: #6c757d;">
+        <strong>Login Date:</strong> ${loginDate}
+      </p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// System Alert Template
+const getSystemAlertTemplate = (alertType, message, severity, timestamp) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>System Alert - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">⚠️ System Alert</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">System Alert Notification</h2>
+    
+    <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #721c24; margin: 0 0 10px 0;">⚠️ ${alertType}</h3>
+      <p style="margin: 0; color: #721c24;">${message}</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Alert Details</h3>
+      <p style="margin: 5px 0;"><strong>Alert Type:</strong> ${alertType}</p>
+      <p style="margin: 5px 0;"><strong>Severity:</strong> ${severity}</p>
+      <p style="margin: 5px 0;"><strong>Timestamp:</strong> ${timestamp}</p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
+// Admin Notification Template
+const getAdminNotificationTemplate = (adminName, notificationType, message, timestamp) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin Notification - CHARISM</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">👨‍💼 Admin Notification</h1>
+  </div>
+  
+  <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e9ecef;">
+    <h2 style="color: #2c3e50; margin-top: 0;">Admin Notification</h2>
+    
+    <p>Dear <strong>${adminName}</strong>,</p>
+    
+    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="color: #155724; margin: 0 0 10px 0;">📋 ${notificationType}</h3>
+      <p style="margin: 0; color: #155724;">${message}</p>
+    </div>
+    
+    <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; border-left: 4px solid #3498db; margin: 20px 0;">
+      <h3 style="color: #2c3e50; margin: 0 0 15px 0;">Notification Details</h3>
+      <p style="margin: 5px 0;"><strong>Type:</strong> ${notificationType}</p>
+      <p style="margin: 5px 0;"><strong>Timestamp:</strong> ${timestamp}</p>
+    </div>
+    
+    ${getNoReplyFooter()}
+  </div>
+</body>
+</html>
+`;
+
 module.exports = {
   getEmailVerificationTemplate,
   getPasswordResetTemplate,
@@ -1757,5 +2361,27 @@ module.exports = {
   getAttendanceApprovalTemplate,
   getAttendanceDisapprovalTemplate,
   getNoReplyFooter,
-  NO_REPLY_EMAIL
+  NO_REPLY_EMAIL,
+  // Additional missing templates
+  getRegistrationTemplate,
+  getLoginTemplate,
+  getForgotPasswordTemplate,
+  getResetPasswordTemplate,
+  getEventRegistrationTemplate,
+  getEventApprovalTemplate,
+  getEventNotificationTemplate,
+  getEventUpdateTemplate,
+  getContactUsTemplate,
+  getFeedbackTemplate,
+  // Essential missing templates for approval/disapproval
+  getUserApprovalTemplate,
+  getUserRejectionTemplate,
+  getEventCancellationTemplate,
+  getEventReminderTemplate,
+  getAttendanceConfirmationTemplate,
+  getProfileUpdateTemplate,
+  getPasswordChangeTemplate,
+  getWelcomeTemplate,
+  getSystemAlertTemplate,
+  getAdminNotificationTemplate
 };

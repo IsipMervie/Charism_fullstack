@@ -1,0 +1,572 @@
+{
+  "timestamp": "2025-09-25T09:38:53.625Z",
+  "results": {
+    "emails": {
+      "passed": 37,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Email Utility",
+          "passed": true,
+          "details": "Required content found"
+        },
+        {
+          "name": "Email Templates",
+          "passed": true,
+          "details": "Required content found"
+        },
+        {
+          "name": "Email Configuration",
+          "passed": true,
+          "details": "Email config found"
+        },
+        {
+          "name": "Authentication - sendEmail",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Authentication - forgotPassword",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Authentication - resetPassword",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Authentication - verifyEmail",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Authentication - registration",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Event Management - sendEmail",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Event Management - registration",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Event Management - approval",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Event Management - eventNotification",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Event Management - eventUpdate",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Admin Functions - sendEmail",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Admin Functions - userApproval",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Admin Functions - adminNotification",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Admin Functions - systemAlert",
+          "passed": true,
+          "details": "Email trigger found"
+        },
+        {
+          "name": "Email Template - getRegistrationTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getLoginTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getForgotPasswordTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getResetPasswordTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getEventRegistrationTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getEventApprovalTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getEventNotificationTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getContactUsTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email Template - getFeedbackTemplate",
+          "passed": true,
+          "details": "Template found"
+        },
+        {
+          "name": "Email API Function - forgotPassword",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Email API Function - resetPassword",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Email API Function - verifyEmail",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Email API Function - sendContactEmail",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Email API Function - sendFeedbackEmail",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Email API Function - sendEventNotification",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "Email Route - forgot-password",
+          "passed": true,
+          "details": "Route found"
+        },
+        {
+          "name": "Email Route - reset-password",
+          "passed": true,
+          "details": "Route found"
+        },
+        {
+          "name": "Email Route - verify-email",
+          "passed": true,
+          "details": "Route found"
+        },
+        {
+          "name": "Email Route - contact-us",
+          "passed": true,
+          "details": "Route found"
+        },
+        {
+          "name": "Email Route - feedback",
+          "passed": true,
+          "details": "Route found"
+        }
+      ]
+    },
+    "flows": {
+      "passed": 52,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Login Flow - loginUser",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Login Flow - handleSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Login Flow - onSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Login Flow - validation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Login Flow - error",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Login Flow - success",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Registration Flow - registerUser",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Registration Flow - handleSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Registration Flow - onSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Registration Flow - validation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Registration Flow - error",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Registration Flow - success",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Creation Flow - createEvent",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Creation Flow - handleSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Creation Flow - onSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Creation Flow - validation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Creation Flow - formData",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Details Flow - registerForEvent",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Details Flow - unregisterFromEvent",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Details Flow - handleRegister",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Details Flow - handleUnregister",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event Details Flow - onClick",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event List Flow - getEvents",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event List Flow - filterEvents",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event List Flow - searchEvents",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event List Flow - onClick",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Event List Flow - navigation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Admin Dashboard Flow - getAnalytics",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Admin Dashboard Flow - navigate",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Admin Dashboard Flow - onClick",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Admin Dashboard Flow - action-card",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Admin Dashboard Flow - dashboard",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "User Management Flow - getUsers",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "User Management Flow - updateUser",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "User Management Flow - deleteUser",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "User Management Flow - approveUser",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "User Management Flow - handleAction",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Profile Management Flow - updateProfile",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Profile Management Flow - handleFormSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Profile Management Flow - formData",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Profile Management Flow - validation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Profile Management Flow - isEditing",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Contact Flow - contactUs",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Contact Flow - handleSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Contact Flow - formData",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Contact Flow - validation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Contact Flow - success",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Feedback Flow - submitFeedback",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Feedback Flow - handleSubmit",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Feedback Flow - formData",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Feedback Flow - validation",
+          "passed": true,
+          "details": "Element found"
+        },
+        {
+          "name": "Feedback Flow - rating",
+          "passed": true,
+          "details": "Element found"
+        }
+      ]
+    },
+    "functionality": {
+      "passed": 19,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "API Function - loginUser",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - registerUser",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - getEvents",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - createEvent",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - updateEvent",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - deleteEvent",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - registerForEvent",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - unregisterFromEvent",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - getUserProfile",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - updateProfile",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - uploadFile",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - sendMessage",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - submitFeedback",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - contactUs",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - getAnalytics",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - getUsers",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - updateUser",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - deleteUser",
+          "passed": true,
+          "details": "Function found"
+        },
+        {
+          "name": "API Function - approveUser",
+          "passed": true,
+          "details": "Function found"
+        }
+      ]
+    },
+    "overall": {
+      "passed": 108,
+      "failed": 0,
+      "total": 108
+    }
+  },
+  "summary": {
+    "overallPercentage": 100,
+    "status": "EXCELLENT"
+  }
+}

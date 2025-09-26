@@ -2,7 +2,7 @@
 // Simple but Creative Event Details Page Design
 
 import React, { useState, useEffect } from 'react';
-import { getEventDetails, getPublicEventDetails, approveRegistration, disapproveRegistration, joinEvent } from '../api/api';
+import { getEventDetails, getPublicEventDetails, approveRegistration, disapproveRegistration, joinEvent, registerForEvent, unregisterFromEvent } from '../api/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaCalendar, FaClock, FaMapMarkerAlt, FaUsers, FaArrowLeft, FaSignInAlt, FaComments, FaCheck, FaTimes } from 'react-icons/fa';
@@ -15,6 +15,7 @@ import './EventDetailsPage.css';
 
 function EventDetailsPage() {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -35,7 +36,65 @@ function EventDetailsPage() {
     'Other'
   ];
 
-  const navigate = useNavigate();
+  // Handle event registration
+  const handleRegister = async () => {
+    if (!event) return;
+    
+    setActionLoading(prev => ({ ...prev, register: true }));
+    
+    try {
+      await registerForEvent(event._id);
+      Swal.fire({
+        title: 'Success!',
+        text: 'You have successfully registered for this event.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      
+      // Refresh event data
+      await fetchEventDetails();
+    } catch (error) {
+      console.error('Registration error:', error);
+      Swal.fire({
+        title: 'Registration Failed',
+        text: error.message || 'Failed to register for event. Please try again.',
+        icon: 'error'
+      });
+    } finally {
+      setActionLoading(prev => ({ ...prev, register: false }));
+    }
+  };
+
+  // Handle event unregistration
+  const handleUnregister = async () => {
+    if (!event) return;
+    
+    setActionLoading(prev => ({ ...prev, unregister: true }));
+    
+    try {
+      await unregisterFromEvent(event._id);
+      Swal.fire({
+        title: 'Success!',
+        text: 'You have successfully unregistered from this event.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      
+      // Refresh event data
+      await fetchEventDetails();
+    } catch (error) {
+      console.error('Unregistration error:', error);
+      Swal.fire({
+        title: 'Unregistration Failed',
+        text: error.message || 'Failed to unregister from event. Please try again.',
+        icon: 'error'
+      });
+    } finally {
+      setActionLoading(prev => ({ ...prev, unregister: false }));
+    }
+  };
   
   // Get user info safely
   const getRole = () => {

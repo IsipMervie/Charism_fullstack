@@ -1,0 +1,266 @@
+{
+  "timestamp": "2025-09-25T10:19:43.412Z",
+  "testResults": {
+    "emailFlow": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "buttonFunctionality": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "userFlows": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "systemIntegration": {
+      "passed": 0,
+      "failed": 0,
+      "tests": []
+    },
+    "overall": {
+      "passed": 45,
+      "failed": 0,
+      "total": 45
+    },
+    "system": {
+      "passed": 45,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Content verified in backend/utils/emailTemplates.js: Email Templates",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/utils/sendEmail.js: Email Sending",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/eventController.js: Event Email Triggers",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/adminController.js: Admin Email Triggers",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/authController.js: Auth Email Triggers",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/LoginPage.jsx: Login Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/RegisterPage.jsx: Register Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ForgotPasswordPage.jsx: Forgot Password Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventListPage.jsx: Event List Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventDetailsPage.jsx: Event Details Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/CreateEventPage.jsx: Create Event Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EditEventPage.jsx: Edit Event Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/AdminDashboard.jsx: Admin Dashboard Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/StaffDashboard.jsx: Staff Dashboard Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/StudentDashboard.jsx: Student Dashboard Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ManageUsersPage.jsx: Manage Users Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/AdminManageEventsPage.jsx: Admin Manage Events Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/NavigationBar.jsx: Navigation Button Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/RegisterPage.jsx: Student Registration Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/authController.js: Student Registration Backend",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventDetailsPage.jsx: Event Registration Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/eventController.js: Event Registration Backend",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/eventController.js: Event Approval Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventAttendancePage.jsx: Time In/Out Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/eventController.js: Time In/Out Backend",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventDetailsPage.jsx: Event Chat Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/EventChatPage.jsx: Event Chat Functionality",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ProfilePage.jsx: Profile Management Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/userController.js: Profile Management Backend",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ManageUsersPage.jsx: Admin Management Flow",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/controllers/adminController.js: Admin Management Backend",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/api/api.js: API Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/authRoutes.js: Auth Route Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/eventRoutes.js: Event Route Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/userRoutes.js: User Route Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/routes/adminRoutes.js: Admin Route Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/User.js: User Model Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/Event.js: Event Model Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/Message.js: Message Model Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/Feedback.js: Feedback Model Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in backend/models/EventChat.js: Event Chat Model Integration",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/LoginPage.jsx: Login Form Validation",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/RegisterPage.jsx: Register Form Validation",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/ContactUsPage.jsx: Contact Form Validation",
+          "passed": true,
+          "details": ""
+        },
+        {
+          "name": "Content verified in frontend/src/components/FeedbackPage.jsx: Feedback Form Validation",
+          "passed": true,
+          "details": ""
+        }
+      ]
+    }
+  },
+  "summary": {
+    "totalPassed": 45,
+    "totalFailed": 0,
+    "successRate": "100.0"
+  }
+}

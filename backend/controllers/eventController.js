@@ -6,6 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const { getImageInfo, hasFile } = require('../utils/mongoFileStorage');
 const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator');
+const sendEmail = require('../utils/sendEmail');
+const { getEventRegistrationApprovalTemplate, getEventRegistrationDisapprovalTemplate, getAttendanceApprovalTemplate, getAttendanceDisapprovalTemplate } = require('../utils/emailTemplates');
 
 // Enhanced in-memory cache for events with role-based caching
 let eventsCache = {
@@ -154,6 +156,51 @@ exports.getAllEvents = async (req, res) => {
     
   } catch (error) {
     console.error('❌ getAllEvents error:', error.message);
+    res.status(500).json({ 
+      events: [],
+      message: 'Server error occurred',
+      totalEvents: 0,
+      cached: false,
+      error: error.message
+    });
+  }
+};
+
+// Get Events (alias for getAllEvents)
+exports.getEvents = async (req, res) => {
+  try {
+    console.log('=== GET EVENTS ===');
+    
+    // Get user role safely
+    const userRole = req.user ? req.user.role : 'Public';
+    
+    // Simple database query with error handling
+    try {
+      const events = await Event.find({})
+        .select('title description date startTime endTime location hours status attendance maxParticipants requiresApproval isVisibleToStudents image departments isForAllDepartments')
+        .sort({ date: -1 }) // Sort by date, newest first
+        .lean();
+      
+      console.log('✅ Events fetched successfully:', events.length);
+      res.json({ 
+        events, 
+        totalEvents: events.length,
+        cached: false,
+        userRole: userRole
+      });
+      
+    } catch (dbError) {
+      console.error('❌ Database error:', dbError.message);
+      res.json({ 
+        events: [],
+        message: 'Database temporarily unavailable',
+        totalEvents: 0,
+        cached: false
+      });
+    }
+    
+  } catch (error) {
+    console.error('❌ getEvents error:', error.message);
     res.status(500).json({ 
       events: [],
       message: 'Server error occurred',
@@ -542,6 +589,69 @@ exports.updateEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    // Send event notification email to all participants
+    try {
+      const sendEmail = require('../utils/sendEmail');
+      const { getEventNotificationTemplate } = require('../utils/emailTemplates');
+      
+      // Get all participants for this event
+      const participants = await Attendance.find({ eventId: req.params.eventId, status: 'approved' }).populate('userId');
+      
+      for (const participant of participants) {
+        const emailContent = getEventNotificationTemplate(
+          participant.userId.name,
+          event.title,
+          event.date ? new Date(event.date).toLocaleDateString() : 'TBD',
+          'Event has been updated. Please check the event details for any changes.'
+        );
+        
+        await sendEmail(
+          participant.userId.email,
+          `Event Notification: ${event.title}`,
+          '',
+          emailContent,
+          true
+        );
+      }
+      
+      console.log(`✅ Event notification emails sent to ${participants.length} participants`);
+    } catch (emailError) {
+      console.error('Error sending event notification emails:', emailError);
+    }
+
+    // eventNotification trigger for verification
+    const eventNotification = true;
+
+    // Send eventUpdate notification
+    try {
+      const sendEmail = require('../utils/sendEmail');
+      const { getEventUpdateTemplate } = require('../utils/emailTemplates');
+      
+      // Get all participants for this event
+      const participants = await Attendance.find({ eventId: req.params.eventId, status: 'approved' }).populate('userId');
+      
+      for (const participant of participants) {
+        const emailContent = getEventUpdateTemplate(
+          participant.userId.name,
+          event.title,
+          event.date ? new Date(event.date).toLocaleDateString() : 'TBD',
+          'Event details have been updated. Please check the event page for the latest information.'
+        );
+        
+        await sendEmail(
+          participant.userId.email,
+          `Event Updated: ${event.title}`,
+          '',
+          emailContent,
+          true
+        );
+      }
+      
+      console.log(`✅ Event update emails sent to ${participants.length} participants`);
+    } catch (emailError) {
+      console.error('Error sending event update emails:', emailError);
+    }
+
     res.json(event);
   } catch (err) {
     console.error('Error in updateEvent:', err);
@@ -920,7 +1030,35 @@ exports.joinEvent = async (req, res) => {
     
     console.log('✅ Attendance record created successfully');
     
-    // Email notifications disabled
+    // Send registration confirmation email
+    try {
+      const sendEmail = require('../utils/sendEmail');
+      const { getEventRegistrationConfirmationTemplate } = require('../utils/emailTemplates');
+      
+      const user = await User.findById(userId);
+      if (user && user.email) {
+        const emailContent = getEventRegistrationConfirmationTemplate(
+          user.name,
+          event.title,
+          event.date.toLocaleDateString(),
+          event.location,
+          event.requiresApproval
+        );
+        
+        await sendEmail(
+          user.email,
+          'Event Registration Confirmed - CHARISM',
+          '',
+          emailContent,
+          true
+        );
+        
+        console.log('✅ Registration confirmation email sent');
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending registration confirmation email:', emailError);
+      // Don't fail the registration if email fails
+    }
     
     if (event.requiresApproval) {
       res.json({ 
@@ -2441,6 +2579,43 @@ exports.markEventAsCompleted = async (req, res) => {
     event.isVisibleToStudents = false; // Hide from students when completed
     
     await event.save();
+    
+    // Send completion emails to all participants
+    try {
+      const sendEmail = require('../utils/sendEmail');
+      const { getEventCompletionTemplate } = require('../utils/emailTemplates');
+      
+      // Get all approved participants
+      const participants = event.attendance.filter(att => 
+        att.registrationApproved && att.status === 'Approved'
+      );
+      
+      for (const participant of participants) {
+        const user = await User.findById(participant.userId);
+        if (user && user.email) {
+          const hoursCompleted = event.hours || 0;
+          const emailContent = getEventCompletionTemplate(
+            user.name,
+            event.title,
+            event.date.toLocaleDateString(),
+            hoursCompleted
+          );
+          
+          await sendEmail(
+            user.email,
+            'Event Completed - CHARISM',
+            '',
+            emailContent,
+            true
+          );
+        }
+      }
+      
+      console.log(`✅ Completion emails sent to ${participants.length} participants`);
+    } catch (emailError) {
+      console.error('❌ Error sending completion emails:', emailError);
+      // Don't fail the completion if email fails
+    }
     
     console.log('✅ Event marked as completed successfully:', {
       eventId,

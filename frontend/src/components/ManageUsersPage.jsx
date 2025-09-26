@@ -6,7 +6,7 @@ import { Form, Spinner, Modal, Badge, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FaUser, FaIdCard, FaBuilding, FaGraduationCap, FaCalendar, FaCrown, FaUserTie, FaUserGraduate } from 'react-icons/fa';
 import {
-  getUsers, updateUser, deleteUser
+  getUsers, updateUser, deleteUser, approveUser
 } from '../api/api';
 import { getProfilePictureUrl } from '../utils/imageUtils';
 import './ManageUsersPage.css';
@@ -23,6 +23,71 @@ function ManageUsersPage() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Load users function
+  const loadUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const usersData = await getUsers();
+      setUsers(usersData || []);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      setError('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  // Handle user actions (approve, reject, etc.)
+  const handleAction = async (userId, action, data = {}) => {
+    try {
+      switch (action) {
+        case 'approve':
+          await approveUser(userId, data);
+          Swal.fire({
+            title: 'Success!',
+            text: 'User has been approved successfully.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          break;
+        case 'reject':
+          await updateUser(userId, { status: 'rejected', ...data });
+          Swal.fire({
+            title: 'Success!',
+            text: 'User has been rejected.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          break;
+        case 'suspend':
+          await updateUser(userId, { status: 'suspended', ...data });
+          Swal.fire({
+            title: 'Success!',
+            text: 'User has been suspended.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          break;
+        default:
+          throw new Error('Unknown action');
+      }
+      
+      // Refresh users list
+      await loadUsers();
+    } catch (error) {
+      console.error('Action error:', error);
+      Swal.fire({
+        title: 'Action Failed',
+        text: error.message || 'Failed to perform action. Please try again.',
+        icon: 'error'
+      });
+    }
+  };
 
   // Client-side sorting & pagination
   const [sortBy, setSortBy] = useState('name');

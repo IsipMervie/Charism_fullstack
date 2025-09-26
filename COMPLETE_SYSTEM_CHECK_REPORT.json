@@ -1,0 +1,288 @@
+{
+  "timestamp": "2025-09-25T09:03:59.437Z",
+  "results": {
+    "backend": {
+      "passed": 0,
+      "failed": 0,
+      "fixed": 0,
+      "tests": []
+    },
+    "frontend": {
+      "passed": 1,
+      "failed": 0,
+      "fixed": 0,
+      "tests": [
+        {
+          "name": "Frontend Build",
+          "passed": true,
+          "details": "Build exists",
+          "fixed": false
+        }
+      ]
+    },
+    "system": {
+      "passed": 40,
+      "failed": 1,
+      "fixed": 0,
+      "tests": [
+        {
+          "name": "Backend Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Main Server File",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Backend Package.json",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Backend Package.json",
+          "passed": true,
+          "details": "Valid package.json",
+          "fixed": false
+        },
+        {
+          "name": "Models Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Controllers Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Routes Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Utils Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Config Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Middleware Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "User Model",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Event Model",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Auth Controller",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Event Controller",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Admin Controller",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Auth Routes",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Event Routes",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Admin Routes",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Database Config",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Email Utility",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Error Handler",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Frontend Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Frontend Package.json",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Frontend Package.json",
+          "passed": true,
+          "details": "Valid package.json",
+          "fixed": false
+        },
+        {
+          "name": "Main App Component",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Entry Point",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "HTML Template",
+          "passed": false,
+          "details": "Missing required content",
+          "fixed": false
+        },
+        {
+          "name": "Components Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "API Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Utils Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Contexts Directory",
+          "passed": true,
+          "details": "Directory exists",
+          "fixed": false
+        },
+        {
+          "name": "Navigation Component",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Home Page",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Login Page",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Event List Page",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Admin Dashboard",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "API Configuration",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Theme Context",
+          "passed": true,
+          "details": "File exists and valid",
+          "fixed": false
+        },
+        {
+          "name": "Backend Dependencies",
+          "passed": true,
+          "details": "Already installed",
+          "fixed": false
+        },
+        {
+          "name": "Frontend Dependencies",
+          "passed": true,
+          "details": "Already installed",
+          "fixed": false
+        },
+        {
+          "name": "Environment File",
+          "passed": true,
+          "details": "Exists",
+          "fixed": false
+        }
+      ]
+    },
+    "overall": {
+      "passed": 41,
+      "failed": 1,
+      "fixed": 0,
+      "total": 42
+    }
+  },
+  "summary": {
+    "overallPercentage": 97.6,
+    "status": "EXCELLENT",
+    "fixesApplied": 0
+  }
+}

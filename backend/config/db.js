@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Get the appropriate MongoDB URI based on environment
-const dbURI = process.env.MONGO_URI;
+const dbURI = process.env.MONGODB_URI || process.env.MONGO_URI;
 const nodeEnv = process.env.NODE_ENV || 'development';
 
 // Optimized connection function for serverless
