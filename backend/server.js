@@ -87,8 +87,34 @@ app.use((req, res, next) => {
   next();
 });
 
-// SIMPLE CORS - Allow all origins
-app.use(cors());
+
+
+// EMERGENCY CORS FIX - Allow all origins
+app.use(cors({
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
+}));
+
+// Handle preflight requests
+app.options('*', cors());
+
+// Additional CORS headers for all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
 
 // Handle preflight requests
 app.options('*', cors());

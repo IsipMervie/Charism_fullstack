@@ -33,8 +33,8 @@ const FeedbackPage = () => {
     
     if (!formData.message.trim()) {
       errors.message = 'Message is required';
-    } else if (formData.message.trim().length < 10) {
-      errors.message = 'Message must be at least 10 characters';
+    } else if (formData.message.trim().length < 5) {
+      errors.message = 'Message must be at least 5 characters';
     }
     
     if (!formData.userEmail.trim()) {

@@ -13,82 +13,32 @@ export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
   timeout: 60000, // Increased to 60 seconds for better reliability
+  withCredentials: true, // Important for CORS
+  crossDomain: true
 });
 
-// Simple request interceptor to add token
+
+// Request interceptor for CORS
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Add CORS headers
+    config.headers['Access-Control-Allow-Origin'] = '*';
+    config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+    config.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
     
-    // For FormData uploads, don't override Content-Type
-    if (config.data instanceof FormData) {
-      delete config.headers['Content-Type'];
-    }
+    console.log('🌐 Making request to:', config.baseURL + config.url);
+    console.log('🔗 Request headers:', config.headers);
     
     return config;
   },
   (error) => {
+    console.error('❌ Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
-
-// Enhanced response interceptor for error handling
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Better error logging with more details
-    if (error.code === 'ECONNABORTED') {
-      console.error('Request timeout - server may be slow or overloaded');
-    } else if (error.code === 'ERR_NETWORK') {
-      console.error('Network error - check connection or server may be down');
-    } else if (error.code === 'ERR_CANCELED') {
-      console.error('Request was canceled/aborted');
-    } else if (error.response) {
-      console.error('Server error:', error.response.status, error.response.statusText);
-      if (error.response.status === 0) {
-        console.error('CORS or network issue - server may be unreachable');
-      }
-    } else {
-      console.error('Unknown error:', error.message);
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
-// Helper to get userId from localStorage
-function getUserId() {
-  const user = localStorage.getItem('user');
-  if (user) {
-    try {
-      return JSON.parse(user)._id;
-    } catch (e) {
-      console.error('Error parsing user from localStorage:', e);
-    }
-  }
-  const userId = localStorage.getItem('userId');
-  if (userId) return userId;
-  throw new Error('No userId found in localStorage. Please log in.');
-}
-
-// Test API connection with shorter timeout for health checks
-export const testApiConnection = async () => {
-  try {
-    console.log('🔍 Testing API connection to:', axiosInstance.defaults.baseURL);
-    
-    // Use a shorter timeout for health checks
-    const healthCheckInstance = axios.create({
-      baseURL: API_URL,
-      timeout: 15000, // 15 seconds for health check
-    });
     
     const response = await healthCheckInstance.get('/health');
     console.log('✅ API connection successful:', response.status);
