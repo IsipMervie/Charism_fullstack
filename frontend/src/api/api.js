@@ -39,7 +39,10 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-    
+
+// Test API connection function
+export const testAPIConnection = async () => {
+  try {
     const response = await healthCheckInstance.get('/health');
     console.log('✅ API connection successful:', response.status);
     return { success: true, data: response.data };

@@ -169,9 +169,10 @@ function RegisterPage() {
         setYearOptions([]);
         setSectionOptions([]);
         setDepartmentOptions([]);
-      } finally {
-        setLoadingOptions(false);
       }
+    } finally {
+      setLoadingOptions(false);
+    }
     };
 
     fetchSettings();
