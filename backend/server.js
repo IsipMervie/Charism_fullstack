@@ -89,6 +89,23 @@ app.use((req, res, next) => {
 
 
 
+// EMERGENCY CORS FIX - Force headers on every request
+app.use((req, res, next) => {
+  // Force CORS headers on EVERY response
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'false');
+  
+  // Handle preflight requests immediately
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
 // CORS configuration - SIMPLIFIED to avoid credentials issues
 app.use(cors({
   origin: '*', // Allow all origins since we disabled credentials
@@ -98,8 +115,9 @@ app.use(cors({
   exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
 }));
 
-// Handle preflight requests - SIMPLIFIED
+// Handle preflight requests - EMERGENCY FIX
 app.options('*', (req, res) => {
+  console.log('🚨 OPTIONS request received:', req.url);
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -107,14 +125,16 @@ app.options('*', (req, res) => {
   res.status(200).end();
 });
 
-// Additional CORS headers for all responses - SIMPLIFIED
+// Additional CORS headers for all responses - EMERGENCY FIX
 app.use((req, res, next) => {
+  console.log('🚨 Request received:', req.method, req.url);
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'false');
   
   if (req.method === 'OPTIONS') {
+    console.log('🚨 OPTIONS handled in middleware');
     res.status(200).end();
     return;
   }
@@ -185,6 +205,7 @@ app.get('/api/ping', (req, res) => {
 
 // EMERGENCY TEST ENDPOINT - Simple CORS test
 app.get('/api/test', (req, res) => {
+  console.log('🚨 TEST endpoint called');
   // Force CORS headers
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -196,7 +217,23 @@ app.get('/api/test', (req, res) => {
     timestamp: new Date().toISOString(),
     cors: 'FIXED',
     server: 'RUNNING',
-    version: '2.0.0 - APPROVAL FIXES DEPLOYED'
+    version: '3.0.0 - EMERGENCY CORS FIX DEPLOYED'
+  });
+});
+
+// EMERGENCY CORS TEST ENDPOINT
+app.post('/api/cors-test', (req, res) => {
+  console.log('🚨 CORS TEST POST endpoint called');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  res.json({
+    status: 'SUCCESS',
+    message: 'CORS POST test working!',
+    timestamp: new Date().toISOString(),
+    cors: 'FIXED',
+    method: 'POST'
   });
 });
 

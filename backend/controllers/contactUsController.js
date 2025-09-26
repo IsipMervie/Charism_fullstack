@@ -7,6 +7,12 @@ const { getContactSubmissionTemplate, getContactAdminNotificationTemplate, getCo
 // Send a contact message (public)
 exports.sendContactMessage = async (req, res) => {
   try {
+    // EMERGENCY CORS FIX - Force headers on response
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'false');
+    
     const { name, email, message } = req.body;
     if (!name || !email || !message) {
       return res.status(400).json({ message: 'All fields are required.' });
