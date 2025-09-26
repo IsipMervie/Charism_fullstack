@@ -836,7 +836,7 @@ export const loginUser = async (email, password) => {
       
       // Test connection first on first attempt
       if (attempt === 1) {
-        const connectionTest = await testApiConnection();
+        const connectionTest = await testAPIConnection();
         if (!connectionTest.success) {
           throw new Error(`Cannot connect to server: ${connectionTest.error}`);
         }
@@ -911,7 +911,7 @@ export const registerUser = async (name, email, password, userId, academicYear, 
   try {
     // Test connection first
     console.log('🔍 Testing API connection before registration...');
-    const connectionTest = await testApiConnection();
+    const connectionTest = await testAPIConnection();
     if (!connectionTest.success) {
       console.error('❌ API connection failed:', connectionTest.error);
       throw new Error(`Cannot connect to server: ${connectionTest.error}`);

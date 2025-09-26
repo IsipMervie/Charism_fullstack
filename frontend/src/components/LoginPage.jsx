@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
-import { loginUser, testApiConnection } from '../api/api';
+import { loginUser, testAPIConnection } from '../api/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { showWarning, showError, showSuccess, showInfo, showAlert } from '../utils/sweetAlertUtils';
 import './LoginPage.css';
@@ -71,7 +71,7 @@ function LoginPage() {
     
     // Test API connection first
     try {
-      const connectionTest = await testApiConnection();
+      const connectionTest = await testAPIConnection();
       if (!connectionTest.success) {
         console.error('API connection test failed:', connectionTest);
         
