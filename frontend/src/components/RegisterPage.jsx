@@ -156,24 +156,22 @@ function RegisterPage() {
         setSectionOptions(settings.sections?.map(s => s.name) || []);
         setDepartmentOptions(settings.departments?.map(d => d.name) || []);
       } catch (error) {
-      console.error('Form submission error:', error);
-      if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-        showError('Server is taking longer than usual. Please try again in a moment.');
-      } else if (error.response?.status === 500) {
-        showError('Server error. Please try again later.');
-      } else if (error.response?.status === 404) {
-        showError('Service temporarily unavailable. Please try again.');
-      } else {
         console.error('Error fetching settings:', error);
+        if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+          console.warn('Server is taking longer than usual. Please try again in a moment.');
+        } else if (error.response?.status === 500) {
+          console.warn('Server error. Please try again later.');
+        } else if (error.response?.status === 404) {
+          console.warn('Service temporarily unavailable. Please try again.');
+        }
         setAcademicYears([]);
         setYearOptions([]);
         setSectionOptions([]);
         setDepartmentOptions([]);
+      } finally {
+        setLoadingOptions(false);
       }
-    } finally {
-      setLoadingOptions(false);
     }
-    };
 
     fetchSettings();
   }, []);

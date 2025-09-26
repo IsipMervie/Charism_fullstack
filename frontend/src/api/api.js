@@ -91,7 +91,8 @@ export const testAPIConnection = async () => {
 };
 
 // Retry mechanism for critical API calls
-export const retryApiCall = async (apiCall, maxRetries = 3, delay = 2000) => {
+export const retryApiCall = async (apiCall, maxRetries = 3, initialDelay = 2000) => {
+  let delay = initialDelay;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`🔄 API call attempt ${attempt}/${maxRetries}`);
@@ -108,7 +109,8 @@ export const retryApiCall = async (apiCall, maxRetries = 3, delay = 2000) => {
       
       // Wait before retrying
       console.log(`⏳ Waiting ${delay}ms before retry...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      // eslint-disable-next-line no-loop-func
+      await new Promise(resolve => setTimeout(() => resolve(), delay));
       
       // Increase delay for next retry
       delay *= 1.5;
@@ -162,10 +164,12 @@ export const clearParticipantCache = (eventId) => {
 // =======================
 
 // Default export for backward compatibility
-export default {
+const apiExports = {
   axiosInstance,
   // Add other commonly used functions here if needed
 };
+
+export default apiExports;
 
 // Generate registration tokens for existing events (admin utility)
 export const generateTokensForExistingEvents = async () => {

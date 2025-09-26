@@ -394,7 +394,7 @@ const EventChat = ({
   const sendMessage = useCallback(async (e) => {
     e.preventDefault();
     
-    if ((!newMessage || !newMessage.trim()) && selectedFiles.length === 0 || sending) return;
+    if (((!newMessage || !newMessage.trim()) && selectedFiles.length === 0) || sending) return;
 
     const messageText = newMessage.trim();
     const tempId = `temp_${Date.now()}`;

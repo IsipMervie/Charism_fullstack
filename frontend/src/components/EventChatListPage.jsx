@@ -174,15 +174,18 @@ const EventChatListPage = () => {
           case 'today':
             if (eventDate.toDateString() !== today.toDateString()) return false;
             break;
-          case 'thisWeek':
+          case 'thisWeek': {
             const weekStart = new Date(today);
             weekStart.setDate(today.getDate() - today.getDay());
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
             if (eventDate < weekStart || eventDate > weekEnd) return false;
             break;
+          }
           case 'thisMonth':
             if (eventDate.getMonth() !== today.getMonth() || eventDate.getFullYear() !== today.getFullYear()) return false;
+            break;
+          default:
             break;
         }
       }
