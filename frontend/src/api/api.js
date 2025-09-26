@@ -41,9 +41,25 @@ axiosInstance.interceptors.request.use(
 );
 
 // Test API connection function
+
+// Get user ID from localStorage
+export const getUserId = () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    
+    // Decode JWT token to get user ID
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || payload.id;
+  } catch (error) {
+    console.error('Error getting user ID:', error);
+    return null;
+  }
+};
+
 export const testAPIConnection = async () => {
   try {
-    const response = await healthCheckInstance.get('/health');
+    const response = await axiosInstance.get('/health');
     console.log('✅ API connection successful:', response.status);
     return { success: true, data: response.data };
   } catch (error) {
@@ -695,7 +711,17 @@ export const registerForEvent = async (eventId) => {
 
 export const timeIn = async (eventId) => {
   try {
-    const userId = getUserId();
+    const userId = (() => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || payload.id;
+  } catch (error) {
+    console.error('Error getting user ID:', error);
+    return null;
+  }
+})();
     const response = await axiosInstance.post(`/events/${eventId}/attendance/${userId}/time-in`);
     return response.data;
   } catch (error) {
@@ -723,7 +749,17 @@ export const timeIn = async (eventId) => {
 
 export const timeOut = async (eventId) => {
   try {
-    const userId = getUserId();
+    const userId = (() => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || payload.id;
+  } catch (error) {
+    console.error('Error getting user ID:', error);
+    return null;
+  }
+})();
     const response = await axiosInstance.post(`/events/${eventId}/attendance/${userId}/time-out`);
     return response.data;
   } catch (error) {
