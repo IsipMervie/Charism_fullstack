@@ -8,37 +8,49 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Simple axios instance with longer timeout and retry logic
-export const axiosInstance = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-  timeout: 60000, // Increased to 60 seconds for better reliability
-  withCredentials: true, // Important for CORS
-  crossDomain: true
-});
+// Simple fetch-based API client to avoid CORS issues completely
+export const apiCall = async (url, options = {}) => {
+  const defaultOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    mode: 'cors',
+    cache: 'no-cache',
+  };
 
-
-// Request interceptor for CORS
-axiosInstance.interceptors.request.use(
-  (config) => {
-    // Add CORS headers
-    config.headers['Access-Control-Allow-Origin'] = '*';
-    config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-    config.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
-    
-    console.log('🌐 Making request to:', config.baseURL + config.url);
-    console.log('🔗 Request headers:', config.headers);
-    
-    return config;
-  },
-  (error) => {
-    console.error('❌ Request interceptor error:', error);
-    return Promise.reject(error);
+  const config = { ...defaultOptions, ...options };
+  
+  if (config.body && typeof config.body === 'object') {
+    config.body = JSON.stringify(config.body);
   }
-);
+
+  try {
+    const response = await fetch(`${API_URL}${url}`, config);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return { data, status: response.status };
+  } catch (error) {
+    console.error('API call failed:', error);
+    throw error;
+  }
+};
+
+// Keep axios for backward compatibility but use fetch internally
+export const axiosInstance = {
+  get: (url, config) => apiCall(url, { method: 'GET', ...config }),
+  post: (url, data, config) => apiCall(url, { method: 'POST', body: data, ...config }),
+  put: (url, data, config) => apiCall(url, { method: 'PUT', body: data, ...config }),
+  delete: (url, config) => apiCall(url, { method: 'DELETE', ...config }),
+};
+
+
+// No interceptors needed with fetch API
 
 // Test API connection function
 

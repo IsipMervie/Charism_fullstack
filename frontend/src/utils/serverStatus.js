@@ -90,8 +90,7 @@ export const checkServerStatus = async () => {
       method: 'OPTIONS',
       mode: 'cors',
       headers: {
-        'Origin': window.location.origin,
-        'Access-Control-Request-Method': 'GET'
+        'Origin': window.location.origin
       }
     });
     

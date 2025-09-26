@@ -89,74 +89,30 @@ app.use((req, res, next) => {
 
 
 
-// CORS configuration - Fixed for credentials
+// CORS configuration - SIMPLIFIED to avoid credentials issues
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'https://charism-ucb4.onrender.com',
-      'https://charism.onrender.com',
-      'http://localhost:3000',
-      'http://localhost:3001'
-    ];
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      // For production, default to main frontend URL
-      callback(null, 'https://charism-ucb4.onrender.com');
-    }
-  },
-  credentials: true,
+  origin: '*', // Allow all origins since we disabled credentials
+  credentials: false, // DISABLE credentials to avoid CORS issues
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
   exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
 }));
 
-// Handle preflight requests with proper CORS
+// Handle preflight requests - SIMPLIFIED
 app.options('*', (req, res) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
-    'https://charism-ucb4.onrender.com',
-    'https://charism.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ];
-  
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
-  }
-  
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Credentials', 'false');
   res.status(200).end();
 });
 
-// Additional CORS headers for all responses
+// Additional CORS headers for all responses - SIMPLIFIED
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
-    'https://charism-ucb4.onrender.com',
-    'https://charism.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ];
-  
-  // Check if origin is allowed
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
-  }
-  
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Credentials', 'false');
   
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -166,25 +122,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Handle preflight requests with proper CORS
+// Handle preflight requests - SIMPLIFIED
 app.options('*', (req, res) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
-    'https://charism-ucb4.onrender.com',
-    'https://charism.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ];
-  
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  } else {
-    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
-  }
-  
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Credentials', 'false');
   res.status(200).end();
 });
 
