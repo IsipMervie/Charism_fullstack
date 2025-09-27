@@ -91,7 +91,7 @@ app.use((req, res, next) => {
 
 // SINGLE CORS CONFIGURATION - NO CONFLICTS
 app.use(cors({
-  origin: 'https://charism-ucb4.onrender.com',
+  origin: true, // Allow all origins for now
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],

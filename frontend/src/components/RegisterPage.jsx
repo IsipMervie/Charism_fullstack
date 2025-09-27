@@ -60,19 +60,20 @@ function RegisterPage() {
       errors.userId = 'User ID is required';
     }
     
-    if (!academicYear.trim()) {
+    // Only validate dropdown fields if they have options loaded
+    if (academicYears.length > 0 && !academicYear.trim()) {
       errors.academicYear = 'Academic Year is required';
     }
     
-    if (!year.trim()) {
+    if (yearOptions.length > 0 && !year.trim()) {
       errors.year = 'Year is required';
     }
     
-    if (!section.trim()) {
+    if (sectionOptions.length > 0 && !section.trim()) {
       errors.section = 'Section is required';
     }
     
-    if (!department.trim()) {
+    if (departmentOptions.length > 0 && !department.trim()) {
       errors.department = 'Department is required';
     }
     
@@ -179,10 +180,20 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if options are still loading
+    if (loadingOptions) {
+      Swal.fire({
+        title: 'Please Wait',
+        text: 'Loading form options. Please try again in a moment.',
+        icon: 'info'
+      });
+      return;
+    }
+
     if (!validateForm()) {
       Swal.fire({
         title: 'Validation Error',
-        text: 'Please fix the errors in the form.',
+        text: 'Please fill in all required fields.',
         icon: 'warning'
       });
       return;
@@ -202,7 +213,7 @@ function RegisterPage() {
     }
     if (role === 'Student') {
       if (!academicYear) {
-        Swal.fire({ icon: 'error', title: 'Missing Academic Year', text: 'Please enter your academic year.' });
+        Swal.fire({ icon: 'error', title: 'Missing Academic Year', text: 'Please select your academic year.' });
         return;
       }
       if (!year) {
@@ -210,7 +221,7 @@ function RegisterPage() {
         return;
       }
       if (!section) {
-        Swal.fire({ icon: 'error', title: 'Missing Section', text: 'Please enter your section.' });
+        Swal.fire({ icon: 'error', title: 'Missing Section', text: 'Please select your section.' });
         return;
       }
       if (!department) {
