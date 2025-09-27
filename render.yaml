@@ -2,8 +2,8 @@ services:
   - type: web
     name: charism-api
     env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node server.js
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -17,10 +17,10 @@ services:
         value: 10000
       - key: FRONTEND_URL
         value: https://charism-ucb4.onrender.com
-      - key: FRONTEND_URL_PRODUCTION
-        value: https://charism-ucb4.onrender.com
+      - key: BACKEND_URL
+        value: https://charism-api-xtw9.onrender.com
       - key: CORS_ORIGINS
-        value: https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000
+        value: https://charism-ucb4.onrender.com,https://charism-api-xtw9.onrender.com,http://localhost:3000
       - key: EMAIL_USER
         value: nexacore91@gmail.com
       - key: EMAIL_PASS
@@ -46,4 +46,6 @@ services:
     envVars:
       - key: REACT_APP_API_URL
         value: https://charism-api-xtw9.onrender.com/api
+      - key: NODE_ENV
+        value: production
 

@@ -2,12 +2,14 @@ services:
   - type: web
     name: charism-api
     env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node server.js
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
+        value: mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
+      - key: MONGODB_URI
         value: mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
       - key: JWT_SECRET
         value: mysecretkey123456789
@@ -15,10 +17,10 @@ services:
         value: 10000
       - key: FRONTEND_URL
         value: https://charism-ucb4.onrender.com
-      - key: FRONTEND_URL_PRODUCTION
-        value: https://charism-ucb4.onrender.com
+      - key: BACKEND_URL
+        value: https://charism-api-xtw9.onrender.com
       - key: CORS_ORIGINS
-        value: https://charism-ucb4.onrender.com
+        value: https://charism-ucb4.onrender.com,https://charism-api-xtw9.onrender.com,http://localhost:3000
       - key: EMAIL_USER
         value: nexacore91@gmail.com
       - key: EMAIL_PASS
@@ -32,16 +34,7 @@ services:
       - key: MAX_FILE_SIZE
         value: 5242880
       - key: UPLOAD_PATH
-        value: ./uploads
+        value: /tmp/uploads
       - key: BCRYPT_ROUNDS
         value: 12
-
-  - type: web
-    name: charism
-    env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/build
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://charism-api-xtw9.onrender.com/api
 

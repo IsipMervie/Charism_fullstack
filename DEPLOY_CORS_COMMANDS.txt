@@ -1,3 +1,0 @@
-git add .
-git commit -m "URGENT: Fix CORS policy errors"
-git push origin main

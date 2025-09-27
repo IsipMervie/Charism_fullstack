@@ -87,6 +87,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Render deployment fix - ensure PORT is set correctly
+const PORT = process.env.PORT || 10000;
+
 
 
 // EMERGENCY CORS FIX - Multiple layers
@@ -296,7 +299,6 @@ const startServer = async () => {
     await createIndexes();
     
 // Start server with error handling
-const PORT = process.env.PORT || 5000;
 
 // Check for email configuration
 if (!process.env.EMAIL_USER) {
@@ -306,7 +308,7 @@ if (!process.env.EMAIL_PASS) {
   console.log('⚠️ EMAIL_PASS not set - email features may not work');
 }
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
