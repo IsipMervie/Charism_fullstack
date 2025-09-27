@@ -51,25 +51,28 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        // Optimized timeouts for Render free tier
-        serverSelectionTimeoutMS: 3000, // Reduced to 3 seconds
-        socketTimeoutMS: 8000, // Reduced to 8 seconds
-        connectTimeoutMS: 3000, // Reduced to 3 seconds
+        // Ultra-fast timeouts for Render free tier
+        serverSelectionTimeoutMS: 5000, // Increased for stability
+        socketTimeoutMS: 30000, // Increased for slow operations
+        connectTimeoutMS: 5000, // Increased for stability
+        maxTimeMS: 25000, // Global operation timeout
         
         // Serverless-optimized pooling
         maxPoolSize: 1,
         minPoolSize: 0,
-        maxIdleTimeMS: 5000, // Reduced to 5 seconds
+        maxIdleTimeMS: 30000, // Increased for stability
         
         // Performance optimizations
-        bufferCommands: true,
+        bufferCommands: false, // Disable buffering for faster responses
+        bufferMaxEntries: 0, // Disable buffering
         family: 4, // Force IPv4
         retryWrites: true,
         retryReads: true,
         w: 'majority',
         
-        // Disable expensive operations in production
+        // Disable expensive operations
         autoIndex: false,
+        autoCreate: false, // Disable auto creation
         maxConnecting: 1,
         
         // Server API version
@@ -80,10 +83,12 @@ const connectDB = async () => {
         },
         
         // Heartbeat optimization
-        heartbeatFrequencyMS: 2000, // Reduced for faster detection
+        heartbeatFrequencyMS: 10000, // Reduced frequency
         
-        // Additional timeout settings - removed maxTimeMS as it's not supported in connection options
+        // Additional optimizations
         compressors: ['zlib'], // Enable compression
+        directConnection: false, // Allow load balancing
+        readPreference: 'primary', // Read from primary
       });
       
       console.log('✅ MongoDB connected successfully');

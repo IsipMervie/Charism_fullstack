@@ -14,8 +14,37 @@ exports.sendContactMessage = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required.' });
     }
     
-    // Just return success without database operations for now
-    console.log(`✅ Contact message received: ${name} - ${email}`);
+    // Save to database
+    const message = new Message({
+      name,
+      email,
+      message,
+      timestamp: new Date()
+    });
+    
+    await message.save();
+    console.log(`✅ Contact message saved to database: ${name} - ${email}`);
+
+    // Send confirmation email to user
+    try {
+      const emailContent = getContactResponseTemplate(name);
+      await sendEmail(email, 'Thank you for contacting CHARISM', '', emailContent, true);
+      console.log('✅ Contact confirmation email sent to:', email);
+    } catch (emailError) {
+      console.error('Failed to send contact confirmation email:', emailError);
+      // Don't fail the request if email fails
+    }
+
+    // Send notification to admin
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@charism.com';
+      const adminContent = getContactAdminNotificationTemplate(name, email, message);
+      await sendEmail(adminEmail, 'New Contact Message - CHARISM', '', adminContent, true);
+      console.log('✅ Contact notification sent to admin');
+    } catch (emailError) {
+      console.error('Failed to send admin notification:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.status(200).json({ 
       message: 'Contact message received successfully.',

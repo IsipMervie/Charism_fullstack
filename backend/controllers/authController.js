@@ -25,8 +25,8 @@ const register = async (req, res) => {
     
     console.log('🔍 Registration attempt:', { name, email, userId, role });
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user already exists (with timeout)
+    const existingUser = await User.findOne({ email }).maxTimeMS(10000);
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -49,7 +49,7 @@ const register = async (req, res) => {
     });
 
     try {
-      await user.save();
+      await user.save({ maxTimeMS: 15000 });
       console.log('✅ User created successfully:', user._id);
     } catch (saveError) {
       console.error('❌ User save error:', saveError);
@@ -58,6 +58,11 @@ const register = async (req, res) => {
         return res.status(400).json({ 
           message: 'Validation failed', 
           errors: validationErrors 
+        });
+      }
+      if (saveError.name === 'MongoTimeoutError') {
+        return res.status(408).json({ 
+          message: 'Registration timeout - please try again' 
         });
       }
       throw saveError;
