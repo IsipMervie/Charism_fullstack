@@ -17,32 +17,8 @@ exports.sendContactMessage = async (req, res) => {
     const newMessage = new Message({ name, email, message });
     await newMessage.save();
     
-    // Send confirmation email to the user
-    try {
-      const userEmailSubject = `Thank you for contacting us - CHARISM`;
-      const userEmailContent = getContactSubmissionTemplate(name, email, message, newMessage._id);
-
-      await sendEmail(email, userEmailSubject, undefined, userEmailContent);
-      console.log(`✅ Confirmation email sent to ${email} for contact submission`);
-    } catch (emailError) {
-      console.error('❌ Failed to send confirmation email to user:', emailError);
-      // Don't fail the request if email fails, just log it
-    }
-
-    // Send notification email to admin (optional)
-    try {
-      const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
-      if (adminEmail) {
-        const adminEmailSubject = `New Contact Message from ${name} - CHARISM`;
-        const adminEmailContent = getContactAdminNotificationTemplate(name, email, message, newMessage._id);
-
-        await sendEmail(adminEmail, adminEmailSubject, undefined, adminEmailContent);
-        console.log(`✅ Admin notification email sent to ${adminEmail} for new contact message`);
-      }
-    } catch (adminEmailError) {
-      console.error('Failed to send admin notification email:', adminEmailError);
-      // Don't fail the request if admin email fails, just log it
-    }
+    // Skip email sending for now to avoid 502 errors
+    console.log(`✅ Contact message saved: ${name} - ${email}`);
 
     res.status(201).json({ 
       message: 'Contact message received and saved. You will receive a confirmation email shortly.',

@@ -14,18 +14,16 @@ const register = async (req, res) => {
     
     const { name, email, password, userId, academicYear, year, section, department, role } = req.body;
     
-    // Debug logging
-    console.log('🔍 Registration attempt:', {
-      name: name ? 'provided' : 'missing',
-      email: email ? 'provided' : 'missing',
-      password: password ? 'provided' : 'missing',
-      userId: userId ? 'provided' : 'missing',
-      academicYear: academicYear ? 'provided' : 'missing',
-      year: year ? 'provided' : 'missing',
-      section: section ? 'provided' : 'missing',
-      department: department ? 'provided' : 'missing',
-      role: role ? 'provided' : 'missing'
-    });
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email, and password are required' });
+    }
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+    
+    console.log('🔍 Registration attempt:', { name, email, userId, role });
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
