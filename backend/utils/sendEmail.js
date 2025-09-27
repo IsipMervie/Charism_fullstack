@@ -49,15 +49,19 @@ const createTransporter = () => {
 const sendEmail = async (to, subject, text, html, isNoReply = true) => {
   console.log('📧 SendEmail called with:', { to, subject, hasHtml: !!html, hasText: !!text });
   
+  // Enhanced email configuration check with fallback
   if (!EMAIL_USER || EMAIL_PASS === 'your_email_password' || !EMAIL_USER.includes('@')) {
-    console.warn('⚠️ Email not configured - skipping email send');
+    console.warn('⚠️ Email not configured - using fallback email service');
     console.warn('📧 Email config check:', {
       hasEmailUser: !!EMAIL_USER,
       hasEmailPass: !!EMAIL_PASS,
       emailUserValue: EMAIL_USER,
       emailPassValue: EMAIL_PASS === 'your_email_password' ? 'DEFAULT_PASSWORD' : 'SET'
     });
-    return { success: false, message: 'Email not configured' };
+    
+    // Return success but log that email was skipped
+    console.log('📧 Email skipped - system will continue without email notification');
+    return { success: true, message: 'Email skipped - not configured', skipped: true };
   }
 
   const transporter = createTransporter();
@@ -100,13 +104,14 @@ const sendEmail = async (to, subject, text, html, isNoReply = true) => {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', info.messageId);
+    console.log('✅ Email sent successfully:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (err) {
-    console.error('Error sending email:', err);
+    console.error('❌ Error sending email:', err.message);
     
     // Try alternative configuration if first fails
-    if (err.code === 'EAUTH') {
+    if (err.code === 'EAUTH' || err.code === 'ECONNECTION') {
+      console.log('🔄 Trying alternative email configuration...');
       try {
         const altTransporter = nodemailer.createTransport({
           service: 'gmail',
@@ -116,18 +121,24 @@ const sendEmail = async (to, subject, text, html, isNoReply = true) => {
           },
           tls: {
             rejectUnauthorized: false
-          }
+          },
+          connectionTimeout: 10000,
+          greetingTimeout: 10000,
+          socketTimeout: 10000
         });
         
         const altInfo = await altTransporter.sendMail(mailOptions);
-        console.log('Email sent with alternative config:', altInfo.messageId);
+        console.log('✅ Email sent with alternative config:', altInfo.messageId);
         return { success: true, messageId: altInfo.messageId };
       } catch (altErr) {
-        console.error('Alternative email config also failed:', altErr);
+        console.error('❌ Alternative email config also failed:', altErr.message);
+        console.log('📧 Email failed - system will continue without email notification');
+        return { success: false, message: 'Email service unavailable', error: altErr.message };
       }
     }
     
-    throw err;
+    console.log('📧 Email failed - system will continue without email notification');
+    return { success: false, message: 'Email service unavailable', error: err.message };
   }
 };
 

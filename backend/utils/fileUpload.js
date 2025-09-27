@@ -48,8 +48,8 @@ const uploadEventDocs = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-    files: 5 // Maximum 5 files per upload
+    fileSize: 5 * 1024 * 1024, // 5MB limit (reduced for Render free tier)
+    files: 3 // Maximum 3 files per upload (reduced for performance)
   }
 });
 

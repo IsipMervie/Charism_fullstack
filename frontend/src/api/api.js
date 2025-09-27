@@ -15,7 +15,7 @@ export const axiosInstance = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  timeout: 30000,
+  timeout: 15000, // Reduced timeout for Render free tier
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });

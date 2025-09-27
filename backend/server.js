@@ -297,7 +297,8 @@ const server = app.listen(PORT, '0.0.0.0', () => {
       console.error('❌ Server error:', error);
       if (error.code === 'EADDRINUSE') {
         console.log('Port is already in use, trying next port...');
-        server.listen(PORT + 1);
+        const nextPort = parseInt(PORT) + 1;
+        server.listen(nextPort);
       }
     });
 
@@ -883,19 +884,11 @@ console.log(' Events routes loaded');
 
 // Debug all API calls
 app.all('/api/*', (req, res, next) => {
-  if (req.path.includes('approve') || req.path.includes('disapprove')) {
-    console.log('🔍 API APPROVAL/DISAPPROVAL CALL:', {
-      method: req.method,
-      url: req.url,
-      path: req.path,
-      params: req.params,
-      body: req.body,
-      headers: {
-        'authorization': req.headers['authorization'] ? 'Present' : 'Missing',
-        'content-type': req.headers['content-type']
-      }
-    });
-  }
+  console.log('🔍 API CALL:', {
+    method: req.method,
+    url: req.url,
+    path: req.path
+  });
   next();
 });
 app.use('/api/event-chat', require('./routes/eventChatRoutes'));

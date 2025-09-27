@@ -51,10 +51,10 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        // Optimized timeouts for serverless - balanced for production
-        serverSelectionTimeoutMS: 5000, // Increased to 5 seconds
-        socketTimeoutMS: 10000, // Increased to 10 seconds
-        connectTimeoutMS: 5000, // Increased to 5 seconds
+        // Optimized timeouts for Render free tier
+        serverSelectionTimeoutMS: 3000, // Reduced to 3 seconds
+        socketTimeoutMS: 8000, // Reduced to 8 seconds
+        connectTimeoutMS: 3000, // Reduced to 3 seconds
         
         // Serverless-optimized pooling
         maxPoolSize: 1,
@@ -167,9 +167,9 @@ const getLazyConnection = async () => {
     }
     
     if (lazyConnection) {
-      // Balanced timeout to prevent hanging
+      // Optimized timeout for Render free tier
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database connection timeout')), 8000); // Increased to 8 seconds
+        setTimeout(() => reject(new Error('Database connection timeout')), 5000); // Reduced to 5 seconds
       });
       
       await Promise.race([lazyConnection, timeoutPromise]);
