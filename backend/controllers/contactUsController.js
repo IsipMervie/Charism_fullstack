@@ -15,14 +15,14 @@ exports.sendContactMessage = async (req, res) => {
     }
     
     // Save to database
-    const message = new Message({
+    const contactMessage = new Message({
       name,
       email,
       message,
       timestamp: new Date()
     });
     
-    await message.save();
+    await contactMessage.save();
     console.log(`✅ Contact message saved to database: ${name} - ${email}`);
 
     // Send confirmation email to user
@@ -38,7 +38,7 @@ exports.sendContactMessage = async (req, res) => {
     // Send notification to admin
     try {
       const adminEmail = process.env.ADMIN_EMAIL || 'admin@charism.com';
-      const adminContent = getContactAdminNotificationTemplate(name, email, message);
+      const adminContent = getContactAdminNotificationTemplate(name, email, contactMessage.message);
       await sendEmail(adminEmail, 'New Contact Message - CHARISM', '', adminContent, true);
       console.log('✅ Contact notification sent to admin');
     } catch (emailError) {

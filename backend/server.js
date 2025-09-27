@@ -9,9 +9,9 @@ if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw
 
 // EMERGENCY: Set critical variables if missing (server needs to work)
 if (!process.env.MONGO_URI) {
-  console.log('⚠️ MONGO_URI not set - using secure fallback');
-  // Use a secure fallback connection string for development
-  process.env.MONGO_URI = 'mongodb://localhost:27017/communitylink-dev';
+  console.log('⚠️ MONGO_URI not set - using production fallback');
+  // Use production database as fallback
+  process.env.MONGO_URI = 'mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE';
 }
 if (!process.env.JWT_SECRET) {
   console.log('⚠️ JWT_SECRET not set - generating secure fallback');
@@ -266,20 +266,22 @@ const startServer = async () => {
     }
     
     // Create database indexes for performance
-    const { createIndexes } = require('./utils/databaseIndexes');
-    await createIndexes();
+    try {
+      const { createIndexes } = require('./utils/databaseIndexes');
+      await createIndexes();
+    } catch (indexError) {
+      console.log('⚠️ Database indexes creation failed:', indexError.message);
+    }
     
-// Start server with error handling
+    // Check for email configuration
+    if (!process.env.EMAIL_USER) {
+      console.log('⚠️ EMAIL_USER not set - email features may not work');
+    }
+    if (!process.env.EMAIL_PASS) {
+      console.log('⚠️ EMAIL_PASS not set - email features may not work');
+    }
 
-// Check for email configuration
-if (!process.env.EMAIL_USER) {
-  console.log('⚠️ EMAIL_USER not set - email features may not work');
-}
-if (!process.env.EMAIL_PASS) {
-  console.log('⚠️ EMAIL_PASS not set - email features may not work');
-}
-
-const server = app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
