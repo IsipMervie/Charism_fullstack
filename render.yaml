@@ -2,18 +2,16 @@ services:
   - type: web
     name: charism-api
     env: node
-    buildCommand: npm install
-    startCommand: node server.js
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node server.js
     rootDir: backend
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
         value: mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
-      - key: MONGODB_URI
-        value: mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
       - key: JWT_SECRET
-        value: mysecretkey123456789
+        value: ${JWT_SECRET}
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
@@ -21,11 +19,11 @@ services:
       - key: BACKEND_URL
         value: https://charism-api-xtw9.onrender.com
       - key: CORS_ORIGINS
-        value: https://charism-ucb4.onrender.com,https://charism-api-xtw9.onrender.com,http://localhost:3000
+        value: https://charism-ucb4.onrender.com,http://localhost:3000
       - key: EMAIL_USER
-        value: nexacore91@gmail.com
+        value: ${EMAIL_USER}
       - key: EMAIL_PASS
-        value: vikq reqx xtdq wglv
+        value: ${EMAIL_PASS}
       - key: EMAIL_SERVICE
         value: gmail
       - key: EMAIL_HOST
@@ -35,7 +33,7 @@ services:
       - key: MAX_FILE_SIZE
         value: 5242880
       - key: UPLOAD_PATH
-        value: /tmp/uploads
+        value: ./uploads
       - key: BCRYPT_ROUNDS
         value: 12
 

@@ -9,16 +9,19 @@ if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw
 
 // EMERGENCY: Set critical variables if missing (server needs to work)
 if (!process.env.MONGO_URI) {
-  console.log('⚠️ MONGO_URI not set - using emergency fallback');
-  process.env.MONGO_URI = 'mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE';
+  console.log('⚠️ MONGO_URI not set - using secure fallback');
+  // Use a secure fallback connection string for development
+  process.env.MONGO_URI = 'mongodb://localhost:27017/communitylink-dev';
 }
 if (!process.env.JWT_SECRET) {
-  console.log('⚠️ JWT_SECRET not set - using emergency fallback');
-  process.env.JWT_SECRET = 'mysecretkey123456789';
+  console.log('⚠️ JWT_SECRET not set - generating secure fallback');
+  // Generate a secure random secret for development
+  const crypto = require('crypto');
+  process.env.JWT_SECRET = crypto.randomBytes(64).toString('hex');
 }
 if (!process.env.CORS_ORIGINS) {
   console.log('⚠️ CORS_ORIGINS not set - using default');
-  process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000';
+  process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,http://localhost:3000';
 }
 
 // Email configuration fallbacks (non-blocking)
@@ -74,16 +77,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set server timeout for long-running requests (like analytics)
+// Set server timeout for Render optimization
 app.use((req, res, next) => {
-  // Set timeout to 90 seconds for analytics endpoints
-  if (req.path === '/analytics' || req.path.startsWith('/analytics/')) {
-    req.setTimeout(90000); // 90 seconds
-    res.setTimeout(90000);
-  } else {
-    req.setTimeout(30000); // 30 seconds for other endpoints
-    res.setTimeout(30000);
-  }
+  // Set timeout to 60 seconds for all endpoints
+  req.setTimeout(60000);
+  res.setTimeout(60000);
   next();
 });
 
@@ -92,18 +90,17 @@ const PORT = process.env.PORT || 10000;
 
 
 
-// CORS Configuration
+// CORS Configuration - Clean and optimized
 app.use(cors({
   origin: [
     'https://charism-ucb4.onrender.com',
     'https://charism-api-xtw9.onrender.com',
     'http://localhost:3000',
-    'http://localhost:3001'
+    'http://localhost:10000'
   ],
   credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
   optionsSuccessStatus: 200
 }));
 

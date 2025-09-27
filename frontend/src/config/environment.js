@@ -1,13 +1,13 @@
 // Environment configuration for different deployment environments
 const config = {
   development: {
-    API_URL: 'http://localhost:10000/api',
-    FRONTEND_URL: 'http://localhost:3000',
+    API_URL: process.env.REACT_APP_API_URL || 'http://localhost:10000/api',
+    FRONTEND_URL: process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000',
     NODE_ENV: 'development'
   },
   production: {
-    API_URL: 'https://charism-api-xtw9.onrender.com/api',
-    FRONTEND_URL:'https://charism-ucb4.onrender.com',
+    API_URL: process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com/api',
+    FRONTEND_URL: process.env.REACT_APP_FRONTEND_URL || 'https://charism-ucb4.onrender.com',
     NODE_ENV: 'production'
   }
 };

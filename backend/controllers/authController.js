@@ -43,7 +43,7 @@ const register = async (req, res) => {
     try {
       const verificationToken = jwt.sign(
         { userId: user._id, email: user.email },
-        process.env.JWT_SECRET || 'mysecretkey123456789',
+        process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
       
@@ -91,7 +91,7 @@ const login = async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'mysecretkey123456789',
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -136,7 +136,7 @@ const forgotPassword = async (req, res) => {
     // Generate reset token
     const resetToken = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'mysecretkey123456789',
+      process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
@@ -168,7 +168,7 @@ const resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mysecretkey123456789');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
 
     if (!user || user.resetToken !== token || user.resetTokenExpiry < Date.now()) {
@@ -197,7 +197,7 @@ const verifyEmail = async (req, res) => {
     const { token } = req.params;
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mysecretkey123456789');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
 
     if (!user) {
