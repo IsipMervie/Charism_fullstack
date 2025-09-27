@@ -12,7 +12,20 @@ const register = async (req, res) => {
   try {
     // CORS handled by main middleware - no conflicting headers
     
-    const { name, email, password, userId, academicYear, year, section, department } = req.body;
+    const { name, email, password, userId, academicYear, year, section, department, role } = req.body;
+    
+    // Debug logging
+    console.log('🔍 Registration attempt:', {
+      name: name ? 'provided' : 'missing',
+      email: email ? 'provided' : 'missing',
+      password: password ? 'provided' : 'missing',
+      userId: userId ? 'provided' : 'missing',
+      academicYear: academicYear ? 'provided' : 'missing',
+      year: year ? 'provided' : 'missing',
+      section: section ? 'provided' : 'missing',
+      department: department ? 'provided' : 'missing',
+      role: role ? 'provided' : 'missing'
+    });
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -33,11 +46,24 @@ const register = async (req, res) => {
       year,
       section,
       department,
-      role: 'Student',
-      status: 'pending'
+      role: role || 'Student', // Use provided role or default to Student
+      approvalStatus: 'pending'
     });
 
-    await user.save();
+    try {
+      await user.save();
+      console.log('✅ User created successfully:', user._id);
+    } catch (saveError) {
+      console.error('❌ User save error:', saveError);
+      if (saveError.name === 'ValidationError') {
+        const validationErrors = Object.values(saveError.errors).map(err => err.message);
+        return res.status(400).json({ 
+          message: 'Validation failed', 
+          errors: validationErrors 
+        });
+      }
+      throw saveError;
+    }
 
     // Send email verification
     try {

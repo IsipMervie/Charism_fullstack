@@ -409,7 +409,7 @@ export const deleteAcademicYear = async (id) => {
 
 export const toggleAcademicYearStatus = async (id) => {
   try {
-    const response = await axiosInstance.patch(`/academic-years/${id}/toggle`);
+    const response = await axiosInstance.patch(`/api/academic-years/${id}/toggle`);
     return response.data;
   } catch (error) {
     console.error('Error toggling academic year status:', error);
@@ -1043,7 +1043,7 @@ export const createEvent = async (eventData) => {
 // Toggle Event Availability
 export const toggleEventAvailability = async (eventId) => {
   try {
-    const response = await axiosInstance.patch(`/events/${eventId}/toggle-availability`);
+    const response = await axiosInstance.patch(`/api/events/${eventId}/toggle-availability`);
     return response.data;
   } catch (error) {
     console.error('Error toggling event availability:', error);
@@ -1217,7 +1217,7 @@ export const getNotifications = async () => {
 
 export const markNotificationAsRead = async (notificationId) => {
   try {
-    const response = await axiosInstance.patch(`/notifications/${notificationId}/read`);
+    const response = await axiosInstance.patch(`/api/notifications/${notificationId}/read`);
     return response.data;
   } catch (error) {
     console.error('Error marking notification as read:', error);
@@ -1228,7 +1228,7 @@ export const markNotificationAsRead = async (notificationId) => {
 // Attendance Management
 export const setParticipationStatus = async (eventId, userId, status) => {
   try {
-    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}`, { status });
+    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}`, { status });
     return response.data;
   } catch (error) {
     console.error('Error setting participation status:', error);
@@ -1244,7 +1244,7 @@ export const approveAttendance = async (eventId, userId) => {
     console.log(`🔑 Token exists: ${!!localStorage.getItem('token')}`);
     console.log(`👤 User role: ${localStorage.getItem('role')}`);
     
-    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}/approve`, {}, {
+    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}/approve`, {}, {
       headers: {
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache'
@@ -1291,7 +1291,7 @@ export const disapproveAttendance = async (eventId, userId, reason) => {
     console.log(`🔑 Token exists: ${!!localStorage.getItem('token')}`);
     console.log(`👤 User role: ${localStorage.getItem('role')}`);
     
-    const response = await axiosInstance.patch(`/events/${eventId}/attendance/${userId}/disapprove`, {
+    const response = await axiosInstance.patch(`/api/events/${eventId}/attendance/${userId}/disapprove`, {
       reason: reason
     }, {
       headers: {
@@ -1726,7 +1726,7 @@ export const getAllContactMessages = async (searchTerm = '') => {
 export const toggleEventVisibility = async (eventId) => {
   try {
     console.log(`🔄 Toggling event visibility for event: ${eventId}`);
-    const response = await axiosInstance.patch(`/events/${eventId}/toggle-visibility`);
+    const response = await axiosInstance.patch(`/api/events/${eventId}/toggle-visibility`);
     console.log('✅ Event visibility toggled successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1914,7 +1914,7 @@ export const deleteDocumentationFile = async (eventId, filename) => {
 export const markEventAsCompleted = async (eventId) => {
   try {
     console.log(`✅ Marking event as completed: ${eventId}`);
-    const response = await axiosInstance.patch(`/events/${eventId}/mark-completed`);
+    const response = await axiosInstance.patch(`/api/events/${eventId}/mark-completed`);
     console.log('✅ Event marked as completed successfully:', response.data);
     return response.data;
   } catch (error) {
@@ -1933,7 +1933,7 @@ export const markEventAsCompleted = async (eventId) => {
 export const markEventAsNotCompleted = async (eventId) => {
   try {
     console.log(`🔄 Marking event as NOT completed: ${eventId}`);
-    const response = await axiosInstance.patch(`/events/${eventId}/mark-not-completed`);
+    const response = await axiosInstance.patch(`/api/events/${eventId}/mark-not-completed`);
     console.log('✅ Event marked as NOT completed successfully:', response.data);
     return response.data;
   } catch (error) {
