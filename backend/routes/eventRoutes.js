@@ -790,4 +790,155 @@ router.delete('/:eventId/documentation/:filename', authMiddleware, roleMiddlewar
   }
 });
 
+// Additional missing routes
+router.patch('/:eventId/toggle-availability', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const Event = require('../models/Event');
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    event.isAvailable = !event.isAvailable;
+    await event.save();
+    
+    res.json({ message: 'Event availability toggled', isAvailable: event.isAvailable });
+  } catch (error) {
+    console.error('Error toggling event availability:', error);
+    res.status(500).json({ message: 'Error toggling event availability', error: error.message });
+  }
+});
+
+router.patch('/:eventId/toggle-visibility', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const Event = require('../models/Event');
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    event.isVisible = !event.isVisible;
+    await event.save();
+    
+    res.json({ message: 'Event visibility toggled', isVisible: event.isVisible });
+  } catch (error) {
+    console.error('Error toggling event visibility:', error);
+    res.status(500).json({ message: 'Error toggling event visibility', error: error.message });
+  }
+});
+
+router.patch('/:eventId/mark-completed', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const Event = require('../models/Event');
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    event.status = 'Completed';
+    event.completedAt = new Date();
+    await event.save();
+    
+    res.json({ message: 'Event marked as completed', status: event.status });
+  } catch (error) {
+    console.error('Error marking event as completed:', error);
+    res.status(500).json({ message: 'Error marking event as completed', error: error.message });
+  }
+});
+
+router.patch('/:eventId/mark-not-completed', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const Event = require('../models/Event');
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    event.status = 'Active';
+    event.completedAt = null;
+    await event.save();
+    
+    res.json({ message: 'Event marked as not completed', status: event.status });
+  } catch (error) {
+    console.error('Error marking event as not completed:', error);
+    res.status(500).json({ message: 'Error marking event as not completed', error: error.message });
+  }
+});
+
+router.get('/pending-registrations', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    
+    const events = await Event.find({ 
+      'attendance': { $elemMatch: { 'registrationApproved': false } }
+    }).populate('attendance.userId', 'name email userId');
+    
+    const pendingRegistrations = [];
+    events.forEach(event => {
+      const pending = event.attendance.filter(a => !a.registrationApproved);
+      pending.forEach(att => {
+        pendingRegistrations.push({
+          eventId: event._id,
+          eventTitle: event.title,
+          userId: att.userId._id,
+          userName: att.userId.name,
+          userEmail: att.userId.email,
+          userStudentId: att.userId.userId,
+          registeredAt: att.registeredAt
+        });
+      });
+    });
+    
+    res.json({ pendingRegistrations });
+  } catch (error) {
+    console.error('Error getting pending registrations:', error);
+    res.status(500).json({ message: 'Error getting pending registrations', error: error.message });
+  }
+});
+
+router.get('/analytics', async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    
+    const totalEvents = await Event.countDocuments();
+    const activeEvents = await Event.countDocuments({ status: 'Active' });
+    const completedEvents = await Event.countDocuments({ status: 'Completed' });
+    
+    const events = await Event.find({}).populate('attendance.userId', 'name email userId');
+    
+    let totalParticipants = 0;
+    let totalHours = 0;
+    
+    events.forEach(event => {
+      totalParticipants += event.attendance.length;
+      totalHours += event.attendance.reduce((sum, att) => {
+        if (att.attended && event.hours) {
+          return sum + event.hours;
+        }
+        return sum;
+      }, 0);
+    });
+    
+    res.json({
+      totalEvents,
+      activeEvents,
+      completedEvents,
+      totalParticipants,
+      totalHours,
+      averageParticipantsPerEvent: totalEvents > 0 ? Math.round(totalParticipants / totalEvents * 100) / 100 : 0
+    });
+  } catch (error) {
+    console.error('Error getting event analytics:', error);
+    res.status(500).json({ message: 'Error getting event analytics', error: error.message });
+  }
+});
+
 module.exports = router;
