@@ -91,7 +91,20 @@ app.use((req, res, next) => {
 
 // EMERGENCY CORS FIX - Multiple layers
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://charism-ucb4.onrender.com',
+    'https://charism-api-xtw9.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ];
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -104,7 +117,12 @@ app.use((req, res, next) => {
 
 // SINGLE CORS CONFIGURATION - NO CONFLICTS
 app.use(cors({
-  origin: true, // Allow all origins for now
+  origin: [
+    'https://charism-ucb4.onrender.com',
+    'https://charism-api-xtw9.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
