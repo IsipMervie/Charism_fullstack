@@ -959,6 +959,10 @@ console.log(' Notifications routes loaded');
 app.use('/api/files', require('./routes/fileRoutes'));
 console.log(' File routes loaded');
 
+// Simple working routes
+app.use('/api', require('./routes/simpleRoutes'));
+console.log(' Simple routes loaded');
+
 // File serving fallback
 app.get('/api/files/*', (req, res) => {
   res.status(404).json({ 
