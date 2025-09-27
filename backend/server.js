@@ -7,11 +7,12 @@ if (!process.env.PORT) process.env.PORT = '10000';
 if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = 'https://charism-ucb4.onrender.com';
 if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw9.onrender.com';
 
-// EMERGENCY: Set critical variables if missing (server needs to work)
+// SECURITY: Never hardcode database credentials in code!
 if (!process.env.MONGO_URI) {
-  console.log('⚠️ MONGO_URI not set - using production fallback');
-  // Use production database as fallback
-  process.env.MONGO_URI = 'mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE';
+  console.log('🚨 CRITICAL ERROR: MONGO_URI environment variable not set!');
+  console.log('🚨 Please set MONGO_URI in your environment variables');
+  console.log('🚨 Server cannot start without database connection');
+  process.exit(1);
 }
 if (!process.env.JWT_SECRET) {
   console.log('⚠️ JWT_SECRET not set - generating secure fallback');
@@ -47,6 +48,18 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// Import security middleware
+const { 
+  generalLimiter, 
+  authLimiter, 
+  contactLimiter, 
+  registerLimiter,
+  securityHeaders,
+  corsOptions,
+  sanitizeInput,
+  securityLogger 
+} = require('./middleware/security');
+
 // Import utilities
 const { globalErrorHandler } = require('./utils/errorHandler');
 
@@ -61,6 +74,11 @@ require('./models/Message');
 require('./models/Feedback');
 
 const app = express();
+
+// Security middleware (MUST be first)
+app.use(securityHeaders);
+app.use(securityLogger);
+app.use(sanitizeInput);
 
 // Performance monitoring middleware
 app.use((req, res, next) => {
@@ -90,19 +108,11 @@ const PORT = process.env.PORT || 10000;
 
 
 
-// CORS Configuration - Clean and optimized
-app.use(cors({
-  origin: [
-    'https://charism-ucb4.onrender.com',
-    'https://charism-api-xtw9.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:10000'
-  ],
-  credentials: false,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  optionsSuccessStatus: 200
-}));
+// CORS Configuration - Secure
+app.use(cors(corsOptions));
+
+// Rate limiting
+app.use('/api', generalLimiter);
 
 // Simple health check endpoint
 app.get('/health', (req, res) => {
@@ -856,6 +866,8 @@ app.use(async (req, res, next) => {
 // Routes - Mount in specific order to avoid conflicts
 console.log('Loading routes...');
 
+app.use('/api/auth', authLimiter);
+app.use('/api/auth/register', registerLimiter);
 app.use('/api/auth', require('./routes/authRoutes'));
 console.log(' Auth routes loaded');
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
@@ -874,6 +886,7 @@ app.use('/api/settings', require('./routes/settingsRoutes'));
 console.log(' Settings routes loaded');
 app.use('/api/messages', require('./routes/messageRoutes'));
 console.log(' Messages routes loaded');
+app.use('/api/contact-us', contactLimiter);
 app.use('/api/contact-us', require('./routes/contactUsRoutes'));
 console.log(' Contact us routes loaded');
 app.use('/api/events', require('./routes/eventRoutes'));

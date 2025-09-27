@@ -14,13 +14,29 @@ const register = async (req, res) => {
     
     const { name, email, password, userId, academicYear, year, section, department, role } = req.body;
     
-    // Basic validation
+    // Enhanced security validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required' });
     }
     
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Security checks
+    if (name.length > 100 || email.length > 255 || userId.length > 50) {
+      return res.status(400).json({ message: 'Input too long' });
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    // Password strength validation
+    if (password.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long' });
     }
     
     console.log('🔍 Registration attempt:', { name, email, userId, role });
