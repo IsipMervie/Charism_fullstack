@@ -31,6 +31,30 @@ axiosInstance.interceptors.request.use(
   }
 );
 
+// Response interceptor with retry logic for timeout/network errors
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const config = error.config;
+    
+    // Retry on timeout or network errors
+    if ((error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') && 
+        config && !config._retry && (config._retryCount || 0) < 2) {
+      config._retry = true;
+      config._retryCount = (config._retryCount || 0) + 1;
+      
+      console.log(`🔄 Retrying request (attempt ${config._retryCount})...`);
+      
+      // Wait 2 seconds before retry
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      return axiosInstance(config);
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 // Test API connection function
 
 // Get user ID from localStorage
@@ -432,7 +456,7 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
 export const checkServerHealth = async () => {
   try {
     const response = await axiosInstance.get('/ping', {
-      timeout: 15000 // 15 seconds timeout for better reliability
+      timeout: 60000 // 60 seconds timeout for Render.com cold starts
     });
     return response.data.status === 'OK';
   } catch (error) {
