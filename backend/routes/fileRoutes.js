@@ -109,7 +109,7 @@ router.get('/event-image/default', (req, res) => {
   res.set({
     'Content-Type': 'image/svg+xml',
     'Cache-Control': 'public, max-age=31536000',
-    'Access-Control-Allow-Origin': '*'
+    'Access-Control-Allow-Origin': 'https://charism-ucb4.onrender.com'
   });
   
   res.send(defaultEventImage);
@@ -173,7 +173,7 @@ router.get('/event-image/:eventId/debug', ensureDBConnection, async (req, res) =
 // Serve event image
 router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
   // Add CORS headers for image requests
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   try {
@@ -210,7 +210,7 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
       res.set({
         'Content-Type': 'image/svg+xml',
         'Cache-Control': 'public, max-age=31536000',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': 'https://charism-ucb4.onrender.com'
       });
       
       return res.send(defaultSVG);
@@ -247,7 +247,7 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
       res.set({
         'Content-Type': 'image/svg+xml',
         'Cache-Control': 'public, max-age=31536000',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': 'https://charism-ucb4.onrender.com'
       });
       
       return res.send(defaultSVG);
@@ -280,7 +280,7 @@ router.get('/event-image/:eventId', ensureDBConnection, async (req, res) => {
       res.set({
         'Content-Type': 'image/svg+xml',
         'Cache-Control': 'public, max-age=31536000',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': 'https://charism-ucb4.onrender.com'
       });
       
       return res.send(defaultSVG);

@@ -5,11 +5,7 @@ const { getFeedbackResponseTemplate, getFeedbackStatusUpdateTemplate, getFeedbac
 
 const submitFeedback = async (req, res) => {
   try {
-    // EMERGENCY CORS FIX - Force headers on response
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'false');
+    // CORS handled by main middleware - no conflicting headers
     
     const { subject, message, category, priority, userEmail, userName, userRole } = req.body;
 

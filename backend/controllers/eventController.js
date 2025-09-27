@@ -121,10 +121,7 @@ exports.getAllEvents = async (req, res) => {
   try {
     console.log('=== GET ALL EVENTS (CLEAN) ===');
     
-    // EMERGENCY: Add CORS headers immediately
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    // CORS handled by main middleware - no conflicting headers
     
     // Get user role safely
     const userRole = req.user ? req.user.role : 'Public';
