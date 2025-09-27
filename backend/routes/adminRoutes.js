@@ -20,6 +20,7 @@ router.get('/dashboard', adminController.getAdminDashboard);
 router.get('/users', adminController.getAllUsers);
 router.put('/users/:id', adminController.updateUser);
 router.delete('/users/:id', adminController.deleteUser);
+router.put('/users/:userId/approve', adminController.approveUser);
 
 // Student reports
 router.get('/students-by-year', adminController.getStudentsByYear);

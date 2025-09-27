@@ -564,3 +564,39 @@ exports.rejectStaff = async (req, res) => {
     res.status(500).json({ message: 'Error rejecting staff member', error: err.message });
   }
 };
+
+// Approve user account
+exports.approveUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { approvalData } = req.body;
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update user status
+    user.status = 'approved';
+    user.approvedBy = req.user.userId || req.user.id || req.user._id;
+    user.approvedAt = new Date();
+    
+    if (approvalData && approvalData.role) {
+      user.role = approvalData.role;
+    }
+    
+    await user.save();
+    
+    // Send approval email
+    const sendEmail = require('../utils/sendEmail');
+    const { getRegistrationTemplate } = require('../utils/emailTemplates');
+    
+    const emailContent = getRegistrationTemplate(user.name, 'Account Approved', new Date().toLocaleDateString());
+    await sendEmail(user.email, 'Account Approved - CHARISM', '', emailContent, true);
+    
+    res.json({ message: 'User approved successfully' });
+  } catch (err) {
+    console.error('Error approving user:', err);
+    res.status(500).json({ message: 'Error approving user', error: err.message });
+  }
+};

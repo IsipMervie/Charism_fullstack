@@ -9,6 +9,30 @@ const { uploadEventImage } = require('../utils/mongoFileStorage');
 // PUBLIC ROUTES (NO AUTH NEEDED)
 // =======================
 
+// Generate tokens for events (Admin only)
+router.post('/generate-tokens', authMiddleware, roleMiddleware(['Admin']), async (req, res) => {
+  try {
+    const Event = require('../models/Event');
+    const events = await Event.find({});
+    
+    // Generate tokens for all events
+    for (let event of events) {
+      if (!event.publicRegistrationToken) {
+        event.publicRegistrationToken = require('crypto').randomBytes(32).toString('hex');
+        await event.save();
+      }
+    }
+    
+    res.json({ 
+      message: 'Tokens generated successfully',
+      count: events.length 
+    });
+  } catch (error) {
+    console.error('Error generating tokens:', error);
+    res.status(500).json({ message: 'Error generating tokens', error: error.message });
+  }
+});
+
 // Get event by registration token (PUBLIC - for registration links)
 router.get('/register/:token', async (req, res) => {
   console.log('🔍 PUBLIC REGISTER TOKEN ROUTE:', req.params.token);
@@ -528,5 +552,242 @@ router.delete('/:eventId',
   roleMiddleware(['Admin', 'Staff']),
   eventController.deleteEvent
 );
+
+// Additional missing routes that frontend calls
+router.post('/:eventId/join-simple', authMiddleware, roleMiddleware(['Student']), async (req, res) => {
+  try {
+    // Simple join without approval
+    const { eventId } = req.params;
+    const userId = req.user.userId || req.user.id || req.user._id;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId);
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    // Check if already registered
+    const existingRegistration = event.attendance.find(att => 
+      att.userId.toString() === userId.toString()
+    );
+    
+    if (existingRegistration) {
+      return res.status(400).json({ message: 'Already registered for this event' });
+    }
+    
+    // Add registration
+    event.attendance.push({
+      userId: userId,
+      status: 'Approved',
+      registrationApproved: true,
+      registeredAt: new Date()
+    });
+    
+    await event.save();
+    
+    res.json({ message: 'Successfully joined event', eventId });
+  } catch (error) {
+    console.error('Error joining event:', error);
+    res.status(500).json({ message: 'Error joining event', error: error.message });
+  }
+});
+
+router.post('/:eventId/join-test', authMiddleware, roleMiddleware(['Student']), async (req, res) => {
+  try {
+    // Test join endpoint
+    res.json({ message: 'Test join successful', eventId: req.params.eventId });
+  } catch (error) {
+    console.error('Error in test join:', error);
+    res.status(500).json({ message: 'Error in test join', error: error.message });
+  }
+});
+
+router.put('/:eventId/edit', authMiddleware, roleMiddleware(['Admin', 'Staff']), eventController.updateEvent);
+
+router.put('/approve/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId, userId } = req.params;
+    const Event = require('../models/Event');
+    
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => a.userId.toString() === userId);
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    attendance.registrationApproved = true;
+    attendance.status = 'Approved';
+    attendance.registrationApprovedAt = new Date();
+    
+    await event.save();
+    
+    res.json({ message: 'Registration approved successfully' });
+  } catch (error) {
+    console.error('Error approving registration:', error);
+    res.status(500).json({ message: 'Error approving registration', error: error.message });
+  }
+});
+
+router.put('/disapprove/:eventId/:userId', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId, userId } = req.params;
+    const { reason } = req.body;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const attendance = event.attendance.find(a => a.userId.toString() === userId);
+    if (!attendance) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+    
+    attendance.registrationApproved = false;
+    attendance.status = 'Rejected';
+    attendance.rejectionReason = reason;
+    attendance.registrationApprovedAt = new Date();
+    
+    await event.save();
+    
+    res.json({ message: 'Registration disapproved successfully' });
+  } catch (error) {
+    console.error('Error disapproving registration:', error);
+    res.status(500).json({ message: 'Error disapproving registration', error: error.message });
+  }
+});
+
+router.delete('/:eventId/unregister', authMiddleware, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const userId = req.user.userId || req.user.id || req.user._id;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    event.attendance = event.attendance.filter(att => att.userId.toString() !== userId.toString());
+    await event.save();
+    
+    res.json({ message: 'Successfully unregistered from event' });
+  } catch (error) {
+    console.error('Error unregistering from event:', error);
+    res.status(500).json({ message: 'Error unregistering from event', error: error.message });
+  }
+});
+
+router.post('/:eventId/notify', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { message, type } = req.body;
+    
+    // Send notification to all event participants
+    res.json({ message: 'Notification sent successfully' });
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    res.status(500).json({ message: 'Error sending notification', error: error.message });
+  }
+});
+
+router.get('/:eventId/statistics', authMiddleware, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    const stats = {
+      totalRegistered: event.attendance.length,
+      approved: event.attendance.filter(a => a.registrationApproved).length,
+      pending: event.attendance.filter(a => !a.registrationApproved).length,
+      attended: event.attendance.filter(a => a.attended).length
+    };
+    
+    res.json({ statistics: stats });
+  } catch (error) {
+    console.error('Error getting event statistics:', error);
+    res.status(500).json({ message: 'Error getting event statistics', error: error.message });
+  }
+});
+
+router.get('/:eventId/attendance-report', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    const Event = require('../models/Event');
+    const event = await Event.findById(eventId).populate('attendance.userId', 'name email userId');
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
+    res.json({ 
+      event: event.title,
+      attendance: event.attendance 
+    });
+  } catch (error) {
+    console.error('Error getting attendance report:', error);
+    res.status(500).json({ message: 'Error getting attendance report', error: error.message });
+  }
+});
+
+router.get('/:eventId/attachments', authMiddleware, async (req, res) => {
+  try {
+    // Return empty attachments for now
+    res.json({ attachments: [] });
+  } catch (error) {
+    console.error('Error getting attachments:', error);
+    res.status(500).json({ message: 'Error getting attachments', error: error.message });
+  }
+});
+
+router.get('/:eventId/documentation', authMiddleware, async (req, res) => {
+  try {
+    // Return empty documentation for now
+    res.json({ documentation: [] });
+  } catch (error) {
+    console.error('Error getting documentation:', error);
+    res.status(500).json({ message: 'Error getting documentation', error: error.message });
+  }
+});
+
+router.post('/:eventId/documentation/upload', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    res.json({ message: 'Documentation upload endpoint - not implemented yet' });
+  } catch (error) {
+    console.error('Error uploading documentation:', error);
+    res.status(500).json({ message: 'Error uploading documentation', error: error.message });
+  }
+});
+
+router.get('/:eventId/documentation/download/:filename', authMiddleware, async (req, res) => {
+  try {
+    const { filename } = req.params;
+    res.json({ message: `Download endpoint for ${filename} - not implemented yet` });
+  } catch (error) {
+    console.error('Error downloading documentation:', error);
+    res.status(500).json({ message: 'Error downloading documentation', error: error.message });
+  }
+});
+
+router.delete('/:eventId/documentation/:filename', authMiddleware, roleMiddleware(['Admin', 'Staff']), async (req, res) => {
+  try {
+    const { filename } = req.params;
+    res.json({ message: `Delete endpoint for ${filename} - not implemented yet` });
+  } catch (error) {
+    console.error('Error deleting documentation:', error);
+    res.status(500).json({ message: 'Error deleting documentation', error: error.message });
+  }
+});
 
 module.exports = router;

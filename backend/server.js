@@ -892,8 +892,68 @@ app.use('/api/event-chat', require('./routes/eventChatRoutes'));
 console.log(' Event chat routes loaded');
 app.use('/api/users', require('./routes/userRoutes'));
 console.log(' Users routes loaded');
+
+// Additional user routes (singular)
+app.get('/api/user/participation', require('./middleware/authMiddleware').authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id || req.user._id;
+    const Event = require('./models/Event');
+    
+    const events = await Event.find({ 'attendance.userId': userId }).populate('createdBy', 'name');
+    const participation = events.map(event => ({
+      eventId: event._id,
+      title: event.title,
+      date: event.date,
+      status: event.attendance.find(a => a.userId.toString() === userId.toString())?.status || 'Unknown',
+      hours: event.hours
+    }));
+    
+    res.json({ participation });
+  } catch (error) {
+    console.error('Error getting user participation:', error);
+    res.status(500).json({ message: 'Error getting user participation', error: error.message });
+  }
+});
+
+app.get('/api/user/my-events', require('./middleware/authMiddleware').authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id || req.user._id;
+    const Event = require('./models/Event');
+    
+    const events = await Event.find({ 'attendance.userId': userId }).populate('createdBy', 'name');
+    res.json({ events });
+  } catch (error) {
+    console.error('Error getting user events:', error);
+    res.status(500).json({ message: 'Error getting user events', error: error.message });
+  }
+});
+
+app.get('/api/user/participation-history', require('./middleware/authMiddleware').authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id || req.user._id;
+    const Event = require('./models/Event');
+    
+    const events = await Event.find({ 'attendance.userId': userId }).populate('createdBy', 'name');
+    const history = events.map(event => ({
+      eventId: event._id,
+      title: event.title,
+      date: event.date,
+      location: event.location,
+      hours: event.hours,
+      attended: event.attendance.find(a => a.userId.toString() === userId.toString())?.attended || false,
+      status: event.attendance.find(a => a.userId.toString() === userId.toString())?.status || 'Unknown'
+    }));
+    
+    res.json({ history });
+  } catch (error) {
+    console.error('Error getting participation history:', error);
+    res.status(500).json({ message: 'Error getting participation history', error: error.message });
+  }
+});
 app.use('/api/feedback', require('./routes/feedbackRoutes'));
 console.log(' Feedback routes loaded');
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+console.log(' Notifications routes loaded');
 
 // File serving routes for MongoDB-stored files
 app.use('/api/files', require('./routes/fileRoutes'));
