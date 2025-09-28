@@ -939,18 +939,18 @@
 
 /* Dark mode styling for disabled success buttons */
 [data-theme="dark"] .success-button.disabled {
-  background: #10b981 !important;
-  color: #ffffff !important;
-  border: 2px solid #059669 !important;
+  background: var(--success) !important;
+  color: var(--text-inverse) !important;
+  border: 2px solid var(--success-dark) !important;
   font-weight: 700 !important;
   opacity: 1 !important;
 }
 
 /* Light mode styling for disabled success buttons */
 [data-theme="light"] .success-button.disabled {
-  background: #059669 !important;
-  color: #ffffff !important;
-  border: 2px solid #047857 !important;
+  background: var(--success-dark) !important;
+  color: var(--text-inverse) !important;
+  border: 2px solid var(--success-darker) !important;
   font-weight: 700 !important;
   opacity: 1 !important;
 }
@@ -1805,7 +1805,7 @@
   width: 100%;
   height: 250px;
   overflow: hidden;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2055,9 +2055,9 @@
 }
 
 .registration-pending {
-  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-  border: 1px solid #ffc107;
-  color: #856404;
+  background: linear-gradient(135deg, var(--warning-light), var(--warning));
+  border: 1px solid var(--warning);
+  color: var(--warning-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2068,9 +2068,9 @@
 }
 
 .registration-approved {
-  background: linear-gradient(135deg, #d4edda, #a8e6cf);
-  border: 1px solid #28a745;
-  color: #155724;
+  background: linear-gradient(135deg, var(--success-light), var(--success-lighter));
+  border: 1px solid var(--success);
+  color: var(--success-dark);
   display: flex;
   align-items: center;
   justify-content: center;

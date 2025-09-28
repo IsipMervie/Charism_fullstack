@@ -1691,7 +1691,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 3px solid #e5e7eb;
+  border: 3px solid var(--border-primary);
   box-shadow: 0 4px 12px var(--shadow-sm);
 }
 
@@ -1706,7 +1706,7 @@
 .profile-picture-fallback {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--border-primary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1739,7 +1739,7 @@
 }
 
 .profile-modal .modal-header {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-primary);
   padding: 1.5rem 2rem;
 }
 
@@ -1764,7 +1764,7 @@
   align-items: center;
   gap: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .profile-picture-large {
@@ -1774,14 +1774,14 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 4px solid #e5e7eb;
+  border: 4px solid var(--border-primary);
   box-shadow: 0 8px 25px var(--shadow-lg);
 }
 
 .profile-picture-fallback-large {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  background: linear-gradient(135deg, var(--bg-secondary), var(--border-primary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1829,15 +1829,15 @@
 }
 
 .role-badge-large.staff {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  background: linear-gradient(135deg, var(--success-light), var(--success-lighter));
   color: var(--success-dark);
-  border: 1px solid #10b981;
+  border: 1px solid var(--success);
 }
 
 .role-badge-large.student {
   background: linear-gradient(135deg, var(--primary-light), var(--primary-light));
   color: var(--primary-dark);
-  border: 1px solid #3b82f6;
+  border: 1px solid var(--primary-color);
 }
 
 .profile-details {
@@ -1872,7 +1872,7 @@
   padding: 0.75rem;
   background: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary);
 }
 
 .detail-group span.verified {
@@ -1898,15 +1898,15 @@
 }
 
 .status-badge-large.approved {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  background: linear-gradient(135deg, var(--success-light), var(--success-lighter));
   color: var(--success-dark);
-  border: 1px solid #10b981;
+  border: 1px solid var(--success);
 }
 
 .status-badge-large.rejected {
-  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  background: linear-gradient(135deg, var(--error-light), var(--error-lighter));
   color: var(--error-dark);
-  border: 1px solid #f87171;
+  border: 1px solid var(--error-light);
 }
 
 .status-badge-large.pending {
@@ -1916,7 +1916,7 @@
 }
 
 .profile-modal .modal-footer {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-primary);
   padding: 1.5rem 2rem;
   gap: 1rem;
 }
@@ -1936,7 +1936,7 @@
 }
 
 .edit-profile-button {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
@@ -1945,7 +1945,7 @@
 }
 
 .edit-profile-button:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
   transform: translateY(-1px);
   box-shadow: 0 8px 25px var(--primary-shadow);
 }
@@ -2303,7 +2303,7 @@
 .retry-button:focus,
 .cancel-button:focus,
 .save-button:focus {
-  outline: 3px solid #2563eb;
+  outline: 3px solid var(--primary-color);
   outline-offset: 2px;
 }
 
@@ -2408,58 +2408,58 @@
 
 /* View Button - Green */
 .user-card-actions .btn.action-button.view-button {
-  background: linear-gradient(135deg, #10b981, #059669) !important;
+  background: linear-gradient(135deg, var(--success), var(--success-dark)) !important;
   color: white !important;
   box-shadow: 0 6px 20px var(--success-shadow) !important;
   border: 1px solid rgba(16, 185, 129, 0.2) !important;
 }
 
 .user-card-actions .btn.action-button.view-button:hover {
-  background: linear-gradient(135deg, #059669, #047857) !important;
+  background: linear-gradient(135deg, var(--success-dark), var(--success-darker)) !important;
   color: white !important;
   box-shadow: 0 10px 30px var(--success-shadow-lg) !important;
 }
 
 .user-card-actions .btn.action-button.view-button:focus {
-  background: linear-gradient(135deg, #059669, #047857) !important;
+  background: linear-gradient(135deg, var(--success-dark), var(--success-darker)) !important;
   color: white !important;
 }
 
 /* Edit Button - Blue */
 .user-card-actions .btn.action-button.edit-button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
   color: white !important;
   box-shadow: 0 6px 20px var(--primary-shadow) !important;
   border: 1px solid rgba(59, 130, 246, 0.2) !important;
 }
 
 .user-card-actions .btn.action-button.edit-button:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker)) !important;
   color: white !important;
   box-shadow: 0 10px 30px var(--primary-shadow-lg) !important;
 }
 
 .user-card-actions .btn.action-button.edit-button:focus {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker)) !important;
   color: white !important;
 }
 
 /* Delete Button - Red */
 .user-card-actions .btn.action-button.delete-button {
-  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  background: linear-gradient(135deg, var(--error), var(--error-dark)) !important;
   color: white !important;
   box-shadow: 0 6px 20px var(--error-shadow) !important;
   border: 1px solid rgba(239, 68, 68, 0.2) !important;
 }
 
 .user-card-actions .btn.action-button.delete-button:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  background: linear-gradient(135deg, var(--error-dark), var(--error-darker)) !important;
   color: white !important;
   box-shadow: 0 10px 30px var(--error-shadow-lg) !important;
 }
 
 .user-card-actions .btn.action-button.delete-button:focus {
-  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  background: linear-gradient(135deg, var(--error-dark), var(--error-darker)) !important;
   color: white !important;
 }
 
@@ -2844,7 +2844,7 @@
   padding: 0.75rem 1.25rem !important;
   background: var(--bg-primary) !important;
   color: var(--text-primary) !important;
-  border: 2px solid #e2e8f0 !important;
+  border: 2px solid var(--border-primary) !important;
   border-radius: 12px !important;
   font-weight: 700 !important;
   font-size: 0.95rem !important;
@@ -2878,7 +2878,7 @@
 /* Search Button Override */
 .search-button.btn {
   padding: 1.25rem 2rem !important;
-  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+  background: linear-gradient(135deg, var(--info), var(--info-light)) !important;
   color: white !important;
   border: none !important;
   border-radius: 16px !important;
@@ -2896,7 +2896,7 @@
 }
 
 .search-button.btn:hover {
-  background: linear-gradient(135deg, #5b21b6, #7c3aed) !important;
+  background: linear-gradient(135deg, var(--info-dark), var(--info)) !important;
   color: white !important;
   transform: translateY(-3px) !important;
   box-shadow: 0 12px 30px var(--primary-shadow-lg) !important;
@@ -2904,7 +2904,7 @@
 }
 
 .search-button.btn:focus {
-  background: linear-gradient(135deg, #5b21b6, #7c3aed) !important;
+  background: linear-gradient(135deg, var(--info-dark), var(--info)) !important;
   color: white !important;
   box-shadow: 0 0 0 3px var(--primary-shadow) !important;
   outline: none !important;
@@ -2913,7 +2913,7 @@
 /* Retry Button Override */
 .retry-button.btn {
   padding: 1rem 2rem !important;
-  background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color)) !important;
   color: white !important;
   border: none !important;
   border-radius: 12px !important;
@@ -2926,7 +2926,7 @@
 }
 
 .retry-button.btn:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker)) !important;
   color: white !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 10px 30px var(--primary-shadow-lg) !important;
@@ -2934,7 +2934,7 @@
 }
 
 .retry-button.btn:focus {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker)) !important;
   color: white !important;
   box-shadow: 0 0 0 3px var(--primary-shadow) !important;
   outline: none !important;

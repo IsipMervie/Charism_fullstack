@@ -22,7 +22,7 @@
 Go to your Render service → Environment → Add these variables:
 
 ```
-MONGO_URI=mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
 JWT_SECRET=your_strong_jwt_secret_here
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
@@ -32,7 +32,7 @@ EMAIL_PASS=your_app_password
 Create a `.env` file in the backend folder:
 
 ```
-MONGO_URI=mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
 JWT_SECRET=your_strong_jwt_secret_here
 NODE_ENV=development
 ```

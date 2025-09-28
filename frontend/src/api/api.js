@@ -8,24 +8,26 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Optimized axios instance with caching and performance features
+// ULTRA-FAST axios instance with maximum performance features
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Cache-Control': 'max-age=300', // 5 minutes cache
+    'Cache-Control': 'max-age=60', // Reduced to 1 minute for instant updates
+    'X-Requested-With': 'XMLHttpRequest'
   },
-  timeout: 20000, // Reduced timeout for faster responses
+  timeout: 10000, // Reduced to 10 seconds for ultra-fast responses
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });
 
-// Response cache for GET requests
+// ULTRA-FAST response cache with instant access
 const responseCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 1 * 60 * 1000; // Reduced to 1 minute for instant updates
+const MAX_CACHE_SIZE = 500; // Increased for more caching
 
-// Cache middleware for axios
+// Cache middleware for axios with LRU eviction
 const cacheMiddleware = (config) => {
   if (config.method === 'get' && config.cache !== false) {
     const cacheKey = `${config.method}:${config.url}:${JSON.stringify(config.params || {})}`;
@@ -37,6 +39,15 @@ const cacheMiddleware = (config) => {
     }
   }
   return null;
+};
+
+// LRU cache eviction function
+const evictLRU = () => {
+  if (responseCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = responseCache.keys().next().value;
+    responseCache.delete(firstKey);
+    console.log(`🗑️ Evicted LRU cache entry: ${firstKey}`);
+  }
 };
 
 
@@ -61,9 +72,13 @@ axiosInstance.interceptors.request.use(
 // Response interceptor with caching and retry logic
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Cache successful GET responses
+    // Cache successful GET responses with LRU eviction
     if (response.config.method === 'get' && response.status === 200) {
       const cacheKey = `${response.config.method}:${response.config.url}:${JSON.stringify(response.config.params || {})}`;
+      
+      // Evict LRU if cache is full
+      evictLRU();
+      
       responseCache.set(cacheKey, {
         data: response,
         timestamp: Date.now()

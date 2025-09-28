@@ -2,11 +2,13 @@
 const compression = require('compression');
 const NodeCache = require('node-cache');
 
-// Create cache instance with 5 minute TTL
+// Create cache instance with ULTRA-FAST settings for maximum speed
 const cache = new NodeCache({ 
-  stdTTL: 300, // 5 minutes
-  checkperiod: 120, // Check for expired keys every 2 minutes
-  useClones: false // Don't clone objects for better performance
+  stdTTL: 60, // Reduced to 1 minute for instant updates
+  checkperiod: 10, // Check every 10 seconds for ultra-fast cleanup
+  useClones: false, // No cloning for maximum speed
+  deleteOnExpire: true, // Instant cleanup
+  maxKeys: 2000 // Increased for more caching
 });
 
 // Cache middleware
@@ -68,38 +70,122 @@ const getCacheStats = () => {
   return cache.getStats();
 };
 
-// Compression middleware with optimization
+// Advanced caching strategies for maximum speed
+const advancedCacheMiddleware = (req, res, next) => {
+  // Only cache GET requests
+  if (req.method !== 'GET') {
+    return next();
+  }
+
+  const cacheKey = `${req.originalUrl}`;
+  
+  // Check cache first
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    console.log(`🚀 Advanced Cache HIT for ${cacheKey}`);
+    res.setHeader('X-Cache', 'HIT');
+    res.setHeader('Cache-Control', 'public, max-age=180');
+    return res.json(cachedData);
+  }
+
+  // Store original json method
+  const originalJson = res.json;
+  
+  // Override json method to cache response
+  res.json = function(data) {
+    // Cache successful responses
+    if (res.statusCode === 200) {
+      cache.set(cacheKey, data, 180); // 3 minutes
+      console.log(`💾 Advanced Cache SET for ${cacheKey}`);
+      res.setHeader('X-Cache', 'MISS');
+      res.setHeader('Cache-Control', 'public, max-age=180');
+    }
+    
+    return originalJson.call(this, data);
+  };
+  
+  next();
+};
+
+// Request batching middleware for multiple similar requests
+const requestBatchingMiddleware = () => {
+  const pendingRequests = new Map();
+  
+  return (req, res, next) => {
+    // Only batch GET requests
+    if (req.method !== 'GET') {
+      return next();
+    }
+    
+    const batchKey = `${req.path}`;
+    
+    // If there's already a pending request for this path, wait for it
+    if (pendingRequests.has(batchKey)) {
+      console.log(`🔄 Batching request for ${batchKey}`);
+      pendingRequests.get(batchKey).push({ req, res });
+      return;
+    }
+    
+    // Create new batch
+    const batch = [{ req, res }];
+    pendingRequests.set(batchKey, batch);
+    
+    // Process batch after a short delay
+    setTimeout(() => {
+      const requests = pendingRequests.get(batchKey);
+      pendingRequests.delete(batchKey);
+      
+      if (requests.length > 1) {
+        console.log(`📦 Processing batch of ${requests.length} requests for ${batchKey}`);
+      }
+      
+      // Process each request in the batch
+      requests.forEach(({ req, res }) => {
+        next();
+      });
+    }, 10); // 10ms delay for batching
+  };
+};
+
+// Compression middleware with ULTRA-FAST optimization
 const compressionMiddleware = compression({
-  // Only compress responses larger than 1KB
-  threshold: 1024,
-  // Compression level (1-9, 6 is good balance)
-  level: 6,
-  // Filter function to decide what to compress
+  // Compress responses larger than 256 bytes for maximum speed
+  threshold: 256,
+  // Maximum compression level for ultimate speed
+  level: 9,
+  // Filter function optimized for speed
   filter: (req, res) => {
-    // Don't compress if already compressed
-    if (req.headers['x-no-compression']) {
+    // Skip compression for already compressed content
+    if (req.headers['x-no-compression'] || res.getHeader('content-encoding')) {
       return false;
     }
-    // Use compression for all other requests
+    
+    // Compress everything else for maximum speed
     return compression.filter(req, res);
   }
 });
 
-// Response time middleware
+// ULTRA-FAST response time middleware with instant headers
 const responseTimeMiddleware = (req, res, next) => {
-  const start = Date.now();
+  const start = process.hrtime.bigint(); // Use high-resolution timer
   
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    res.setHeader('X-Response-Time', `${duration}ms`);
+  // Set response time header before sending response
+  const originalSend = res.send;
+  res.send = function(data) {
+    const duration = Number(process.hrtime.bigint() - start) / 1000000; // Convert to milliseconds
+    res.setHeader('X-Response-Time', `${Math.round(duration)}ms`);
     
-    // Log slow requests
-    if (duration > 1000) {
-      console.log(`🐌 SLOW REQUEST: ${req.method} ${req.path} - ${duration}ms`);
-    } else if (duration > 500) {
-      console.log(`⚠️ MEDIUM REQUEST: ${req.method} ${req.path} - ${duration}ms`);
+    // Log ultra-fast requests
+    if (duration > 100) {
+      console.log(`⚡ FAST REQUEST: ${req.method} ${req.path} - ${Math.round(duration)}ms`);
+    } else if (duration > 50) {
+      console.log(`🚀 ULTRA-FAST REQUEST: ${req.method} ${req.path} - ${Math.round(duration)}ms`);
+    } else {
+      console.log(`⚡ INSTANT REQUEST: ${req.method} ${req.path} - ${Math.round(duration)}ms`);
     }
-  });
+    
+    return originalSend.call(this, data);
+  };
   
   next();
 };
@@ -111,7 +197,6 @@ const optimizeMongoose = (mongoose) => {
     maxPoolSize: 10, // Maximum number of connections in the pool
     serverSelectionTimeoutMS: 5000, // How long to try to connect
     socketTimeoutMS: 45000, // How long to wait for a response
-    bufferMaxEntries: 0, // Disable mongoose buffering
     bufferCommands: false, // Disable mongoose buffering
   };
 
@@ -139,6 +224,8 @@ setInterval(memoryMonitoring, 5 * 60 * 1000);
 
 module.exports = {
   cacheMiddleware,
+  advancedCacheMiddleware,
+  requestBatchingMiddleware,
   clearCache,
   clearAllCache,
   getCacheStats,

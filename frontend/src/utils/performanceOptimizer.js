@@ -1,9 +1,8 @@
-// Performance optimization utilities for React frontend
+// Advanced performance optimization utilities for React frontend
 import React from 'react';
 
-// Image lazy loading optimization
+// Enhanced image lazy loading with intersection observer optimization
 export const optimizeImages = () => {
-  // Add intersection observer for lazy loading
   if ('IntersectionObserver' in window) {
     const imageObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
@@ -11,9 +10,12 @@ export const optimizeImages = () => {
           const img = entry.target;
           img.src = img.dataset.src;
           img.classList.remove('lazy');
-          observer.unobserve(img);
+          imageObserver.unobserve(img);
         }
       });
+    }, {
+      rootMargin: '50px 0px', // Start loading 50px before image comes into view
+      threshold: 0.1
     });
 
     // Observe all lazy images
@@ -23,27 +25,45 @@ export const optimizeImages = () => {
   }
 };
 
-// Debounce function for search inputs
-export const debounce = (func, wait) => {
+// Ultra-fast debounce with immediate execution option
+export const debounce = (func, wait, immediate = false) => {
   let timeout;
   return function executedFunction(...args) {
     const later = () => {
-      clearTimeout(timeout);
-      func(...args);
+      timeout = null;
+      if (!immediate) func(...args);
     };
+    const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
+    if (callNow) func(...args);
   };
 };
 
-// Throttle function for scroll events
-export const throttle = (func, limit) => {
+// High-performance throttle with leading and trailing options
+export const throttle = (func, limit, options = {}) => {
   let inThrottle;
+  let lastFunc;
+  let lastRan;
+  
   return function(...args) {
     if (!inThrottle) {
-      func.apply(this, args);
+      if (options.leading !== false) {
+        func.apply(this, args);
+      }
+      lastRan = Date.now();
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if (Date.now() - lastRan >= limit) {
+          if (options.trailing !== false) {
+            func.apply(this, args);
+          }
+          lastRan = Date.now();
+        }
+        inThrottle = false;
+      }, limit - (Date.now() - lastRan));
     }
   };
 };
@@ -74,23 +94,119 @@ export const lazyLoadComponent = (importFunc) => {
   return React.lazy(importFunc);
 };
 
-// Preload critical resources
-export const preloadCriticalResources = () => {
-  // Preload critical CSS
-  const criticalCSS = document.createElement('link');
-  criticalCSS.rel = 'preload';
-  criticalCSS.as = 'style';
-  criticalCSS.href = '/static/css/critical.css';
-  document.head.appendChild(criticalCSS);
+// Advanced request batching for API calls
+export const createRequestBatcher = (batchSize = 5, delay = 50) => {
+  let batch = [];
+  let timeoutId = null;
+  
+  return (request) => {
+    return new Promise((resolve, reject) => {
+      batch.push({ request, resolve, reject });
+      
+      if (batch.length >= batchSize) {
+        processBatch();
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(processBatch, delay);
+      }
+    });
+  };
+  
+  function processBatch() {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    
+    if (batch.length === 0) return;
+    
+    const currentBatch = batch.splice(0, batchSize);
+    console.log(`📦 Processing batch of ${currentBatch.length} requests`);
+    
+    // Process batch concurrently
+    Promise.allSettled(currentBatch.map(({ request }) => request()))
+      .then(results => {
+        results.forEach((result, index) => {
+          const { resolve, reject } = currentBatch[index];
+          if (result.status === 'fulfilled') {
+            resolve(result.value);
+          } else {
+            reject(result.reason);
+          }
+        });
+      });
+  }
+};
 
-  // Preload critical fonts
-  const criticalFont = document.createElement('link');
-  criticalFont.rel = 'preload';
-  criticalFont.as = 'font';
-  criticalFont.type = 'font/woff2';
-  criticalFont.crossOrigin = 'anonymous';
-  criticalFont.href = '/static/fonts/critical.woff2';
-  document.head.appendChild(criticalFont);
+// Advanced caching with LRU eviction
+export const createLRUCache = (maxSize = 100) => {
+  const cache = new Map();
+  
+  return {
+    get(key) {
+      if (cache.has(key)) {
+        const value = cache.get(key);
+        cache.delete(key);
+        cache.set(key, value); // Move to end
+        return value;
+      }
+      return undefined;
+    },
+    
+    set(key, value) {
+      if (cache.has(key)) {
+        cache.delete(key);
+      } else if (cache.size >= maxSize) {
+        const firstKey = cache.keys().next().value;
+        cache.delete(firstKey);
+      }
+      cache.set(key, value);
+    },
+    
+    clear() {
+      cache.clear();
+    },
+    
+    size() {
+      return cache.size;
+    }
+  };
+};
+
+// ULTRA-FAST predictive preloading for instant access
+export const predictivePreloading = () => {
+  // Preload critical resources instantly
+  const criticalResources = [
+    '/logo.png',
+    '/images/default-event.jpg',
+    '/static/css/critical.css',
+    '/static/js/main.js'
+  ];
+  
+  criticalResources.forEach(resource => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = resource;
+    
+    if (resource.endsWith('.css')) {
+      link.as = 'style';
+      link.onload = () => { link.rel = 'stylesheet'; };
+    } else if (resource.endsWith('.js')) {
+      link.as = 'script';
+    } else if (resource.match(/\.(png|jpg|jpeg|gif|webp)$/)) {
+      link.as = 'image';
+    }
+    
+    document.head.appendChild(link);
+  });
+  
+  // Preload next likely pages
+  const likelyPages = ['/events', '/dashboard', '/profile'];
+  likelyPages.forEach(page => {
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = page;
+    document.head.appendChild(link);
+  });
 };
 
 // Service Worker registration for caching
@@ -209,28 +325,28 @@ export const analyzeBundle = () => {
   }
 };
 
-// Initialize performance optimizations
+// Initialize ULTRA-FAST performance optimizations
 export const initPerformanceOptimizations = () => {
   // Register service worker
   registerServiceWorker();
 
-  // Preload critical resources
-  preloadCriticalResources();
+  // Predictive preloading for instant access
+  predictivePreloading();
 
-  // Monitor memory usage every 30 seconds
-  setInterval(memoryMonitor, 30000);
+  // Monitor memory usage every 10 seconds for ultra-fast cleanup
+  setInterval(memoryMonitor, 10000);
 
-  // Get initial Web Vitals
+  // Get initial Web Vitals instantly
   setTimeout(() => {
     performanceMonitor.getWebVitals();
-  }, 1000);
+  }, 100);
 
   // Analyze bundle in development
   if (process.env.NODE_ENV === 'development') {
     analyzeBundle();
   }
 
-  console.log('🚀 Performance optimizations initialized');
+  console.log('⚡ ULTRA-FAST performance optimizations initialized');
 };
 
 // Default export object
@@ -241,7 +357,9 @@ const performanceOptimizer = {
   memoize,
   getVisibleRange,
   lazyLoadComponent,
-  preloadCriticalResources,
+  createRequestBatcher,
+  createLRUCache,
+  predictivePreloading,
   registerServiceWorker,
   performanceMonitor,
   memoryMonitor,

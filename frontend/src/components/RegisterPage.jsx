@@ -561,7 +561,7 @@ function RegisterPage() {
               <div className="reminder-icon">📧</div>
               <div className="reminder-text">
                 <strong>Important:</strong> After registration, you'll receive a verification email. 
-                You must verify your email before you can log in. The Email will send by "nexacore91@gmail.com"
+                You must verify your email before you can log in.
               </div>
             </div>
           </Form>

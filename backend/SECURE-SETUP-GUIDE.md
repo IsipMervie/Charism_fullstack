@@ -21,10 +21,10 @@ Go to: https://dashboard.render.com → Your backend service → Environment tab
 
 **Add these variables:**
 ```
-MONGO_URI=mongodb+srv://admin:admin123@ua-database.wzgg1.mongodb.net/charism?retryWrites=true&w=majority&appName=UA-DATABASE
-JWT_SECRET=mysecretkey123456789
-EMAIL_USER=nexacore91@gmail.com
-EMAIL_PASS=vikq reqx xtdq wglv
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
+JWT_SECRET=your-super-secure-jwt-secret-here
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
 EMAIL_SERVICE=gmail
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587

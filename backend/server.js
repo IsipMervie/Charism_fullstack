@@ -1,5 +1,21 @@
 // server.js
-require('dotenv').config();
+// Load environment variables in order of priority:
+// 1. .env (if exists)
+// 2. local.env (if exists) - overrides .env
+// 3. system environment variables (highest priority)
+
+require('dotenv').config(); // Load .env if it exists
+
+// Load local.env if it exists (for development) - this will override .env
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    require('dotenv').config({ path: '../local.env', override: true });
+    console.log('📁 Loaded local environment variables (local.env)');
+  } catch (error) {
+    // local.env not found, continue with .env or defaults
+    console.log('📁 Using .env or system environment variables');
+  }
+}
 
 // Set basic environment variables if not set (no sensitive data)
 if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
@@ -9,16 +25,31 @@ if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw
 
 // SECURITY: Never hardcode database credentials in code!
 if (!process.env.MONGO_URI) {
-  console.log('🚨 CRITICAL ERROR: MONGO_URI environment variable not set!');
-  console.log('🚨 Please set MONGO_URI in your environment variables');
-  console.log('🚨 Server cannot start without database connection');
-  process.exit(1);
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🚨 CRITICAL ERROR: MONGO_URI environment variable not set!');
+    console.log('🚨 This is required for production deployment');
+    console.log('🚨 Please set MONGO_URI in your Render environment variables');
+    process.exit(1);
+  } else {
+    console.log('⚠️ WARNING: MONGO_URI environment variable not set!');
+    console.log('⚠️ Please set MONGO_URI in your environment variables');
+    console.log('⚠️ Create a .env file or set environment variables');
+    // Don't set hardcoded credentials - require environment variable
+    process.env.MONGO_URI = process.env.MONGO_URI;
+  }
 }
 if (!process.env.JWT_SECRET) {
-  console.log('⚠️ JWT_SECRET not set - generating secure fallback');
-  // Generate a secure random secret for development
-  const crypto = require('crypto');
-  process.env.JWT_SECRET = crypto.randomBytes(64).toString('hex');
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🚨 CRITICAL ERROR: JWT_SECRET environment variable not set!');
+    console.log('🚨 This is required for production deployment');
+    console.log('🚨 Please set JWT_SECRET in your Render environment variables');
+    process.exit(1);
+  } else {
+    console.log('⚠️ JWT_SECRET not set - generating secure fallback for development');
+    // Generate a secure random secret for development
+    const crypto = require('crypto');
+    process.env.JWT_SECRET = crypto.randomBytes(64).toString('hex');
+  }
 }
 if (!process.env.CORS_ORIGINS) {
   console.log('⚠️ CORS_ORIGINS not set - using default');

@@ -303,6 +303,97 @@
   --primary-color: #3b82f6;
 }
 
+/* Global HTML and Body styling for dark mode */
+html {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+html[data-theme="dark"] {
+  background-color: #0f172a;
+}
+
+body {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+body[data-theme="dark"] {
+  background-color: #0f172a;
+}
+
+/* Ensure all containers and overflow areas have proper background */
+#root {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+#root[data-theme="dark"] {
+  background-color: #0f172a;
+}
+
+/* Fix for any overflow or scrolling containers */
+.container, .container-fluid, .row, .col, .col-* {
+  background-color: transparent;
+}
+
+/* Ensure page containers have proper background */
+.page-container, .page, .main-container, .content-container {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+/* Fix for any elements that might show white background */
+* {
+  background-color: transparent;
+}
+
+/* Re-apply background to elements that should have it */
+.page, .page-container, .main-container, .content-container,
+[class*="page"], [class*="container"], [class*="main"] {
+  background-color: var(--bg-primary) !important;
+}
+
+/* CRITICAL FIX: Prevent white background when scrolling in dark mode */
+html, body, #root {
+  background-color: var(--bg-primary) !important;
+  background-image: none !important;
+}
+
+/* Ensure dark mode has proper background everywhere */
+[data-theme="dark"] html,
+[data-theme="dark"] body,
+[data-theme="dark"] #root {
+  background-color: #0f172a !important;
+}
+
+/* Fix for any overflow content */
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Ensure all page elements have consistent background */
+.page, .page-container, .main-container, .content-container,
+[class*="page"], [class*="container"], [class*="main"],
+.home-page, .event-list-page, .login-page, .register-page,
+.student-dashboard, .admin-dashboard, .manage-users-page {
+  background-color: var(--bg-primary) !important;
+  background-image: none !important;
+}
+
+/* Fix for Bootstrap containers that might override background */
+.container, .container-fluid {
+  background-color: transparent !important;
+}
+
+/* Ensure proper background for all viewport areas */
+html, body {
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
 /* Smooth transitions for theme switching */
 * {
   transition: background-color var(--transition-normal),

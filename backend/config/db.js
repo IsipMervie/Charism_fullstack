@@ -7,6 +7,52 @@ require('dotenv').config();
 const dbURI = process.env.MONGODB_URI || process.env.MONGO_URI;
 const nodeEnv = process.env.NODE_ENV || 'development';
 
+// Helper function to connect with specific URI
+const connectDBWithURI = async (uri) => {
+  try {
+    console.log(`🔄 Attempting to connect to MongoDB with URI: ${uri.substring(0, 30)}...`);
+    
+    // Close any existing connections first
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+    
+    const conn = await mongoose.connect(uri, {
+      // Optimized timeouts for speed
+      serverSelectionTimeoutMS: 3000,
+      socketTimeoutMS: 15000,
+      connectTimeoutMS: 3000,
+      
+      // Optimized connection pooling
+      maxPoolSize: 5,
+      minPoolSize: 1,
+      maxIdleTimeMS: 60000,
+      
+      // Performance optimizations
+      bufferCommands: false,
+      family: 4,
+      retryWrites: true,
+      retryReads: true,
+      w: 'majority',
+      
+      // Disable expensive operations
+      autoIndex: false,
+      autoCreate: false,
+      maxConnecting: 5,
+    });
+    
+    console.log('✅ MongoDB connected successfully with fallback URI');
+    console.log('📊 Database:', conn.connection.name);
+    console.log('🌐 Host:', conn.connection.host);
+    console.log('🔌 Port:', conn.connection.port);
+    
+    return conn;
+  } catch (err) {
+    console.error('❌ Fallback MongoDB connection failed:', err.message);
+    return null;
+  }
+};
+
 // Optimized connection function for serverless
 const connectDB = async () => {
   console.log('🔍 MongoDB Connection Debug:');
@@ -16,10 +62,15 @@ const connectDB = async () => {
   if (!dbURI) {
     console.error('❌ No MongoDB URI found!');
     if (nodeEnv === 'production') {
-      console.error('🚨 Production environment - continuing without DB connection');
-      return null;
+      console.error('🚨 CRITICAL ERROR: MONGO_URI must be set in production!');
+      console.error('🚨 Please set MONGO_URI environment variable in Render dashboard');
+      console.error('🚨 Server cannot start without database connection in production');
+      process.exit(1);
     } else {
-      console.error('❌ Development environment - continuing without DB connection');
+      console.error('⚠️ Development environment - MONGO_URI required');
+      console.error('⚠️ Please set MONGO_URI in your environment variables');
+      console.error('⚠️ Create a .env file or set environment variables');
+      // Don't use hardcoded credentials - require environment variable
       return null;
     }
   }
@@ -63,7 +114,6 @@ const connectDB = async () => {
         
         // Performance optimizations
         bufferCommands: false, // Disable buffering for faster responses
-        bufferMaxEntries: 0, // Disable mongoose buffering
         family: 4, // Force IPv4
         retryWrites: true,
         retryReads: true,

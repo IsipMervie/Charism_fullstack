@@ -177,7 +177,7 @@
   gap: 0.5rem;
   padding: 1rem 2rem;
   background: var(--primary);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -493,7 +493,7 @@
 
 .approve-button {
   background: var(--success-hover);
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--success-shadow);
 }
 
@@ -504,7 +504,7 @@
 
 .disapprove-button {
   background: var(--error-hover);
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--error-shadow);
 }
 
@@ -519,7 +519,7 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 8px;
   font-size: 0.8rem;
@@ -541,7 +541,7 @@
 /* Button Icons */
 .action-button .button-icon {
   font-size: 1.2rem;
-  color: white;
+  color: var(--text-inverse);
   font-weight: bold;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
@@ -558,7 +558,7 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--bg-tertiary);
-  color: white;
+  color: var(--text-inverse);
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   font-size: 0.75rem;
@@ -662,7 +662,7 @@
   gap: 0.5rem;
   padding: 1rem 2rem;
   background: var(--primary);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -854,7 +854,7 @@
 
 .event-actions .action-button.share-button {
   background: linear-gradient(135deg, var(--success), var(--success-hover));
-  color: white;
+  color: var(--text-inverse);
   font-size: 1rem;
   font-weight: 600;
 }
@@ -932,7 +932,7 @@
 
 .back-button {
   background: var(--secondary);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .back-button:hover {
@@ -942,7 +942,7 @@
 
 .login-button {
   background: var(--primary-dark);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .login-button:hover {
@@ -1053,7 +1053,7 @@
 
 .public-register-button {
   background: var(--primary-dark);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -1099,7 +1099,7 @@
 
 .edit-button {
   background: var(--success);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .edit-button:hover {
@@ -1109,7 +1109,7 @@
 
 .participants-button {
   background: var(--primary);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .participants-button:hover {
@@ -1182,7 +1182,7 @@
 
 .approve-button {
   background: var(--success);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .approve-button:hover {
@@ -1191,7 +1191,7 @@
 
 .disapprove-button {
   background: var(--error);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .disapprove-button:hover {
@@ -1206,74 +1206,74 @@
 [data-theme="dark"] .event-header {
   background: rgba(30, 41, 59, 0.95) !important;
   border: 1px solid rgba(71, 85, 105, 0.3) !important;
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .event-title {
-  color: #e2e8f0 !important;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  color: var(--border-primary) !important;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
 }
 
 [data-theme="dark"] .meta-item {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .meta-icon {
-  color: #3b82f6 !important;
+  color: var(--primary-color) !important;
 }
 
 [data-theme="dark"] .event-description {
   background: rgba(30, 41, 59, 0.95) !important;
   border: 1px solid rgba(71, 85, 105, 0.3) !important;
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .event-description h3 {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .event-description p {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .detail-card {
   background: rgba(30, 41, 59, 0.95) !important;
   border: 1px solid rgba(71, 85, 105, 0.3) !important;
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .detail-card h4 {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .detail-card p {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .status-badge.status-active {
   background: rgba(16, 185, 129, 0.2) !important;
-  color: #10b981 !important;
+  color: var(--success) !important;
   border: 1px solid rgba(16, 185, 129, 0.4) !important;
 }
 
 [data-theme="dark"] .status-badge.status-completed {
   background: rgba(59, 130, 246, 0.2) !important;
-  color: #3b82f6 !important;
+  color: var(--primary-color) !important;
   border: 1px solid rgba(59, 130, 246, 0.4) !important;
 }
 
 [data-theme="dark"] .status-badge.status-disabled {
   background: rgba(239, 68, 68, 0.2) !important;
-  color: #ef4444 !important;
+  color: var(--error) !important;
   border: 1px solid rgba(239, 68, 68, 0.4) !important;
 }
 
 [data-theme="dark"] .status-badge.status-draft {
   background: rgba(156, 163, 175, 0.2) !important;
-  color: #9ca3af !important;
+  color: var(--text-muted) !important;
   border: 1px solid rgba(156, 163, 175, 0.4) !important;
 }
 
@@ -1283,11 +1283,11 @@
 }
 
 [data-theme="dark"] .public-registration-notice h4 {
-  color: #3b82f6 !important;
+  color: var(--primary-color) !important;
 }
 
 [data-theme="dark"] .public-registration-notice p {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .admin-actions {
@@ -1296,7 +1296,7 @@
 }
 
 [data-theme="dark"] .admin-actions h3 {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .attendance-item {
@@ -1305,26 +1305,26 @@
 }
 
 [data-theme="dark"] .student-name {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .attendance-status {
-  color: #9ca3af !important;
+  color: var(--text-muted) !important;
 }
 
 [data-theme="dark"] .loading-section,
 [data-theme="dark"] .error-section {
   background: rgba(30, 41, 59, 0.95) !important;
   border: 1px solid rgba(71, 85, 105, 0.3) !important;
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .loading-section h3 {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .loading-section p {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .documentation-section {
@@ -1333,11 +1333,11 @@
 }
 
 [data-theme="dark"] .documentation-section .section-title {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .documentation-section .section-description {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .info-card {
@@ -1346,15 +1346,15 @@
 }
 
 [data-theme="dark"] .card-title {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .info-label {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .info-value {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .participants-section {
@@ -1368,11 +1368,11 @@
 
 [data-theme="dark"] .participants-table th {
   background: rgba(51, 65, 85, 0.8) !important;
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .participants-table td {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
   border-bottom: 1px solid rgba(71, 85, 105, 0.3) !important;
 }
 
@@ -1381,15 +1381,15 @@
 }
 
 [data-theme="dark"] .no-participants {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme="dark"] .no-participants h4 {
-  color: #e2e8f0 !important;
+  color: var(--border-primary) !important;
 }
 
 [data-theme="dark"] .no-participants p {
-  color: #cbd5e1 !important;
+  color: var(--text-secondary) !important;
 }
 
 /* Responsive Design */
@@ -1416,7 +1416,7 @@
 /* Event Chat Styles */
 .chat-button {
   background: linear-gradient(135deg, var(--primary), var(--info));
-  color: white;
+  color: var(--text-inverse);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
@@ -1484,7 +1484,7 @@
 
 .join-event-button {
   background: linear-gradient(135deg, var(--primary), var(--success));
-  color: white;
+  color: var(--text-inverse);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
@@ -1530,9 +1530,9 @@
 }
 
 .approved-status {
-  background: linear-gradient(135deg, #d4edda, #c3e6cb);
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background: linear-gradient(135deg, var(--success-light), var(--success-lighter));
+  color: var(--success-dark);
+  border: 1px solid var(--success-lighter);
 }
 
 .status-icon {
@@ -1546,14 +1546,14 @@
 .time-info {
   margin-top: 1rem;
   padding: 0.75rem;
-  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  background: linear-gradient(135deg, var(--info-light), var(--info-lighter));
   border-radius: 8px;
-  border: 1px solid #e1bee7;
+  border: 1px solid var(--info-lighter);
 }
 
 .time-info p {
   margin: 0;
-  color: #4a148c;
+  color: var(--info-dark);
   font-size: 0.9rem;
   text-align: center;
 }
