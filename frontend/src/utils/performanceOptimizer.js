@@ -1,4 +1,5 @@
 // Performance optimization utilities for React frontend
+import React from 'react';
 
 // Image lazy loading optimization
 export const optimizeImages = () => {
@@ -173,14 +174,16 @@ export const componentOptimizations = {
     return React.memo(Component, areEqual);
   },
 
-  // Callback memoization
-  withCallback: (callback, deps) => {
-    return React.useCallback(callback, deps);
+  // Note: useCallback and useMemo should be used inside React components
+  // These are utility functions to help developers remember to use them
+  createCallbackHook: () => {
+    console.warn('useCallback should be used inside React components');
+    return null;
   },
 
-  // Value memoization
-  withMemoValue: (value, deps) => {
-    return React.useMemo(() => value, deps);
+  createMemoHook: () => {
+    console.warn('useMemo should be used inside React components');
+    return null;
   }
 };
 
@@ -230,7 +233,8 @@ export const initPerformanceOptimizations = () => {
   console.log('🚀 Performance optimizations initialized');
 };
 
-export default {
+// Default export object
+const performanceOptimizer = {
   optimizeImages,
   debounce,
   throttle,
@@ -245,3 +249,5 @@ export default {
   analyzeBundle,
   initPerformanceOptimizations
 };
+
+export default performanceOptimizer;
