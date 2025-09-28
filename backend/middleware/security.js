@@ -94,7 +94,19 @@ const corsOptions = {
   },
   credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  allowedHeaders: [
+    'Origin', 
+    'X-Requested-With', 
+    'Content-Type', 
+    'Accept', 
+    'Authorization',
+    'Cache-Control',
+    'Pragma',
+    'Expires',
+    'cache-control',
+    'x-cache-control',
+    'X-Cache-Control'
+  ],
   optionsSuccessStatus: 200
 };
 

@@ -250,22 +250,57 @@ export const performanceMonitor = {
     }
   },
 
-  // Get Web Vitals
+  // Get Web Vitals (Updated for modern browsers)
   getWebVitals: () => {
     if ('performance' in window && 'getEntriesByType' in performance) {
-      const paintEntries = performance.getEntriesByType('paint');
-      const navigationEntries = performance.getEntriesByType('navigation');
-      
-      const vitals = {
-        FCP: paintEntries.find(entry => entry.name === 'first-contentful-paint')?.startTime,
-        LCP: performance.getEntriesByType('largest-contentful-paint')[0]?.startTime,
-        FID: performance.getEntriesByType('first-input')[0]?.processingStart,
-        CLS: performance.getEntriesByType('layout-shift').reduce((sum, entry) => sum + entry.value, 0),
-        TTFB: navigationEntries[0]?.responseStart - navigationEntries[0]?.requestStart
-      };
+      try {
+        const paintEntries = performance.getEntriesByType('paint');
+        const navigationEntries = performance.getEntriesByType('navigation');
+        
+        const vitals = {
+          FCP: paintEntries.find(entry => entry.name === 'first-contentful-paint')?.startTime,
+          TTFB: navigationEntries[0]?.responseStart - navigationEntries[0]?.requestStart
+        };
 
-      console.log('📊 Web Vitals:', vitals);
-      return vitals;
+        // Use modern Performance Observer for newer metrics
+        if ('PerformanceObserver' in window) {
+          try {
+            // LCP with modern API
+            const lcpObserver = new PerformanceObserver((list) => {
+              const entries = list.getEntries();
+              const lastEntry = entries[entries.length - 1];
+              vitals.LCP = lastEntry.startTime;
+            });
+            lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+
+            // FID with modern API
+            const fidObserver = new PerformanceObserver((list) => {
+              list.getEntries().forEach((entry) => {
+                vitals.FID = entry.processingStart - entry.startTime;
+              });
+            });
+            fidObserver.observe({ entryTypes: ['first-input'] });
+
+            // CLS with modern API
+            const clsObserver = new PerformanceObserver((list) => {
+              list.getEntries().forEach((entry) => {
+                if (!entry.hadRecentInput) {
+                  vitals.CLS = (vitals.CLS || 0) + entry.value;
+                }
+              });
+            });
+            clsObserver.observe({ entryTypes: ['layout-shift'] });
+          } catch (error) {
+            console.log('📊 Using fallback Web Vitals monitoring');
+          }
+        }
+
+        console.log('📊 Web Vitals:', vitals);
+        return vitals;
+      } catch (error) {
+        console.log('📊 Web Vitals: Error getting metrics');
+        return null;
+      }
     }
     return null;
   }
