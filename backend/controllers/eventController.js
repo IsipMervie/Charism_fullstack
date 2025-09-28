@@ -9,27 +9,56 @@ const { generateEventRegistrationLink } = require('../utils/emailLinkGenerator')
 const sendEmail = require('../utils/sendEmail');
 const { getEventRegistrationApprovalTemplate, getEventRegistrationDisapprovalTemplate, getAttendanceApprovalTemplate, getAttendanceDisapprovalTemplate } = require('../utils/emailTemplates');
 
-// Enhanced in-memory cache for events with role-based caching
+// Enhanced multi-level cache for events
+const { cache, clearCache } = require('../middleware/performanceMiddleware');
+
+// In-memory cache for events with role-based caching
 let eventsCache = {
   data: null,
   timestamp: null,
-  ttl: 3 * 60 * 1000, // 3 minutes for better freshness
+  ttl: 2 * 60 * 1000, // 2 minutes for better freshness
   userRole: null // Cache based on user role
 };
 
 const getCachedEvents = (userRole = 'Public') => {
+  // Try middleware cache first
+  const cacheKey = `events_${userRole}`;
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    console.log(`🚀 Events cache HIT for ${userRole}`);
+    return cachedData;
+  }
+
+  // Fallback to in-memory cache
   if (eventsCache.data && eventsCache.timestamp && 
       eventsCache.userRole === userRole &&
       (Date.now() - eventsCache.timestamp) < eventsCache.ttl) {
+    console.log(`🚀 Events in-memory cache HIT for ${userRole}`);
     return eventsCache.data;
   }
   return null;
 };
 
 const setCachedEvents = (events, userRole = 'Public') => {
+  // Set in middleware cache
+  const cacheKey = `events_${userRole}`;
+  cache.set(cacheKey, events, 120); // 2 minutes
+
+  // Set in-memory cache
   eventsCache.data = events;
   eventsCache.timestamp = Date.now();
   eventsCache.userRole = userRole;
+  
+  console.log(`💾 Events cached for ${userRole}`);
+};
+
+// Clear events cache
+const clearEventsCache = () => {
+  clearCache('events_');
+  eventsCache.data = null;
+  eventsCache.timestamp = null;
+  eventsCache.userRole = null;
+  console.log('🗑️ Events cache cleared');
 };
 
 

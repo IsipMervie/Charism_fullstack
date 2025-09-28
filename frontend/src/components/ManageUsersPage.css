@@ -490,7 +490,7 @@
 .search-button {
   padding: 0.75rem 1.5rem;
   background: var(--primary);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -842,7 +842,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 2rem;
   border: 4px solid var(--bg-primary);
   box-shadow: 0 8px 25px var(--primary-shadow);
@@ -1055,17 +1055,17 @@
 
 .role-badge.admin {
   background: linear-gradient(135deg, var(--info), var(--primary));
-  color: white;
+  color: var(--text-inverse);
 }
 
 .role-badge.staff {
   background: linear-gradient(135deg, var(--info), var(--info-hover));
-  color: white;
+  color: var(--text-inverse);
 }
 
 .role-badge.student {
   background: linear-gradient(135deg, var(--success), var(--success-hover));
-  color: white;
+  color: var(--text-inverse);
 }
 
 .approval-status-badge {
@@ -1082,37 +1082,37 @@
 
 .approval-status-badge.approved {
   background: linear-gradient(135deg, var(--success), var(--success-hover));
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--success-shadow);
 }
 
 .user-meta .approval-status-badge.approved {
   background: linear-gradient(135deg, var(--success), var(--success-hover));
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--success-shadow);
 }
 
 .approval-status-badge.rejected {
   background: linear-gradient(135deg, var(--error), var(--error-hover));
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--error-shadow);
 }
 
 .user-meta .approval-status-badge.rejected {
   background: linear-gradient(135deg, var(--error), var(--error-hover));
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--error-shadow);
 }
 
 .approval-status-badge.pending {
   background: linear-gradient(135deg, var(--warning), var(--warning-hover));
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--warning-shadow);
 }
 
 .user-meta .approval-status-badge.pending {
   background: linear-gradient(135deg, var(--warning), var(--warning-hover));
-  color: white;
+  color: var(--text-inverse);
   box-shadow: 0 4px 15px var(--warning-shadow);
 }
 
@@ -1285,17 +1285,17 @@
 
 .status-badge.approved {
   background: linear-gradient(135deg, var(--success), var(--success-hover));
-  color: white;
+  color: var(--text-inverse);
 }
 
 .status-badge.rejected {
   background: linear-gradient(135deg, var(--error), var(--error-hover));
-  color: white;
+  color: var(--text-inverse);
 }
 
 .status-badge.pending {
   background: linear-gradient(135deg, var(--warning), var(--warning-hover));
-  color: white;
+  color: var(--text-inverse);
 }
 
 /* User Card Actions */
@@ -1490,7 +1490,7 @@
 
 .pagination-button:hover:not(:disabled) {
   background: var(--primary);
-  color: white;
+  color: var(--text-inverse);
   border-color: var(--primary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--primary-shadow);
@@ -1580,7 +1580,7 @@
 .retry-button {
   padding: 1rem 2rem;
   background: linear-gradient(135deg, var(--info), var(--primary));
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -1646,7 +1646,7 @@
 .cancel-button {
   padding: 1rem 2rem;
   background: var(--secondary-dark);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-weight: 700;
@@ -1662,7 +1662,7 @@
 .save-button {
   padding: 1rem 2rem;
   background: linear-gradient(135deg, var(--info), var(--primary));
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-weight: 700;

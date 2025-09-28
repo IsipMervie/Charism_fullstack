@@ -51,20 +51,19 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        // Ultra-fast timeouts for Render free tier
-        serverSelectionTimeoutMS: 5000, // Increased for stability
-        socketTimeoutMS: 30000, // Increased for slow operations
-        connectTimeoutMS: 5000, // Increased for stability
-        maxTimeMS: 25000, // Global operation timeout
+        // Optimized timeouts for speed
+        serverSelectionTimeoutMS: 3000, // Faster connection
+        socketTimeoutMS: 15000, // Faster socket timeout
+        connectTimeoutMS: 3000, // Faster connection timeout
         
-        // Serverless-optimized pooling
-        maxPoolSize: 1,
-        minPoolSize: 0,
-        maxIdleTimeMS: 30000, // Increased for stability
+        // Optimized connection pooling
+        maxPoolSize: 5, // Increased for better performance
+        minPoolSize: 1, // Keep minimum connections
+        maxIdleTimeMS: 60000, // Keep connections longer
         
         // Performance optimizations
         bufferCommands: false, // Disable buffering for faster responses
-        bufferMaxEntries: 0, // Disable buffering
+        bufferMaxEntries: 0, // Disable mongoose buffering
         family: 4, // Force IPv4
         retryWrites: true,
         retryReads: true,
@@ -72,8 +71,8 @@ const connectDB = async () => {
         
         // Disable expensive operations
         autoIndex: false,
-        autoCreate: false, // Disable auto creation
-        maxConnecting: 1,
+        autoCreate: false,
+        maxConnecting: 5,
         
         // Server API version
         serverApi: {
@@ -83,12 +82,12 @@ const connectDB = async () => {
         },
         
         // Heartbeat optimization
-        heartbeatFrequencyMS: 10000, // Reduced frequency
+        heartbeatFrequencyMS: 10000,
         
         // Additional optimizations
         compressors: ['zlib'], // Enable compression
-        directConnection: false, // Allow load balancing
-        readPreference: 'primary', // Read from primary
+        directConnection: false,
+        readPreference: 'primary',
       });
       
       console.log('✅ MongoDB connected successfully');

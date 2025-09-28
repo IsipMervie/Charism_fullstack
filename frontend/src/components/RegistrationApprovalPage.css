@@ -129,7 +129,7 @@
 
 .header-icon-symbol {
   font-size: 1.8rem;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .header-text {
@@ -196,7 +196,7 @@
 
 .primary-button {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  color: var(--text-inverse);
 }
 
 .secondary-button {
@@ -276,7 +276,7 @@
   gap: 0.5rem;
   padding: 1rem 1.5rem;
   background: var(--danger);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -306,7 +306,7 @@
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #ffffff;
+  background: var(--bg-card);
   color: #1e293b;
   font-weight: 500;
 }
@@ -343,7 +343,7 @@
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: #ffffff;
+  background: var(--bg-card);
   color: #1e293b;
   cursor: pointer;
   font-weight: 500;
@@ -364,7 +364,7 @@
 .clear-filters-btn {
   padding: 1rem 1.5rem;
   background: #dc2626;
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -431,7 +431,7 @@
   height: 48px;
   background: linear-gradient(135deg, var(--primary), var(--info));
   border-radius: 12px;
-  color: white;
+  color: var(--text-inverse);
   font-size: 1.2rem;
 }
 
@@ -486,7 +486,7 @@
 
 .clear-search-button {
   background: #dc3545;
-  color: white;
+  color: var(--text-inverse);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -512,7 +512,7 @@
 }
 
 .event-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -566,7 +566,7 @@
 
 .event-date-badge {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  color: var(--text-inverse);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -667,7 +667,7 @@
   gap: 0.75rem;
   padding: 1rem 2rem;
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -781,7 +781,7 @@
   gap: 0.5rem;
   padding: 0.8rem 1.5rem;
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -927,7 +927,7 @@
 
 /* Registration Card - Based on Participant Card Design */
 .registration-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   margin-bottom: 1.5rem;
@@ -1351,7 +1351,7 @@
 
 .approve-btn {
   background-color: #10b981;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .approve-btn:hover {
@@ -1362,7 +1362,7 @@
 
 .disapprove-btn {
   background-color: #ef4444;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .disapprove-btn:hover {
@@ -1515,7 +1515,7 @@
 
 .no-results-icon svg {
   font-size: 2rem;
-  color: white;
+  color: var(--text-inverse);
 }
 
 .no-results-title {
@@ -1539,7 +1539,7 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   background: var(--primary-color);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 8px;
   font-size: 0.9rem;

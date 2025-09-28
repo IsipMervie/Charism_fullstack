@@ -79,7 +79,7 @@ const ImageDiagnostic = ({ eventId, eventTitle }) => {
             <button onClick={runDiagnostic} style={{ 
               padding: '5px 10px', 
               backgroundColor: '#007bff', 
-              color: 'white', 
+              color: 'var(--text-inverse)', 
               border: 'none', 
               borderRadius: '3px',
               cursor: 'pointer'

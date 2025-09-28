@@ -17,6 +17,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { setupGlobalErrorHandler } from './utils/apiErrorHandler';
 import { setupNetworkMonitoring, showNetworkStatus } from './utils/networkUtils';
 import { initSweetAlertTheme } from './utils/sweetAlertUtils';
+import { initPerformanceOptimizations } from './utils/performanceOptimizer';
 
 // Lazy load pages for better performance
 const HomePage = React.lazy(() => import('./components/HomePage'));
@@ -67,7 +68,7 @@ const LoadingSpinner = () => (
     alignItems: 'center', 
     height: '200px',
     fontSize: '18px',
-    color: '#666'
+    color: 'var(--text-secondary)'
   }}>
     Loading...
   </div>
@@ -93,6 +94,11 @@ function App() {
   useEffect(() => {
     const cleanup = initSweetAlertTheme();
     return cleanup;
+  }, []);
+
+  // Initialize performance optimizations
+  useEffect(() => {
+    initPerformanceOptimizations();
   }, []);
 
   return (

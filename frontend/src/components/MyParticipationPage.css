@@ -157,7 +157,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 1.5rem;
   flex-shrink: 0;
 }
@@ -331,7 +331,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 2rem;
   flex-shrink: 0;
   box-shadow: 0 10px 30px var(--success-shadow);
@@ -360,7 +360,7 @@
   gap: 0.75rem;
   padding: 1rem 2rem;
   background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   font-size: 1rem;
@@ -489,7 +489,7 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  color: white;
+  color: var(--text-inverse);
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -932,7 +932,7 @@
 
 .certificate-button {
   background: var(--success);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   border-radius: 12px;
   padding: 1rem 2rem;

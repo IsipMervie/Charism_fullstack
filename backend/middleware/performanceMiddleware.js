@@ -1,145 +1,150 @@
-// Performance Optimization Middleware
-const performanceMiddleware = (req, res, next) => {
-  // Add performance headers
-  res.setHeader('X-Response-Time', '0ms');
-  res.setHeader('X-Cache-Control', 'no-cache');
-  
-  // Start timing
-  const start = Date.now();
-  
-  // Override res.end to calculate response time
-  const originalEnd = res.end;
-  res.end = function(chunk, encoding) {
-    const responseTime = Date.now() - start;
-    res.setHeader('X-Response-Time', `${responseTime}ms`);
-    
-    // Log slow responses
-    if (responseTime > 1000) {
-      console.warn(`🐌 Slow response detected: ${req.method} ${req.path} took ${responseTime}ms`);
-    }
-    
-    // Call original end method
-    originalEnd.call(this, chunk, encoding);
-  };
-  
-  // Add compression for large responses
-  if (req.headers['accept-encoding'] && req.headers['accept-encoding'].includes('gzip')) {
-    res.setHeader('Content-Encoding', 'gzip');
-  }
-  
-  // Add cache headers for static resources
-  if (req.path.startsWith('/uploads/') || req.path.startsWith('/api/health')) {
-    res.setHeader('Cache-Control', 'public, max-age=300'); // 5 minutes
-  }
-  
-  next();
-};
+// Performance optimization middleware
+const compression = require('compression');
+const NodeCache = require('node-cache');
 
-// Request deduplication middleware
-const requestDeduplication = (req, res, next) => {
-  const requestKey = `${req.method}-${req.path}-${JSON.stringify(req.query)}`;
-  
-  // Check if this request is already being processed
-  if (global.pendingRequests && global.pendingRequests.has(requestKey)) {
-    console.log(`🔄 Duplicate request detected: ${requestKey}`);
-    return res.status(429).json({ 
-      error: 'Request already in progress',
-      message: 'Please wait for the previous request to complete'
-    });
-  }
-  
-  // Initialize global pending requests if not exists
-  if (!global.pendingRequests) {
-    global.pendingRequests = new Map();
-  }
-  
-  // Mark request as pending
-  global.pendingRequests.set(requestKey, true);
-  
-  // Clean up when request completes
-  res.on('finish', () => {
-    global.pendingRequests.delete(requestKey);
-  });
-  
-  next();
-};
+// Create cache instance with 5 minute TTL
+const cache = new NodeCache({ 
+  stdTTL: 300, // 5 minutes
+  checkperiod: 120, // Check for expired keys every 2 minutes
+  useClones: false // Don't clone objects for better performance
+});
 
-// Database query optimization middleware
-const dbOptimization = (req, res, next) => {
-  // Add query timeout
-  req.queryTimeout = setTimeout(() => {
-    console.warn(`⏰ Query timeout for: ${req.method} ${req.path}`);
-  }, 10000); // 10 second timeout
-  
-  // Clean up timeout on response
-  res.on('finish', () => {
-    if (req.queryTimeout) {
-      clearTimeout(req.queryTimeout);
-    }
-  });
-  
-  next();
-};
-
-// Response compression middleware
-const compression = (req, res, next) => {
-  // Skip compression for health and test endpoints to avoid encoding issues
-  if (req.path === '/api/health' || req.path === '/api/test' || req.path === '/api/frontend-test') {
-    return next();
-  }
-  
-  // Check if response should be compressed
-  const shouldCompress = req.headers['accept-encoding'] && 
-                        (req.headers['accept-encoding'].includes('gzip') || 
-                         req.headers['accept-encoding'].includes('deflate'));
-  
-  if (shouldCompress && req.path.startsWith('/api/')) {
-    // Set compression headers
-    res.setHeader('Content-Encoding', 'gzip');
-    res.setHeader('Vary', 'Accept-Encoding');
-  }
-  
-  next();
-};
-
-// Rate limiting middleware
-const rateLimit = (() => {
-  const requests = new Map();
-  const windowMs = 60000; // 1 minute
-  const maxRequests = 100; // Max requests per minute per IP
-  
+// Cache middleware
+const cacheMiddleware = (ttl = 300) => {
   return (req, res, next) => {
-    const ip = req.ip || req.connection.remoteAddress;
-    const now = Date.now();
-    
-    if (!requests.has(ip)) {
-      requests.set(ip, { count: 1, resetTime: now + windowMs });
-    } else {
-      const record = requests.get(ip);
-      
-      if (now > record.resetTime) {
-        record.count = 1;
-        record.resetTime = now + windowMs;
-      } else {
-        record.count++;
-      }
-      
-      if (record.count > maxRequests) {
-        return res.status(429).json({
-          error: 'Too many requests',
-          message: 'Please try again later'
-        });
-      }
+    // Only cache GET requests
+    if (req.method !== 'GET') {
+      return next();
     }
+
+    // Create cache key from URL and query parameters
+    const cacheKey = `${req.originalUrl}`;
     
+    // Check if data is in cache
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      console.log(`🚀 Cache HIT for ${cacheKey}`);
+      return res.json(cachedData);
+    }
+
+    // Store original json method
+    const originalJson = res.json;
+    
+    // Override json method to cache response
+    res.json = function(data) {
+      // Cache the response data
+      cache.set(cacheKey, data, ttl);
+      console.log(`💾 Cached response for ${cacheKey} (TTL: ${ttl}s)`);
+      
+      // Call original json method
+      return originalJson.call(this, data);
+    };
+
     next();
   };
-})();
+};
+
+// Clear cache for specific patterns
+const clearCache = (pattern) => {
+  const keys = cache.keys();
+  const regex = new RegExp(pattern);
+  
+  keys.forEach(key => {
+    if (regex.test(key)) {
+      cache.del(key);
+      console.log(`🗑️ Cleared cache for ${key}`);
+    }
+  });
+};
+
+// Clear all cache
+const clearAllCache = () => {
+  cache.flushAll();
+  console.log('🗑️ Cleared all cache');
+};
+
+// Get cache stats
+const getCacheStats = () => {
+  return cache.getStats();
+};
+
+// Compression middleware with optimization
+const compressionMiddleware = compression({
+  // Only compress responses larger than 1KB
+  threshold: 1024,
+  // Compression level (1-9, 6 is good balance)
+  level: 6,
+  // Filter function to decide what to compress
+  filter: (req, res) => {
+    // Don't compress if already compressed
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    // Use compression for all other requests
+    return compression.filter(req, res);
+  }
+});
+
+// Response time middleware
+const responseTimeMiddleware = (req, res, next) => {
+  const start = Date.now();
+  
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    res.setHeader('X-Response-Time', `${duration}ms`);
+    
+    // Log slow requests
+    if (duration > 1000) {
+      console.log(`🐌 SLOW REQUEST: ${req.method} ${req.path} - ${duration}ms`);
+    } else if (duration > 500) {
+      console.log(`⚠️ MEDIUM REQUEST: ${req.method} ${req.path} - ${duration}ms`);
+    }
+  });
+  
+  next();
+};
+
+// Connection pooling optimization
+const optimizeMongoose = (mongoose) => {
+  // Set connection pool size
+  const options = {
+    maxPoolSize: 10, // Maximum number of connections in the pool
+    serverSelectionTimeoutMS: 5000, // How long to try to connect
+    socketTimeoutMS: 45000, // How long to wait for a response
+    bufferMaxEntries: 0, // Disable mongoose buffering
+    bufferCommands: false, // Disable mongoose buffering
+  };
+
+  return options;
+};
+
+// Memory usage monitoring
+const memoryMonitoring = () => {
+  const used = process.memoryUsage();
+  const formatBytes = (bytes) => {
+    return Math.round(bytes / 1024 / 1024 * 100) / 100 + ' MB';
+  };
+
+  console.log('💾 Memory Usage:', {
+    rss: formatBytes(used.rss), // Resident Set Size
+    heapTotal: formatBytes(used.heapTotal),
+    heapUsed: formatBytes(used.heapUsed),
+    external: formatBytes(used.external),
+    arrayBuffers: formatBytes(used.arrayBuffers)
+  });
+};
+
+// Log memory usage every 5 minutes
+setInterval(memoryMonitoring, 5 * 60 * 1000);
 
 module.exports = {
-  performanceMiddleware,
-  requestDeduplication,
-  dbOptimization,
-  compression,
-  rateLimit
+  cacheMiddleware,
+  clearCache,
+  clearAllCache,
+  getCacheStats,
+  compressionMiddleware,
+  responseTimeMiddleware,
+  optimizeMongoose,
+  memoryMonitoring,
+  cache
 };

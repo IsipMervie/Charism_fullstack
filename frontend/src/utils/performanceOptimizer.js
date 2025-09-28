@@ -1,7 +1,28 @@
-// Performance Optimization Utilities
-// This file contains utilities to improve overall system performance
+// Performance optimization utilities for React frontend
 
-// Debounce function to limit API calls
+// Image lazy loading optimization
+export const optimizeImages = () => {
+  // Add intersection observer for lazy loading
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.classList.remove('lazy');
+          observer.unobserve(img);
+        }
+      });
+    });
+
+    // Observe all lazy images
+    document.querySelectorAll('img[data-src]').forEach(img => {
+      imageObserver.observe(img);
+    });
+  }
+};
+
+// Debounce function for search inputs
 export const debounce = (func, wait) => {
   let timeout;
   return function executedFunction(...args) {
@@ -14,21 +35,19 @@ export const debounce = (func, wait) => {
   };
 };
 
-// Throttle function to limit function execution frequency
+// Throttle function for scroll events
 export const throttle = (func, limit) => {
   let inThrottle;
-  return function() {
-    const args = arguments;
-    const context = this;
+  return function(...args) {
     if (!inThrottle) {
-      func.apply(context, args);
+      func.apply(this, args);
       inThrottle = true;
       setTimeout(() => inThrottle = false, limit);
     }
   };
 };
 
-// Memoization utility for expensive calculations
+// Memoization for expensive calculations
 export const memoize = (fn) => {
   const cache = new Map();
   return (...args) => {
@@ -36,171 +55,193 @@ export const memoize = (fn) => {
     if (cache.has(key)) {
       return cache.get(key);
     }
-    const result = fn.apply(this, args);
+    const result = fn(...args);
     cache.set(key, result);
     return result;
   };
 };
 
-// Lazy loading utility for images
-export const lazyLoadImage = (imgElement, src) => {
-  if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = src;
-          img.classList.remove('lazy');
-          imageObserver.unobserve(img);
-        }
-      });
-    });
-    imageObserver.observe(imgElement);
-  } else {
-    // Fallback for older browsers
-    imgElement.src = src;
-  }
+// Virtual scrolling helper
+export const getVisibleRange = (scrollTop, itemHeight, containerHeight, totalItems) => {
+  const startIndex = Math.floor(scrollTop / itemHeight);
+  const endIndex = Math.min(startIndex + Math.ceil(containerHeight / itemHeight) + 1, totalItems);
+  return { startIndex, endIndex };
+};
+
+// Bundle size optimization - dynamic imports
+export const lazyLoadComponent = (importFunc) => {
+  return React.lazy(importFunc);
 };
 
 // Preload critical resources
-export const preloadResource = (href, as = 'fetch') => {
-  const link = document.createElement('link');
-  link.rel = 'preload';
-  link.href = href;
-  link.as = as;
-  document.head.appendChild(link);
+export const preloadCriticalResources = () => {
+  // Preload critical CSS
+  const criticalCSS = document.createElement('link');
+  criticalCSS.rel = 'preload';
+  criticalCSS.as = 'style';
+  criticalCSS.href = '/static/css/critical.css';
+  document.head.appendChild(criticalCSS);
+
+  // Preload critical fonts
+  const criticalFont = document.createElement('link');
+  criticalFont.rel = 'preload';
+  criticalFont.as = 'font';
+  criticalFont.type = 'font/woff2';
+  criticalFont.crossOrigin = 'anonymous';
+  criticalFont.href = '/static/fonts/critical.woff2';
+  document.head.appendChild(criticalFont);
 };
 
-// Optimize scroll events
-export const optimizeScroll = (callback, options = {}) => {
-  const { throttleMs = 16, passive = true } = options;
-  
-  let ticking = false;
-  const throttledCallback = throttle(() => {
-    callback();
-    ticking = false;
-  }, throttleMs);
-  
-  return (event) => {
-    if (!ticking) {
-      requestAnimationFrame(throttledCallback);
-      ticking = true;
-    }
-  };
-};
-
-// Cache management utility
-export class CacheManager {
-  constructor(maxSize = 100) {
-    this.cache = new Map();
-    this.maxSize = maxSize;
-  }
-  
-  set(key, value, ttl = 300000) { // 5 minutes default TTL
-    if (this.cache.size >= this.maxSize) {
-      const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
-    }
-    
-    this.cache.set(key, {
-      value,
-      timestamp: Date.now(),
-      ttl
+// Service Worker registration for caching
+export const registerServiceWorker = () => {
+  if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          console.log('🚀 Service Worker registered successfully:', registration.scope);
+        })
+        .catch((error) => {
+          console.log('❌ Service Worker registration failed:', error);
+        });
     });
   }
-  
-  get(key) {
-    const item = this.cache.get(key);
-    if (!item) return null;
-    
-    if (Date.now() - item.timestamp > item.ttl) {
-      this.cache.delete(key);
-      return null;
-    }
-    
-    return item.value;
-  }
-  
-  clear() {
-    this.cache.clear();
-  }
-  
-  size() {
-    return this.cache.size;
-  }
-}
+};
 
-// Simple API request utility without complex timeout logic
-export const createSimpleAPI = (baseURL) => {
-  const makeRequest = async (endpoint, options = {}) => {
+// Performance monitoring
+export const performanceMonitor = {
+  // Measure component render time
+  measureRender: (componentName, renderFunction) => {
+    const start = performance.now();
+    const result = renderFunction();
+    const end = performance.now();
+    console.log(`⚡ ${componentName} render time: ${end - start}ms`);
+    return result;
+  },
+
+  // Measure API call performance
+  measureApiCall: async (apiCall, callName) => {
+    const start = performance.now();
     try {
-      const response = await fetch(`${baseURL}${endpoint}`, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      return await response.json();
+      const result = await apiCall();
+      const end = performance.now();
+      console.log(`🌐 ${callName} API call time: ${end - start}ms`);
+      return result;
     } catch (error) {
-      console.error('API request failed:', error);
+      const end = performance.now();
+      console.log(`❌ ${callName} API call failed after: ${end - start}ms`);
       throw error;
     }
-  };
-  
-  return {
-    get: (endpoint) => makeRequest(endpoint, { method: 'GET' }),
-    post: (endpoint, data) => makeRequest(endpoint, { 
-      method: 'POST', 
-      body: JSON.stringify(data)
-    }),
-    put: (endpoint, data) => makeRequest(endpoint, { 
-      method: 'PUT', 
-      body: JSON.stringify(data)
-    }),
-    delete: (endpoint) => makeRequest(endpoint, { method: 'DELETE' })
-  };
+  },
+
+  // Get Web Vitals
+  getWebVitals: () => {
+    if ('performance' in window && 'getEntriesByType' in performance) {
+      const paintEntries = performance.getEntriesByType('paint');
+      const navigationEntries = performance.getEntriesByType('navigation');
+      
+      const vitals = {
+        FCP: paintEntries.find(entry => entry.name === 'first-contentful-paint')?.startTime,
+        LCP: performance.getEntriesByType('largest-contentful-paint')[0]?.startTime,
+        FID: performance.getEntriesByType('first-input')[0]?.processingStart,
+        CLS: performance.getEntriesByType('layout-shift').reduce((sum, entry) => sum + entry.value, 0),
+        TTFB: navigationEntries[0]?.responseStart - navigationEntries[0]?.requestStart
+      };
+
+      console.log('📊 Web Vitals:', vitals);
+      return vitals;
+    }
+    return null;
+  }
 };
 
-// Bundle size optimization
-export const loadComponentLazy = (importFunc, fallback = null) => {
-  const React = require('react');
-  const LazyComponent = React.lazy(importFunc);
-  
-  return (props) => (
-    <React.Suspense fallback={fallback || <div>Loading...</div>}>
-      <LazyComponent {...props} />
-    </React.Suspense>
-  );
+// Memory usage monitoring
+export const memoryMonitor = () => {
+  if ('memory' in performance) {
+    const memory = performance.memory;
+    console.log('💾 Memory Usage:', {
+      used: Math.round(memory.usedJSHeapSize / 1024 / 1024) + ' MB',
+      total: Math.round(memory.totalJSHeapSize / 1024 / 1024) + ' MB',
+      limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024) + ' MB'
+    });
+  }
 };
 
-// Memory leak prevention
-export const useCleanup = (cleanupFn) => {
-  const React = require('react');
-  React.useEffect(() => {
-    return () => {
-      if (typeof cleanupFn === 'function') {
-        cleanupFn();
+// Component optimization helpers
+export const componentOptimizations = {
+  // Memo wrapper for expensive components
+  withMemo: (Component, areEqual) => {
+    return React.memo(Component, areEqual);
+  },
+
+  // Callback memoization
+  withCallback: (callback, deps) => {
+    return React.useCallback(callback, deps);
+  },
+
+  // Value memoization
+  withMemoValue: (value, deps) => {
+    return React.useMemo(() => value, deps);
+  }
+};
+
+// Bundle analyzer helper
+export const analyzeBundle = () => {
+  if (process.env.NODE_ENV === 'development') {
+    // Log component render counts
+    const renderCounts = {};
+    const originalConsoleLog = console.log;
+    
+    console.log = (...args) => {
+      if (args[0] && args[0].includes && args[0].includes('render')) {
+        const componentName = args[0].split(' ')[0];
+        renderCounts[componentName] = (renderCounts[componentName] || 0) + 1;
       }
+      originalConsoleLog.apply(console, args);
     };
-  }, [cleanupFn]);
+
+    // Log render counts every 10 seconds
+    setInterval(() => {
+      console.table(renderCounts);
+    }, 10000);
+  }
 };
 
-// Export default utilities
+// Initialize performance optimizations
+export const initPerformanceOptimizations = () => {
+  // Register service worker
+  registerServiceWorker();
+
+  // Preload critical resources
+  preloadCriticalResources();
+
+  // Monitor memory usage every 30 seconds
+  setInterval(memoryMonitor, 30000);
+
+  // Get initial Web Vitals
+  setTimeout(() => {
+    performanceMonitor.getWebVitals();
+  }, 1000);
+
+  // Analyze bundle in development
+  if (process.env.NODE_ENV === 'development') {
+    analyzeBundle();
+  }
+
+  console.log('🚀 Performance optimizations initialized');
+};
+
 export default {
+  optimizeImages,
   debounce,
   throttle,
   memoize,
-  lazyLoadImage,
-  preloadResource,
-  optimizeScroll,
-  CacheManager,
-  createSimpleAPI,
-  loadComponentLazy,
-  useCleanup
+  getVisibleRange,
+  lazyLoadComponent,
+  preloadCriticalResources,
+  registerServiceWorker,
+  performanceMonitor,
+  memoryMonitor,
+  componentOptimizations,
+  analyzeBundle,
+  initPerformanceOptimizations
 };

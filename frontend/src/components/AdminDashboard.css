@@ -144,7 +144,7 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   background: linear-gradient(135deg, var(--info), var(--primary));
-  color: white;
+  color: var(--text-inverse);
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -353,7 +353,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 1.25rem;
   flex-shrink: 0;
 }

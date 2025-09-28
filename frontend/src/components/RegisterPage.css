@@ -233,7 +233,7 @@
   background: var(--primary);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: var(--text-inverse);
   cursor: pointer;
   transition: all var(--transition-normal);
   position: relative;
@@ -285,7 +285,7 @@ input[type="submit"].register-button,
   background-color: var(--primary) !important;
   background-image: none !important;
   border-color: var(--primary) !important;
-  color: white !important;
+  color: var(--text-inverse) !important;
 }
 
 .btn.register-button:hover,
@@ -383,7 +383,7 @@ input[type="submit"].register-button:hover,
   margin: -0.5rem 0 0 -0.5rem;
   border: 2px solid transparent;
   border-radius: 50%;
-  border-top-color: white;
+  border-top-color: var(--text-inverse);
   animation: spin 1s linear infinite;
 }
 

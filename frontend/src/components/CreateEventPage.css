@@ -61,7 +61,7 @@
 .create-event-page .form-control:focus {
   border-color: var(--primary-dark);
   box-shadow: 0 0 0 0.2rem var(--primary-focus);
-  background: white;
+  background: var(--bg-card);
   transform: translateY(-2px);
 }
 
@@ -260,7 +260,7 @@
 @media (prefers-contrast: high) {
   .create-event-page .card {
     border: 3px solid var(--text-primary);
-    background: white;
+    background: var(--bg-card);
   }
   
   .create-event-page .btn {
@@ -284,7 +284,7 @@
 /* Print styles */
 @media print {
   .create-event-page {
-    background: white;
+    background: var(--bg-card);
   }
   
   .create-event-page .card {

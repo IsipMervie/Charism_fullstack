@@ -155,7 +155,7 @@
   padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   border-radius: 20px;
-  color: white;
+  color: var(--text-inverse);
   font-size: 0.9rem;
   font-weight: 600;
   box-shadow: 0 4px 15px var(--primary-shadow);
@@ -337,7 +337,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 1.5rem;
   flex-shrink: 0;
 }
@@ -560,7 +560,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-inverse);
   font-size: 1.25rem;
   flex-shrink: 0;
 }
@@ -954,7 +954,7 @@
 
 .view-more-button {
   background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   padding: 1rem 2rem;
   border-radius: 12px;
@@ -1002,7 +1002,7 @@
 
 .view-events-button {
   background: linear-gradient(135deg, #6b7280, #4b5563);
-  color: white;
+  color: var(--text-inverse);
   border: none;
   padding: 1rem 2rem;
   border-radius: 12px;

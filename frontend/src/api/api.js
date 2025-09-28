@@ -8,22 +8,49 @@ console.log('🌐 API URL configured as:', API_BASE_URL);
 console.log('🏠 Current hostname:', window.location.hostname);
 console.log('🔗 Current protocol:', window.location.protocol);
 
-// Simple axios instance with proper CORS configuration
+// Optimized axios instance with caching and performance features
 export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
+    'Cache-Control': 'max-age=300', // 5 minutes cache
   },
-  timeout: 30000, // Optimized timeout for Render
+  timeout: 20000, // Reduced timeout for faster responses
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });
 
+// Response cache for GET requests
+const responseCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// Request interceptor for logging
+// Cache middleware for axios
+const cacheMiddleware = (config) => {
+  if (config.method === 'get' && config.cache !== false) {
+    const cacheKey = `${config.method}:${config.url}:${JSON.stringify(config.params || {})}`;
+    const cached = responseCache.get(cacheKey);
+    
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`🚀 Cache HIT for ${cacheKey}`);
+      return Promise.resolve(cached.data);
+    }
+  }
+  return null;
+};
+
+
+// Request interceptor for caching and logging
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Check cache first for GET requests
+    const cachedResponse = cacheMiddleware(config);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // Add request timestamp
+    config.metadata = { startTime: Date.now() };
     return config;
   },
   (error) => {
@@ -31,9 +58,27 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor with retry logic for timeout/network errors
+// Response interceptor with caching and retry logic
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Cache successful GET responses
+    if (response.config.method === 'get' && response.status === 200) {
+      const cacheKey = `${response.config.method}:${response.config.url}:${JSON.stringify(response.config.params || {})}`;
+      responseCache.set(cacheKey, {
+        data: response,
+        timestamp: Date.now()
+      });
+      console.log(`💾 Cached response for ${cacheKey}`);
+    }
+    
+    // Log response time
+    if (response.config.metadata) {
+      const duration = Date.now() - response.config.metadata.startTime;
+      console.log(`⚡ ${response.config.url} - ${duration}ms`);
+    }
+    
+    return response;
+  },
   async (error) => {
     const config = error.config;
     

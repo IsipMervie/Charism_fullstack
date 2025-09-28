@@ -133,20 +133,20 @@ function EventParticipantsPage() {
       html: `
         <div style="text-align: left;">
           <p style="margin-bottom: 15px;">Please select a reason for disapproving ${participant.userId.name}'s attendance:</p>
-          <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+            <select id="disapproval-reason" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--border-primary); border-radius: 4px; font-size: 14px; background: var(--bg-input); color: var(--text-primary);">
             <option value="">Select a reason...</option>
             ${attendanceDisapprovalReasons.map((reason, index) => `<option value="${index}">${reason}</option>`).join('')}
           </select>
           <div id="other-reason-container" style="display: none; margin-top: 10px;">
             <label for="other-reason" style="display: block; margin-bottom: 5px; font-weight: 500;">Please specify other reason:</label>
-            <textarea id="other-reason" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-height: 80px;" placeholder="Enter your specific reason here..."></textarea>
+            <textarea id="other-reason" style="width: 100%; padding: 10px; border: 1px solid var(--border-primary); border-radius: 4px; font-size: 14px; min-height: 80px; background: var(--bg-input); color: var(--text-primary);" placeholder="Enter your specific reason here..."></textarea>
           </div>
         </div>
       `,
       showCancelButton: true,
       confirmButtonText: 'Disapprove',
       cancelButtonText: 'Cancel',
-      confirmButtonColor: '#dc3545',
+      confirmButtonColor: 'var(--error)',
       preConfirm: () => {
         const selectedReason = document.getElementById('disapproval-reason').value;
         const otherReason = document.getElementById('other-reason').value;

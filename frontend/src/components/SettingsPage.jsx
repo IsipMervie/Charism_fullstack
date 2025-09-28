@@ -227,8 +227,8 @@ function SettingsPage() {
         text: 'Your profile has been updated successfully.',
         timer: 2000,
         showConfirmButton: false,
-        background: '#ffffff',
-        color: '#1e293b'
+        background: 'var(--bg-card)',
+        color: 'var(--text-primary)'
       });
       
       setTimeout(() => setMessage(''), 3000);
@@ -578,7 +578,7 @@ function SettingsPage() {
                     className="action-button upload-button"
                     style={{
                       background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                      color: 'white',
+                      color: 'var(--text-inverse)',
                       border: 'none',
                       display: 'flex',
                       alignItems: 'center',
@@ -612,7 +612,7 @@ function SettingsPage() {
                     className="action-button delete-button"
                     style={{
                       background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-                      color: 'white',
+                      color: 'var(--text-inverse)',
                       border: 'none',
                       display: 'flex',
                       alignItems: 'center',

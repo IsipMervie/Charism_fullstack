@@ -121,7 +121,7 @@ const ImageUrlTester = ({ event }) => {
         style={{
           padding: '10px 20px',
           backgroundColor: isTesting ? '#ccc' : '#007bff',
-          color: 'white',
+          color: 'var(--text-inverse)',
           border: 'none',
           borderRadius: '4px',
           cursor: isTesting ? 'not-allowed' : 'pointer'

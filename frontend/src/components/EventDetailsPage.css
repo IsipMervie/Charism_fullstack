@@ -976,7 +976,7 @@
 }
 
 .detail-card {
-  background: white;
+  background: var(--bg-card);
   padding: 1.5rem;
   border-radius: 12px;
   border: 1px solid var(--border-primary);
@@ -1135,7 +1135,7 @@
 }
 
 .attendance-item {
-  background: white;
+  background: var(--bg-card);
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid var(--border-primary);
@@ -1524,9 +1524,9 @@
 }
 
 .pending-status {
-  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-  color: #856404;
-  border: 1px solid #ffeaa7;
+  background: linear-gradient(135deg, var(--warning-light), var(--warning));
+  color: var(--warning-dark);
+  border: 1px solid var(--warning);
 }
 
 .approved-status {
