@@ -14,10 +14,9 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Cache-Control': 'max-age=60', // Reduced to 1 minute for instant updates
     'X-Requested-With': 'XMLHttpRequest'
   },
-  timeout: 10000, // Reduced to 10 seconds for ultra-fast responses
+  timeout: 15000, // Increased timeout for stability
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });

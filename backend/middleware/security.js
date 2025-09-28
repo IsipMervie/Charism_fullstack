@@ -79,11 +79,22 @@ const corsOptions = {
       'https://charism-ucb4.onrender.com',
       'https://charism-api-xtw9.onrender.com',
       'http://localhost:3000',
-      'http://localhost:10000'
+      'http://localhost:10000',
+      'https://charism.onrender.com'
     ];
     
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
+    
+    // Allow any Render subdomain
+    if (origin && origin.includes('onrender.com')) {
+      return callback(null, true);
+    }
+    
+    // Allow localhost in development
+    if (origin && origin.includes('localhost')) {
+      return callback(null, true);
+    }
     
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -105,7 +116,14 @@ const corsOptions = {
     'Expires',
     'cache-control',
     'x-cache-control',
-    'X-Cache-Control'
+    'X-Cache-Control',
+    'Content-Length',
+    'X-HTTP-Method-Override',
+    'X-Requested-With',
+    'If-Modified-Since',
+    'Cache-Control',
+    'Origin',
+    'X-File-Name'
   ],
   optionsSuccessStatus: 200
 };

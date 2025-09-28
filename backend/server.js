@@ -116,6 +116,9 @@ require('./models/Feedback');
 
 const app = express();
 
+// Trust proxy for Render deployment (fixes rate limiting error)
+app.set('trust proxy', 1);
+
 // Performance optimizations (MUST be first)
 app.use(compressionMiddleware);
 app.use(responseTimeMiddleware);
