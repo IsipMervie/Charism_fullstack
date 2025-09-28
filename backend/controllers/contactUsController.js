@@ -6,6 +6,11 @@ const { getContactSubmissionTemplate, getContactAdminNotificationTemplate, getCo
 
 // Send a contact message (public)
 exports.sendContactMessage = async (req, res) => {
+  // Set CORS headers explicitly
+  res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
   try {
     const { name, email, message } = req.body;
     

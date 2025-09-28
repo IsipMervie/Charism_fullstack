@@ -33,17 +33,17 @@ const authLimiter = createRateLimit(
   'Too many authentication attempts, please try again later.'
 );
 
-// Contact form rate limiting
+// Contact form rate limiting (temporarily relaxed for deadline)
 const contactLimiter = createRateLimit(
-  60 * 60 * 1000, // 1 hour
-  3, // 3 requests per hour
+  5 * 60 * 1000, // 5 minutes
+  20, // 20 requests per 5 minutes
   'Too many contact form submissions, please try again later.'
 );
 
-// Registration rate limiting
+// Registration rate limiting (temporarily relaxed for deadline)
 const registerLimiter = createRateLimit(
-  60 * 60 * 1000, // 1 hour
-  3, // 3 registrations per hour
+  15 * 60 * 1000, // 15 minutes
+  10, // 10 registrations per 15 minutes
   'Too many registration attempts, please try again later.'
 );
 
