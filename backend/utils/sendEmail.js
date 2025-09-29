@@ -57,8 +57,17 @@ const createTransporter = () => {
 const sendEmail = async (to, subject, text, html, isNoReply = true) => {
   console.log('📧 SendEmail called with:', { to, subject, hasHtml: !!html, hasText: !!text });
   
-  // Always try to send email - don't skip
-console.log('📧 Attempting to send email with current configuration...');
+  // Check email configuration
+  if (!EMAIL_USER || EMAIL_PASS === 'your_email_password' || !EMAIL_USER.includes('@')) {
+    console.warn('⚠️ Email not configured - attempting to send anyway');
+    console.warn('📧 Email config check:', {
+      hasEmailUser: !!EMAIL_USER,
+      hasEmailPass: !!EMAIL_PASS,
+      emailUserValue: EMAIL_USER,
+      emailPassValue: EMAIL_PASS === 'your_email_password' ? 'DEFAULT_PASSWORD' : 'SET'
+    });
+    // Don't skip - try to send with current config
+    console.log('📧 Attempting to send email with current configuration...');
   }
 
   const transporter = createTransporter();

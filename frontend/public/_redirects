@@ -3,9 +3,3 @@
 # so React Router can handle client-side routing
 
 /*    /index.html   200
-
-# Don't redirect API calls
-/api/*  /api/:splat  200
-
-# Don't redirect static assets
-/static/*  /static/:splat  200
