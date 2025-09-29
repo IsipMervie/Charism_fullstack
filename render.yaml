@@ -1,28 +1,40 @@
 services:
+  # Backend API Service
+  - type: web
+    name: charism-api
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromDatabase:
+          name: charism-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: EMAIL_USER
+        value: nexacore91@gmail.com
+      - key: EMAIL_PASS
+        value: your_email_password
+      - key: CORS_ORIGINS
+        value: https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000
+
   # Frontend Service
   - type: web
     name: charism-frontend
     env: node
+    plan: free
     buildCommand: cd frontend && npm install && npm run build
     startCommand: cd frontend && node server.js
-    plan: free
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
     envVars:
       - key: NODE_ENV
         value: production
+      - key: REACT_APP_API_URL
+        value: https://charism-api-xtw9.onrender.com/api
 
-  # Backend Service  
-  - type: web
-    name: charism-backend
-    env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+databases:
+  - name: charism-db
     plan: free
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 10000

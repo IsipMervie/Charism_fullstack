@@ -1,5 +1,6 @@
 {
   "name": "frontend",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -32,7 +33,8 @@
     "predeploy": "npm run build:render",
     "deploy": "echo 'Build completed successfully for Render'",
     "serve": "node server.js",
-    "start:prod": "npm run build && npm run serve"
+    "start:prod": "npm run build && npm run serve",
+    "start:deploy": "npm run build && node server.js"
   },
   "eslintConfig": {
     "extends": [
