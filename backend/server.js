@@ -19,7 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Set basic environment variables if not set (no sensitive data)
 if (!process.env.NODE_ENV) process.env.NODE_ENV = 'production';
-if (!process.env.PORT) process.env.PORT = '10000';
+if (!process.env.PORT) process.env.PORT = '5000';
 if (!process.env.FRONTEND_URL) process.env.FRONTEND_URL = 'https://charism-ucb4.onrender.com';
 if (!process.env.BACKEND_URL) process.env.BACKEND_URL = 'https://charism-api-xtw9.onrender.com';
 
@@ -142,7 +142,7 @@ app.use((req, res, next) => {
 });
 
 // Render deployment fix - ensure PORT is set correctly
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 
 
 
