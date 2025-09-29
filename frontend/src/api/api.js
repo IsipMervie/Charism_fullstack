@@ -14,9 +14,12 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest'
+    'X-Requested-With': 'XMLHttpRequest',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   },
-  timeout: 60000, // Increased timeout for email sending and heavy operations
+  timeout: 30000, // Reduced timeout for better performance
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });

@@ -1,0 +1,11 @@
+# Render.com SPA redirects for React Router
+# This tells Render to serve index.html for all routes
+# so React Router can handle client-side routing
+
+/*    /index.html   200
+
+# Don't redirect API calls
+/api/*  /api/:splat  200
+
+# Don't redirect static assets
+/static/*  /static/:splat  200

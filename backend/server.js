@@ -148,6 +148,39 @@ const PORT = process.env.PORT || 10000;
 
 // CORS Configuration - Secure
 app.use(cors(corsOptions));
+// Additional CORS middleware for critical endpoints
+app.use((req, res, next) => {
+  // Set CORS headers for all requests
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
+// Additional CORS middleware for critical endpoints
+app.use((req, res, next) => {
+  // Set CORS headers for all requests
+  res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
 
 // Rate limiting
 app.use('/api', generalLimiter);
@@ -248,15 +281,50 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static folder for uploads (images, attachments, logos, etc.)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
 
 // Static folder for images
-app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use('/api/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+app.use('/api/images', express.static(path.join(__dirname, 'images'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
 
 // Specific route for chat files
 app.use('/api/uploads/chat-files', express.static(path.join(__dirname, 'uploads/chat-files')));
+
+// Handle CSS files with proper MIME type
+app.get('/static/css/*', (req, res) => {
+  const cssPath = path.join(__dirname, '..', 'frontend', 'build', 'static', 'css', req.params[0]);
+  res.setHeader('Content-Type', 'text/css');
+  res.sendFile(cssPath, (err) => {
+    if (err) {
+      res.status(404).send('CSS file not found');
+    }
+  });
+});
 
 // Static files - CORS handled by main middleware
 

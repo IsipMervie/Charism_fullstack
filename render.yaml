@@ -1,56 +1,28 @@
 services:
+  # Frontend Service
   - type: web
-    name: charism-api
+    name: charism-frontend
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && node server.js
+    plan: free
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # Backend Service  
+  - type: web
+    name: charism-backend
     env: node
     buildCommand: cd backend && npm install
-    startCommand: cd backend && node server.js
-    rootDir: backend
+    startCommand: cd backend && npm start
     plan: free
     envVars:
       - key: NODE_ENV
         value: production
-      - key: MONGO_URI
-        value: ${MONGO_URI}
-      - key: JWT_SECRET
-        value: ${JWT_SECRET}
       - key: PORT
         value: 10000
-      - key: FRONTEND_URL
-        value: https://charism-ucb4.onrender.com
-      - key: BACKEND_URL
-        value: https://charism-api-xtw9.onrender.com
-      - key: CORS_ORIGINS
-        value: https://charism-ucb4.onrender.com,http://localhost:3000
-      - key: EMAIL_USER
-        value: ${EMAIL_USER}
-      - key: EMAIL_PASS
-        value: ${EMAIL_PASS}
-      - key: EMAIL_SERVICE
-        value: gmail
-      - key: EMAIL_HOST
-        value: smtp.gmail.com
-      - key: EMAIL_PORT
-        value: 587
-      - key: NO_REPLY_EMAIL
-        value: ${NO_REPLY_EMAIL}
-      - key: MAX_FILE_SIZE
-        value: 5242880
-      - key: UPLOAD_PATH
-        value: ./uploads
-      - key: BCRYPT_ROUNDS
-        value: 12
-      - key: ENABLE_AI_FILTERING
-        value: true
-
-  - type: static
-    name: charism
-    env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: build
-    plan: free
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://charism-api-xtw9.onrender.com/api
-      - key: NODE_ENV
-        value: production
-

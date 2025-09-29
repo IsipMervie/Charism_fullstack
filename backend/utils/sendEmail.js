@@ -57,19 +57,8 @@ const createTransporter = () => {
 const sendEmail = async (to, subject, text, html, isNoReply = true) => {
   console.log('📧 SendEmail called with:', { to, subject, hasHtml: !!html, hasText: !!text });
   
-  // Enhanced email configuration check with fallback
-  if (!EMAIL_USER || EMAIL_PASS === 'your_email_password' || !EMAIL_USER.includes('@')) {
-    console.warn('⚠️ Email not configured - using fallback email service');
-    console.warn('📧 Email config check:', {
-      hasEmailUser: !!EMAIL_USER,
-      hasEmailPass: !!EMAIL_PASS,
-      emailUserValue: EMAIL_USER,
-      emailPassValue: EMAIL_PASS === 'your_email_password' ? 'DEFAULT_PASSWORD' : 'SET'
-    });
-    
-    // Return success but log that email was skipped
-    console.log('📧 Email skipped - system will continue without email notification');
-    return { success: true, message: 'Email skipped - not configured', skipped: true };
+  // Always try to send email - don't skip
+console.log('📧 Attempting to send email with current configuration...');
   }
 
   const transporter = createTransporter();

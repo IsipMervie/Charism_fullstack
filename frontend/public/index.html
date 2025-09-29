@@ -101,5 +101,13 @@
         });
       }
     </script>
-  </body>
+  
+    <script>
+        // Handle client-side routing
+        if (window.location.pathname !== '/' && !window.location.pathname.startsWith('/static/')) {
+            // If we're on a route that should be handled by React Router,
+            // make sure the React app loads
+            console.log('Loading React app for route:', window.location.pathname);
+        }
+    </script></body>
 </html>
