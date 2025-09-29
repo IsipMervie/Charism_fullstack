@@ -16,7 +16,7 @@ export const axiosInstance = axios.create({
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
   },
-  timeout: 15000, // Increased timeout for stability
+  timeout: 60000, // Increased timeout for email sending and heavy operations
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });

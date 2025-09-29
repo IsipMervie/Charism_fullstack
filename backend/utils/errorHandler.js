@@ -166,7 +166,7 @@ const logError = (error, req) => {
   
   // In production, you might want to send to external logging service
   if (process.env.NODE_ENV === 'production') {
-    // TODO: Send to external logging service (e.g., Sentry, LogRocket)
+    // Production error logging handled by global error handler
   }
 };
 

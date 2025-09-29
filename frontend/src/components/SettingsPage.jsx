@@ -159,10 +159,7 @@ function SettingsPage() {
   useEffect(() => {
     // Wait for the component to fully render
     const timer = setTimeout(() => {
-      console.log('=== FILE INPUT REF DEBUG ===');
-      console.log('fileInputRef.current:', fileInputRef.current);
-      console.log('File input by ID:', document.getElementById('profile-picture-file-input'));
-      console.log('All file inputs on page:', document.querySelectorAll('input[type="file"]'));
+      // File input reference setup
       
       // If ref is still null, try to find the element and reconnect
       if (!fileInputRef.current) {
@@ -351,10 +348,7 @@ function SettingsPage() {
       return;
     }
 
-    console.log('=== DELETE PROFILE PICTURE DEBUG ===');
-    console.log('User ID for delete:', userId);
-    console.log('Profile picture to delete:', profilePicture);
-    console.log('Authentication token exists:', !!localStorage.getItem('token'));
+    // Delete profile picture functionality
 
     setDeleting(true);
     try {

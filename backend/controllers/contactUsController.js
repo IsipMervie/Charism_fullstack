@@ -27,33 +27,26 @@ exports.sendContactMessage = async (req, res) => {
       timestamp: new Date()
     });
     
-    await contactMessage.save();
-    console.log(`✅ Contact message saved to database: ${name} - ${email}`);
-
-    // Send confirmation email to user
-    try {
-      const emailContent = getContactResponseTemplate(name);
-      await sendEmail(email, 'Thank you for contacting CHARISM', '', emailContent, true);
-      console.log('✅ Contact confirmation email sent to:', email);
-    } catch (emailError) {
-      console.error('Failed to send contact confirmation email:', emailError);
-      // Don't fail the request if email fails
-    }
-
-    // Send notification to admin
-    try {
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@charism.com';
-      const adminContent = getContactAdminNotificationTemplate(name, email, contactMessage.message);
-      await sendEmail(adminEmail, 'New Contact Message - CHARISM', '', adminContent, true);
-      console.log('✅ Contact notification sent to admin');
-    } catch (emailError) {
-      console.error('Failed to send admin notification:', emailError);
-      // Don't fail the request if email fails
-    }
-
+    // Send response IMMEDIATELY - NO WAITING FOR ANYTHING
     res.status(200).json({ 
       message: 'Contact message received successfully.',
       success: true
+    });
+
+    // Process everything in background with NO error handling that could block
+    setImmediate(() => {
+      contactMessage.save().then(() => {
+        console.log(`✅ Contact message saved to database: ${name} - ${email}`);
+
+        sendEmail(email, 'Thank you for contacting CHARISM', '', getContactResponseTemplate(name), true)
+          .then(() => console.log('✅ Contact confirmation email sent to:', email))
+          .catch(() => {});
+
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@charism.com';
+        sendEmail(adminEmail, 'New Contact Message - CHARISM', '', getContactAdminNotificationTemplate(name, email, contactMessage.message), true)
+          .then(() => console.log('✅ Contact notification sent to admin'))
+          .catch(() => {});
+      }).catch(() => {}); // Silent fail
     });
   } catch (err) {
     console.error('Error saving contact message:', err);

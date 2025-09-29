@@ -42,8 +42,8 @@ const contactLimiter = createRateLimit(
 
 // Registration rate limiting (temporarily relaxed for deadline)
 const registerLimiter = createRateLimit(
-  15 * 60 * 1000, // 15 minutes
-  10, // 10 registrations per 15 minutes
+  5 * 60 * 1000, // 5 minutes
+  20, // 20 registrations per 5 minutes
   'Too many registration attempts, please try again later.'
 );
 

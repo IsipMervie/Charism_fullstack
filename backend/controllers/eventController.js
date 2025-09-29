@@ -1186,11 +1186,7 @@ exports.timeIn = async (req, res) => {
     const eventEndTime = new Date(eventDate);
     eventEndTime.setHours(endHour, endMinute, 0, 0);
     
-    // DEBUG: Log time calculations
-    console.log('🕐 TIME-IN DEBUG:');
-    console.log('   Server Time (UTC):', now.toLocaleString());
-    console.log('   Philippines Time:', philippinesTime.toLocaleString());
-    console.log('   Event Date:', eventDate.toLocaleString());
+    // Calculate time for attendance tracking
     console.log('   Event Start:', eventStartTime.toLocaleString());
     console.log('   Event End:', eventEndTime.toLocaleString());
     console.log('   Start Time String:', event.startTime);

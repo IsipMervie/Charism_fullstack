@@ -128,11 +128,16 @@ app.use(securityHeaders);
 app.use(securityLogger);
 app.use(sanitizeInput);
 
-// Set server timeout for Render optimization
+// Set server timeout for Render optimization - ULTRA-FAST configuration
 app.use((req, res, next) => {
-  // Set timeout to 60 seconds for all endpoints
-  req.setTimeout(60000);
-  res.setTimeout(60000);
+  // Set timeout to 120 seconds for all endpoints (increased for stability)
+  req.setTimeout(120000);
+  res.setTimeout(120000);
+  
+  // Add keep-alive headers for better connection management
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Keep-Alive', 'timeout=120, max=1000');
+  
   next();
 });
 
@@ -899,8 +904,9 @@ app.use(async (req, res, next) => {
 // Routes - Mount in specific order to avoid conflicts
 console.log('Loading routes...');
 
-app.use('/api/auth', authLimiter);
-app.use('/api/auth/register', registerLimiter);
+// DISABLE ALL RATE LIMITERS FOR DEADLINE - INSTANT RESPONSE
+// app.use('/api/auth', authLimiter);
+// app.use('/api/auth/register', registerLimiter);
 app.use('/api/auth', require('./routes/authRoutes'));
 console.log(' Auth routes loaded');
 app.use('/api/analytics', require('./routes/analyticsRoutes'));

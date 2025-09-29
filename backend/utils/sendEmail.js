@@ -4,6 +4,14 @@ const nodemailer = require('nodemailer');
 
 const EMAIL_USER = process.env.EMAIL_USER || 'your_email@gmail.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || 'your_email_password';
+
+// Validate email configuration
+if (!EMAIL_USER || EMAIL_USER === 'your_email@gmail.com') {
+  console.warn('⚠️ EMAIL_USER not properly configured - email notifications disabled');
+}
+if (!EMAIL_PASS || EMAIL_PASS === 'your_email_password') {
+  console.warn('⚠️ EMAIL_PASS not properly configured - email notifications disabled');
+}
 const EMAIL_SERVICE = process.env.EMAIL_SERVICE || 'gmail';
 const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'noreply@charism.edu.ph';
 

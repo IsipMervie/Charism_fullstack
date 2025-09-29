@@ -9,6 +9,20 @@ router.get('/test', (req, res) => {
   res.json({ message: 'Reports route is working', timestamp: new Date().toISOString() });
 });
 
+// Overview endpoint
+router.get('/overview', authMiddleware, roleMiddleware('Admin', 'Staff'), (req, res) => {
+  res.json({ 
+    message: 'Reports overview', 
+    availableReports: [
+      'students-by-year',
+      'students-40-hours',
+      'event-participation',
+      'department-statistics'
+    ],
+    timestamp: new Date().toISOString() 
+  });
+});
+
 // Students by year PDF report
 router.get(
   '/students-by-year',

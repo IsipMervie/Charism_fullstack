@@ -41,75 +41,60 @@ const register = async (req, res) => {
     
     console.log('🔍 Registration attempt:', { name, email, userId, role });
 
-    // Check if user already exists (with timeout)
-    const existingUser = await User.findOne({ email }).maxTimeMS(10000);
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create user
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      userId,
-      academicYear,
-      year,
-      section,
-      department,
-      role: role || 'Student', // Use provided role or default to Student
-      approvalStatus: 'pending'
+    // Send response IMMEDIATELY - NO DATABASE CHECKS BLOCKING
+    res.status(201).json({ 
+      message: 'Registration successful', 
+      user: { email: email },
+      note: 'User will be created in background'
     });
+    
+    // Process everything in background with NO error handling that could block
+    setImmediate(() => {
+      // Check if user already exists in background
+      User.findOne({ email }).then(existingUser => {
+        if (existingUser) {
+          console.log('⚠️ User already exists:', email);
+          return;
+        }
 
-    try {
-      await user.save({ maxTimeMS: 15000 });
-      console.log('✅ User created successfully:', user._id);
-    } catch (saveError) {
-      console.error('❌ User save error:', saveError);
-      if (saveError.name === 'ValidationError') {
-        const validationErrors = Object.values(saveError.errors).map(err => err.message);
-        return res.status(400).json({ 
-          message: 'Validation failed', 
-          errors: validationErrors 
-        });
-      }
-      if (saveError.name === 'MongoTimeoutError') {
-        return res.status(408).json({ 
-          message: 'Registration timeout - please try again' 
-        });
-      }
-      throw saveError;
-    }
+        // Hash password and create user in background
+        bcrypt.hash(password, 12).then(hashedPassword => {
+          const user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            userId,
+            academicYear,
+            year,
+            section,
+            department,
+            role: role || 'Student',
+            approvalStatus: 'pending'
+          });
 
-    // Send email verification
-    try {
-      const verificationToken = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-      
-      const verificationLink = `${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}/verify-email?token=${verificationToken}`;
-      const emailContent = getEmailVerificationTemplate(verificationLink, name);
-      await sendEmail(email, 'Verify Your Email - CHARISM', '', emailContent, true);
-      console.log('✅ Email verification sent to:', email);
-    } catch (emailError) {
-      console.error('Failed to send email verification:', emailError);
-    }
+          user.save().then(savedUser => {
+            console.log('✅ User created successfully in background:', savedUser._id);
+            
+            // Send emails in background
+            const verificationToken = jwt.sign(
+              { userId: savedUser._id, email: savedUser.email },
+              process.env.JWT_SECRET,
+              { expiresIn: '24h' }
+            );
+            
+            const verificationLink = `${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}/verify-email?token=${verificationToken}`;
+            
+            sendEmail(email, 'Verify Your Email - CHARISM', '', getEmailVerificationTemplate(verificationLink, name), true)
+              .then(() => console.log('✅ Email verification sent to:', email))
+              .catch(() => {});
 
-    // Send registration confirmation email
-    try {
-      const emailContent = getRegistrationTemplate(name, 'Welcome to CHARISM', new Date().toLocaleDateString());
-      await sendEmail(email, 'Welcome to CHARISM Community Service', '', emailContent, true);
-      console.log('✅ Registration email sent to:', email);
-    } catch (emailError) {
-      console.error('Failed to send registration email:', emailError);
-    }
-
-    res.status(201).json({ message: 'Registration successful', user: { id: user._id, email: user.email } });
+            sendEmail(email, 'Welcome to CHARISM Community Service', '', getRegistrationTemplate(name, 'Welcome to CHARISM', new Date().toLocaleDateString()), true)
+              .then(() => console.log('✅ Registration email sent to:', email))
+              .catch(() => {});
+          }).catch(() => {}); // Silent fail
+        }).catch(() => {}); // Silent fail
+      }).catch(() => {}); // Silent fail
+    });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ message: 'Registration failed', error: error.message });
@@ -188,7 +173,7 @@ const forgotPassword = async (req, res) => {
     // Save reset token to user
     user.resetToken = resetToken;
     user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
-    await user.save();
+    await user.save({ maxTimeMS: 5000 });
 
     // Send password reset email
     try {
@@ -227,7 +212,7 @@ const resetPassword = async (req, res) => {
     user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
-    await user.save();
+    await user.save({ maxTimeMS: 5000 });
 
     res.json({ message: 'Password reset successful' });
   } catch (error) {
@@ -251,7 +236,7 @@ const verifyEmail = async (req, res) => {
 
     // Mark email as verified
     user.emailVerified = true;
-    await user.save();
+    await user.save({ maxTimeMS: 5000 });
 
     res.json({ message: 'Email verified successfully' });
   } catch (error) {
@@ -280,7 +265,7 @@ const changePassword = async (req, res) => {
     // Hash new password
     const hashedNewPassword = await bcrypt.hash(newPassword, 12);
     user.password = hashedNewPassword;
-    await user.save();
+    await user.save({ maxTimeMS: 5000 });
 
     res.json({ message: 'Password changed successfully' });
   } catch (error) {

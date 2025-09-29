@@ -18,15 +18,15 @@ const connectDBWithURI = async (uri) => {
     }
     
     const conn = await mongoose.connect(uri, {
-      // Optimized timeouts for speed
-      serverSelectionTimeoutMS: 3000,
-      socketTimeoutMS: 15000,
-      connectTimeoutMS: 3000,
+      // PRODUCTION-OPTIMIZED timeouts for Render.com
+      serverSelectionTimeoutMS: 30000,  // Increased for Render.com cold starts
+      socketTimeoutMS: 60000,           // Increased for stability
+      connectTimeoutMS: 30000,          // Increased for Render.com
       
-      // Optimized connection pooling
-      maxPoolSize: 5,
-      minPoolSize: 1,
-      maxIdleTimeMS: 60000,
+      // PRODUCTION connection pooling for Render.com
+      maxPoolSize: 20,                  // Increased for production load
+      minPoolSize: 5,                   // Increased for stability
+      maxIdleTimeMS: 300000,            // Increased to 5 minutes
       
       // Performance optimizations
       bufferCommands: false,
