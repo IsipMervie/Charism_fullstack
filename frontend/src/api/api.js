@@ -19,14 +19,14 @@ export const axiosInstance = axios.create({
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   },
-  timeout: 30000, // Reduced timeout for better performance
+  timeout: 25000, // Optimized timeout for Render.com (25 seconds)
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });
 
 // ULTRA-FAST response cache with instant access
 const responseCache = new Map();
-const CACHE_TTL = 1 * 60 * 1000; // Reduced to 1 minute for instant updates
+const CACHE_TTL = 2 * 60 * 1000; // Optimized to 2 minutes for better performance
 const MAX_CACHE_SIZE = 500; // Increased for more caching
 
 // Cache middleware for axios with LRU eviction
@@ -107,8 +107,8 @@ axiosInstance.interceptors.response.use(
       
       console.log(`🔄 Retrying request (attempt ${config._retryCount})...`);
       
-      // Wait 2 seconds before retry
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait 1.5 seconds before retry (optimized for Render.com)
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       return axiosInstance(config);
     }
@@ -518,7 +518,7 @@ export const rejectStaff = async (userId, approvalNotes = '') => {
 export const checkServerHealth = async () => {
   try {
     const response = await axiosInstance.get('/api/ping', {
-      timeout: 60000 // 60 seconds timeout for Render.com cold starts
+      timeout: 30000 // Optimized 30 seconds timeout for Render.com
     });
     return response.data.status === 'OK';
   } catch (error) {
@@ -560,9 +560,9 @@ export const getEvents = async (retryCount = 0) => {
     // Use public events endpoint (no authentication required)
     console.log('🔐 Using public events endpoint: /events');
     
-    // Use longer timeout for better reliability
+    // Optimized timeout for Render.com
     const response = await axiosInstance.get('/api/events', {
-      timeout: 30000 // 30 seconds timeout for better reliability
+      timeout: 25000 // 25 seconds timeout optimized for Render.com
     });
     
     console.log('✅ Events API response received');
@@ -1122,9 +1122,9 @@ export const getAnalytics = async () => {
     try {
       console.log(`🔄 Fetching analytics attempt ${attempt}/${maxRetries}`);
       
-      // Use longer timeout for analytics (60 seconds)
+      // Optimized timeout for analytics (45 seconds)
       const response = await axiosInstance.get('/api/analytics', {
-        timeout: 60000
+        timeout: 45000
       });
       
       console.log(`✅ Analytics fetched successfully on attempt ${attempt}`);

@@ -15,9 +15,9 @@ if (!EMAIL_PASS || EMAIL_PASS === 'your_email_password') {
 const EMAIL_SERVICE = process.env.EMAIL_SERVICE || 'gmail';
 const NO_REPLY_EMAIL = process.env.NO_REPLY_EMAIL || 'noreply@charism.edu.ph';
 
-// Create a transporter with better configuration
+// Create a transporter with optimized configuration for Render.com
 const createTransporter = () => {
-  // For Gmail, use OAuth2 or App Password
+  // For Gmail, use optimized configuration for Render.com
   if (EMAIL_SERVICE === 'gmail') {
     return nodemailer.createTransport({
       service: 'gmail',
@@ -26,8 +26,19 @@ const createTransporter = () => {
         pass: EMAIL_PASS,
       },
       tls: {
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3'
+      },
+      // Optimized timeouts for Render.com
+      connectionTimeout: 15000, // 15 seconds
+      greetingTimeout: 15000,   // 15 seconds
+      socketTimeout: 15000,     // 15 seconds
+      // Pool configuration for better performance
+      pool: true,
+      maxConnections: 5,
+      maxMessages: 100,
+      rateDelta: 20000, // 20 seconds
+      rateLimit: 5 // 5 emails per 20 seconds
     });
   }
   
@@ -41,8 +52,19 @@ const createTransporter = () => {
       pass: EMAIL_PASS,
     },
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+      ciphers: 'SSLv3'
+    },
+    // Optimized timeouts for Render.com
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 15000,
+    // Pool configuration
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    rateDelta: 20000,
+    rateLimit: 5
   });
 };
 
@@ -126,11 +148,19 @@ const sendEmail = async (to, subject, text, html, isNoReply = true) => {
             pass: EMAIL_PASS,
           },
           tls: {
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            ciphers: 'SSLv3'
           },
-          connectionTimeout: 10000,
-          greetingTimeout: 10000,
-          socketTimeout: 10000
+          // Optimized timeouts for Render.com
+          connectionTimeout: 15000,
+          greetingTimeout: 15000,
+          socketTimeout: 15000,
+          // Pool configuration
+          pool: true,
+          maxConnections: 3,
+          maxMessages: 50,
+          rateDelta: 20000,
+          rateLimit: 3
         });
         
         const altInfo = await altTransporter.sendMail(mailOptions);

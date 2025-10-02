@@ -76,11 +76,22 @@ const register = async (req, res) => {
             console.log('✅ User created successfully in background:', savedUser._id);
             
             // Send emails in background
-            const verificationToken = jwt.sign(
-              { userId: savedUser._id, email: savedUser.email },
-              process.env.JWT_SECRET,
-              { expiresIn: '24h' }
-            );
+            let verificationToken;
+            try {
+              if (!process.env.JWT_SECRET) {
+                console.error('JWT_SECRET not configured for verification token');
+                return;
+              }
+              
+              verificationToken = jwt.sign(
+                { userId: savedUser._id, email: savedUser.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+              );
+            } catch (jwtError) {
+              console.error('JWT verification token generation failed:', jwtError.message);
+              return;
+            }
             
             const verificationLink = `${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}/verify-email?token=${verificationToken}`;
             
@@ -118,12 +129,26 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // Generate JWT token with error handling
+    let token;
+    try {
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured');
+      }
+      
+      token = jwt.sign(
+        { userId: user._id, email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+    } catch (jwtError) {
+      console.error('JWT token generation failed:', jwtError.message);
+      return res.status(500).json({ 
+        message: 'Authentication service error', 
+        error: 'Token generation failed',
+        details: process.env.NODE_ENV === 'development' ? jwtError.message : 'Internal error'
+      });
+    }
 
     // Send login notification email
     try {

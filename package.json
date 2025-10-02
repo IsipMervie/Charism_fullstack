@@ -6,10 +6,13 @@
     "start:frontend": "cd frontend && npm start",
     "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev",
-    "test": "echo \"Tests passed - system is healthy!\"",
+    "test": "node test-system.js",
+    "test:local": "node test-local.js",
     "test:backend": "cd backend && echo \"Backend tests passed!\"",
     "test:frontend": "cd frontend && echo \"Frontend tests passed!\"",
-    "health-check": "echo \"System health check completed successfully!\""
+    "test:production": "node test-system.js",
+    "health-check": "node test-system.js",
+    "verify": "node test-system.js"
   },
   "engines": {
     "node": ">=14.0.0"

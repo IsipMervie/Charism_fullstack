@@ -20,9 +20,9 @@ services:
       - key: EMAIL_USER
         value: nexacore91@gmail.com
       - key: EMAIL_PASS
-        value: your_email_password
+        sync: false
       - key: CORS_ORIGINS
-        value: https://charism-ucb4.onrender.com,https://charism.onrender.com,http://localhost:3000
+        value: https://charism-ucb4.onrender.com,https://charism-api-xtw9.onrender.com
 
   # Frontend Service
   - type: web

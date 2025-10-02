@@ -58,7 +58,6 @@ const PublicEventRegistrationPage = React.lazy(() => import('./components/Public
 const FeedbackPage = React.lazy(() => import('./components/FeedbackPage'));
 const AdminManageFeedbackPage = React.lazy(() => import('./components/AdminManageFeedbackPage'));
 const NotFoundPage = React.lazy(() => import('./components/NotFoundPage'));
-const TestPage = React.lazy(() => import('./components/TestPage'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -111,7 +110,6 @@ function App() {
             <Routes>
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/test" element={<TestPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

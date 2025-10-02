@@ -102,19 +102,19 @@ const connectDB = async () => {
       }
       
       const conn = await mongoose.connect(dbURI, {
-        // Optimized timeouts for speed
-        serverSelectionTimeoutMS: 3000, // Faster connection
-        socketTimeoutMS: 15000, // Faster socket timeout
-        connectTimeoutMS: 3000, // Faster connection timeout
+        // ULTRA-FAST timeouts optimized for Render.com
+        serverSelectionTimeoutMS: 5000, // Balanced for Render.com cold starts
+        socketTimeoutMS: 30000, // Increased for stability
+        connectTimeoutMS: 5000, // Balanced for Render.com
         
-        // Optimized connection pooling
-        maxPoolSize: 5, // Increased for better performance
-        minPoolSize: 1, // Keep minimum connections
-        maxIdleTimeMS: 60000, // Keep connections longer
+        // OPTIMIZED connection pooling for production
+        maxPoolSize: 10, // Optimal for Render.com free tier
+        minPoolSize: 2, // Keep minimum connections alive
+        maxIdleTimeMS: 120000, // Keep connections alive longer (2 minutes)
         
         // Performance optimizations
         bufferCommands: false, // Disable buffering for faster responses
-        family: 4, // Force IPv4
+        family: 4, // Force IPv4 for better performance
         retryWrites: true,
         retryReads: true,
         w: 'majority',
@@ -122,7 +122,7 @@ const connectDB = async () => {
         // Disable expensive operations
         autoIndex: false,
         autoCreate: false,
-        maxConnecting: 5,
+        maxConnecting: 3, // Reduced for faster connection
         
         // Server API version
         serverApi: {
@@ -132,12 +132,16 @@ const connectDB = async () => {
         },
         
         // Heartbeat optimization
-        heartbeatFrequencyMS: 10000,
+        heartbeatFrequencyMS: 30000, // Reduced frequency for better performance
         
         // Additional optimizations
         compressors: ['zlib'], // Enable compression
         directConnection: false,
         readPreference: 'primary',
+        
+        // Render.com specific optimizations
+        keepAlive: true,
+        keepAliveInitialDelay: 300000, // 5 minutes
       });
       
       console.log('✅ MongoDB connected successfully');
@@ -223,7 +227,7 @@ const getLazyConnection = async () => {
     if (lazyConnection) {
       // Optimized timeout for Render free tier
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database connection timeout')), 5000); // Reduced to 5 seconds
+        setTimeout(() => reject(new Error('Database connection timeout')), 8000); // Balanced for Render.com
       });
       
       await Promise.race([lazyConnection, timeoutPromise]);

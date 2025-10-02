@@ -243,6 +243,16 @@ const createRateLimitError = (message = 'Too many requests') => {
   return new RateLimitError(message);
 };
 
+// Performance logging utility
+const logPerformance = (operation, duration, metadata = {}) => {
+  console.log(`⚡ Performance: ${operation} took ${duration}ms`, metadata);
+};
+
+// Health check logging utility
+const logHealthCheck = (service, status, metadata = {}) => {
+  console.log(`🏥 Health Check: ${service} is ${status}`, metadata);
+};
+
 // Database connection error handler
 const handleDatabaseError = (error) => {
   console.error('🚨 Database Error:', error);
@@ -319,5 +329,7 @@ module.exports = {
   formatErrorResponse,
   getHttpStatusCode,
   logError,
+  logPerformance,
+  logHealthCheck,
   createRateLimitError
 };

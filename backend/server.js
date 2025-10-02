@@ -53,7 +53,7 @@ if (!process.env.JWT_SECRET) {
 }
 if (!process.env.CORS_ORIGINS) {
   console.log('⚠️ CORS_ORIGINS not set - using default');
-  process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,http://localhost:3000';
+  process.env.CORS_ORIGINS = 'https://charism-ucb4.onrender.com,https://charism-api-xtw9.onrender.com,http://localhost:3000';
 }
 
 // Email configuration fallbacks (non-blocking)
@@ -101,8 +101,13 @@ const {
   optimizeMongoose
 } = require('./middleware/performanceMiddleware');
 
-// Import utilities
-const { globalErrorHandler } = require('./utils/errorHandler');
+// Import error handling utilities
+const { 
+  logPerformance, 
+  logHealthCheck, 
+  logError, 
+  globalErrorHandler 
+} = require('./utils/errorHandler');
 
 // Import models to ensure they are registered with Mongoose
 require('./models/Section');
@@ -148,39 +153,6 @@ const PORT = process.env.PORT || 5000;
 
 // CORS Configuration - Secure
 app.use(cors(corsOptions));
-// Additional CORS middleware for critical endpoints
-app.use((req, res, next) => {
-  // Set CORS headers for all requests
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
-
-// Additional CORS middleware for critical endpoints
-app.use((req, res, next) => {
-  // Set CORS headers for all requests
-  res.header('Access-Control-Allow-Origin', 'https://charism-ucb4.onrender.com');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
 
 // Rate limiting
 app.use('/api', generalLimiter);
@@ -355,6 +327,7 @@ const { mongoose, getLazyConnection } = require('./config/db');
 
 // Wait for database connection before starting server
 const startServer = async () => {
+  const startTime = Date.now();
   try {
     // Get database connection lazily
     const connection = await getLazyConnection();
@@ -398,14 +371,25 @@ const startServer = async () => {
     }
 
     const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
-  console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
-  console.log(`📊 MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected'}`);
-  console.log('✅ All routes loaded successfully!');
-  console.log('🎯 Server is ready to handle requests!');
-});
+      const startupTime = Date.now() - startTime;
+      logPerformance('server_startup', startupTime, { port: PORT });
+      
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 CORS Origins: ${process.env.CORS_ORIGINS || 'Not set'}`);
+      console.log(`📧 Email User: ${process.env.EMAIL_USER || 'Not set'}`);
+      console.log(`📊 MongoDB: ${mongoose.connection.readyState === 1 ? 'Connected' : 'Not connected'}`);
+      console.log(`⏱️ Startup time: ${startupTime}ms`);
+      console.log('✅ All routes loaded successfully!');
+      console.log('🎯 Server is ready to handle requests!');
+      
+      // Log successful startup
+      logHealthCheck('server', 'OK', { 
+        startupTime, 
+        port: PORT,
+        environment: process.env.NODE_ENV 
+      });
+    });
 
     // Handle server errors
     server.on('error', (error) => {
@@ -440,6 +424,9 @@ const startServer = async () => {
     });
     
   } catch (error) {
+    const startupTime = Date.now() - startTime;
+    logError(error, { context: 'server_startup', startupTime });
+    
     console.error('❌ Failed to start server:', error);
     if (process.env.NODE_ENV === 'production') {
       console.log('🚨 Production mode - exiting gracefully');
@@ -900,6 +887,46 @@ app.get('/api/test-models', (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Test JWT_SECRET configuration
+app.get('/api/test-jwt', (req, res) => {
+  try {
+    const jwt = require('jsonwebtoken');
+    
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ 
+        error: 'JWT_SECRET not configured',
+        message: 'JWT_SECRET environment variable is missing'
+      });
+    }
+    
+    // Test JWT token generation
+    const testToken = jwt.sign(
+      { test: 'data' },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    // Test JWT token verification
+    const decoded = jwt.verify(testToken, process.env.JWT_SECRET);
+    
+    res.json({
+      status: 'OK',
+      message: 'JWT_SECRET is working correctly',
+      jwtSecretLength: process.env.JWT_SECRET.length,
+      jwtSecretPreview: process.env.JWT_SECRET.substring(0, 10) + '...',
+      testTokenGenerated: !!testToken,
+      testTokenVerified: !!decoded
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'JWT_SECRET test failed',
+      message: error.message,
+      jwtSecretExists: !!process.env.JWT_SECRET,
+      jwtSecretLength: process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0
+    });
   }
 });
 
