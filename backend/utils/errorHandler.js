@@ -147,12 +147,12 @@ const logError = (error, req) => {
     name: error.name,
     message: error.message,
     stack: error.stack,
-    url: req.originalUrl,
-    method: req.method,
-    ip: req.ip,
-    userAgent: req.get('User-Agent'),
+    url: req?.originalUrl || 'N/A',
+    method: req?.method || 'N/A',
+    ip: req?.ip || 'N/A',
+    userAgent: req?.get ? req.get('User-Agent') : 'N/A',
     timestamp: new Date().toISOString(),
-    userId: req.user?.id || 'anonymous'
+    userId: req?.user?.id || 'anonymous'
   };
   
   // Log based on error severity

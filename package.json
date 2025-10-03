@@ -12,7 +12,13 @@
     "test:frontend": "cd frontend && echo \"Frontend tests passed!\"",
     "test:production": "node test-system.js",
     "health-check": "node test-system.js",
-    "verify": "node test-system.js"
+    "verify": "node test-system.js",
+    "monitor": "node error-monitor.js",
+    "fix-errors": "node fix-common-errors.js",
+    "fix-emergency": "node fix-common-errors.js --emergency",
+    "keep-alive": "node keep-alive.js",
+    "keep-alive-once": "node keep-alive.js --once",
+    "health": "node keep-alive.js --health"
   },
   "engines": {
     "node": ">=14.0.0"

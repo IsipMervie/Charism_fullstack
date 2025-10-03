@@ -140,8 +140,7 @@ const connectDB = async () => {
         readPreference: 'primary',
         
         // Render.com specific optimizations
-        keepAlive: true,
-        keepAliveInitialDelay: 300000, // 5 minutes
+        // keepAlive removed - not supported in newer MongoDB driver
       });
       
       console.log('✅ MongoDB connected successfully');

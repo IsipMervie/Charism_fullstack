@@ -41,70 +41,73 @@ const register = async (req, res) => {
     
     console.log('🔍 Registration attempt:', { name, email, userId, role });
 
-    // Send response IMMEDIATELY - NO DATABASE CHECKS BLOCKING
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.log('⚠️ User already exists:', email);
+      return res.status(400).json({ message: 'Email already registered' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+    
+    // Create user
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      userId,
+      academicYear,
+      year,
+      section,
+      department,
+      role: role || 'Student',
+      approvalStatus: 'pending'
+    });
+
+    // Save user to database
+    const savedUser = await user.save();
+    console.log('✅ User created successfully:', savedUser._id);
+    
+    // Generate verification token
+    let verificationToken;
+    try {
+      if (!process.env.JWT_SECRET) {
+        console.error('JWT_SECRET not configured for verification token');
+      } else {
+        verificationToken = jwt.sign(
+          { userId: savedUser._id, email: savedUser.email },
+          process.env.JWT_SECRET,
+          { expiresIn: '24h' }
+        );
+      }
+    } catch (jwtError) {
+      console.error('JWT verification token generation failed:', jwtError.message);
+    }
+    
+    // Send emails in background (non-blocking)
+    if (verificationToken) {
+      const verificationLink = `${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}/verify-email?token=${verificationToken}`;
+      
+      setImmediate(() => {
+        sendEmail(email, 'Verify Your Email - CHARISM', '', getEmailVerificationTemplate(verificationLink, name), true)
+          .then(() => console.log('✅ Email verification sent to:', email))
+          .catch(err => console.error('❌ Failed to send verification email:', err.message));
+
+        sendEmail(email, 'Welcome to CHARISM Community Service', '', getRegistrationTemplate(name, 'Welcome to CHARISM', new Date().toLocaleDateString()), true)
+          .then(() => console.log('✅ Registration email sent to:', email))
+          .catch(err => console.error('❌ Failed to send registration email:', err.message));
+      });
+    }
+    
+    // Send success response AFTER user is saved
     res.status(201).json({ 
       message: 'Registration successful', 
-      user: { email: email },
-      note: 'User will be created in background'
-    });
-    
-    // Process everything in background with NO error handling that could block
-    setImmediate(() => {
-      // Check if user already exists in background
-      User.findOne({ email }).then(existingUser => {
-        if (existingUser) {
-          console.log('⚠️ User already exists:', email);
-          return;
-        }
-
-        // Hash password and create user in background
-        bcrypt.hash(password, 12).then(hashedPassword => {
-          const user = new User({
-            name,
-            email,
-            password: hashedPassword,
-            userId,
-            academicYear,
-            year,
-            section,
-            department,
-            role: role || 'Student',
-            approvalStatus: 'pending'
-          });
-
-          user.save().then(savedUser => {
-            console.log('✅ User created successfully in background:', savedUser._id);
-            
-            // Send emails in background
-            let verificationToken;
-            try {
-              if (!process.env.JWT_SECRET) {
-                console.error('JWT_SECRET not configured for verification token');
-                return;
-              }
-              
-              verificationToken = jwt.sign(
-                { userId: savedUser._id, email: savedUser.email },
-                process.env.JWT_SECRET,
-                { expiresIn: '24h' }
-              );
-            } catch (jwtError) {
-              console.error('JWT verification token generation failed:', jwtError.message);
-              return;
-            }
-            
-            const verificationLink = `${process.env.FRONTEND_URL || 'https://charism-ucb4.onrender.com'}/verify-email?token=${verificationToken}`;
-            
-            sendEmail(email, 'Verify Your Email - CHARISM', '', getEmailVerificationTemplate(verificationLink, name), true)
-              .then(() => console.log('✅ Email verification sent to:', email))
-              .catch(() => {});
-
-            sendEmail(email, 'Welcome to CHARISM Community Service', '', getRegistrationTemplate(name, 'Welcome to CHARISM', new Date().toLocaleDateString()), true)
-              .then(() => console.log('✅ Registration email sent to:', email))
-              .catch(() => {});
-          }).catch(() => {}); // Silent fail
-        }).catch(() => {}); // Silent fail
-      }).catch(() => {}); // Silent fail
+      user: { 
+        id: savedUser._id,
+        email: savedUser.email,
+        name: savedUser.name
+      }
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -127,6 +130,15 @@ const login = async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Check if email is verified (optional - can be disabled for testing)
+    if (process.env.REQUIRE_EMAIL_VERIFICATION !== 'false' && !user.isVerified) {
+      return res.status(403).json({ 
+        message: 'Email not verified', 
+        error: 'EMAIL_NOT_VERIFIED',
+        details: 'Please verify your email before logging in. Check your inbox for the verification link.'
+      });
     }
 
     // Generate JWT token with error handling
