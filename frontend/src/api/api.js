@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '../config/environment';
+import coldStartHandler from '../utils/coldStartHandler';
 
 // Use centralized environment configuration
 const API_BASE_URL = API_URL;
@@ -14,12 +15,9 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    'X-Requested-With': 'XMLHttpRequest'
   },
-  timeout: 25000, // Optimized timeout for Render.com (25 seconds)
+  timeout: 60000, // Increased timeout for cold start handling (60 seconds)
   withCredentials: false, // Disable credentials for CORS
   crossDomain: true
 });
@@ -88,10 +86,13 @@ axiosInstance.interceptors.response.use(
       console.log(`💾 Cached response for ${cacheKey}`);
     }
     
-    // Log response time
+    // Log response time and detect cold start
     if (response.config.metadata) {
       const duration = Date.now() - response.config.metadata.startTime;
       console.log(`⚡ ${response.config.url} - ${duration}ms`);
+      
+      // Detect cold start and show notification
+      coldStartHandler.detectColdStart(duration);
     }
     
     return response;
@@ -99,16 +100,18 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const config = error.config;
     
-    // Retry on timeout or network errors
-    if ((error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') && 
-        config && !config._retry && (config._retryCount || 0) < 2) {
+    // Enhanced retry logic for cold start and network issues
+    if ((error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK' || error.code === 'ECONNRESET') && 
+        config && !config._retry && (config._retryCount || 0) < 3) {
       config._retry = true;
       config._retryCount = (config._retryCount || 0) + 1;
       
-      console.log(`🔄 Retrying request (attempt ${config._retryCount})...`);
+      console.log(`🔄 Retrying request (attempt ${config._retryCount}/3) - Cold start handling...`);
       
-      // Wait 1.5 seconds before retry (optimized for Render.com)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Progressive backoff for cold start (longer delays)
+      const delay = config._retryCount * 3000; // 3s, 6s, 9s
+      console.log(`⏳ Waiting ${delay/1000}s before retry...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
       
       return axiosInstance(config);
     }

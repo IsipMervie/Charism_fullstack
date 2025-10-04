@@ -96,20 +96,24 @@ function EventDetailsPage() {
     }
   };
   
-  // Get user info safely
+  // Get user info safely with comprehensive error handling
   const getRole = () => {
     try {
+      if (typeof window === 'undefined' || !window.localStorage) return null;
       return localStorage.getItem('role');
     } catch (e) {
+      console.warn('localStorage access failed:', e.message);
       return null;
     }
   };
   
   const getUser = () => {
     try {
+      if (typeof window === 'undefined' || !window.localStorage) return null;
       const userStr = localStorage.getItem('user');
       return userStr ? JSON.parse(userStr) : null;
     } catch (e) {
+      console.warn('localStorage user access failed:', e.message);
       return null;
     }
   };

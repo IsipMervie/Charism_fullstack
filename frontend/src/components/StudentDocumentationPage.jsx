@@ -26,7 +26,7 @@ const StudentDocumentationPage = () => {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await fetch('/api/files/upload', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com'}/api/files/upload`, {
         method: 'POST',
         body: formData,
       });

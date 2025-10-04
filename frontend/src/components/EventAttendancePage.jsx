@@ -22,7 +22,7 @@ const EventAttendancePage = memo(() => {
   // Get attendance data
   const getAttendance = async (eventId) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/attendance`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com'}/api/events/${eventId}/attendance`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -34,7 +34,7 @@ const EventAttendancePage = memo(() => {
   // Update attendance data
   const updateAttendance = async (eventId, attendanceData) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/attendance`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com'}/api/events/${eventId}/attendance`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

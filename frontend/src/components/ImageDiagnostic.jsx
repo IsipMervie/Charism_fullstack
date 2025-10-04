@@ -13,7 +13,7 @@ const ImageDiagnostic = ({ eventId, eventTitle }) => {
     setError(null);
     
     try {
-      const response = await axios.get(`https://charism-api-xtw9.onrender.com/api/files/event-image/${eventId}/debug`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com'}/api/files/event-image/${eventId}/debug`);
       setDiagnosticInfo(response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);

@@ -69,7 +69,7 @@ const EventChatListPage = () => {
   // Get messages function
   const getMessages = async () => {
     try {
-      const response = await fetch('/api/events/chat/messages');
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com'}/api/events/chat/messages`);
       const data = await response.json();
       return data;
     } catch (error) {

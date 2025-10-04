@@ -1,5 +1,6 @@
 // Network utilities for handling connectivity issues
 import { showSuccessToast, showWarningToast } from './sweetAlertUtils';
+import { API_URL } from '../config/environment';
 
 // Check if the device is online
 export const isOnline = () => {
@@ -9,7 +10,7 @@ export const isOnline = () => {
 // Check if the backend server is reachable
 export const checkServerHealth = async () => {
   try {
-    const response = await fetch('/api/health', {
+    const response = await fetch(`${API_URL}/api/health`, {
       method: 'GET',
       timeout: 5000,
     });

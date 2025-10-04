@@ -11,15 +11,15 @@ const getBackendUrl = () => {
     
     // Production environment
     if (hostname === 'charism-ucb4.onrender.com' || hostname === 'charism.onrender.com') {
-      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
+      apiUrl = 'https://charism-api-xtw9.onrender.com';
     }
     // Local development
     else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      apiUrl = 'http://localhost:10000/api';
+      apiUrl = 'http://localhost:5000';
     }
     // Default to production for any other case
     else {
-      apiUrl = 'https://charism-api-xtw9.onrender.com/api';
+      apiUrl = 'https://charism-api-xtw9.onrender.com';
     }
   }
   

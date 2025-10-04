@@ -46,7 +46,7 @@ const EventChatPage = () => {
   // Send message function
   const sendMessage = async (messageData) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/chat`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://charism-api-xtw9.onrender.com'}/api/events/${eventId}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

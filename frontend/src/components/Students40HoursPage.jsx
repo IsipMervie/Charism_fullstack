@@ -73,8 +73,8 @@ function Students40HoursPage() {
       const token = localStorage.getItem('token');
       let apiUrl = process.env.REACT_APP_API_URL || 
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-          ? 'http://localhost:10000/api' 
-          : 'https://charism-backend.vercel.app/api');
+          ? 'http://localhost:5000/api' 
+          : 'https://charism-api-xtw9.onrender.com');
       
       // Ensure API URL always ends with /api
       if (!apiUrl.endsWith('/api')) {
