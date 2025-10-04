@@ -150,6 +150,12 @@ export const testAPIConnection = async () => {
       url: axiosInstance.defaults.baseURL + '/health'
     });
     
+    // Check if it's actually a successful response with error status
+    if (error.response && error.response.status >= 200 && error.response.status < 300) {
+      console.log('✅ API connection successful (with error response):', error.response.status);
+      return { success: true, data: error.response.data };
+    }
+    
     // Provide more helpful error messages
     let errorMessage = 'Server is not responding';
     if (error.code === 'ECONNABORTED') {
@@ -958,7 +964,8 @@ export const loginUser = async (email, password) => {
       if (attempt === 1) {
         const connectionTest = await testAPIConnection();
         if (!connectionTest.success) {
-          throw new Error(`Cannot connect to server: ${connectionTest.error}`);
+          console.warn('⚠️ Connection test failed, but continuing with login attempt...');
+          // Don't throw error, just log warning and continue
         }
       }
       
@@ -1033,10 +1040,11 @@ export const registerUser = async (name, email, password, userId, academicYear, 
     console.log('🔍 Testing API connection before registration...');
     const connectionTest = await testAPIConnection();
     if (!connectionTest.success) {
-      console.error('❌ API connection failed:', connectionTest.error);
-      throw new Error(`Cannot connect to server: ${connectionTest.error}`);
+      console.warn('⚠️ Connection test failed, but continuing with registration attempt...');
+      // Don't throw error, just log warning and continue
+    } else {
+      console.log('✅ API connection successful, proceeding with registration...');
     }
-    console.log('✅ API connection successful, proceeding with registration...');
     
     const payload = {
       name,
